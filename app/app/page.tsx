@@ -1,19 +1,58 @@
+"use client"
+
+import React, { useState } from "react";
+// import ReactDOM from "react-dom/client";
 import { VoiceClient } from "realtime-ai";
+import { VoiceClientAudio, VoiceClientProvider } from "realtime-ai-react";
+
+import { Header } from "@/components/ui/header";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import App from "./App";
+import { defaultConfig } from "../../utils/config";
+import { Splash } from "./Splash";
+
+// import "./global.css"; // Note: Core app layout can be found here
+
+
+const voiceClient = new VoiceClient({
+  baseUrl: process.env.NEXT_PUBLIC_BASE_URL || "",
+  enableMic: true,
+  config: defaultConfig,
+});
 
 const page = () => {
+  const [showSplash, setShowSplash] = useState<boolean>(true);
 
+  if (showSplash) {
+    return <Splash handleReady={() => setShowSplash(false)} />;
+  }
 
-    // const voiceClient = new VoiceClient({
-    //     baseUrl: "http://localhost:7860", // as an example
-    //     enableMic: true,
-        
-    // });
-    
-    return (
-        <div>
-        <h1>Page</h1>
-        </div>
-    );
-    }
+  return (
+    <VoiceClientProvider voiceClient={voiceClient}>
+      <TooltipProvider>
+        <main>
+          <Header />
+          <div id="app">
+            <App />
+          </div>
+        </main>
+        <aside id="tray" />
+        <VoiceClientAudio />
+      </TooltipProvider>
+    </VoiceClientProvider>
+  );
+};
+//
+// ReactDOM.createRoot(document.getElementById("root")!).render(
+//   <React.StrictMode>
+//     {isFirefox && (
+//       <div className="bg-red-500 text-white text-sm font-bold text-center p-2 fixed t-0 w-full">
+//         Latency readings can be inaccurate in Firefox. For best results, please
+//         use Chrome.
+//       </div>
+//     )}
+//     <Layout />
+//   </React.StrictMode>
+// );
 
 export default page;
