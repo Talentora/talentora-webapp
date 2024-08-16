@@ -2,6 +2,12 @@ import os
 import argparse
 import subprocess
 from pathlib import Path
+import ssl
+import certifi
+
+# SSL Certificate configuration
+ssl_context = ssl.create_default_context(cafile=certifi.where())
+os.environ['SSL_CERT_FILE'] = certifi.where()
 
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,6 +28,8 @@ MAX_SESSION_TIME = 15 * 60  # 15 minutes
 
 DAILY_API_URL = os.getenv("DAILY_API_URL", "https://api.daily.co/v1")
 DAILY_API_KEY = os.getenv("DAILY_API_KEY", "")
+
+
 
 app = FastAPI()
 
