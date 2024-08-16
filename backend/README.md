@@ -32,8 +32,8 @@ pip install -r runner/requirements.txt
 #### Create environment files for both apps:
 
 ```bash
-cp runner/env.example runner/.env
-cp bot/env.example bot/.env
+cp runner/.env runner/.env
+cp bot/.env bot/.env
 ```
 
 Enter the necessary (required) API keys for both applications.

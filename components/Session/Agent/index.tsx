@@ -3,14 +3,13 @@ import clsx from "clsx";
 import { Loader2 } from "lucide-react";
 import { VoiceEvent } from "realtime-ai";
 import { useVoiceClientEvent } from "realtime-ai-react";
-
-import Latency from "@/components/Latency";
-
-//import TranscriptOverlay from "../TranscriptOverlay";
+// import Latency from "@/components/Latency";
 import Avatar from "./avatar";
 import ModelBadge from "./model";
+import dynamic from 'next/dynamic'
 
-import styles from "./styles.module.css";
+const Latency = dynamic(() => import('@/components/Latency'), { ssr: false })
+
 
 export const Agent: React.FC<{
   isReady: boolean;
@@ -23,7 +22,6 @@ export const Agent: React.FC<{
     >("initializing");
 
     useEffect(() => {
-      // Update the started state when the transport enters the ready state
       if (!isReady) return;
       setHasStarted(true);
       setBotStatus("connected");
@@ -37,25 +35,26 @@ export const Agent: React.FC<{
       }, [])
     );
 
-    // Cleanup
     useEffect(() => () => setHasStarted(false), []);
 
-    const cx = clsx(styles.agentWindow, hasStarted && styles.ready);
+    const agentWindowClass = clsx(
+      "relative flex items-center justify-center min-w-[400px] bg-primary-300 rounded-2xl transition-colors duration-[2.5s] overflow-hidden aspect-square",
+      hasStarted && "bg-primary-600"
+    );
 
     return (
-      <div className={styles.agent}>
-        <div className={cx}>
+      <div className="relative p-2">
+        <div className={agentWindowClass}>
           <ModelBadge />
           {!hasStarted ? (
-            <span className={styles.loader}>
+            <span className="absolute p-3 inline-block bg-primary-600 text-white rounded-full">
               <Loader2 size={32} className="animate-spin" />
             </span>
           ) : (
             <Avatar />
           )}
-          {/*<TranscriptOverlay />*/}
         </div>
-        <footer className={styles.agentFooter}>
+        <footer className="flex justify-between w-full mt-4">
           <Latency
             started={hasStarted}
             botStatus={botStatus}

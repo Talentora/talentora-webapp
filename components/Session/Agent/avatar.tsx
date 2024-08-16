@@ -1,10 +1,7 @@
 import { useCallback, useRef } from "react";
 import { VoiceEvent } from "realtime-ai";
 import { useVoiceClientEvent } from "realtime-ai-react";
-
 import FaceSVG from "./face.svg";
-
-import styles from "./styles.module.css";
 
 export const Avatar: React.FC = () => {
   const volRef = useRef<HTMLDivElement>(null);
@@ -18,10 +15,13 @@ export const Avatar: React.FC = () => {
   );
 
   return (
-    <>
-      <img src={FaceSVG} alt="Face" className={styles.face} />
-      <div className={styles.faceBubble} ref={volRef} />
-    </>
+    <div className="relative z-2">
+      <img src={FaceSVG} alt="Face" className="animate-faceAppear" />
+      <div
+        className="absolute w-[220px] h-[220px] rounded-full bg-primary-700 transition-transform duration-100 ease z-1"
+        ref={volRef}
+      />
+    </div>
   );
 };
 

@@ -1,11 +1,18 @@
 'use client';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { signInWithEmail } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card';
 
 // Define prop type with allowPassword boolean
 interface EmailSignInProps {
@@ -15,10 +22,10 @@ interface EmailSignInProps {
 }
 
 export default function EmailSignIn({
-  allowPassword,
-  redirectMethod,
-  disableButton
-}: EmailSignInProps) {
+                                      allowPassword,
+                                      redirectMethod,
+                                      disableButton
+                                    }: EmailSignInProps) {
   const router = redirectMethod === 'client' ? useRouter() : null;
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -29,13 +36,16 @@ export default function EmailSignIn({
   };
 
   return (
-    <div className="my-8">
-      <form
-        noValidate={true}
-        className="mb-4"
-        onSubmit={(e) => handleSubmit(e)}
-      >
-        <div className="grid gap-2">
+    <Card shadow className="my-8">
+      <CardHeader>
+        <CardTitle>Sign in with Email</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form
+          noValidate={true}
+          className="grid gap-2"
+          onSubmit={(e) => handleSubmit(e)}
+        >
           <div className="grid gap-1">
             <label htmlFor="email">Email</label>
             <input
@@ -50,7 +60,7 @@ export default function EmailSignIn({
             />
           </div>
           <Button
-            variant="slim"
+            variant="default"
             type="submit"
             className="mt-1"
             loading={isSubmitting}
@@ -58,10 +68,10 @@ export default function EmailSignIn({
           >
             Sign in
           </Button>
-        </div>
-      </form>
+        </form>
+      </CardContent>
       {allowPassword && (
-        <>
+        <CardFooter className="flex flex-col items-start space-y-2">
           <p>
             <Link href="/signin/password_signin" className="font-light text-sm">
               Sign in with email and password
@@ -69,11 +79,11 @@ export default function EmailSignIn({
           </p>
           <p>
             <Link href="/signin/signup" className="font-light text-sm">
-              Don't have an account? Sign up
+              Don&apos;t have an account? Sign up
             </Link>
           </p>
-        </>
+        </CardFooter>
       )}
-    </div>
+    </Card>
   );
 }

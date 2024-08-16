@@ -23,7 +23,7 @@ export const SettingsList: React.FC<SettingsList> = ({
 }) => {
   return (
     <div className="grid w-full border border-primary-100 rounded-lg overflow-hidden">
-      {import.meta.env.VITE_SERVER_URL ? (
+      {process.env.NEXT_PUBLIC_BASE_URL ? (
         <div className={rowCx}>
           <span className={titleCx}>Server URL</span>
           <span className={valueCx}>{serverUrl}</span>

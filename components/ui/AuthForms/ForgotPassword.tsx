@@ -1,11 +1,18 @@
 'use client';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { requestPasswordUpdate } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card';
 
 // Define prop type with allowEmail boolean
 interface ForgotPasswordProps {
@@ -15,11 +22,11 @@ interface ForgotPasswordProps {
 }
 
 export default function ForgotPassword({
-  allowEmail,
-  redirectMethod,
-  disableButton
-}: ForgotPasswordProps) {
-  const router = redirectMethod === 'client' ? useRouter() : null;
+                                         allowEmail,
+                                         redirectMethod,
+                                         disableButton
+                                       }: ForgotPasswordProps) {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -29,13 +36,16 @@ export default function ForgotPassword({
   };
 
   return (
-    <div className="my-8">
-      <form
-        noValidate={true}
-        className="mb-4"
-        onSubmit={(e) => handleSubmit(e)}
-      >
-        <div className="grid gap-2">
+    <Card shadow className="my-8">
+      <CardHeader>
+        <CardTitle>Reset Your Password</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form
+          noValidate={true}
+          className="grid gap-2"
+          onSubmit={(e) => handleSubmit(e)}
+        >
           <div className="grid gap-1">
             <label htmlFor="email">Email</label>
             <input
@@ -50,7 +60,7 @@ export default function ForgotPassword({
             />
           </div>
           <Button
-            variant="slim"
+            variant="default"
             type="submit"
             className="mt-1"
             loading={isSubmitting}
@@ -58,25 +68,27 @@ export default function ForgotPassword({
           >
             Send Email
           </Button>
-        </div>
-      </form>
-      <p>
-        <Link href="/signin/password_signin" className="font-light text-sm">
-          Sign in with email and password
-        </Link>
-      </p>
-      {allowEmail && (
+        </form>
+      </CardContent>
+      <CardFooter className="flex flex-col items-start space-y-2">
         <p>
-          <Link href="/signin/email_signin" className="font-light text-sm">
-            Sign in via magic link
+          <Link href="/signin/password_signin" className="font-light text-sm">
+            Sign in with email and password
           </Link>
         </p>
-      )}
-      <p>
-        <Link href="/signin/signup" className="font-light text-sm">
-          Don't have an account? Sign up
-        </Link>
-      </p>
-    </div>
+        {allowEmail && (
+          <p>
+            <Link href="/signin/email_signin" className="font-light text-sm">
+              Sign in via magic link
+            </Link>
+          </p>
+        )}
+        <p>
+          <Link href="/signin/signup" className="font-light text-sm">
+            Don&apos;t have an account? Sign up
+          </Link>
+        </p>
+      </CardFooter>
+    </Card>
   );
 }

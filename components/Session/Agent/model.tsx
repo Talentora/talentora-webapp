@@ -2,8 +2,6 @@ import React, { useCallback } from "react";
 import { VoiceEvent } from "realtime-ai";
 import { useVoiceClient, useVoiceClientEvent } from "realtime-ai-react";
 
-import styles from "./styles.module.css";
-
 const ModelBadge: React.FC = () => {
   const { config } = useVoiceClient()!;
   const [model, setModel] = React.useState<string | undefined>(
@@ -17,7 +15,11 @@ const ModelBadge: React.FC = () => {
     }, [])
   );
 
-  return <div className={styles.modelBadge}>{model}</div>;
+  return (
+    <div className="absolute top-3 left-3 right-3 text-center z-99 uppercase text-xs font-semibold text-primary-500">
+      {model}
+    </div>
+  );
 };
 
 export default ModelBadge;

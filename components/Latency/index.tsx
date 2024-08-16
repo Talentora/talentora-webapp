@@ -1,15 +1,12 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
-import clsx from "clsx";
 import { VoiceEvent } from "realtime-ai";
-import { useVoiceClientMediaTrack } from "realtime-ai-react";
-import { useVoiceClientEvent } from "realtime-ai-react";
-import { VAD, VADState } from "web-vad";
-// @ts-ignore
-import AudioWorkletURL from "web-vad/dist/worklet?worker&url";
+import { useVoiceClientMediaTrack, useVoiceClientEvent } from "realtime-ai-react";
+// Removed static import for VAD and AudioWorkletURL
+import clsx from "clsx";
 
 import {
-  // LATENCY_MAX,
-  // LATENCY_MIN,
+  LATENCY_MAX,
+  LATENCY_MIN,
   VAD_MIN_SPEECH_FRAMES,
   VAD_NEGATIVE_SPEECH_THRESHOLD,
   VAD_POSITIVE_SPEECH_THRESHOLD,
@@ -17,25 +14,24 @@ import {
   VAD_REDEMPTION_FRAMES,
 } from "@/utils/config";
 
-// import { calculateMedian } from "./utils";
-
-import styles from "./styles.module.css";
+import { calculateMedian } from "./utils";
+import StatsAggregator from "@/utils/stats_aggregator";
 
 enum State {
   SPEAKING = "Speaking",
   SILENT = "Silent",
 }
 
-// const REMOTE_AUDIO_THRESHOLD = 0;
+const REMOTE_AUDIO_THRESHOLD = 0;
 
 const Latency: React.FC<{
   started: boolean;
   botStatus: string;
-  // statsAggregator: StatsAggregator;
+  statsAggregator: StatsAggregator;
 }> = memo(
-  ({ started = false, botStatus }) => {
+  ({ started = false, botStatus, statsAggregator }) => {
     const localMediaTrack = useVoiceClientMediaTrack("audio", "local");
-    const [vadInstance, setVadInstance] = useState<VAD | null>(null);
+    const [vadInstance, setVadInstance] = useState<any | null>(null);
     const [currentState, setCurrentState] = useState<State>(State.SILENT);
     const [botTalkingState, setBotTalkingState] = useState<State | undefined>(
       undefined
@@ -54,44 +50,40 @@ const Latency: React.FC<{
       startTimeRef.current = new Date();
     }, []);
 
-    // const stopTimer = useCallback(() => {
-    //   if (!startTimeRef.current) {
-    //     return;
-    //   }
-    //
-    //   const now = new Date();
-    //   const diff = now.getTime() - startTimeRef.current.getTime();
-    //
-    //   // Ignore any values that are obviously wrong
-    //   // These may be triggered by small noises such as coughs etc
-    //   if (diff < LATENCY_MIN || diff > LATENCY_MAX) {
-    //     startTimeRef.current = null;
-    //     return;
-    //   }
-    //
-    //   deltaArrayRef.current = [...deltaArrayRef.current, diff];
-    //   setMedian(calculateMedian(deltaArrayRef.current));
-    //   setLastDelta(diff);
-    //   startTimeRef.current = null;
-    //
-    //   // Increment turns
-    //   if (statsAggregator) {
-    //     statsAggregator.turns++;
-    //   }
-    // }, [statsAggregator]);
+    const stopTimer = useCallback(() => {
+      if (!startTimeRef.current) {
+        return;
+      }
 
-    // Stop timer when bot starts talking
-    // useVoiceClientEvent(
-    //   VoiceEvent.RemoteAudioLevel,
-    //   useCallback(
-    //     (volume) => {
-    //       if (volume > REMOTE_AUDIO_THRESHOLD && startTimeRef.current) {
-    //         stopTimer();
-    //       }
-    //     },
-    //     [stopTimer]
-    //   )
-    // );
+      const now = new Date();
+      const diff = now.getTime() - startTimeRef.current.getTime();
+
+      if (diff < LATENCY_MIN || diff > LATENCY_MAX) {
+        startTimeRef.current = null;
+        return;
+      }
+
+      deltaArrayRef.current = [...deltaArrayRef.current, diff];
+      setMedian(calculateMedian(deltaArrayRef.current));
+      setLastDelta(diff);
+      startTimeRef.current = null;
+
+      if (statsAggregator) {
+        statsAggregator.turns++;
+      }
+    }, [statsAggregator]);
+
+    useVoiceClientEvent(
+      VoiceEvent.RemoteAudioLevel,
+      useCallback(
+        (volume) => {
+          if (volume > REMOTE_AUDIO_THRESHOLD && startTimeRef.current) {
+            stopTimer();
+          }
+        },
+        [stopTimer]
+      )
+    );
 
     useVoiceClientEvent(
       VoiceEvent.BotStoppedTalking,
@@ -116,9 +108,6 @@ const Latency: React.FC<{
       }, [hasSpokenOnce])
     );
 
-    /* ---- Effects ---- */
-
-    // Reset state on mount
     useEffect(() => {
       startTimeRef.current = null;
       deltaRef.current = 0;
@@ -127,13 +116,12 @@ const Latency: React.FC<{
       setHasSpokenOnce(false);
     }, []);
 
-    // Start timer after user has spoken once
     useEffect(() => {
       if (
         !started ||
         !hasSpokenOnce ||
         !vadInstance ||
-        vadInstance.state !== VADState.listening ||
+        vadInstance.state !== "listening" ||
         currentState !== State.SILENT
       ) {
         return;
@@ -147,41 +135,55 @@ const Latency: React.FC<{
       }
 
       async function loadVad() {
-        const stream = new MediaStream([localMediaTrack!]);
+        try {
+          if (typeof window.AudioContext === "undefined" || typeof window.AudioWorkletNode === "undefined") {
+            console.error("AudioWorkletProcessor or AudioContext is not supported in this environment.");
+            return;
+          }
 
-        const vad = new VAD({
-          workletURL: AudioWorkletURL,
-          stream,
-          positiveSpeechThreshold: VAD_POSITIVE_SPEECH_THRESHOLD,
-          negativeSpeechThreshold: VAD_NEGATIVE_SPEECH_THRESHOLD,
-          minSpeechFrames: VAD_MIN_SPEECH_FRAMES,
-          redemptionFrames: VAD_REDEMPTION_FRAMES,
-          preSpeechPadFrames: VAD_PRESPEECH_PAD_FRAMES,
-          onSpeechStart: () => {
-            setCurrentState(State.SPEAKING);
-          },
-          onVADMisfire: () => {
-            setCurrentState(State.SILENT);
-          },
-          onSpeechEnd: () => {
-            setCurrentState(State.SILENT);
-          },
-        });
-        await vad.init();
-        vad.start();
-        setVadInstance(vad);
+          const { VAD, VADState } = await import("web-vad");
+          const AudioWorkletURL = (await import("web-vad/dist/worklet?worker&url")).default;
+
+          const stream = new MediaStream([localMediaTrack!]);
+
+          const vad = new VAD({
+            workletURL: AudioWorkletURL,
+            stream,
+            positiveSpeechThreshold: VAD_POSITIVE_SPEECH_THRESHOLD,
+            negativeSpeechThreshold: VAD_NEGATIVE_SPEECH_THRESHOLD,
+            minSpeechFrames: VAD_MIN_SPEECH_FRAMES,
+            redemptionFrames: VAD_REDEMPTION_FRAMES,
+            preSpeechPadFrames: VAD_PRESPEECH_PAD_FRAMES,
+            onSpeechStart: () => {
+              setCurrentState(State.SPEAKING);
+            },
+            onVADMisfire: () => {
+              setCurrentState(State.SILENT);
+            },
+            onSpeechEnd: () => {
+              setCurrentState(State.SILENT);
+            },
+          });
+          await vad.init();
+          vad.start();
+          setVadInstance(vad);
+        } catch (error) {
+          console.error("Error initializing VAD:", error);
+        }
       }
 
-      // Load VAD
-      loadVad();
+      if (typeof window !== 'undefined') {
+        loadVad().catch(error => {
+          console.error("Error in loadVad:", error);
+        });
+      }
 
       mountedRef.current = true;
     }, [localMediaTrack]);
 
-    // Cleanup VAD
     useEffect(
       () => () => {
-        if (vadInstance && vadInstance.state !== VADState.destroyed) {
+        if (vadInstance && vadInstance.state !== "destroyed") {
           setVadInstance(null);
           vadInstance?.destroy();
         }
@@ -189,68 +191,58 @@ const Latency: React.FC<{
       [vadInstance]
     );
 
-    /* ---- Render ---- */
-
     const userCx = clsx(
-      styles.statusColumn,
-      currentState === State.SPEAKING && styles.speaking
+      "flex flex-col bg-white p-2 md:p-3 rounded-2xl transition-all duration-200",
+      currentState === State.SPEAKING && "border-emerald-300 bg-emerald-50 shadow-lg"
     );
 
     const botCx = clsx(
-      styles.statusColumn,
-      botTalkingState === State.SPEAKING && styles.speaking
+      "flex flex-col bg-white p-2 md:p-3 rounded-2xl transition-all duration-200",
+      botTalkingState === State.SPEAKING && "border-emerald-300 bg-emerald-50 shadow-lg"
     );
 
     const userStatusCx = clsx(
-      styles.status,
-      currentState === State.SPEAKING && styles.statusSpeaking
+      "mx-auto self-start bg-sky-100 rounded-md text-xs font-bold px-1 py-2 text-sky-700 capitalize",
+      currentState === State.SPEAKING && "bg-emerald-100 text-emerald-700"
     );
 
-    const boxStatusCx = clsx(
-      styles.status,
-      botStatus === "initializing" && styles.statusLoading,
-      botStatus === "disconnected" && styles.statusDisconnected,
-      botTalkingState === State.SPEAKING && styles.statusSpeaking
+    const botStatusCx = clsx(
+      "mx-auto self-start bg-sky-100 rounded-md text-xs font-bold px-1 py-2 text-sky-700 capitalize",
+      botStatus === "initializing" && "bg-orange-100 text-orange-700",
+      botStatus === "disconnected" && "bg-red-100 text-red-700",
+      botTalkingState === State.SPEAKING && "bg-emerald-100 text-emerald-700"
     );
 
     return (
-      <>
-        <div className={styles.statusContainer}>
-          <div className={started ? userCx : styles.statusColumn}>
-            <span className={styles.header}>
-              User <span>status</span>
-            </span>
-            <span className={started ? userStatusCx : styles.status}>
-              {started && currentState === State.SPEAKING
-                ? "Speaking"
-                : "Connected"}
-            </span>
-          </div>
-          <div className={styles.latencyColumn}>
-            <span className={styles.header}>Latency</span>
-            <span className={styles.lastDelta}>
-              {lastDelta || "---"}
-              <sub>ms</sub>
-            </span>
-            <span className={styles.medianDelta}>
-              avg {median?.toFixed() || "0"}
-              <sub>ms</sub>
-            </span>
-          </div>
-          <div className={botCx}>
-            <span className={styles.header}>
-              Bot <span>status</span>
-            </span>
-            <span className={boxStatusCx}>
-              {botStatus === "disconnected"
-                ? "Disconnected"
-                : botTalkingState === State.SPEAKING
-                ? "Speaking"
-                : botStatus}
-            </span>
-          </div>
+      <div className="w-full flex flex-row p-2">
+        <div className={started ? userCx : "flex flex-col bg-white p-2 md:p-3 rounded-2xl"}>
+          <span className="font-mono text-xs uppercase tracking-wider">
+            User <span className="hidden md:inline">status</span>
+          </span>
+          <span className={started ? userStatusCx : "mx-auto self-start bg-sky-100 rounded-md text-xs font-bold px-1 py-2 text-sky-700 capitalize"}>
+            {started && currentState === State.SPEAKING ? "Speaking" : "Connected"}
+          </span>
         </div>
-      </>
+        <div className="flex flex-col w-20 mx-auto p-0 bg-white">
+          <span className="font-mono text-xs uppercase tracking-wider">
+            Latency
+          </span>
+          <span className="font-bold text-sm">
+            {lastDelta || "---"}<sub>ms</sub>
+          </span>
+          <span className="text-gray-400 text-xs">
+            avg {median?.toFixed() || "0"}<sub>ms</sub>
+          </span>
+        </div>
+        <div className={botCx}>
+          <span className="font-mono text-xs uppercase tracking-wider">
+            Bot <span className="hidden md:inline">status</span>
+          </span>
+          <span className={botStatusCx}>
+            {botStatus === "disconnected" ? "Disconnected" : botTalkingState === State.SPEAKING ? "Speaking" : botStatus}
+          </span>
+        </div>
+      </div>
     );
   },
   (prevState, nextState) =>

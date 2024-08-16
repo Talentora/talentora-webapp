@@ -96,12 +96,14 @@ export default function App() {
 
   if (error) {
     return (
-      <Alert intent="danger" title="An error occurred">
+      <Alert title="An error occurred">
         {error}
       </Alert>
     );
   }
 
+
+  // session page
   if (appState === "connected") {
     return (
       <Session
@@ -114,16 +116,18 @@ export default function App() {
 
   const isReady = appState === "ready";
 
+
+  // loading/settings page
   return (
     <Card.Card shadow className="animate-appear max-w-lg mb-14">
       <Card.CardHeader>
-        <Card.CardTitle>Configuration</Card.CardTitle>
+        <Card.CardTitle className="text-primary-200">Configuration</Card.CardTitle>
         <Card.CardDescription>
           Please configure your devices and pipeline settings below
         </Card.CardDescription>
       </Card.CardHeader>
       <Card.CardContent stack>
-        <div className="flex flex-row gap-2 bg-primary-50 px-4 py-2 md:p-2 text-sm items-center justify-center rounded-md font-medium text-pretty">
+        <div className="flex flex-row gap-2 px-4 py-2 md:p-2 text-sm items-center justify-center rounded-md font-medium text-pretty text-primary-200">
           <Ear className="size-7 md:size-5 text-primary-400" />
           Works best in a quiet environment with a good internet.
         </div>
@@ -134,8 +138,8 @@ export default function App() {
       </Card.CardContent>
       <Card.CardFooter>
         <Button
+          className="bg-primary-200 text-primary-900"
           key="start"
-          fullWidthMobile
           onClick={() => start()}
           disabled={!isReady}
         >

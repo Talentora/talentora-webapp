@@ -8,7 +8,7 @@ import { VoiceClientAudio, VoiceClientProvider } from "realtime-ai-react";
 import { Header } from "@/components/ui/header";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import App from "./App";
-import { defaultConfig } from "../../utils/config";
+import { defaultConfig } from "@/utils/config";
 import { Splash } from "./Splash";
 
 // import "./global.css"; // Note: Core app layout can be found here

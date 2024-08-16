@@ -3,15 +3,15 @@ import { LogOut, StopCircle } from "lucide-react";
 import { TransportState, VoiceEvent } from "realtime-ai";
 import { useVoiceClient, useVoiceClientEvent } from "realtime-ai-react";
 
-// import StatsAggregator from "../../utils/stats_aggregator";
-import { Button } from "../ui/button";
-import * as Card from "../ui/card";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import UserMicBubble from "../UserMicBubble";
+import StatsAggregator from "@/utils/stats_aggregator";
+import { Button } from "@/components/ui/button";
+import * as Card from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import UserMicBubble from "@/components/UserMicBubble";
 
 import Agent from "./Agent";
 
-// let stats_aggregator: StatsAggregator;
+let stats_aggregator: StatsAggregator;
 
 interface SessionProps {
   state: TransportState;
@@ -26,6 +26,8 @@ export const Session = React.memo(
     const [hasStarted, setHasStarted] = useState(false);
     const [muted, setMuted] = useState(startAudioOff);
     const modalRef = useRef<HTMLDialogElement>(null);
+    const [showDevices, setShowDevices] = useState(false);
+
 
     // ---- Voice Client Events
 
@@ -40,14 +42,14 @@ export const Session = React.memo(
       }, [voiceClient])
     );
 
-    // useVoiceClientEvent(
-    //   VoiceEvent.Metrics,
-    //   useCallback((metrics) => {
-    //     metrics?.ttfb?.map((m: { processor: string; value: number }) => {
-    //       stats_aggregator.addStat([m.processor, "ttfb", m.value, Date.now()]);
-    //     });
-    //   }, [])
-    // );
+    useVoiceClientEvent(
+      VoiceEvent.Metrics,
+      useCallback((metrics) => {
+        metrics?.ttfb?.map((m: { processor: string; value: number }) => {
+          stats_aggregator.addStat([m.processor, "ttfb", m.value, Date.now()]);
+        });
+      }, [])
+    );
 
     useVoiceClientEvent(
       VoiceEvent.BotStoppedTalking,
@@ -71,10 +73,10 @@ export const Session = React.memo(
       voiceClient.enableMic(true);
     }, [voiceClient, startAudioOff, hasStarted]);
 
-    // useEffect(() => {
-    //   // Create new stats aggregator on mount (removes stats from previous session)
-    //   stats_aggregator = new StatsAggregator();
-    // }, []);
+    useEffect(() => {
+      // Create new stats aggregator on mount (removes stats from previous session)
+      stats_aggregator = new StatsAggregator();
+    }, []);
 
     useEffect(() => {
       // Leave the meeting if there is an error
@@ -110,7 +112,7 @@ export const Session = React.memo(
           >
             <Agent
               isReady={state === "ready"}
-              statsAggregator={null}
+              statsAggregator={stat}
             />
           </Card.Card>
           <UserMicBubble

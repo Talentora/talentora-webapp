@@ -12,6 +12,9 @@ const DashboardPage: React.FC = () => {
                 <Link href="/app" className="text-blue-500 hover:underline">
                     App
                 </Link>
+                <Link href="/dashboard" className="text-blue-500 hover:underline">
+                  Dashboard
+                </Link>
             </div>
             
         </div>

@@ -29,9 +29,9 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: theme(colors.primary.900);
-  background-color: theme(colors.primary.50);
-  @apply text-white bg-zinc-800 antialiased;
+  color: theme(colors.primary.200);
+  background-color: theme(colors.primary.200);
+  /*@apply text-white bg-zinc-800 antialiased;*/
 }
 
 a {

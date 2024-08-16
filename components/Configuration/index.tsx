@@ -2,7 +2,7 @@ import React from "react";
 import { VoiceClientConfigOptions } from "realtime-ai";
 import { useVoiceClient } from "realtime-ai-react";
 
-import { Voice } from "@/config";
+import { Voice } from "@/utils/config";
 
 import ModelSelect from "./ModelSelect";
 import VoiceSelect from "./VoiceSelect";
