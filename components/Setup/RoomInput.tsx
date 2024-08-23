@@ -11,7 +11,7 @@ export const RoomInput: React.FC<RoomInputProps> = ({ onChange, error }) => {
     <Field label="Enter room URL:" error={error}>
       <Input
         type="text"
-        variant={error ? "danger" : "default"}
+        // variant={error ? "danger" : "default"}
         placeholder="E.g. https://yourdomain.daily.co/room_name"
         onChange={(e) => onChange(e.target.value)}
         className="w-full"
