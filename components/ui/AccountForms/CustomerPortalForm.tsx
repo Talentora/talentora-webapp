@@ -13,7 +13,7 @@ import {
   CardContent,
   CardFooter,
 } from '@/components/ui/card';
-import { Tables } from '@/types_db';
+import { Tables } from '@/types/types_db';
 
 type Subscription = Tables<'subscriptions'>;
 type Price = Tables<'prices'>;
