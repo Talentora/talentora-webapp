@@ -137,7 +137,9 @@ CREATE TABLE IF NOT EXISTS "public"."jobs" (
     "description" "text",
     "salary_range" "text",
     "company_id" bigint,
-    "applicant_count" bigint DEFAULT 0
+    "applicant_count" bigint DEFAULT 0,
+    "location" "text" DEFAULT 'Boston, MA'::"text",
+    "department" "text" DEFAULT 'Marketing'::"text"
 );
 
 ALTER TABLE "public"."jobs" OWNER TO "postgres";
@@ -269,7 +271,17 @@ CREATE POLICY "Can update own user data." ON "public"."users" FOR UPDATE USING (
 
 CREATE POLICY "Can view own user data." ON "public"."users" FOR SELECT USING (("auth"."uid"() = "id"));
 
+CREATE POLICY "Enable read access for all users" ON "public"."applicants" FOR SELECT USING (true);
+
+CREATE POLICY "Select Jobs" ON "public"."jobs" FOR SELECT USING (true);
+
+ALTER TABLE "public"."applicants" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE "public"."companies" ENABLE ROW LEVEL SECURITY;
+
 ALTER TABLE "public"."customers" ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE "public"."jobs" ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE "public"."prices" ENABLE ROW LEVEL SECURITY;
 

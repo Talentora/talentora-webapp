@@ -1,7 +1,14 @@
 import Dashboard from './Dashboard';
+import { Tables } from '@/types/types_db';
 
-export default function DashboardPage() {
+type Job = Tables<'jobs'>;
+
+interface DashboardPageProps {
+  jobs: Job[];
+}
+
+export default function DashboardPage({ jobs }: DashboardPageProps) {
   return (
-    <Dashboard />
-  )
+    <Dashboard jobs={jobs} />
+  );
 }

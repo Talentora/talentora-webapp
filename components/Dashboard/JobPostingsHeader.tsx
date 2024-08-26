@@ -36,6 +36,7 @@ export default function JobPostingsHeader({ searchTerm, setSearchTerm,filters,se
           filterOptions={filterOptions}
           activeFilterCount={0}
         />
+
       </div>
     </div>
   );

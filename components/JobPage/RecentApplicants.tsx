@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 interface RecentApplicantsProps {
   toggleSection: (section: string) => void;
   visible: boolean;
+  jobId: number;
 }
 
 interface ApplicantRowProps {
@@ -14,7 +15,16 @@ interface ApplicantRowProps {
   status: string;
 }
 
-export function RecentApplicants({ toggleSection, visible }: RecentApplicantsProps) {
+import { Tables } from "@/types/types_db";
+type Applicant = Tables<'applicants'>;
+import { getApplicants } from '@/utils/supabase/queries';
+import { createClient } from '@/utils/supabase/server';
+
+export async function RecentApplicants({ toggleSection, visible,jobId }: RecentApplicantsProps) {
+
+  const supabase = createClient();
+  const applicants = await getApplicants(supabase,jobId);
+
   return (
     <Card>
       <CardHeader>
@@ -37,11 +47,10 @@ export function RecentApplicants({ toggleSection, visible }: RecentApplicantsPro
               </TableRow>
             </TableHeader>
             <TableBody>
-              <ApplicantRow name="Sarah Johnson" date="2023-06-01" experience="6 years" status="Interviewing" />
-              <ApplicantRow name="Michael Chen" date="2023-05-30" experience="4 years" status="Under Review" />
-              <ApplicantRow name="Emily Rodriguez" date="2023-05-28" experience="7 years" status="Interviewing" />
-              <ApplicantRow name="David Kim" date="2023-05-25" experience="3 years" status="Rejected" />
-              <ApplicantRow name="Lisa Patel" date="2023-05-22" experience="5 years" status="Offer Extended" />
+              {applicants.map((applicant: Applicant) => (
+                <ApplicantRow key={applicant.id} name={applicant.first_name + ' ' + applicant.last_name} date={''} experience={'applicant.experience'} status={'applicant.status'} />
+              ))}
+
             </TableBody>
           </Table>
         </CardContent>

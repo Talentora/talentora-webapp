@@ -8,15 +8,16 @@ import { Button } from "@/components/ui/button";
 import { UsersIcon, MoreVerticalIcon, LayoutGridIcon, ListIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Switch } from "@/components/ui/switch";
+import { Tables } from "@/types/types_db";
+type Job = Tables<'jobs'>;
 
 interface JobListProps {
-  jobs: any[];
-  filteredJobs: any[];
+  filteredJobs: Job[];
   isCardView: boolean;
   toggleView: () => void;
 }
 
-export default function JobList({ jobs, filteredJobs, isCardView, toggleView }: JobListProps) {
+export default function JobList({ filteredJobs, isCardView, toggleView }: JobListProps) {
   const router = useRouter();
 
   return (
@@ -34,18 +35,28 @@ export default function JobList({ jobs, filteredJobs, isCardView, toggleView }: 
         </label>
       </div>
       {isCardView ? (
-        <CardView jobs={filteredJobs} onCardClick={(jobId) => router.push(`./JobPage/${jobId}`)} />
+        <CardView filteredJobs={filteredJobs} onCardClick={(jobId) => router.push(`./JobPage/${jobId}`)} />
       ) : (
-        <TableView jobs={filteredJobs} onRowClick={(jobId) => router.push(`./JobPage/${jobId}`)} />
+        <TableView filteredJobs={filteredJobs} onRowClick={(jobId) => router.push(`./JobPage/${jobId}`)} />
       )}
     </>
   );
 }
 
-function CardView({ jobs, onCardClick }) {
+interface CardViewProps {
+  filteredJobs: Job[];
+  onCardClick: (id: number) => void;
+}
+
+interface TableViewProps {
+  filteredJobs: Job[];
+  onRowClick: (id: number) => void;
+}
+
+function CardView({ filteredJobs, onCardClick }:CardViewProps) {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 ">
-      {jobs.map((job) => (
+      {filteredJobs.map((job) => (
         <Card key={job.id} onClick={() => onCardClick(job.id)} className="hover:bg-primary-800">
           <CardHeader>
             <CardTitle>{job.title}</CardTitle>
@@ -57,13 +68,13 @@ function CardView({ jobs, onCardClick }) {
             </div>
             <div className="mt-2 flex items-center space-x-2">
               <UsersIcon className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">{job.applicants} applicants</span>
+              <span className="text-sm text-muted-foreground">{job.applicant_count} applicants</span>
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Badge variant={job.status === 'Active' ? 'default' : job.status === 'Closed' ? 'secondary' : 'outline'}>
-              {job.status}
-            </Badge>
+            {/*<Badge variant={job.status === 'Active' ? 'default' : job.status === 'Closed' ? 'secondary' : 'outline'}>*/}
+            {/*  {job.status}*/}
+            {/*</Badge>*/}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm">
@@ -84,7 +95,7 @@ function CardView({ jobs, onCardClick }) {
   );
 }
 
-function TableView({ jobs, onRowClick }) {
+function TableView({ filteredJobs, onRowClick }:TableViewProps) {
   return (
     <Table>
       <TableHeader>
@@ -98,17 +109,17 @@ function TableView({ jobs, onRowClick }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {jobs.map((job) => (
+        {filteredJobs.map((job) => (
           <TableRow key={job.id} onClick={() => onRowClick(job.id)} className="hover:bg-primary-800">
             <TableCell className="font-medium">{job.title}</TableCell>
             <TableCell>{job.department}</TableCell>
             <TableCell>{job.location}</TableCell>
-            <TableCell>{job.applicants}</TableCell>
-            <TableCell>
-              <Badge variant={job.status === 'Active' ? 'default' : job.status === 'Closed' ? 'secondary' : 'outline'}>
-                {job.status}
-              </Badge>
-            </TableCell>
+            <TableCell>{job.applicant_count}</TableCell>
+            {/*<TableCell>*/}
+            {/*  <Badge variant={job.status === 'Active' ? 'default' : job.status === 'Closed' ? 'secondary' : 'outline'}>*/}
+            {/*    {job.status}*/}
+            {/*  </Badge>*/}
+            {/*</TableCell>*/}
             <TableCell className="text-right">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
