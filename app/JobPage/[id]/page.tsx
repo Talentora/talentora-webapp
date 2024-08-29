@@ -7,11 +7,21 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   console.log("job",job);
 
-  return (
-    <div>
-      <JobPage job={job} />
-    </div>
-  );
+  if (job) {
+    return (
+      <div>
+        <JobPage job={job} />
+      </div>
+    );
+  }
+  else {
+    return (
+      <div>
+        <h1>Job not found</h1>
+      </div>
+    );
+  }
+
 }
 
 async function fetchJobData(id: string) {

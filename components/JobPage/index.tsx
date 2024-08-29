@@ -22,7 +22,7 @@ export default function JobPage({ job }: JobPageProps) {
     roboRecruiterConfig: true,
   });
 
-  const toggleSection = (section: string | number) => {
+  const toggleSection = (section:  | number) => {
     setVisibleSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
