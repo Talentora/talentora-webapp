@@ -1,6 +1,13 @@
+'use client'
+
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Tables } from "@/types/types_db";
+import { fetchApplicants } from '@/app/actions/getApplicants'
+
+type Applicant = Tables<'applicants'>;
 
 interface RecentApplicantsProps {
   toggleSection: (section: string) => void;
@@ -8,29 +15,23 @@ interface RecentApplicantsProps {
   jobId: number;
 }
 
-interface ApplicantRowProps {
-  name: string;
-  date: string;
-  experience: string;
-  status: string;
-}
+export function RecentApplicants({ toggleSection, visible, jobId }: RecentApplicantsProps) {
+  const [applicants, setApplicants] = useState<Applicant[]>([]);
 
-import { Tables } from "@/types/types_db";
-type Applicant = Tables<'applicants'>;
-import { getApplicants } from '@/utils/supabase/queries';
-import { createClient } from '@/utils/supabase/server';
-
-export async function RecentApplicants({ toggleSection, visible,jobId }: RecentApplicantsProps) {
-
-  const supabase = createClient();
-  const applicants = await getApplicants(supabase,jobId);
+  useEffect(() => {
+    async function loadApplicants() {
+      const fetchedApplicants = await fetchApplicants(jobId);
+      setApplicants(fetchedApplicants);
+    }
+    loadApplicants();
+  }, [jobId]);
 
   return (
     <Card>
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="text-xl font-semibold">Recent Applicants</CardTitle>
-          <Button variant="outline" size="sm" onClick={() => toggleSection('recentApplicants')}>
+          <Button onClick={() => toggleSection('recentApplicants')}>
             {visible ? 'Hide' : 'Show'} Applicants
           </Button>
         </div>
@@ -48,9 +49,13 @@ export async function RecentApplicants({ toggleSection, visible,jobId }: RecentA
             </TableHeader>
             <TableBody>
               {applicants.map((applicant: Applicant) => (
-                <ApplicantRow key={applicant.id} name={applicant.first_name + ' ' + applicant.last_name} date={''} experience={'applicant.experience'} status={'applicant.status'} />
+                <ApplicantRow 
+                  key={applicant.id} 
+                  name={`${applicant.first_name} ${applicant.last_name}`} 
+                  // experience={applicant.experience || ''} 
+                  status={"Interviewing"}
+                />
               ))}
-
             </TableBody>
           </Table>
         </CardContent>
@@ -59,14 +64,16 @@ export async function RecentApplicants({ toggleSection, visible,jobId }: RecentA
   );
 }
 
+interface ApplicantRowProps {
+  name: string;
+  status: string;
+}
 
-
-function ApplicantRow({ name, date, experience, status }: ApplicantRowProps) {
+function ApplicantRow({ name, status }: ApplicantRowProps) {
   return (
     <TableRow>
       <TableCell className="font-medium">{name}</TableCell>
-      <TableCell>{date}</TableCell>
-      <TableCell>{experience}</TableCell>
+      
       <TableCell>
         <span className={`inline-flex items-center rounded-full bg-${getStatusColor(status)}-100 px-2.5 py-0.5 text-xs font-medium text-${getStatusColor(status)}-800`}>
           {status}

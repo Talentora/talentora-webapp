@@ -1,3 +1,5 @@
+"use client"
+
 import JobPage from "@/components/JobPage";
 import { getJob } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
@@ -9,7 +11,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   return (
     <div>
-      <JobPage job={job} />
+      {job ? <JobPage job={job} /> : <p>Job not found</p>}
     </div>
   );
 }

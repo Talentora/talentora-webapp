@@ -1,5 +1,5 @@
 // import Pricing from '@/components/ui/Pricing/Pricing';
-import LandingPage from '@/components/ui/LandingPage/LandingPage';
+import LandingPage from '@/components/LandingPage/LandingPage';
 // import { createClient } from '@/utils/supabase/server';
 // import {
 //   getProducts,
