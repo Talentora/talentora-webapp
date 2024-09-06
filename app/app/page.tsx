@@ -1,23 +1,22 @@
-"use client"
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 // import ReactDOM from "react-dom/client";
-import { VoiceClient } from "realtime-ai";
-import { VoiceClientAudio, VoiceClientProvider } from "realtime-ai-react";
+import { VoiceClient } from 'realtime-ai';
+import { VoiceClientAudio, VoiceClientProvider } from 'realtime-ai-react';
 
-import { Header } from "@/components/ui/header";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import App from "./App";
-import { defaultConfig } from "@/utils/config";
-import { Splash } from "./Splash";
+import { Header } from '@/components/ui/header';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import App from './App';
+import { defaultConfig } from '@/utils/config';
+import { Splash } from './Splash';
 
 // import "./global.css"; // Note: Core app layout can be found here
 
-
 const voiceClient = new VoiceClient({
-  baseUrl: process.env.NEXT_PUBLIC_BASE_URL || "",
+  baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
   enableMic: true,
-  config: defaultConfig,
+  config: defaultConfig
 });
 
 const page = () => {

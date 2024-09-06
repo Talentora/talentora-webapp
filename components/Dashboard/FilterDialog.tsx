@@ -1,20 +1,35 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
 import { FilterIcon } from 'lucide-react';
 
 interface FilterDialogProps {
-  filters: { departments: string[], locations: string[], statuses: string[] };
+  filters: { departments: string[]; locations: string[]; statuses: string[] };
   setFilters: (filters: any) => void;
-  filterOptions: { departments: string[], locations: string[], statuses: string[] };
+  filterOptions: {
+    departments: string[];
+    locations: string[];
+    statuses: string[];
+  };
   activeFilterCount: number;
 }
 
-export default function FilterDialog({ filters, setFilters, filterOptions, activeFilterCount }: FilterDialogProps) {
+export default function FilterDialog({
+  filters,
+  setFilters,
+  filterOptions,
+  activeFilterCount
+}: FilterDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -37,34 +52,40 @@ export default function FilterDialog({ filters, setFilters, filterOptions, activ
             title="Department"
             options={filterOptions.departments}
             selectedOptions={filters.departments}
-            onCheckedChange={(checked, option) => setFilters(prev => ({
-              ...prev,
-              departments: checked
-                ? [...prev.departments, option]
-                : prev.departments.filter(d => d !== option)
-            }))}
+            onCheckedChange={(checked, option) =>
+              setFilters((prev) => ({
+                ...prev,
+                departments: checked
+                  ? [...prev.departments, option]
+                  : prev.departments.filter((d) => d !== option)
+              }))
+            }
           />
           <FilterSection
             title="Location"
             options={filterOptions.locations}
             selectedOptions={filters.locations}
-            onCheckedChange={(checked, option) => setFilters(prev => ({
-              ...prev,
-              locations: checked
-                ? [...prev.locations, option]
-                : prev.locations.filter(l => l !== option)
-            }))}
+            onCheckedChange={(checked, option) =>
+              setFilters((prev) => ({
+                ...prev,
+                locations: checked
+                  ? [...prev.locations, option]
+                  : prev.locations.filter((l) => l !== option)
+              }))
+            }
           />
           <FilterSection
             title="Status"
             options={filterOptions.statuses}
             selectedOptions={filters.statuses}
-            onCheckedChange={(checked, option) => setFilters(prev => ({
-              ...prev,
-              statuses: checked
-                ? [...prev.statuses, option]
-                : prev.statuses.filter(s => s !== option)
-            }))}
+            onCheckedChange={(checked, option) =>
+              setFilters((prev) => ({
+                ...prev,
+                statuses: checked
+                  ? [...prev.statuses, option]
+                  : prev.statuses.filter((s) => s !== option)
+              }))
+            }
           />
         </div>
       </DialogContent>

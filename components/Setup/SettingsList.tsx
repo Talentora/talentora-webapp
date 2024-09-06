@@ -1,6 +1,6 @@
-import { Check, X } from "lucide-react";
+import { Check, X } from 'lucide-react';
 
-import { cn } from "@/utils/cn";
+import { cn } from '@/utils/cn';
 
 interface SettingsList {
   serverUrl: string;
@@ -10,16 +10,16 @@ interface SettingsList {
 }
 
 const rowCx =
-  "grid grid-cols-subgrid col-span-2 gap-6 p-2 text-xs items-center overflow-hidden [&:nth-child(even)]:bg-white bg-primary-50";
-const titleCx = "font-semibold w-max";
+  'grid grid-cols-subgrid col-span-2 gap-6 p-2 text-xs items-center overflow-hidden [&:nth-child(even)]:bg-white bg-primary-50';
+const titleCx = 'font-semibold w-max';
 const valueCx =
-  "text-right font-mono truncate text-primary-600 [&>svg]:ml-auto";
+  'text-right font-mono truncate text-primary-600 [&>svg]:ml-auto';
 
 export const SettingsList: React.FC<SettingsList> = ({
   serverUrl,
   manualRoomCreation = false,
   roomQueryString,
-  roomQueryStringValid,
+  roomQueryStringValid
 }) => {
   return (
     <div className="grid w-full border border-primary-100 rounded-lg overflow-hidden">
@@ -51,7 +51,7 @@ export const SettingsList: React.FC<SettingsList> = ({
         </div>
       )}
       {roomQueryString && (
-        <div className={cn(rowCx, !roomQueryStringValid ? "text-red-500" : "")}>
+        <div className={cn(rowCx, !roomQueryStringValid ? 'text-red-500' : '')}>
           <span className={titleCx}>Valid room URL</span>
           <span className={valueCx}>
             {roomQueryStringValid ? (
@@ -65,7 +65,7 @@ export const SettingsList: React.FC<SettingsList> = ({
       <div className={rowCx}>
         <span className={titleCx}>Mic input mode</span>
         <span className={valueCx}>
-          {import.meta.env.VITE_OPEN_MIC ? "Open Mic" : "Round-robin"}
+          {import.meta.env.VITE_OPEN_MIC ? 'Open Mic' : 'Round-robin'}
         </span>
       </div>
       <div className={rowCx}>

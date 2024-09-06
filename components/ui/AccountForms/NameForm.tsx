@@ -7,7 +7,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
+  CardFooter
 } from '@/components/ui/card';
 import { updateName } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
@@ -35,7 +35,8 @@ export default function NameForm({ userName }: { userName: string }) {
       <CardHeader>
         <CardTitle>Your Name</CardTitle>
         <CardDescription>
-          Please enter your full name, or a display name you are comfortable with.
+          Please enter your full name, or a display name you are comfortable
+          with.
         </CardDescription>
       </CardHeader>
       <CardContent>

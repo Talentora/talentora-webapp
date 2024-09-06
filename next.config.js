@@ -1,5 +1,5 @@
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
+  enabled: process.env.ANALYZE === 'true'
 });
 const path = require('path');
 
@@ -14,34 +14,36 @@ class WebfontDownload {
   }
 }
 
-
 module.exports = withBundleAnalyzer({
   experimental: {
     turbo: {
       rules: {
         '*.svg': {
           loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
+          as: '*.js'
+        }
+      }
+    }
   },
   webpack: (config, { isServer }) => {
     config.resolve.alias['@'] = path.resolve(__dirname, './src');
 
     config.module.rules.push({
       test: /\.onnx$/,
-      type: 'asset/resource',
+      type: 'asset/resource'
     });
 
     config.plugins.push(
       new CopyWebpackPlugin({
         patterns: [
           {
-            from: path.resolve(__dirname, 'node_modules/onnxruntime-web/dist/*.wasm'),
-            to: path.resolve(__dirname, './public/[name][ext]'),
-          },
-        ],
+            from: path.resolve(
+              __dirname,
+              'node_modules/onnxruntime-web/dist/*.wasm'
+            ),
+            to: path.resolve(__dirname, './public/[name][ext]')
+          }
+        ]
       }),
       new WebfontDownload()
     );
@@ -56,14 +58,14 @@ module.exports = withBundleAnalyzer({
         headers: [
           {
             key: 'Cross-Origin-Embedder-Policy',
-            value: 'require-corp',
+            value: 'require-corp'
           },
           {
             key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin',
-          },
-        ],
-      },
+            value: 'same-origin'
+          }
+        ]
+      }
     ];
-  },
+  }
 });

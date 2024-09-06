@@ -14,9 +14,9 @@ interface PasswordSignInProps {
 }
 
 export default function PasswordSignIn({
-                                         allowEmail,
-                                         redirectMethod
-                                       }: PasswordSignInProps) {
+  allowEmail,
+  redirectMethod
+}: PasswordSignInProps) {
   // const router = redirectMethod === 'client' ? useRouter() : null;
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);

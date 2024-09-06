@@ -1,4 +1,4 @@
-import Dashboard from "@/components/Dashboard";
+import Dashboard from '@/components/Dashboard';
 import { createClient } from '@/utils/supabase/server';
 import { getJobs } from '@/utils/supabase/queries';
 import { Tables } from '@/types/types_db';
@@ -13,7 +13,7 @@ const Page = async () => {
     jobs = await getJobs(supabase);
     // console.log("jobs", jobs);
   } catch (error) {
-    console.error("Error fetching jobs:", error);
+    console.error('Error fetching jobs:', error);
   }
 
   return (
@@ -25,6 +25,6 @@ const Page = async () => {
       )}
     </div>
   );
-}
+};
 
 export default Page;
