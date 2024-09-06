@@ -8,12 +8,7 @@ import {
   getDefaultSignInView,
   getRedirectMethod
 } from '@/utils/auth-helpers/settings';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import PasswordSignIn from '@/components/ui/AuthForms/PasswordSignIn';
 import EmailSignIn from '@/components/ui/AuthForms/EmailSignIn';
 import Separator from '@/components/ui/AuthForms/Separator';
@@ -23,9 +18,9 @@ import UpdatePassword from '@/components/ui/AuthForms/UpdatePassword';
 import SignUp from '@/components/ui/AuthForms/Signup';
 
 export default async function SignIn({
-                                       params,
-                                       searchParams
-                                     }: {
+  params,
+  searchParams
+}: {
   params: { id: string };
   searchParams: { disable_button: boolean };
 }) {
@@ -99,10 +94,7 @@ export default async function SignIn({
               <UpdatePassword redirectMethod={redirectMethod} />
             )}
             {viewProp === 'signup' && (
-              <SignUp
-                allowEmail={allowEmail}
-                redirectMethod={redirectMethod}
-              />
+              <SignUp allowEmail={allowEmail} redirectMethod={redirectMethod} />
             )}
             {viewProp !== 'update_password' &&
               viewProp !== 'signup' &&

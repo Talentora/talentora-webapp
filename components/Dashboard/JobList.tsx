@@ -1,14 +1,37 @@
 'use client';
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { UsersIcon, MoreVerticalIcon, LayoutGridIcon, ListIcon } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import {
+  UsersIcon,
+  MoreVerticalIcon,
+  LayoutGridIcon,
+  ListIcon
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Switch } from "@/components/ui/switch";
-import { Tables } from "@/types/types_db";
+import { Switch } from '@/components/ui/switch';
+import { Tables } from '@/types/types_db';
 type Job = Tables<'jobs'>;
 
 interface JobListProps {
@@ -17,7 +40,11 @@ interface JobListProps {
   toggleView: () => void;
 }
 
-export default function JobList({ filteredJobs, isCardView, toggleView }: JobListProps) {
+export default function JobList({
+  filteredJobs,
+  isCardView,
+  toggleView
+}: JobListProps) {
   const router = useRouter();
 
   return (
@@ -35,9 +62,15 @@ export default function JobList({ filteredJobs, isCardView, toggleView }: JobLis
         </label>
       </div>
       {isCardView ? (
-        <CardView filteredJobs={filteredJobs} onCardClick={(jobId) => router.push(`./JobPage/${jobId}`)} />
+        <CardView
+          filteredJobs={filteredJobs}
+          onCardClick={(jobId) => router.push(`./JobPage/${jobId}`)}
+        />
       ) : (
-        <TableView filteredJobs={filteredJobs} onRowClick={(jobId) => router.push(`./JobPage/${jobId}`)} />
+        <TableView
+          filteredJobs={filteredJobs}
+          onRowClick={(jobId) => router.push(`./JobPage/${jobId}`)}
+        />
       )}
     </>
   );
@@ -53,11 +86,15 @@ interface TableViewProps {
   onRowClick: (id: number) => void;
 }
 
-function CardView({ filteredJobs, onCardClick }:CardViewProps) {
+function CardView({ filteredJobs, onCardClick }: CardViewProps) {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 ">
       {filteredJobs.map((job) => (
-        <Card key={job.id} onClick={() => onCardClick(job.id)} className="hover:bg-primary-800">
+        <Card
+          key={job.id}
+          onClick={() => onCardClick(job.id)}
+          className="hover:bg-primary-800"
+        >
           <CardHeader>
             <CardTitle>{job.title}</CardTitle>
           </CardHeader>
@@ -68,7 +105,9 @@ function CardView({ filteredJobs, onCardClick }:CardViewProps) {
             </div>
             <div className="mt-2 flex items-center space-x-2">
               <UsersIcon className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">{job.applicant_count} applicants</span>
+              <span className="text-sm text-muted-foreground">
+                {job.applicant_count} applicants
+              </span>
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
@@ -95,11 +134,11 @@ function CardView({ filteredJobs, onCardClick }:CardViewProps) {
   );
 }
 
-function TableView({ filteredJobs, onRowClick }:TableViewProps) {
+function TableView({ filteredJobs, onRowClick }: TableViewProps) {
   return (
     <Table>
       <TableHeader>
-        <TableRow >
+        <TableRow>
           <TableHead>Title</TableHead>
           <TableHead>Department</TableHead>
           <TableHead>Location</TableHead>
@@ -110,7 +149,11 @@ function TableView({ filteredJobs, onRowClick }:TableViewProps) {
       </TableHeader>
       <TableBody>
         {filteredJobs.map((job) => (
-          <TableRow key={job.id} onClick={() => onRowClick(job.id)} className="hover:bg-primary-800">
+          <TableRow
+            key={job.id}
+            onClick={() => onRowClick(job.id)}
+            className="hover:bg-primary-800"
+          >
             <TableCell className="font-medium">{job.title}</TableCell>
             <TableCell>{job.department}</TableCell>
             <TableCell>{job.location}</TableCell>

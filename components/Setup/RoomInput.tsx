@@ -1,5 +1,5 @@
-import { Field } from "../ui/field";
-import { Input } from "../ui/input";
+import { Field } from '../ui/field';
+import { Input } from '../ui/input';
 
 interface RoomInputProps {
   onChange: (url: string) => void;

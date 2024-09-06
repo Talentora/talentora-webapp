@@ -1,20 +1,20 @@
-import React from "react";
-import { VoiceClientConfigOptions } from "realtime-ai";
-import { useVoiceClient } from "realtime-ai-react";
+import React from 'react';
+import { VoiceClientConfigOptions } from 'realtime-ai';
+import { useVoiceClient } from 'realtime-ai-react';
 
-import { Voice } from "@/utils/config";
+import { Voice } from '@/utils/config';
 
-import ModelSelect from "./ModelSelect";
-import VoiceSelect from "./VoiceSelect";
+import ModelSelect from './ModelSelect';
+import VoiceSelect from './VoiceSelect';
 
 const Configuration: React.FC<{ showAllOptions: boolean }> = ({
-  showAllOptions = false,
+  showAllOptions = false
 }) => {
   const voiceClient = useVoiceClient()!;
 
   const updateConfig = (config: VoiceClientConfigOptions) => {
     const updateOpts =
-      voiceClient.state === "ready"
+      voiceClient.state === 'ready'
         ? { sendPartial: true }
         : { useDeepMerge: true };
 
@@ -23,28 +23,28 @@ const Configuration: React.FC<{ showAllOptions: boolean }> = ({
 
   const handleVoiceChange = (voice: Voice) => {
     updateConfig({
-      tts: { voice: voice.id },
+      tts: { voice: voice.id }
     });
 
     // Prompt the LLM to speak
     voiceClient.appendLLMContext({
-      role: "assistant",
-      content: "Ask if the user prefers the new voice you have been given.",
+      role: 'assistant',
+      content: 'Ask if the user prefers the new voice you have been given.'
     });
   };
 
   const handleModelChange = (model: string) => {
     updateConfig({
-      llm: { model: model },
+      llm: { model: model }
     });
 
-    if (voiceClient.state === "ready") {
+    if (voiceClient.state === 'ready') {
       voiceClient.interrupt();
 
       setTimeout(() => {
         voiceClient.appendLLMContext({
-          role: "user",
-          content: `I just changed your model to use ${model}! Thank me for the change.`,
+          role: 'user',
+          content: `I just changed your model to use ${model}! Thank me for the change.`
         });
       }, 500);
     }

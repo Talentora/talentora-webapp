@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useMemo, useEffect } from 'react';
 import JobList from './JobList';
@@ -16,7 +16,7 @@ export default function Dashboard({ jobs }: DashboardProps) {
   const [isCardView, setIsCardView] = useState(true);
   const [filters, setFilters] = useState({
     departments: [],
-    locations: [],
+    locations: []
   });
 
   useEffect(() => {
@@ -25,13 +25,13 @@ export default function Dashboard({ jobs }: DashboardProps) {
 
   const filterOptions = useMemo(() => {
     return {
-      departments: [...new Set(jobs.map(job => job.department))],
-      locations: [...new Set(jobs.map(job => job.location))],
+      departments: [...new Set(jobs.map((job) => job.department))],
+      locations: [...new Set(jobs.map((job) => job.location))]
     };
   }, [jobs]);
 
   const filteredJobs = useMemo(() => {
-    return jobs.filter(job => {
+    return jobs.filter((job) => {
       const matchesSearch =
         job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         job.department?.toLowerCase().includes(searchTerm.toLowerCase()) ||

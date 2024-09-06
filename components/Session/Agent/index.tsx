@@ -1,15 +1,14 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
-import clsx from "clsx";
-import { Loader2 } from "lucide-react";
-import { VoiceEvent } from "realtime-ai";
-import { useVoiceClientEvent } from "realtime-ai-react";
+import React, { memo, useCallback, useEffect, useState } from 'react';
+import clsx from 'clsx';
+import { Loader2 } from 'lucide-react';
+import { VoiceEvent } from 'realtime-ai';
+import { useVoiceClientEvent } from 'realtime-ai-react';
 // import Latency from "@/components/Latency";
-import Avatar from "./avatar";
-import ModelBadge from "./model";
-import dynamic from 'next/dynamic'
+import Avatar from './avatar';
+import ModelBadge from './model';
+import dynamic from 'next/dynamic';
 
-const Latency = dynamic(() => import('@/components/Latency'), { ssr: false })
-
+const Latency = dynamic(() => import('@/components/Latency'), { ssr: false });
 
 export const Agent: React.FC<{
   isReady: boolean;
@@ -18,28 +17,28 @@ export const Agent: React.FC<{
   ({ isReady, statsAggregator }) => {
     const [hasStarted, setHasStarted] = useState<boolean>(false);
     const [botStatus, setBotStatus] = useState<
-      "initializing" | "connected" | "disconnected"
-    >("initializing");
+      'initializing' | 'connected' | 'disconnected'
+    >('initializing');
 
     useEffect(() => {
       if (!isReady) return;
       setHasStarted(true);
-      setBotStatus("connected");
+      setBotStatus('connected');
     }, [isReady]);
 
     useVoiceClientEvent(
       VoiceEvent.BotDisconnected,
       useCallback(() => {
         setHasStarted(false);
-        setBotStatus("disconnected");
+        setBotStatus('disconnected');
       }, [])
     );
 
     useEffect(() => () => setHasStarted(false), []);
 
     const agentWindowClass = clsx(
-      "relative flex items-center justify-center min-w-[400px] bg-primary-300 rounded-2xl transition-colors duration-[2.5s] overflow-hidden aspect-square",
-      hasStarted && "bg-primary-600"
+      'relative flex items-center justify-center min-w-[400px] bg-primary-300 rounded-2xl transition-colors duration-[2.5s] overflow-hidden aspect-square',
+      hasStarted && 'bg-primary-600'
     );
 
     return (

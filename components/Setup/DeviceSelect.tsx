@@ -1,24 +1,24 @@
-import { useEffect } from "react";
-import { Mic } from "lucide-react";
-import { useVoiceClientMediaDevices } from "realtime-ai-react";
+import { useEffect } from 'react';
+import { Mic } from 'lucide-react';
+import { useVoiceClientMediaDevices } from 'realtime-ai-react';
 
-import { AudioIndicatorBar } from "../AudioIndicator";
-import { Field } from "../ui/field";
+import { AudioIndicatorBar } from '../AudioIndicator';
+import { Field } from '../ui/field';
 import {
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
-  SelectValue,
-} from "../ui/select";
+  SelectValue
+} from '../ui/select';
 
 interface DeviceSelectProps {
   hideMeter: boolean;
 }
 
 export const DeviceSelect: React.FC<DeviceSelectProps> = ({
-                                                            hideMeter = false,
-                                                          }) => {
+  hideMeter = false
+}) => {
   const { availableMics, selectedMic, updateMic } =
     useVoiceClientMediaDevices();
 

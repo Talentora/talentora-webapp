@@ -1,7 +1,7 @@
-import { useCallback, useRef } from "react";
-import { VoiceEvent } from "realtime-ai";
-import { useVoiceClientEvent } from "realtime-ai-react";
-import FaceSVG from "./face.svg";
+import { useCallback, useRef } from 'react';
+import { VoiceEvent } from 'realtime-ai';
+import { useVoiceClientEvent } from 'realtime-ai-react';
+import FaceSVG from './face.svg';
 
 export const Avatar: React.FC = () => {
   const volRef = useRef<HTMLDivElement>(null);

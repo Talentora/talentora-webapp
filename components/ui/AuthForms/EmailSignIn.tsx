@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
   CardContent,
-  CardFooter,
+  CardFooter
 } from '@/components/ui/card';
 
 // Define prop type with allowPassword boolean
@@ -22,10 +22,10 @@ interface EmailSignInProps {
 }
 
 export default function EmailSignIn({
-                                      allowPassword,
-                                      redirectMethod,
-                                      disableButton
-                                    }: EmailSignInProps) {
+  allowPassword,
+  redirectMethod,
+  disableButton
+}: EmailSignInProps) {
   const router = redirectMethod === 'client' ? useRouter() : null;
   const [isSubmitting, setIsSubmitting] = useState(false);
 

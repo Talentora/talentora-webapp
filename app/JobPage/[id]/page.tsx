@@ -1,11 +1,11 @@
-import JobPage from "@/components/JobPage";
-import { getJob } from "@/utils/supabase/queries";
-import { createClient } from "@/utils/supabase/server";
+import JobPage from '@/components/JobPage';
+import { getJob } from '@/utils/supabase/queries';
+import { createClient } from '@/utils/supabase/server';
 
 export default async function Page({ params }: { params: { id: string } }) {
   const job = await fetchJobData(params.id);
 
-  console.log("job",job);
+  console.log('job', job);
 
   if (job) {
     return (
@@ -13,15 +13,13 @@ export default async function Page({ params }: { params: { id: string } }) {
         <JobPage job={job} />
       </div>
     );
-  }
-  else {
+  } else {
     return (
       <div>
         <h1>Job not found</h1>
       </div>
     );
   }
-
 }
 
 async function fetchJobData(id: string) {
@@ -31,7 +29,7 @@ async function fetchJobData(id: string) {
   try {
     job = await getJob(supabase, id);
   } catch (error) {
-    console.error("Error fetching job:", error);
+    console.error('Error fetching job:', error);
   }
 
   return job;

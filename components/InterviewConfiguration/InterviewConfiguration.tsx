@@ -1,31 +1,31 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Slider } from "@/components/ui/slider"
-import { Mic } from 'lucide-react'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Slider } from '@/components/ui/slider';
+import { Mic } from 'lucide-react';
 import Configuration from '@/components/Configuration';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+  SelectValue
+} from '@/components/ui/select';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+  CardTitle
+} from '@/components/ui/card';
 
 export default function Component() {
-  const router = useRouter()
+  const router = useRouter();
   const [config, setConfig] = useState({
     recruiterName: '',
     departmentName: '',
@@ -35,58 +35,68 @@ export default function Component() {
     questionCount: 5,
     questionTypes: [],
     department: '',
-    departmentContext: '',
-  })
-  const [listenerInput, setListenerInput] = useState('')
-  const [customQuestions, setCustomQuestions] = useState([''])
+    departmentContext: ''
+  });
+  const [listenerInput, setListenerInput] = useState('');
+  const [customQuestions, setCustomQuestions] = useState(['']);
 
   const handleChange = (field: string, value: string | number | string[]) => {
-    setConfig(prev => ({ ...prev, [field]: value }))
-  }
+    setConfig((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
-    e.preventDefault()
-    console.log('Submitted config:', config)
-  }
+    e.preventDefault();
+    console.log('Submitted config:', config);
+  };
 
   const handleSpeak = () => {
     if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(listenerInput || "Hello, I'm your RoboRecruiter!")
-      speechSynthesis.speak(utterance)
+      const utterance = new SpeechSynthesisUtterance(
+        listenerInput || "Hello, I'm your RoboRecruiter!"
+      );
+      speechSynthesis.speak(utterance);
     } else {
-      alert('Speech synthesis is not supported in your browser.')
+      alert('Speech synthesis is not supported in your browser.');
     }
-  }
+  };
 
   const handleCustomQuestionChange = (index: number, value: string) => {
-    const updatedQuestions = [...customQuestions]
-    updatedQuestions[index] = value
-    setCustomQuestions(updatedQuestions)
-  }
+    const updatedQuestions = [...customQuestions];
+    updatedQuestions[index] = value;
+    setCustomQuestions(updatedQuestions);
+  };
 
   const addCustomQuestion = () => {
-    setCustomQuestions([...customQuestions, ''])
-  }
+    setCustomQuestions([...customQuestions, '']);
+  };
 
   const generateAIQuestions = () => {
     // This is a placeholder. In a real application, you would call an AI service here.
     const aiGeneratedQuestions = [
-      "What challenges have you faced in your previous roles?",
-      "How do you approach problem-solving in a team environment?",
-      "Can you describe a situation where you had to adapt to a significant change?"
-    ]
-    setCustomQuestions([...customQuestions, ...aiGeneratedQuestions])
-  }
+      'What challenges have you faced in your previous roles?',
+      'How do you approach problem-solving in a team environment?',
+      'Can you describe a situation where you had to adapt to a significant change?'
+    ];
+    setCustomQuestions([...customQuestions, ...aiGeneratedQuestions]);
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-bold text-center mb-6">RoboRecruiter Configuration</h1>
+    <form
+      onSubmit={handleSubmit}
+      className="w-full max-w-4xl mx-auto p-4 space-y-6"
+    >
+      <h1 className="text-3xl font-bold text-center mb-6">
+        RoboRecruiter Configuration
+      </h1>
 
       {/* Department Settings Card */}
       <Card>
         <CardHeader>
           <CardTitle>Company Settings</CardTitle>
-          <CardDescription>Specify your company, department, and provide any additional context.</CardDescription>
+          <CardDescription>
+            Specify your company, department, and provide any additional
+            context.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -103,27 +113,33 @@ export default function Component() {
             <Input
               id="department"
               value={config.departmentContext}
-              onChange={(e) => handleChange('departmentContext', e.target.value)}
+              onChange={(e) =>
+                handleChange('departmentContext', e.target.value)
+              }
               placeholder="e.g. Our team focuses on building a robust and scalable backend"
             />
           </div>
-
         </CardContent>
       </Card>
-
 
       {/* Combined Interview Settings Card */}
       <Card>
         <CardHeader>
           <CardTitle>Interview Settings</CardTitle>
-          <CardDescription>Configure the interview process and questions.</CardDescription>
+          <CardDescription>
+            Configure the interview process and questions.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="interviewDuration">Interview Duration (minutes)</Label>
+            <Label htmlFor="interviewDuration">
+              Interview Duration (minutes)
+            </Label>
             <Select
               value={config.interviewDuration.toString()}
-              onValueChange={(value) => handleChange('interviewDuration', parseInt(value))}
+              onValueChange={(value) =>
+                handleChange('interviewDuration', parseInt(value))
+              }
             >
               <SelectTrigger id="interviewDuration">
                 <SelectValue placeholder="Select duration" />
@@ -153,21 +169,27 @@ export default function Component() {
           <div className="space-y-2">
             <Label>Question Types</Label>
             <div className="flex flex-wrap gap-2">
-              {['Technical', 'Behavioral', 'Situational', 'Cultural Fit'].map((type) => (
-                <Button
-                  key={type}
-                  type="button"
-                  variant={config.questionTypes.includes(type) ? "default" : "outline"}
-                  onClick={() => {
-                    const updatedTypes = config.questionTypes.includes(type)
-                      ? config.questionTypes.filter(t => t !== type)
-                      : [...config.questionTypes, type]
-                    handleChange('questionTypes', updatedTypes)
-                  }}
-                >
-                  {type}
-                </Button>
-              ))}
+              {['Technical', 'Behavioral', 'Situational', 'Cultural Fit'].map(
+                (type) => (
+                  <Button
+                    key={type}
+                    type="button"
+                    variant={
+                      config.questionTypes.includes(type)
+                        ? 'default'
+                        : 'outline'
+                    }
+                    onClick={() => {
+                      const updatedTypes = config.questionTypes.includes(type)
+                        ? config.questionTypes.filter((t) => t !== type)
+                        : [...config.questionTypes, type];
+                      handleChange('questionTypes', updatedTypes);
+                    }}
+                  >
+                    {type}
+                  </Button>
+                )
+              )}
             </div>
           </div>
         </CardContent>
@@ -177,7 +199,9 @@ export default function Component() {
       <Card>
         <CardHeader>
           <CardTitle>Interviewer Settings</CardTitle>
-          <CardDescription>Configure the AI interviewer's name and voice.</CardDescription>
+          <CardDescription>
+            Configure the AI interviewer's name and voice.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -200,11 +224,15 @@ export default function Component() {
       <Card>
         <CardHeader>
           <CardTitle>Listen to Your Interviewer</CardTitle>
-          <CardDescription>Test how your AI interviewer sounds.</CardDescription>
+          <CardDescription>
+            Test how your AI interviewer sounds.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="listenerInput">Enter text for the AI to speak</Label>
+            <Label htmlFor="listenerInput">
+              Enter text for the AI to speak
+            </Label>
             <div className="flex space-x-2">
               <Input
                 id="listenerInput"
@@ -225,7 +253,9 @@ export default function Component() {
       <Card>
         <CardHeader>
           <CardTitle>Customize Interview Questions</CardTitle>
-          <CardDescription>Create and manage custom interview questions.</CardDescription>
+          <CardDescription>
+            Create and manage custom interview questions.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {customQuestions.map((question, index) => (
@@ -234,7 +264,9 @@ export default function Component() {
               <Input
                 id={`question-${index}`}
                 value={question}
-                onChange={(e) => handleCustomQuestionChange(index, e.target.value)}
+                onChange={(e) =>
+                  handleCustomQuestionChange(index, e.target.value)
+                }
                 placeholder="Enter your custom question..."
               />
             </div>
@@ -243,13 +275,16 @@ export default function Component() {
             <Button type="button" onClick={addCustomQuestion} variant="outline">
               Add Question
             </Button>
-            <Button type="button" onClick={generateAIQuestions} variant="outline">
+            <Button
+              type="button"
+              onClick={generateAIQuestions}
+              variant="outline"
+            >
               Generate AI Questions
             </Button>
           </div>
         </CardContent>
       </Card>
-
 
       {/* Enter Sample Interview Button */}
       <Button
@@ -260,8 +295,9 @@ export default function Component() {
         Enter Sample Interview
       </Button>
 
-      <Button
-        type="submit" className="w-full">Save Configuration</Button>
+      <Button type="submit" className="w-full">
+        Save Configuration
+      </Button>
     </form>
-  )
+  );
 }

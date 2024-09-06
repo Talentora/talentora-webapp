@@ -11,7 +11,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
+  CardFooter
 } from '@/components/ui/card';
 import { Tables } from '@/types/types_db';
 
@@ -22,8 +22,8 @@ type Product = Tables<'products'>;
 type SubscriptionWithPriceAndProduct = Subscription & {
   prices:
     | (Price & {
-    products: Product | null;
-  })
+        products: Product | null;
+      })
     | null;
 };
 

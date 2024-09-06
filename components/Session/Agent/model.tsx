@@ -1,6 +1,6 @@
-import React, { useCallback } from "react";
-import { VoiceEvent } from "realtime-ai";
-import { useVoiceClient, useVoiceClientEvent } from "realtime-ai-react";
+import React, { useCallback } from 'react';
+import { VoiceEvent } from 'realtime-ai';
+import { useVoiceClient, useVoiceClientEvent } from 'realtime-ai-react';
 
 const ModelBadge: React.FC = () => {
   const { config } = useVoiceClient()!;

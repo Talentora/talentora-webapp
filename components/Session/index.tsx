@@ -1,15 +1,19 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { LogOut, StopCircle } from "lucide-react";
-import { TransportState, VoiceEvent } from "realtime-ai";
-import { useVoiceClient, useVoiceClientEvent } from "realtime-ai-react";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { LogOut, StopCircle } from 'lucide-react';
+import { TransportState, VoiceEvent } from 'realtime-ai';
+import { useVoiceClient, useVoiceClientEvent } from 'realtime-ai-react';
 
-import StatsAggregator from "@/utils/stats_aggregator";
-import { Button } from "@/components/ui/button";
-import * as Card from "@/components/ui/card";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import UserMicBubble from "@/components/UserMicBubble";
+import StatsAggregator from '@/utils/stats_aggregator';
+import { Button } from '@/components/ui/button';
+import * as Card from '@/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
+import UserMicBubble from '@/components/UserMicBubble';
 
-import Agent from "./Agent";
+import Agent from './Agent';
 
 let stats_aggregator: StatsAggregator;
 
@@ -28,7 +32,6 @@ export const Session = React.memo(
     const modalRef = useRef<HTMLDialogElement>(null);
     const [showDevices, setShowDevices] = useState(false);
 
-
     // ---- Voice Client Events
 
     // Wait for the bot to enter a ready state and trigger it to say hello
@@ -36,8 +39,8 @@ export const Session = React.memo(
       VoiceEvent.BotReady,
       useCallback(() => {
         voiceClient.appendLLMContext({
-          role: "assistant",
-          content: "Greet the user",
+          role: 'assistant',
+          content: 'Greet the user'
         });
       }, [voiceClient])
     );
@@ -46,7 +49,7 @@ export const Session = React.memo(
       VoiceEvent.Metrics,
       useCallback((metrics) => {
         metrics?.ttfb?.map((m: { processor: string; value: number }) => {
-          stats_aggregator.addStat([m.processor, "ttfb", m.value, Date.now()]);
+          stats_aggregator.addStat([m.processor, 'ttfb', m.value, Date.now()]);
         });
       }, [])
     );
@@ -80,7 +83,7 @@ export const Session = React.memo(
 
     useEffect(() => {
       // Leave the meeting if there is an error
-      if (state === "error") {
+      if (state === 'error') {
         onLeave();
       }
     }, [state, onLeave]);
@@ -110,10 +113,7 @@ export const Session = React.memo(
             fullWidthMobile={false}
             className="w-full max-w-[320px] sm:max-w-[420px] mt-auto shadow-long"
           >
-            <Agent
-              isReady={state === "ready"}
-              statsAggregator={stat}
-            />
+            <Agent isReady={state === 'ready'} statsAggregator={stat} />
           </Card.Card>
           <UserMicBubble
             active={hasStarted}
@@ -136,7 +136,7 @@ export const Session = React.memo(
                 </Button>
               </TooltipTrigger>
             </Tooltip>
-              <Button onClick={() => onLeave()} className="ml-auto">
+            <Button onClick={() => onLeave()} className="ml-auto">
               <LogOut size={16} />
               End
             </Button>

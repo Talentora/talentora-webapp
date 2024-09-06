@@ -1,24 +1,24 @@
-import { useEffect, useState } from "react";
-import { Ear, Loader2 } from "lucide-react";
-import { RateLimitError } from "realtime-ai";
+import { useEffect, useState } from 'react';
+import { Ear, Loader2 } from 'lucide-react';
+import { RateLimitError } from 'realtime-ai';
 import {
   useVoiceClient,
-  useVoiceClientTransportState,
-} from "realtime-ai-react";
+  useVoiceClientTransportState
+} from 'realtime-ai-react';
 
-import Session from "@/components/Session";
-import { Configure } from "@/components/Setup";
-import { Alert } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import * as Card from "@/components/ui/card";
-import { BOT_READY_TIMEOUT } from "@/utils/config";
+import Session from '@/components/Session';
+import { Configure } from '@/components/Setup';
+import { Alert } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import * as Card from '@/components/ui/card';
+import { BOT_READY_TIMEOUT } from '@/utils/config';
 
 const status_text = {
-  idle: "Initializing...",
-  initializing: "Initializing...",
-  initialized: "Start",
-  handshaking: "Requesting agent...",
-  connecting: "Connecting...",
+  idle: 'Initializing...',
+  initializing: 'Initializing...',
+  initialized: 'Start',
+  handshaking: 'Requesting agent...',
+  connecting: 'Connecting...'
 };
 
 export default function App() {
@@ -26,14 +26,14 @@ export default function App() {
 
   const transportState = useVoiceClientTransportState();
   const [appState, setAppState] = useState<
-    "idle" | "ready" | "connecting" | "connected"
-  >("idle");
+    'idle' | 'ready' | 'connecting' | 'connected'
+  >('idle');
   const [error, setError] = useState<string | null>(null);
   const [startAudioOff, setStartAudioOff] = useState<boolean>(false);
 
   useEffect(() => {
     // Initialize local audio devices
-    if (!voiceClient || transportState !== "idle") return;
+    if (!voiceClient || transportState !== 'idle') return;
     voiceClient.initDevices();
   }, [transportState, voiceClient]);
 
@@ -42,19 +42,19 @@ export default function App() {
     // We only need a substate of states for the different view states
     // so this method helps avoid inline conditionals.
     switch (transportState) {
-      case "initialized":
-        setAppState("ready");
+      case 'initialized':
+        setAppState('ready');
         break;
-      case "handshaking":
-      case "connecting":
-        setAppState("connecting");
+      case 'handshaking':
+      case 'connecting':
+        setAppState('connecting');
         break;
-      case "connected":
-      case "ready":
-        setAppState("connected");
+      case 'connected':
+      case 'ready':
+        setAppState('connected');
         break;
       default:
-        setAppState("idle");
+        setAppState('idle');
     }
   }, [transportState]);
 
@@ -63,9 +63,9 @@ export default function App() {
 
     // Set a timeout and check for join state, incase under heavy load
     setTimeout(() => {
-      if (voiceClient.state !== "ready") {
+      if (voiceClient.state !== 'ready') {
         setError(
-          "Bot failed to join or enter ready state. Server may be busy. Please try again later."
+          'Bot failed to join or enter ready state. Server may be busy. Please try again later.'
         );
         voiceClient.disconnect();
       }
@@ -78,10 +78,10 @@ export default function App() {
       await voiceClient.start();
     } catch (e) {
       if (e instanceof RateLimitError) {
-        setError("Demo is currently at capacity. Please try again later.");
+        setError('Demo is currently at capacity. Please try again later.');
       } else {
         setError(
-          "Unable to authenticate. Server may be offline or busy. Please try again later."
+          'Unable to authenticate. Server may be offline or busy. Please try again later.'
         );
       }
       return;
@@ -95,16 +95,11 @@ export default function App() {
   }
 
   if (error) {
-    return (
-      <Alert title="An error occurred">
-        {error}
-      </Alert>
-    );
+    return <Alert title="An error occurred">{error}</Alert>;
   }
 
-
   // session page
-  if (appState === "connected") {
+  if (appState === 'connected') {
     return (
       <Session
         state={transportState}
@@ -114,14 +109,15 @@ export default function App() {
     );
   }
 
-  const isReady = appState === "ready";
-
+  const isReady = appState === 'ready';
 
   // loading/settings page
   return (
     <Card.Card shadow className="animate-appear max-w-lg mb-14">
       <Card.CardHeader>
-        <Card.CardTitle className="text-primary-200">Configuration</Card.CardTitle>
+        <Card.CardTitle className="text-primary-200">
+          Configuration
+        </Card.CardTitle>
         <Card.CardDescription>
           Please configure your devices and pipeline settings below
         </Card.CardDescription>
