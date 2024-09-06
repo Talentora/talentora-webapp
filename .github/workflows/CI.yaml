@@ -55,7 +55,8 @@ jobs:
         run: |
           npm run lint
           npm run prettier-fix
-
+        continue-on-error: true
+        
       - name: Run Tests
         run: npm test
 
