@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState } from "react";
-// import ReactDOM from "react-dom/client";
 import { VoiceClient } from "realtime-ai";
 import { VoiceClientAudio, VoiceClientProvider } from "realtime-ai-react";
 
@@ -11,7 +10,6 @@ import App from "./App";
 import { defaultConfig } from "@/utils/config";
 import { Splash } from "./Splash";
 
-// import "./global.css"; // Note: Core app layout can be found here
 
 
 const voiceClient = new VoiceClient({
@@ -26,6 +24,8 @@ const page = () => {
   if (showSplash) {
     return <Splash handleReady={() => setShowSplash(false)} />;
   }
+  
+  console.log("voiceClient", voiceClient);
 
   return (
     <VoiceClientProvider voiceClient={voiceClient}>
@@ -42,17 +42,5 @@ const page = () => {
     </VoiceClientProvider>
   );
 };
-//
-// ReactDOM.createRoot(document.getElementById("root")!).render(
-//   <React.StrictMode>
-//     {isFirefox && (
-//       <div className="bg-red-500 text-white text-sm font-bold text-center p-2 fixed t-0 w-full">
-//         Latency readings can be inaccurate in Firefox. For best results, please
-//         use Chrome.
-//       </div>
-//     )}
-//     <Layout />
-//   </React.StrictMode>
-// );
 
 export default page;

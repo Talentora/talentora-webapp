@@ -104,8 +104,8 @@ export function AiRecruiterSetup() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">AI Recruiter Setup</h1>
+    <div className="container mx-auto p-4 bg-background text-foreground">
+      <h1 className="text-2xl font-bold mb-4 text-primary-foreground">AI Recruiter Setup</h1>
       
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="questions">
@@ -118,7 +118,7 @@ export function AiRecruiterSetup() {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className="p-4"
+                      className="p-4 bg-card text-card-foreground"
                     >
                       {editingQuestionId === question.id ? (
                         <div className="flex flex-col space-y-4">
@@ -126,12 +126,13 @@ export function AiRecruiterSetup() {
                             value={newQuestionText}
                             onChange={(e) => setNewQuestionText(e.target.value)}
                             placeholder="Enter question text"
+                            className="bg-input text-input-foreground"
                           />
                           <Select value={newQuestionType} onValueChange={(value: QuestionType) => setNewQuestionType(value)}>
-                            <SelectTrigger>
+                            <SelectTrigger className="bg-select text-select-foreground">
                               <SelectValue placeholder="Select question type" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="bg-popover text-popover-foreground">
                               <SelectItem value="behavioral">Behavioral</SelectItem>
                               <SelectItem value="technical">Technical</SelectItem>
                               <SelectItem value="team-based">Team-based</SelectItem>
@@ -139,10 +140,10 @@ export function AiRecruiterSetup() {
                             </SelectContent>
                           </Select>
                           <div className="flex justify-between">
-                            <Button onClick={handleUpdateQuestion}>
+                            <Button onClick={handleUpdateQuestion} className="bg-primary text-primary-foreground">
                               Update Question
                             </Button>
-                            <Button variant="outline" onClick={handleCancelEdit}>
+                            <Button variant="outline" onClick={handleCancelEdit} className="bg-secondary text-secondary-foreground">
                               Cancel
                             </Button>
                           </div>
@@ -150,9 +151,9 @@ export function AiRecruiterSetup() {
                       ) : (
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
-                            <GripVertical className="h-5 w-5 text-gray-400" />
+                            <GripVertical className="h-5 w-5 text-muted-foreground" />
                             <div className="space-y-1">
-                              <Badge variant="outline" className="text-xs font-normal">
+                              <Badge variant="outline" className="text-xs font-normal bg-accent text-accent-foreground">
                                 {question.type}
                               </Badge>
                               <p className="text-sm">{question.text}</p>
@@ -163,10 +164,11 @@ export function AiRecruiterSetup() {
                               id={`must-ask-${question.id}`}
                               checked={question.mustAsk}
                               onCheckedChange={() => handleToggleMustAsk(question.id)}
+                              className="bg-primary text-primary-foreground"
                             />
                             <label 
                               htmlFor={`must-ask-${question.id}`}
-                              className="text-sm text-gray-600"
+                              className="text-sm text-muted-foreground"
                             >
                               Must Ask
                             </label>
@@ -175,6 +177,7 @@ export function AiRecruiterSetup() {
                               size="icon"
                               onClick={() => handleEditQuestion(question)}
                               aria-label="Edit question"
+                              className="text-accent-foreground"
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -183,6 +186,7 @@ export function AiRecruiterSetup() {
                               size="icon"
                               onClick={() => handleRemoveQuestion(question.id)}
                               aria-label="Remove question"
+                              className="text-destructive"
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -200,19 +204,20 @@ export function AiRecruiterSetup() {
       </DragDropContext>
 
       {editingQuestionId === null && (
-        <Card className="mb-4">
+        <Card className="mb-4 bg-card text-card-foreground">
           <CardContent className="pt-6">
             <div className="flex flex-col space-y-4">
               <Input
                 placeholder="Enter question text"
                 value={newQuestionText}
                 onChange={(e) => setNewQuestionText(e.target.value)}
+                className="bg-input text-primary"
               />
               <Select value={newQuestionType} onValueChange={(value: QuestionType) => setNewQuestionType(value)}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-select text-select-foreground">
                   <SelectValue placeholder="Select question type" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-popover text-popover-foreground">
                   <SelectItem value="behavioral">Behavioral</SelectItem>
                   <SelectItem value="technical">Technical</SelectItem>
                   <SelectItem value="team-based">Team-based</SelectItem>
@@ -220,10 +225,10 @@ export function AiRecruiterSetup() {
                 </SelectContent>
               </Select>
               <div className="flex space-x-2">
-                <Button onClick={handleAddQuestion} className="flex-1">
+                <Button onClick={handleAddQuestion} className="flex-1 bg-primary text-primary-foreground">
                   <Plus className="mr-2 h-4 w-4" /> Add Question
                 </Button>
-                <Button onClick={handleGenerateQuestion} className="flex-1">
+                <Button onClick={handleGenerateQuestion} className="flex-1 bg-secondary text-secondary-foreground">
                   <Wand2 className="mr-2 h-4 w-4" /> Generate with AI
                 </Button>
               </div>
@@ -232,7 +237,7 @@ export function AiRecruiterSetup() {
         </Card>
       )}
 
-      <Button onClick={handleSaveQuestions} className="w-full">
+      <Button onClick={handleSaveQuestions} className="w-full bg-accent text-accent-foreground">
         Save Questions
       </Button>
     </div>
