@@ -81,6 +81,7 @@ export const Session = React.memo(
     useEffect(() => {
       // Leave the meeting if there is an error
       if (state === "error") {
+        console.log("error");
         onLeave();
       }
     }, [state, onLeave]);
@@ -112,7 +113,7 @@ export const Session = React.memo(
           >
             <Agent
               isReady={state === "ready"}
-              statsAggregator={stat}
+              statsAggregator={stats_aggregator}
             />
           </Card.Card>
           <UserMicBubble
@@ -121,6 +122,7 @@ export const Session = React.memo(
             handleMute={() => toggleMute()}
           />
         </div>
+     
 
         <footer className="w-full flex flex-row mt-auto self-end md:w-auto">
           <div className="flex flex-row justify-between gap-3 w-full md:w-auto">

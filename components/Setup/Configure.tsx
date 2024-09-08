@@ -27,7 +27,6 @@ export const Configure: React.FC<ConfigureProps> = ({
         <div className="flex flex-row justify-between items-center">
           <Label className="flex flex-row gap-1 items-center text-primary-200">
             Join with mic muted{" "}
-            {/*<HelpTip text="Start with microphone muted (click to unmute)" />*/}
           </Label>
           <Switch
             checked={startAudioOff}

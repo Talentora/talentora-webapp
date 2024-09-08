@@ -18,7 +18,7 @@ interface DeviceSelectProps {
 export const DeviceSelect: React.FC<DeviceSelectProps> = ({
   hideMeter = false,
 }) => {
-  
+
   const { availableMics, selectedMic, updateMic } =useVoiceClientMediaDevices();
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export const DeviceSelect: React.FC<DeviceSelectProps> = ({
           </SelectTrigger>
           <SelectContent>
             {availableMics.length === 0 ? (
-              <SelectItem value="" disabled>
+              <SelectItem value="null" disabled>
                 Loading devices...
               </SelectItem>
             ) : (

@@ -25,8 +25,6 @@ const page = () => {
     return <Splash handleReady={() => setShowSplash(false)} />;
   }
   
-  console.log("voiceClient", voiceClient);
-
   return (
     <VoiceClientProvider voiceClient={voiceClient}>
       <TooltipProvider>
