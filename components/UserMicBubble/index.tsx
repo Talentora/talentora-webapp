@@ -1,5 +1,5 @@
-import { Mic, MicOff, Pause } from "lucide-react";
-import clsx from "clsx";
+import { Mic, MicOff, Pause } from 'lucide-react';
+import clsx from 'clsx';
 
 interface Props {
   active: boolean;
@@ -7,9 +7,9 @@ interface Props {
   handleMute: () => void;
 }
 
-import React, { useCallback, useRef } from "react";
-import { VoiceEvent } from "realtime-ai";
-import { useVoiceClientEvent } from "realtime-ai-react";
+import React, { useCallback, useRef } from 'react';
+import { VoiceEvent } from 'realtime-ai';
+import { useVoiceClientEvent } from 'realtime-ai-react';
 
 const AudioIndicatorBubble: React.FC = () => {
   const volRef = useRef<HTMLDivElement>(null);
@@ -32,29 +32,28 @@ const AudioIndicatorBubble: React.FC = () => {
   );
 };
 
-
 export default function UserMicBubble({
-                                        active,
-                                        muted = false,
-                                        handleMute,
-                                      }: Props) {
+  active,
+  muted = false,
+  handleMute
+}: Props) {
   const canTalk = !muted && active;
 
   const bubbleClass = clsx(
-    "relative cursor-pointer box-border w-24 h-24 md:w-30 md:h-30 rounded-full flex justify-center items-center mx-auto transition-all duration-500 ease-in-out",
+    'relative cursor-pointer box-border w-24 h-24 md:w-30 md:h-30 rounded-full flex justify-center items-center mx-auto transition-all duration-500 ease-in-out',
     {
-      "bg-red-500 bg-gradient-to-br from-red-500 to-red-600 animate-pulse border-6 border-red-200 outline-6 outline-red-400":
-      muted,
-      "bg-primary-500 bg-gradient-to-br from-primary-300 to-primary-400 border-6 outline-6 opacity-50":
+      'bg-red-500 bg-gradient-to-br from-red-500 to-red-600 animate-pulse border-6 border-red-200 outline-6 outline-red-400':
+        muted,
+      'bg-primary-500 bg-gradient-to-br from-primary-300 to-primary-400 border-6 outline-6 opacity-50':
         !canTalk,
-      "bg-primary-500 bg-gradient-to-br from-primary-500 to-primary-600 border-6 border-primary-200 outline-6 outline-primary-400":
-      canTalk,
+      'bg-primary-500 bg-gradient-to-br from-primary-500 to-primary-600 border-6 border-primary-200 outline-6 outline-primary-400':
+        canTalk
     }
   );
 
-  const iconClass = clsx("relative z-20 transition-opacity duration-500", {
-    "opacity-30": !canTalk,
-    "opacity-100": canTalk,
+  const iconClass = clsx('relative z-20 transition-opacity duration-500', {
+    'opacity-30': !canTalk,
+    'opacity-100': canTalk
   });
 
   return (

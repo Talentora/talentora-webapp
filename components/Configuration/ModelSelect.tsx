@@ -1,15 +1,15 @@
-import React from "react";
-import { Package } from "lucide-react";
+import React from 'react';
+import { Package } from 'lucide-react';
 
-import { LLMModel, llmModels } from "@/utils/config";
-import { Field } from "../ui/field";
+import { LLMModel, llmModels } from '@/utils/config';
+import { Field } from '../ui/field';
 import {
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
-  SelectValue,
-} from "../ui/select";
+  SelectValue
+} from '../ui/select';
 
 type ModelSelectProps = {
   onSelect: (model: string) => void;

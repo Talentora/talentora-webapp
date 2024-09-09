@@ -1,37 +1,49 @@
-'use client'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Tables } from "@/types/types_db";
-import { fetchApplicants } from '@/app/actions/getApplicants'
-
-type Applicant = Tables<'applicants'>;
 
 interface RecentApplicantsProps {
   toggleSection: (section: string) => void;
   visible: boolean;
-  jobId: number;
+  applicants: Applicant[];
 }
 
-export function RecentApplicants({ toggleSection, visible, jobId }: RecentApplicantsProps) {
-  const [applicants, setApplicants] = useState<Applicant[]>([]);
+interface ApplicantRowProps {
+  name: string;
+  date: string;
+  experience: string;
+  status: string;
+}
 
-  useEffect(() => {
-    async function loadApplicants() {
-      const fetchedApplicants = await fetchApplicants(jobId);
-      setApplicants(fetchedApplicants);
-    }
-    loadApplicants();
-  }, [jobId]);
+import { Tables } from '@/types/types_db';
+type Applicant = Tables<'applicants'>;
+
+export async function RecentApplicants({
+  toggleSection,
+  visible,
+  applicants
+}: RecentApplicantsProps) {
 
   return (
     <Card>
       <CardHeader>
         <div className="flex justify-between items-center">
-          <CardTitle className="text-xl font-semibold">Recent Applicants</CardTitle>
-          <Button onClick={() => toggleSection('recentApplicants')}>
+          <CardTitle className="text-xl font-semibold">
+            Recent Applicants
+          </CardTitle>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => toggleSection('recentApplicants')}
+          >
             {visible ? 'Hide' : 'Show'} Applicants
           </Button>
         </div>
@@ -49,11 +61,12 @@ export function RecentApplicants({ toggleSection, visible, jobId }: RecentApplic
             </TableHeader>
             <TableBody>
               {applicants.map((applicant: Applicant) => (
-                <ApplicantRow 
-                  key={applicant.id} 
-                  name={`${applicant.first_name} ${applicant.last_name}`} 
-                  // experience={applicant.experience || ''} 
-                  status={"Interviewing"}
+                <ApplicantRow
+                  key={applicant.id}
+                  name={applicant.first_name + ' ' + applicant.last_name}
+                  date={''}
+                  experience={'applicant.experience'}
+                  status={'applicant.status'}
                 />
               ))}
             </TableBody>
@@ -75,7 +88,9 @@ function ApplicantRow({ name, status }: ApplicantRowProps) {
       <TableCell className="font-medium">{name}</TableCell>
       
       <TableCell>
-        <span className={`inline-flex items-center rounded-full bg-${getStatusColor(status)}-100 px-2.5 py-0.5 text-xs font-medium text-${getStatusColor(status)}-800`}>
+        <span
+          className={`inline-flex items-center rounded-full bg-${getStatusColor(status)}-100 px-2.5 py-0.5 text-xs font-medium text-${getStatusColor(status)}-800`}
+        >
           {status}
         </span>
       </TableCell>
@@ -85,15 +100,15 @@ function ApplicantRow({ name, status }: ApplicantRowProps) {
 
 function getStatusColor(status: any) {
   switch (status) {
-    case "Interviewing":
-      return "green";
-    case "Under Review":
-      return "yellow";
-    case "Rejected":
-      return "red";
-    case "Offer Extended":
-      return "blue";
+    case 'Interviewing':
+      return 'green';
+    case 'Under Review':
+      return 'yellow';
+    case 'Rejected':
+      return 'red';
+    case 'Offer Extended':
+      return 'blue';
     default:
-      return "gray";
+      return 'gray';
   }
 }

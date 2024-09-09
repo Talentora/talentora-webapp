@@ -23,9 +23,9 @@ import UpdatePassword from '@/components/AuthForms/UpdatePassword';
 import SignUp from '@/components/AuthForms/Signup';
 
 export default async function SignIn({
-                                       params,
-                                       searchParams
-                                     }: {
+  params,
+  searchParams
+}: {
   params: { id: string };
   searchParams: { disable_button: boolean };
 }) {
@@ -99,10 +99,7 @@ export default async function SignIn({
               <UpdatePassword redirectMethod={redirectMethod} />
             )}
             {viewProp === 'signup' && (
-              <SignUp
-                allowEmail={allowEmail}
-                redirectMethod={redirectMethod}
-              />
+              <SignUp allowEmail={allowEmail} redirectMethod={redirectMethod} />
             )}
             {viewProp !== 'update_password' &&
               viewProp !== 'signup' &&

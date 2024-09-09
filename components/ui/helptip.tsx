@@ -1,9 +1,13 @@
-import React from "react";
-import { CircleHelp } from "lucide-react";
+import React from 'react';
+import { CircleHelp } from 'lucide-react';
 
-import { cn } from "@/utils/cn";
+import { cn } from '@/utils/cn';
 
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 
 interface HelpTipProps {
   text: string;
@@ -16,7 +20,7 @@ const HelpTip: React.FC<HelpTipProps> = ({ text, className }) => {
       <TooltipTrigger>
         <CircleHelp
           size={16}
-          className={cn("text-primary-400 hidden md:block", className)}
+          className={cn('text-primary-400 hidden md:block', className)}
         />
       </TooltipTrigger>
       <TooltipContent asChild>

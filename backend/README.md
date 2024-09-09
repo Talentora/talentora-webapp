@@ -10,11 +10,9 @@ This project includes two Python files:
 
 🤖 `bot.py` The chatbot agent, leveraging Pipecat and the library's RTVI framework implementation.
 
-
 The example bot included in this project does not require any GPU-enabled platform to run, instead opting for AI services that are available via http / websockets (no local models.) You can, of course, configure your pipeline to use on-premises models if you prefer.
 
 **Note: The term 'local' in this project name refers to the ability to spawn agents as Python processes on your local computer instead of containerizing and deploying them to the cloud. Please note, however, that the bot services still require an active internet connection to function.**
-
 
 ## Quickstart
 
@@ -37,7 +35,6 @@ cp bot/.env bot/.env
 ```
 
 Enter the necessary (required) API keys for both applications.
-
 
 #### Start the bot runner server:
 
@@ -71,7 +68,6 @@ curl --location --request POST 'http://localhost:7860' \
 
 Note: the first time you run this method, it may take a few minutes to download the necessary dependencies.
 
-
 #### Configure your RTVI client
 
 You can pass the URL of your bot runner to your RTVI client like so:
@@ -92,11 +88,9 @@ This repo doesn't make any hosting platform assumptions and simply launches the 
 
 You can read more about the deployment pattern adopted in this example [here](https://docs.pipecat.ai/deployment/pattern).
 
-
 ## HTTP service / bot runner
 
 In order for your client to start a new realtime session with your bot, you should create an HTTP service that expects a JSON formatted pipeline configuration object. When a new request is sent, the runner will spawn a new bot agent, passing the necessary connectivity and configuration details.
-
 
 ### Configuration options
 
@@ -118,7 +112,6 @@ By default, a runner will create a new room for the realtime session with each r
 
 This example is configured to use [Daily](https://www.daily.co) as the default realtime media transport. You can obtain your developer key for your domain by visiting your [Daily dashboard](https://dashboard.daily.co).
 
-
 ## Bot file
 
 The example bot file included in this project uses the [Pipecat](https://www.pipecat.ai) RTVI framework implementation to run a realtime voice session. It uses the following services:
@@ -127,7 +120,6 @@ The example bot file included in this project uses the [Pipecat](https://www.pip
 - Daily for real-time user transcription (Deepgram)
 - [OpenAI](https://openai.com/) for LLM inference. Note: you can use whichever OpenAI compatible service you prefer, such as Groq.
 - [Cartesia](https://cartesia.ai/) for text-to-speech.
-
 
 #### Project `.env`
 
@@ -144,10 +136,9 @@ OPENAI_API_KEY=your-groq-key-here
 
 ## Building docker containers
 
-Both the `runner` and `bot` apps contain example Dockerfiles that you can use to build and deploy your applications. 
+Both the `runner` and `bot` apps contain example Dockerfiles that you can use to build and deploy your applications.
 
 We recommend deploying these apps independently, but please note that doing so will require you to configure your runner accordingly to your chosen hosting platform. An example of how to do this with Fly.io can be found [here](https://docs.pipecat.ai/deployment/fly).
-
 
 You can build your apps like this:
 

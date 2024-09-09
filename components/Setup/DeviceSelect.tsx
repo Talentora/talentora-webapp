@@ -8,8 +8,8 @@ import {
   SelectTrigger,
   SelectContent,
   SelectItem,
-  SelectValue,
-} from "../ui/select";
+  SelectValue
+} from '../ui/select';
 
 interface DeviceSelectProps {
   hideMeter: boolean;

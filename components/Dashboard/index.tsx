@@ -8,7 +8,5 @@ interface DashboardPageProps {
 }
 
 export default function DashboardPage({ jobs }: DashboardPageProps) {
-  return (
-    <Dashboard jobs={jobs} />
-  );
+  return <Dashboard jobs={jobs} />;
 }
