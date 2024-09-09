@@ -9,10 +9,11 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 
+
 interface RecentApplicantsProps {
   toggleSection: (section: string) => void;
   visible: boolean;
-  jobId: number;
+  applicants: Applicant[];
 }
 
 interface ApplicantRowProps {
@@ -24,16 +25,12 @@ interface ApplicantRowProps {
 
 import { Tables } from '@/types/types_db';
 type Applicant = Tables<'applicants'>;
-import { getApplicants } from '@/utils/supabase/queries';
-import { createClient } from '@/utils/supabase/server';
 
 export async function RecentApplicants({
   toggleSection,
   visible,
-  jobId
+  applicants
 }: RecentApplicantsProps) {
-  const supabase = createClient();
-  const applicants = await getApplicants(supabase, jobId);
 
   return (
     <Card>

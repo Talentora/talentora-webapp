@@ -9,12 +9,14 @@ import { RoboRecruiterConfig } from './BotConfig';
 import { Tables } from '@/types/types_db';
 
 type Job = Tables<'jobs'>;
+type Applicant = Tables<'applicants'>
 
 interface JobPageProps {
   job: Job;
+  applicants: Applicant[];
 }
 
-export default function JobPage({ job }: JobPageProps) {
+export default function JobPage({ job, applicants }: JobPageProps) {
   const [visibleSections, setVisibleSections] = useState({
     jobDetails: true,
     applicantStats: true,
@@ -38,7 +40,7 @@ export default function JobPage({ job }: JobPageProps) {
       <RecentApplicants
         toggleSection={toggleSection}
         visible={visibleSections.recentApplicants}
-        jobId={job.id}
+        applicants={applicants}
       />
       <RoboRecruiterConfig
         toggleSection={toggleSection}

@@ -1,16 +1,20 @@
 import JobPage from '@/components/JobPage';
 import { getJob } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/server';
+import { getApplicants } from '@/utils/supabase/queries';
 
 export default async function Page({ params }: { params: { id: string } }) {
   const job = await fetchJobData(params.id);
-
-  console.log('job', job);
+  const supabase = createClient();
 
   if (job) {
+    const applicants = await getApplicants(supabase, job?.id);
     return (
       <div>
-        <JobPage job={job} />
+        <JobPage 
+          job={job} 
+          applicants={applicants}
+        />
       </div>
     );
   } else {
