@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-// import ReactDOM from "react-dom/client";
-import { VoiceClient } from 'realtime-ai';
-import { VoiceClientAudio, VoiceClientProvider } from 'realtime-ai-react';
+import React, { useState } from "react";
+import { VoiceClient } from "realtime-ai";
+import { VoiceClientAudio, VoiceClientProvider } from "realtime-ai-react";
 
 import { Header } from '@/components/ui/header';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -11,7 +10,6 @@ import App from './App';
 import { defaultConfig } from '@/utils/config';
 import { Splash } from './Splash';
 
-// import "./global.css"; // Note: Core app layout can be found here
 
 const voiceClient = new VoiceClient({
   baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
@@ -25,7 +23,7 @@ const page = () => {
   if (showSplash) {
     return <Splash handleReady={() => setShowSplash(false)} />;
   }
-
+  
   return (
     <VoiceClientProvider voiceClient={voiceClient}>
       <TooltipProvider>
@@ -41,17 +39,5 @@ const page = () => {
     </VoiceClientProvider>
   );
 };
-//
-// ReactDOM.createRoot(document.getElementById("root")!).render(
-//   <React.StrictMode>
-//     {isFirefox && (
-//       <div className="bg-red-500 text-white text-sm font-bold text-center p-2 fixed t-0 w-full">
-//         Latency readings can be inaccurate in Firefox. For best results, please
-//         use Chrome.
-//       </div>
-//     )}
-//     <Layout />
-//   </React.StrictMode>
-// );
 
 export default page;

@@ -77,12 +77,16 @@ export async function RecentApplicants({
   );
 }
 
-function ApplicantRow({ name, date, experience, status }: ApplicantRowProps) {
+interface ApplicantRowProps {
+  name: string;
+  status: string;
+}
+
+function ApplicantRow({ name, status }: ApplicantRowProps) {
   return (
     <TableRow>
       <TableCell className="font-medium">{name}</TableCell>
-      <TableCell>{date}</TableCell>
-      <TableCell>{experience}</TableCell>
+      
       <TableCell>
         <span
           className={`inline-flex items-center rounded-full bg-${getStatusColor(status)}-100 px-2.5 py-0.5 text-xs font-medium text-${getStatusColor(status)}-800`}

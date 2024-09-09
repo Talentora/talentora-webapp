@@ -1,18 +1,3 @@
-[?25l
-    Select a project:                                                                           
-                                                                                                
-  >  1. laieiinzukjqqbaglafj [name: RoboRecruiter, org: pqrywszkoyqcerrsztte, region: us-east-1]
-    2. xhhtpfjlaskxpjoikhla [name: test1, org: pqrywszkoyqcerrsztte, region: us-east-1]         
-                                                                                                
-                                                                                                
-    ↑/k up • ↓/j down • / filter • q quit • ? more                                              
-                                                                                                [0D[2K[1A[2K[1A[2K[1A[2K[1A[2K[1A[2K[1A[2K[1A[2K[1A[0D[2K [0D[2K[?25h[?1002l[?1003l[?1006lexport type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
 
 export type Database = {
   public: {
@@ -148,7 +133,7 @@ export type Database = {
           id: string
           interval: Database["public"]["Enums"]["pricing_plan_interval"] | null
           interval_count: number | null
-          metadata: Json | null
+          metadata: JSON | null
           product_id: string | null
           trial_period_days: number | null
           type: Database["public"]["Enums"]["pricing_type"] | null
@@ -161,7 +146,7 @@ export type Database = {
           id: string
           interval?: Database["public"]["Enums"]["pricing_plan_interval"] | null
           interval_count?: number | null
-          metadata?: Json | null
+          metadata?: JSON | null
           product_id?: string | null
           trial_period_days?: number | null
           type?: Database["public"]["Enums"]["pricing_type"] | null
@@ -174,7 +159,7 @@ export type Database = {
           id?: string
           interval?: Database["public"]["Enums"]["pricing_plan_interval"] | null
           interval_count?: number | null
-          metadata?: Json | null
+          metadata?: JSON | null
           product_id?: string | null
           trial_period_days?: number | null
           type?: Database["public"]["Enums"]["pricing_type"] | null
@@ -196,7 +181,7 @@ export type Database = {
           description: string | null
           id: string
           image: string | null
-          metadata: Json | null
+          metadata: JSON | null
           name: string | null
         }
         Insert: {
@@ -204,7 +189,7 @@ export type Database = {
           description?: string | null
           id: string
           image?: string | null
-          metadata?: Json | null
+          metadata?: JSON | null
           name?: string | null
         }
         Update: {
@@ -212,7 +197,7 @@ export type Database = {
           description?: string | null
           id?: string
           image?: string | null
-          metadata?: Json | null
+          metadata?: JSON | null
           name?: string | null
         }
         Relationships: []
@@ -227,7 +212,7 @@ export type Database = {
           current_period_start: string
           ended_at: string | null
           id: string
-          metadata: Json | null
+          metadata: JSON | null
           price_id: string | null
           quantity: number | null
           status: Database["public"]["Enums"]["subscription_status"] | null
@@ -244,7 +229,7 @@ export type Database = {
           current_period_start?: string
           ended_at?: string | null
           id: string
-          metadata?: Json | null
+          metadata?: JSON | null
           price_id?: string | null
           quantity?: number | null
           status?: Database["public"]["Enums"]["subscription_status"] | null
@@ -261,7 +246,7 @@ export type Database = {
           current_period_start?: string
           ended_at?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: JSON | null
           price_id?: string | null
           quantity?: number | null
           status?: Database["public"]["Enums"]["subscription_status"] | null
@@ -289,24 +274,24 @@ export type Database = {
       users: {
         Row: {
           avatar_url: string | null
-          billing_address: Json | null
+          billing_address: JSON | null
           full_name: string | null
           id: string
-          payment_method: Json | null
+          payment_method: JSON | null
         }
         Insert: {
           avatar_url?: string | null
-          billing_address?: Json | null
+          billing_address?: JSON | null
           full_name?: string | null
           id: string
-          payment_method?: Json | null
+          payment_method?: JSON | null
         }
         Update: {
           avatar_url?: string | null
-          billing_address?: Json | null
+          billing_address?: JSON | null
           full_name?: string | null
           id?: string
-          payment_method?: Json | null
+          payment_method?: JSON | null
         }
         Relationships: [
           {

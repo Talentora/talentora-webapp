@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
-import { Mic } from 'lucide-react';
-import { useVoiceClientMediaDevices } from 'realtime-ai-react';
-
-import { AudioIndicatorBar } from '../AudioIndicator';
-import { Field } from '../ui/field';
+import { useEffect } from "react";
+import { Mic } from "lucide-react";
+import { useVoiceClientMediaDevices } from "realtime-ai-react";
+import { AudioIndicatorBar } from "../AudioIndicator";
+import { Field } from "../ui/field";
 import {
   Select,
   SelectTrigger,
@@ -17,10 +16,10 @@ interface DeviceSelectProps {
 }
 
 export const DeviceSelect: React.FC<DeviceSelectProps> = ({
-  hideMeter = false
+  hideMeter = false,
 }) => {
-  const { availableMics, selectedMic, updateMic } =
-    useVoiceClientMediaDevices();
+
+  const { availableMics, selectedMic, updateMic } =useVoiceClientMediaDevices();
 
   useEffect(() => {
     if (selectedMic) {
@@ -38,7 +37,7 @@ export const DeviceSelect: React.FC<DeviceSelectProps> = ({
           </SelectTrigger>
           <SelectContent>
             {availableMics.length === 0 ? (
-              <SelectItem value="" disabled>
+              <SelectItem value="null" disabled>
                 Loading devices...
               </SelectItem>
             ) : (

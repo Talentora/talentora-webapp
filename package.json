@@ -23,6 +23,7 @@
     "supabase:pull": "npx supabase db pull"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^0.0.55",
     "@heroicons/react": "^2.1.5",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.1",
@@ -38,14 +39,16 @@
     "@supabase/ssr": "^0.1.0",
     "@supabase/supabase-js": "^2.45.1",
     "@svgr/webpack": "^8.1.0",
+    "ai": "^3.3.26",
     "class-variance-authority": "^0.7.0",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "copy-webpack-plugin": "^12.0.2",
     "lucide-react": "0.330.0",
-    "next": "14.2.5",
+    "next": "14.2.8",
     "onnxruntime-web": "^1.19.0",
     "react": "^18.3.1",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.3.1",
     "react-merge-refs": "^2.1.1",
     "realtime-ai": "^0.0.9",
@@ -55,7 +58,8 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss": "^3.4.10",
     "tailwindcss-animate": "^1.0.7",
-    "web-vad": "^0.0.6"
+    "web-vad": "^0.0.6",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^14.2.5",
