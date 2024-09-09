@@ -7,7 +7,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
+  CardFooter
 } from '@/components/ui/card';
 import { updateEmail } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
@@ -15,8 +15,8 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function EmailForm({
-                                    userEmail
-                                  }: {
+  userEmail
+}: {
   userEmail: string | undefined;
 }) {
   const router = useRouter();

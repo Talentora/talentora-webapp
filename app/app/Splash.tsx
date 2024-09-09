@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import { Book, Info } from "lucide-react";
-import { VAD } from "web-vad";
+import React, { useEffect } from 'react';
+import { Book, Info } from 'lucide-react';
+import { VAD } from 'web-vad';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 type SplashProps = {
   handleReady: () => void;
@@ -13,7 +13,7 @@ export const Splash: React.FC<SplashProps> = ({ handleReady }) => {
 
   useEffect(() => {
     const cacheVAD = async () => {
-      await VAD.precacheModels("silero_vad.onnx");
+      await VAD.precacheModels('silero_vad.onnx');
       setIsReady(true);
     };
     cacheVAD();
@@ -27,10 +27,8 @@ export const Splash: React.FC<SplashProps> = ({ handleReady }) => {
         </h1>
 
         <Button onClick={handleReady} disabled={!isReady}>
-          {isReady ? "Try demo" : "Downloading assets..."}
+          {isReady ? 'Try demo' : 'Downloading assets...'}
         </Button>
-
-
       </div>
     </main>
   );

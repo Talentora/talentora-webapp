@@ -1,8 +1,8 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { TrendingUp } from "lucide-react"
-import { Label, Pie, PieChart } from "recharts"
+import * as React from 'react';
+import { TrendingUp } from 'lucide-react';
+import { Label, Pie, PieChart } from 'recharts';
 
 import {
   Card,
@@ -10,52 +10,54 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+  CardTitle
+} from '@/components/ui/card';
 import {
   ChartConfig,
-  ChartContainer, ChartLegend, ChartLegendContent,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent
 } from '@/components/ui/chart';
 const chartData = [
-  { browser: "Masters", visitors: 275, fill: "green" },
-  { browser: "Bachelors", visitors: 200, fill: "red" },
-  { browser: "PhD", visitors: 287, fill: "blue" },
-  { browser: "High School", visitors: 173, fill: "yellow" },
-  { browser: "other", visitors: 190, fill: "grey" },
-]
+  { browser: 'Masters', visitors: 275, fill: 'green' },
+  { browser: 'Bachelors', visitors: 200, fill: 'red' },
+  { browser: 'PhD', visitors: 287, fill: 'blue' },
+  { browser: 'High School', visitors: 173, fill: 'yellow' },
+  { browser: 'other', visitors: 190, fill: 'grey' }
+];
 
 const chartConfig = {
   visitors: {
-    label: "Visitors",
+    label: 'Visitors'
   },
   chrome: {
-    label: "Chrome",
-    color: "hsl(var(--chart-1))",
+    label: 'Chrome',
+    color: 'hsl(var(--chart-1))'
   },
   safari: {
-    label: "Safari",
-    color: "hsl(var(--chart-2))",
+    label: 'Safari',
+    color: 'hsl(var(--chart-2))'
   },
   firefox: {
-    label: "Firefox",
-    color: "hsl(var(--chart-3))",
+    label: 'Firefox',
+    color: 'hsl(var(--chart-3))'
   },
   edge: {
-    label: "Edge",
-    color: "hsl(var(--chart-4))",
+    label: 'Edge',
+    color: 'hsl(var(--chart-4))'
   },
   other: {
-    label: "Other",
-    color: "hsl(var(--chart-5))",
-  },
-} satisfies ChartConfig
+    label: 'Other',
+    color: 'hsl(var(--chart-5))'
+  }
+} satisfies ChartConfig;
 
 export function DegreeTypes() {
   const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0)
-  }, [])
+    return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
+  }, []);
 
   return (
     <Card className="flex flex-col">
@@ -81,7 +83,7 @@ export function DegreeTypes() {
             >
               <Label
                 content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
                     return (
                       <text
                         x={viewBox.cx}
@@ -104,7 +106,7 @@ export function DegreeTypes() {
                           Visitors
                         </tspan>
                       </text>
-                    )
+                    );
                   }
                 }}
               />
@@ -113,5 +115,5 @@ export function DegreeTypes() {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

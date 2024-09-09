@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
   CardContent,
-  CardFooter,
+  CardFooter
 } from '@/components/ui/card';
 
 // Define prop type with allowEmail boolean
@@ -22,10 +22,10 @@ interface ForgotPasswordProps {
 }
 
 export default function ForgotPassword({
-                                         allowEmail,
-                                         redirectMethod,
-                                         disableButton
-                                       }: ForgotPasswordProps) {
+  allowEmail,
+  redirectMethod,
+  disableButton
+}: ForgotPasswordProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

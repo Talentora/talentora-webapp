@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { VoiceEvent } from "realtime-ai";
-import { useVoiceClientEvent } from "realtime-ai-react";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { VoiceEvent } from 'realtime-ai';
+import { useVoiceClientEvent } from 'realtime-ai-react';
 
 const TranscriptOverlay: React.FC = () => {
   const [sentences, setSentences] = useState<string[]>([]);
@@ -32,8 +32,8 @@ const TranscriptOverlay: React.FC = () => {
           key={index}
           className="font-semibold text-sm max-w-xs opacity-1 m-0 line-height[2] animate-fadeOut"
           style={{
-            animation: "fadeOut 2.5s linear forwards",
-            animationDelay: "1s",
+            animation: 'fadeOut 2.5s linear forwards',
+            animationDelay: '1s'
           }}
         >
           <span className="box-decoration-clone bg-primary-800/70 rounded-md px-2 py-1">

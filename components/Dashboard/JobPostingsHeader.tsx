@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { SearchIcon, PlusIcon } from 'lucide-react';
 import FilterDialog from './FilterDialog';
 
@@ -13,8 +13,13 @@ interface JobPostingsHeaderProps {
   filterOptions: any;
 }
 
-export default function JobPostingsHeader({ searchTerm, setSearchTerm,filters,setFilters,filterOptions }: JobPostingsHeaderProps) {
-
+export default function JobPostingsHeader({
+  searchTerm,
+  setSearchTerm,
+  filters,
+  setFilters,
+  filterOptions
+}: JobPostingsHeaderProps) {
   return (
     <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4">
       <h1 className="text-2xl font-bold">Job Postings</h1>
@@ -36,7 +41,6 @@ export default function JobPostingsHeader({ searchTerm, setSearchTerm,filters,se
           filterOptions={filterOptions}
           activeFilterCount={0}
         />
-
       </div>
     </div>
   );

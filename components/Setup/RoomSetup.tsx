@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 
-import { Alert } from "../ui/alert";
+import { Alert } from '../ui/alert';
 
-import { RoomInput } from "./RoomInput";
-import { SettingsList } from "./SettingsList";
+import { RoomInput } from './RoomInput';
+import { SettingsList } from './SettingsList';
 
 interface RoomSetupProps {
   serverUrl: string;
@@ -17,18 +17,18 @@ const serverURL = process.env.NEXT_PUBLIC_SERVER_URL;
 const manualRoomCreation = !!process.env.NEXT_PUBLIC_MANUAL_ROOM_ENTRY;
 
 const RoomSetup: React.FC<RoomSetupProps> = ({
-                                                      serverUrl,
-                                                      roomQs,
-                                                      roomQueryStringValid,
-                                                      roomError,
-                                                      handleCheckRoomUrl,
-                                                    }) => {
+  serverUrl,
+  roomQs,
+  roomQueryStringValid,
+  roomError,
+  handleCheckRoomUrl
+}) => {
   return (
     <>
       {import.meta.env.DEV && !serverURL && (
         <Alert title="Warning: no server URL set">
           <p className="text-sm">
-            You have not set a server URL for local development. Please set{" "}
+            You have not set a server URL for local development. Please set{' '}
             <samp>VITE_SERVER_URL</samp> in <samp>.env.local</samp>. You will
             need to launch your bot manually at the same room URL.
           </p>
@@ -55,7 +55,7 @@ const RoomSetup: React.FC<RoomSetupProps> = ({
       {manualRoomCreation && !roomQs && (
         <RoomInput
           onChange={handleCheckRoomUrl}
-          error={roomError && "Please enter valid room URL"}
+          error={roomError && 'Please enter valid room URL'}
         />
       )}
     </>
