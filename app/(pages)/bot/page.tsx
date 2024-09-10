@@ -9,6 +9,9 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import App from './App';
 import { defaultConfig } from '@/utils/config';
 import { Splash } from './Splash';
+import { getUser, getUserDetails, getSubscription } from '@/utils/supabase/queries';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/utils/supabase/server';
 
 
 const voiceClient = new VoiceClient({
@@ -17,7 +20,18 @@ const voiceClient = new VoiceClient({
   config: defaultConfig
 });
 
-const page = () => {
+const page = async () => {
+  const supabase = createClient();
+  const [user, userDetails, subscription] = await Promise.all([
+    getUser(supabase),
+    getUserDetails(supabase),
+    getSubscription(supabase)
+  ]);
+
+  if (!user) {
+    return redirect('/signin');
+  }
+
   const [showSplash, setShowSplash] = useState<boolean>(true);
 
   if (showSplash) {

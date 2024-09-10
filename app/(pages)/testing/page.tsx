@@ -1,14 +1,19 @@
+import { getApplicants } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/server';
-import { getJobs } from '@/utils/supabase/queries';
-export default async function Home() {
-  const supabase = createClient();
 
-  const jobs = await getJobs(supabase);
+const page = async () => {
+  const supabase = createClient();
+  const applicants = await getApplicants(supabase, 1);
+
+
+  console.log("applicants", applicants);
 
   return (
     <div>
-      <h1>Hello World</h1>
-      <p>{JSON.stringify(jobs)}</p>
+      <h1>Applicants</h1>
+      <p>{JSON.stringify(applicants)}</p>
     </div>
   );
 }
+
+export default page;

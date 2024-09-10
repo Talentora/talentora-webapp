@@ -3,10 +3,22 @@ import { createClient } from '@/utils/supabase/server';
 import { getJobs } from '@/utils/supabase/queries';
 import { Tables } from '@/types/types_db';
 
+import { getUser, getUserDetails, getSubscription } from '@/utils/supabase/queries';
+import { redirect } from 'next/navigation';
+
 type Job = Tables<'jobs'>;
 
 const Page = async () => {
   const supabase = createClient();
+  const [user, userDetails, subscription] = await Promise.all([
+    getUser(supabase),
+    getUserDetails(supabase),
+    getSubscription(supabase)
+  ]);
+
+  if (!user) {
+    return redirect('/signin');
+  }
   let jobs: Job[] = [];
 
   try {

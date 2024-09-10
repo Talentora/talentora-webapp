@@ -9,8 +9,8 @@ const DashboardPage: React.FC = () => {
         <Link href="/settings" className="text-blue-500 hover:underline">
           Settings
         </Link>
-        <Link href="/app" className="text-blue-500 hover:underline">
-          App
+        <Link href="/bot" className="text-blue-500 hover:underline">
+          Bot
         </Link>
         <Link href="/dashboard" className="text-blue-500 hover:underline">
           Dashboard
