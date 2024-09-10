@@ -1,12 +1,9 @@
 import { createClient } from '@/utils/supabase/server';
-
+import { getJobs } from '@/utils/supabase/queries';
 export default async function Home() {
   const supabase = createClient();
 
-  const { data: jobs, error } = await supabase.from('jobs').select('*');
-  if (error) console.error(error);
-
-  console.log('jobs', jobs);
+  const jobs = await getJobs(supabase);
 
   return (
     <div>

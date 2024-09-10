@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Trash2, Plus, Wand2, Edit, GripVertical } from 'lucide-react'
-import { generateQuestion } from '@/app/actions/generateQuestion'
+import { generateQuestion } from '@/app/(api)/actions/generateQuestion'
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd'
 
 type QuestionType = 'behavioral' | 'technical' | 'team-based' | 'industry-knowledge'
