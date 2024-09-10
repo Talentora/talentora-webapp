@@ -30,7 +30,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         >
           {children}
         </main>
-        <Footer />
+        {/* <Footer /> */}
         <Suspense>
           <Toaster />
         </Suspense>
