@@ -2,6 +2,7 @@
 
 - [Getting started (how to test your code on your machine)](#Getting-Started)
 - [MUST READ BEFORE CONTRIBUTING](#MUST-READ)
+- [Troubleshooting](#Troubleshooting)
 
 # Getting Started
 
@@ -65,9 +66,45 @@ npm run dev
 
 
 # MUST READ
-## Contributing to the code guidelene
+# Contributing to the code guidelene
+Our goal is to make a succesfull project. To make this process go as smooth as possible, we want to keep some rules when contributing to Github
 
+## Branch guidlines
+We have a set of branches for production. However, no matter what, **NEVER DIRECTLY PUSH TO MAIN OR DEV BRANCH**
+Follow these step.
+1. Whenever you want to fix a bug or add a new feature, **always** start by making a new branch.
+    - Follow the naming guidlines indicated in this website: https://medium.com/@abhay.pixolo/naming-conventions-for-git-branches-a-cheatsheet-8549feca2534
+    - In the github project root directory
+```
+git checkout -b your-branch-name
+git push -u origin your-branch-name
+```
+2. Once you're done contributing, run:
+```
+git add .
+git commit -m "your commit message"
+git push
+```
+3. We want to make sure that the commit messages are organized. If you have multiple commits on your branch:
+```
+git log
+```
+to see how many commits you have. Then run
+```
+git reset HEAD~(number of your commits)
+git add .
+git commit -m "your commit message"
+git push --force
+```
+4. Finally, we want to merge the code to dev. On github, navigate to Pull requests, then set the base branch to dev, and compare branch to your branch.
+5. Then, click "Create pull request"
+6. Ping Ben or Lucas
 
+# Troubleshooting
+When you face unexpected errors/bugs, please let 
+Ben Gardiner (bengard@bu.edu)
+Lucas Yoon (lyoon02@bu.edu, 617-816-9352)
+know
 
 ## Set up Frontend
 
