@@ -105,7 +105,7 @@ export function AiRecruiterSetup() {
 
   return (
     <div className="container mx-auto p-4 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-4 text-primary-foreground">AI Recruiter Setup</h1>
+      <h1 className="text-2xl font-bold mb-4 text-primary-foreground">Interview Questions</h1>
       
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="questions">

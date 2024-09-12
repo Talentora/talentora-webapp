@@ -10,6 +10,8 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Tables } from '@/types/types_db';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { MoreHorizontal } from 'lucide-react';
 
 type Applicant = Tables<'applicants'>;
 
@@ -47,6 +49,10 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Phone Number</TableHead>
+                <TableHead>Resume</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -55,6 +61,9 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
                   key={applicant.id}
                   name={`${applicant.first_name} ${applicant.last_name}`}
                   status={applicant.status || ''}
+                  resume={applicant.resume || ''}
+                  email={applicant.email || ''}
+                  phone_number={applicant.phone_number || ''}
                 />
               ))}
             </TableBody>
@@ -68,9 +77,12 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
 interface ApplicantRowProps {
   name: string;
   status: string;
+  resume: string;
+  email: string;
+  phone_number: string;
 }
 
-function ApplicantRow({ name, status }: ApplicantRowProps) {
+function ApplicantRow({ name, status, resume, email, phone_number }: ApplicantRowProps) {
   return (
     <TableRow>
       <TableCell className="font-medium">{name}</TableCell>
@@ -80,6 +92,24 @@ function ApplicantRow({ name, status }: ApplicantRowProps) {
         >
           {status}
         </span>
+      </TableCell>
+      <TableCell>{email}</TableCell>
+      <TableCell>{phone_number}</TableCell>
+      <TableCell>{resume}</TableCell>
+      <TableCell>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Schedule Interview</DropdownMenuItem>
+            <DropdownMenuItem>Send Message</DropdownMenuItem>
+            <DropdownMenuItem>View Profile</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </TableCell>
     </TableRow>
   );

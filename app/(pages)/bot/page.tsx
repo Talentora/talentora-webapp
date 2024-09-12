@@ -21,16 +21,7 @@ const voiceClient = new VoiceClient({
 });
 
 const page = async () => {
-  const supabase = createClient();
-  const [user, userDetails, subscription] = await Promise.all([
-    getUser(supabase),
-    getUserDetails(supabase),
-    getSubscription(supabase)
-  ]);
 
-  if (!user) {
-    return redirect('/signin');
-  }
 
   const [showSplash, setShowSplash] = useState<boolean>(true);
 

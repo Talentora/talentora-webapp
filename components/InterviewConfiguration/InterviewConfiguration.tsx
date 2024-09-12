@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { Mic } from 'lucide-react';
 import Configuration from '@/components/Configuration';
+import { AiRecruiterSetup } from '../ai-recruiter-setup';
 import {
   Select,
   SelectContent,
@@ -23,10 +24,11 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-
+import { Tables } from '@/types/types_db';
+type Job = Tables<'jobs'>;
 export default function Component(
 
-  jobId: string | undefined
+  job: Job
 ) {
   const router = useRouter();
   const [config, setConfig] = useState({
@@ -252,48 +254,17 @@ export default function Component(
         </CardContent>
       </Card>
 
-      {/* Customize Interview Questions Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Customize Interview Questions</CardTitle>
-          <CardDescription>
-            Create and manage custom interview questions.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {customQuestions.map((question, index) => (
-            <div key={index} className="space-y-2">
-              <Label htmlFor={`question-${index}`}>Question {index + 1}</Label>
-              <Input
-                id={`question-${index}`}
-                value={question}
-                onChange={(e) =>
-                  handleCustomQuestionChange(index, e.target.value)
-                }
-                placeholder="Enter your custom question..."
-              />
-            </div>
-          ))}
-          <div className="flex space-x-2">
-            <Button type="button" onClick={addCustomQuestion} variant="outline">
-              Add Question
-            </Button>
-            <Button
-              type="button"
-              onClick={generateAIQuestions}
-              variant="outline"
-            >
-              Generate AI Questions
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+    
+
+      <AiRecruiterSetup/>
+
+
 
       {/* Enter Sample Interview Button */}
       <Button
         type="button"
         className="w-full"
-        onClick={() => router.push('../app')}
+        onClick={() => router.push('../bot')}
       >
         Enter Sample Interview
       </Button>

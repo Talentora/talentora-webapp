@@ -33,11 +33,9 @@ export default function JobPage({ job, applicants }: JobPageProps) {
       <RecentApplicants
         applicants={applicants}
       />
-      {/* <RoboRecruiterConfig
-        toggleSection={toggleSection}
-        visible={visibleSections.roboRecruiterConfig}
+      <RoboRecruiterConfig
         job={job}
-      /> */}
+      />
     </div>
   );
 }
