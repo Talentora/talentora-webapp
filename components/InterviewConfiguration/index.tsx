@@ -1,7 +1,11 @@
 import InterviewConfiguration from './InterviewConfiguration';
+import { useParams } from 'next/navigation';
+
 
 const page = () => {
-  return <InterviewConfiguration />;
+  const { id } = useParams();
+
+  return <InterviewConfiguration job={} />;
 };
 
 export default page;

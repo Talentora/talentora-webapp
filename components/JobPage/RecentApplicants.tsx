@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -8,29 +9,20 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import { Tables } from '@/types/types_db';
 
+type Applicant = Tables<'applicants'>;
 
 interface RecentApplicantsProps {
-  toggleSection: (section: string) => void;
-  visible: boolean;
   applicants: Applicant[];
 }
 
-interface ApplicantRowProps {
-  name: string;
-  date: string;
-  experience: string;
-  status: string;
-}
+export function RecentApplicants({ applicants }: RecentApplicantsProps) {
+  const [visible, setVisible] = useState(true);
 
-import { Tables } from '@/types/types_db';
-type Applicant = Tables<'applicants'>;
-
-export async function RecentApplicants({
-  toggleSection,
-  visible,
-  applicants
-}: RecentApplicantsProps) {
+  const toggleVisibility = () => {
+    setVisible(!visible);
+  };
 
   return (
     <Card>
@@ -42,7 +34,7 @@ export async function RecentApplicants({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => toggleSection('recentApplicants')}
+            onClick={toggleVisibility}
           >
             {visible ? 'Hide' : 'Show'} Applicants
           </Button>
@@ -54,8 +46,6 @@ export async function RecentApplicants({
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
-                <TableHead>Applied Date</TableHead>
-                <TableHead>Experience</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
@@ -63,10 +53,8 @@ export async function RecentApplicants({
               {applicants.map((applicant: Applicant) => (
                 <ApplicantRow
                   key={applicant.id}
-                  name={applicant.first_name + ' ' + applicant.last_name}
-                  date={''}
-                  experience={'applicant.experience'}
-                  status={'applicant.status'}
+                  name={`${applicant.first_name} ${applicant.last_name}`}
+                  status={applicant.status || ''}
                 />
               ))}
             </TableBody>
@@ -86,7 +74,6 @@ function ApplicantRow({ name, status }: ApplicantRowProps) {
   return (
     <TableRow>
       <TableCell className="font-medium">{name}</TableCell>
-      
       <TableCell>
         <span
           className={`inline-flex items-center rounded-full bg-${getStatusColor(status)}-100 px-2.5 py-0.5 text-xs font-medium text-${getStatusColor(status)}-800`}
@@ -98,7 +85,7 @@ function ApplicantRow({ name, status }: ApplicantRowProps) {
   );
 }
 
-function getStatusColor(status: any) {
+function getStatusColor(status: string) {
   switch (status) {
     case 'Interviewing':
       return 'green';

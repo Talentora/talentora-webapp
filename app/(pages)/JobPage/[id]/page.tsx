@@ -7,8 +7,28 @@ import { redirect } from 'next/navigation';
 
 import { getUser, getUserDetails, getSubscription } from '@/utils/supabase/queries';
 
+async function fetchJobData(id: string) {
+  const supabase = createClient();
+  let job = null;
 
-export default async function Page({ params }: { params: { id: string } }) {
+  try {
+    job = await getJob(supabase, id);
+  } catch (error) {
+    console.error('Error fetching job:', error);
+  }
+
+  return job;
+}
+
+interface JobPageProps {
+  params: { id: string };
+}
+
+
+
+export default async function Page(
+  { params }: JobPageProps
+) {
   const supabase = createClient();
   const [user, userDetails, subscription] = await Promise.all([
     getUser(supabase),
@@ -39,17 +59,4 @@ export default async function Page({ params }: { params: { id: string } }) {
       </div>
     );
   }
-}
-
-async function fetchJobData(id: string) {
-  const supabase = createClient();
-  let job = null;
-
-  try {
-    job = await getJob(supabase, id);
-  } catch (error) {
-    console.error('Error fetching job:', error);
-  }
-
-  return job;
 }

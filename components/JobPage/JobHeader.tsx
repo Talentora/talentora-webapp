@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   BriefcaseIcon,
@@ -7,26 +6,17 @@ import {
   MapPinIcon
 } from 'lucide-react';
 import { Tables } from '@/types/types_db';
+
 type Job = Tables<'jobs'>;
 
 interface JobHeaderProps {
   job: Job;
-  toggleSection: (section: string) => void;
-  visible: boolean;
 }
-export function JobHeader({ job, toggleSection, visible }: JobHeaderProps) {
+
+export function JobHeader({ job }: JobHeaderProps) {
   return (
     <CardHeader>
-      <div className="flex justify-between items-center">
-        <CardTitle className="text-2xl font-bold">{job.title}</CardTitle>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => toggleSection('jobDetails')}
-        >
-          {visible ? 'Hide' : 'Show'} Details
-        </Button>
-      </div>
+      <CardTitle className="text-2xl font-bold">{job.title}</CardTitle>
       <CardDescription>
         <div className="flex items-center space-x-4 text-sm text-muted-foreground">
           <span className="flex items-center">

@@ -35,7 +35,7 @@ export default function Navlinks({ user }: NavlinksProps) {
       </div>
       <div className="flex justify-end space-x-8">
         {user ? (
-          <div className="flex flex-row">
+          <div className="flex flex-row items-center">
             {
               user.full_name ?
               <Label>Hello, {user.full_name}</Label>

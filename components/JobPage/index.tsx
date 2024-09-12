@@ -1,4 +1,4 @@
-'use client';
+"use client"
 
 import { useState } from 'react';
 import { JobHeader } from './JobHeader';
@@ -17,35 +17,27 @@ interface JobPageProps {
 }
 
 export default function JobPage({ job, applicants }: JobPageProps) {
-  const [visibleSections, setVisibleSections] = useState({
-    jobDetails: true,
-    applicantStats: true,
-    recentApplicants: true,
-    roboRecruiterConfig: true
-  });
+  
 
-  const toggleSection = (section: number) => {
-    setVisibleSections((prev) => ({ ...prev, [section]: !prev[section] }));
-  };
+  
 
   return (
     <div className="container mx-auto p-4 space-y-8">
       <JobHeader
         job={job}
-        toggleSection={toggleSection}
-        visible={visibleSections.jobDetails}
       />
-      {visibleSections.jobDetails && <JobDetails job={job} />}
+      <JobDetails 
+        job={job} 
+      />
       <ApplicantStatistics />
       <RecentApplicants
-        toggleSection={toggleSection}
-        visible={visibleSections.recentApplicants}
         applicants={applicants}
       />
-      <RoboRecruiterConfig
+      {/* <RoboRecruiterConfig
         toggleSection={toggleSection}
         visible={visibleSections.roboRecruiterConfig}
-      />
+        job={job}
+      /> */}
     </div>
   );
 }
