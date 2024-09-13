@@ -101,10 +101,10 @@ git push --force
 6. Ping Ben or Lucas
 
 # Troubleshooting
-When you face unexpected errors/bugs, please let 
+When you face unexpected errors/bugs, please contact either
 Ben Gardiner (bengard@bu.edu)
 Lucas Yoon (lyoon02@bu.edu, 617-816-9352)
-know
+
 
 ## Set up Frontend
 
