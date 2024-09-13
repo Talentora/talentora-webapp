@@ -1,4 +1,4 @@
-import { generateQuestion } from '@/app/actions/generateQuestion';
+import { generateQuestion } from '@/app/(api)/actions/generateQuestion';
 import { generateText } from 'ai';
 
 // Mock the ai module

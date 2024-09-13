@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Trash2, Plus, Wand2, Edit, GripVertical } from 'lucide-react'
-import { generateQuestion } from '@/app/actions/generateQuestion'
+import { generateQuestion } from '@/app/(api)/actions/generateQuestion'
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd'
 
 type QuestionType = 'behavioral' | 'technical' | 'team-based' | 'industry-knowledge'
@@ -105,7 +105,7 @@ export function AiRecruiterSetup() {
 
   return (
     <div className="container mx-auto p-4 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-4 text-primary-foreground">AI Recruiter Setup</h1>
+      <h1 className="text-2xl font-bold mb-4 text-primary-foreground">Interview Questions</h1>
       
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="questions">
