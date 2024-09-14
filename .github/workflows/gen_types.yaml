@@ -15,7 +15,7 @@ jobs:
           run: |
             ls
             pwd
-            npx supabase gen types typescript --local --schema public > types/types_db.ts
+            npm run supabase:generate-types
             if ! git diff --ignore-space-at-eol --exit-code --quiet types/types_db.ts; then
               echo "Detected uncommitted changes after build. See status below:"
               git diff
