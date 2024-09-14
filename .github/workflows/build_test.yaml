@@ -72,6 +72,8 @@ jobs:
               version: latest
           - run: supabase init
           - run: supabase db start
+          - name: Install dependencies
+            run: npm install 
           - name: Verify generated types match Postgres schema
             run: |
               ls
