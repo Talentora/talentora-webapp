@@ -82,15 +82,18 @@ jobs:
               if ! git diff --ignore-space-at-eol --exit-code --quiet types/types_db.ts; then
                 echo "Detected uncommitted changes after build. See status below:"
                 git diff
-                git config --global user.name "github-actions[bot]"
-                git config --global user.email "github-actions[bot]@users.noreply.github.com"
-                git add schema.gen.ts
-                git commit -m "Update generated types based on Postgres schema"
-                git push
               else
                 echo "No changes detected."
                 exit 1
               fi
+              
+          - name: Set Git config with custom user
+            run: |
+              git config --global user.name "github-actions[bot]"
+              git config --global user.email "github-actions[bot]@users.noreply.github.com"
+              git add schema.gen.ts
+              git commit -m "Update generated types based on Postgres schema"
+              git push
 
 
   deploy-preview: # Make sure this can be deployed. Only run when on a pull request
