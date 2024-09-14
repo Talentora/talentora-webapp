@@ -34,7 +34,6 @@ env:
 jobs:
   install-and-test: # Validation, lint test.
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [18.x]
@@ -64,7 +63,7 @@ jobs:
       - name: Build Next.js project
         run: npm run build
 
-  generate_supabase_types: 
+  generate_types: 
       runs-on: ubuntu-latest
       steps:
           - uses: supabase/setup-cli@v1
@@ -72,13 +71,11 @@ jobs:
               version: latest
           - run: supabase init
           - run: supabase db start
-          - name: Install dependencies
-            run: npm install 
           - name: Verify generated types match Postgres schema
             run: |
               ls
               pwd
-              npm run supabase:generate-types
+              npx supabase gen types typescript --local --schema public > types/types_db.ts
               if ! git diff --ignore-space-at-eol --exit-code --quiet types/types_db.ts; then
                 echo "Detected uncommitted changes after build. See status below:"
                 git diff
