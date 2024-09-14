@@ -71,10 +71,10 @@ jobs:
               version: latest
           - run: supabase init
           - run: supabase db start
+          - name: Create types directory
+            run: mkdir -p types
           - name: Verify generated types match Postgres schema
             run: |
-              ls
-              pwd
               npx supabase gen types typescript --local --schema public > types/types_db.ts
               if ! git diff --ignore-space-at-eol --exit-code --quiet types/types_db.ts; then
                 echo "Detected uncommitted changes after build. See status below:"
