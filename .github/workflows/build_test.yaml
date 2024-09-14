@@ -71,16 +71,24 @@ jobs:
           - uses: supabase/setup-cli@v1
             with:
               version: latest
-          - run: supabase init --force
-          - run: supabase db start
-          - name: Create types directory
-            run: mkdir -p types
+          - name: init supabase
+          - run: | 
+              supabase init --force
+              supabase db start
           - name: Verify generated types match Postgres schema
             run: |
+              mkdir -p types
               npx supabase gen types typescript --local --schema public > types/types_db.ts
               if ! git diff --ignore-space-at-eol --exit-code --quiet types/types_db.ts; then
                 echo "Detected uncommitted changes after build. See status below:"
                 git diff
+                git config --global user.name "github-actions[bot]"
+                git config --global user.email "github-actions[bot]@users.noreply.github.com"
+                git add schema.gen.ts
+                git commit -m "Update generated types based on Postgres schema"
+                git push
+              else
+                echo "No changes detected."
                 exit 1
               fi
 
