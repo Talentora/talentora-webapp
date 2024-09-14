@@ -34,7 +34,6 @@ env:
 jobs:
   install-and-test: # Validation, lint test.
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
 
     strategy:
       matrix:
@@ -68,7 +67,6 @@ jobs:
   deploy-preview: # Make sure this can be deployed. Only run when on a pull request
     runs-on: ubuntu-latest
     needs: install-and-test
-    if: github.event_name == 'pull_request'
 
     steps:
       - name: Checkout code
