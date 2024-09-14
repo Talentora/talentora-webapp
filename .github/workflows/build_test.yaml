@@ -73,7 +73,7 @@ jobs:
           - uses: supabase/setup-cli@v1
             with:
               version: latest
-          # - run: supabase init
+          - run: supabase init --force
           - run: supabase db start
           - name: Create types directory
             run: mkdir -p types
