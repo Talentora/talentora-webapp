@@ -66,8 +66,6 @@ jobs:
   generate_types: 
       runs-on: ubuntu-latest
       steps:
-          - name: Print environment variables for debugging
-            run: printenv | grep SUPABASE
           - name: Checkout repository
             uses: actions/checkout@v2
           - uses: supabase/setup-cli@v1
