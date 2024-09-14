@@ -10,6 +10,8 @@ on:
       - dev
 
 env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+
   # SUPABASE
   NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
   NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
@@ -91,9 +93,7 @@ jobs:
             run: |
               git config --global user.name "github-actions[bot]"
               git config --global user.email "github-actions[bot]@users.noreply.github.com"
-              pwd
-              ls
-              git add types/types_db.ts
+              git add .
               git commit -m "Update generated types based on Postgres schema"
               git push origin HEAD:${{ github.ref }}
 
