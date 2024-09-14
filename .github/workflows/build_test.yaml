@@ -93,7 +93,7 @@ jobs:
               git config --global user.email "github-actions[bot]@users.noreply.github.com"
               pwd
               ls
-              git add types/teypes_db.ts
+              git add types/types_db.ts
               git commit -m "Update generated types based on Postgres schema"
               git push origin HEAD:${{ github.ref }}
 
