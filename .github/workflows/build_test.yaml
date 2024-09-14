@@ -1,4 +1,4 @@
-name: CI for Next.js
+name: 'build-test_Next.js'
 
 on:
   push:
