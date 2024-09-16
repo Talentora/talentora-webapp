@@ -11,7 +11,7 @@ export type Database = {
     Tables: {
       applicants: {
         Row: {
-          email: null
+          email: string
           first_name: string
           id: number
           job_id: number | null
