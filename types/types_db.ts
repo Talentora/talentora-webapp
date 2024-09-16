@@ -1,3 +1,10 @@
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export type Database = {
   public: {
@@ -133,7 +140,7 @@ export type Database = {
           id: string
           interval: Database["public"]["Enums"]["pricing_plan_interval"] | null
           interval_count: number | null
-          metadata: JSON | null
+          metadata: Json | null
           product_id: string | null
           trial_period_days: number | null
           type: Database["public"]["Enums"]["pricing_type"] | null
@@ -146,7 +153,7 @@ export type Database = {
           id: string
           interval?: Database["public"]["Enums"]["pricing_plan_interval"] | null
           interval_count?: number | null
-          metadata?: JSON | null
+          metadata?: Json | null
           product_id?: string | null
           trial_period_days?: number | null
           type?: Database["public"]["Enums"]["pricing_type"] | null
@@ -159,7 +166,7 @@ export type Database = {
           id?: string
           interval?: Database["public"]["Enums"]["pricing_plan_interval"] | null
           interval_count?: number | null
-          metadata?: JSON | null
+          metadata?: Json | null
           product_id?: string | null
           trial_period_days?: number | null
           type?: Database["public"]["Enums"]["pricing_type"] | null
@@ -181,7 +188,7 @@ export type Database = {
           description: string | null
           id: string
           image: string | null
-          metadata: JSON | null
+          metadata: Json | null
           name: string | null
         }
         Insert: {
@@ -189,7 +196,7 @@ export type Database = {
           description?: string | null
           id: string
           image?: string | null
-          metadata?: JSON | null
+          metadata?: Json | null
           name?: string | null
         }
         Update: {
@@ -197,7 +204,7 @@ export type Database = {
           description?: string | null
           id?: string
           image?: string | null
-          metadata?: JSON | null
+          metadata?: Json | null
           name?: string | null
         }
         Relationships: []
@@ -212,7 +219,7 @@ export type Database = {
           current_period_start: string
           ended_at: string | null
           id: string
-          metadata: JSON | null
+          metadata: Json | null
           price_id: string | null
           quantity: number | null
           status: Database["public"]["Enums"]["subscription_status"] | null
@@ -229,7 +236,7 @@ export type Database = {
           current_period_start?: string
           ended_at?: string | null
           id: string
-          metadata?: JSON | null
+          metadata?: Json | null
           price_id?: string | null
           quantity?: number | null
           status?: Database["public"]["Enums"]["subscription_status"] | null
@@ -246,7 +253,7 @@ export type Database = {
           current_period_start?: string
           ended_at?: string | null
           id?: string
-          metadata?: JSON | null
+          metadata?: Json | null
           price_id?: string | null
           quantity?: number | null
           status?: Database["public"]["Enums"]["subscription_status"] | null
@@ -274,24 +281,24 @@ export type Database = {
       users: {
         Row: {
           avatar_url: string | null
-          billing_address: JSON | null
+          billing_address: Json | null
           full_name: string | null
           id: string
-          payment_method: JSON | null
+          payment_method: Json | null
         }
         Insert: {
           avatar_url?: string | null
-          billing_address?: JSON | null
+          billing_address?: Json | null
           full_name?: string | null
           id: string
-          payment_method?: JSON | null
+          payment_method?: Json | null
         }
         Update: {
           avatar_url?: string | null
-          billing_address?: JSON | null
+          billing_address?: Json | null
           full_name?: string | null
           id?: string
-          payment_method?: JSON | null
+          payment_method?: Json | null
         }
         Relationships: [
           {
@@ -410,3 +417,4 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
     : never
+
