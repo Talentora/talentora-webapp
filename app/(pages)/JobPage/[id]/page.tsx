@@ -40,6 +40,8 @@ export default async function Page(
     return redirect('/signin');
   }
 
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  
   const job = await fetchJobData(params.id);
 
   if (job) {
