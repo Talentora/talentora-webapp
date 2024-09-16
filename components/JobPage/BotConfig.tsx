@@ -1,36 +1,37 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Settings } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-interface RoboRecruiterConfigProps {
-  toggleSection: (section: string) => void;
-  visible: boolean;
-}
-
+import { Tables } from '@/types/types_db';
 import Link from 'next/link';
 
-export function RoboRecruiterConfig({
-  toggleSection,
-  visible
-}: RoboRecruiterConfigProps) {
+type Job = Tables<'jobs'>;
+
+interface RoboRecruiterConfigProps {
+  job: Job;
+}
+
+export function RoboRecruiterConfig({ job }: RoboRecruiterConfigProps) {
+
+
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center">
+        <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-semibold">
-            RoboRecruiter Settings
+            Job Settings
           </CardTitle>
+          
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
-          <Link
-            href="/InterviewConfig"
-            className="w-full bg-primary-400 p-5 rounded-2xl"
-          >
-            Customize Your RoboRecruiter
-          </Link>
-        </div>
-      </CardContent>
+        <CardContent>
+          <div className="space-y-6">
+            <Link
+              href={`/InterviewConfig/${job.id}`}
+              className="w-full bg-primary-400 p-5 rounded-2xl block text-center"
+            >
+              Customize Your RoboRecruiter
+            </Link>
+          </div>
+        </CardContent>
     </Card>
   );
 }

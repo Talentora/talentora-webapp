@@ -7,6 +7,7 @@ import Logo from '@/components/icons/Logo';
 import { usePathname, useRouter } from 'next/navigation';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import s from './Navbar.module.css';
+import { Label } from '../ui/label';
 
 interface NavlinksProps {
   user?: any;
@@ -34,12 +35,20 @@ export default function Navlinks({ user }: NavlinksProps) {
       </div>
       <div className="flex justify-end space-x-8">
         {user ? (
-          <form onSubmit={(e) => handleRequest(e, SignOut, router)}>
-            <input type="hidden" name="pathName" value={usePathname()} />
-            <button type="submit" className={s.link}>
+          <div className="flex flex-row items-center">
+            {
+              user.full_name ?
+              <Label>Hello, {user.full_name}</Label>
+              :
+              <Label>Hello, {user.email}</Label>
+            }
+            <form onSubmit={(e) => handleRequest(e, SignOut, router)}>
+              <input type="hidden" name="pathName" value={usePathname()} />
+              <button type="submit" className={s.link}>
               Sign out
             </button>
-          </form>
+            </form>
+          </div>
         ) : (
           <Link href="/signin" className={s.link}>
             Sign In
