@@ -86,7 +86,7 @@ jobs:
                 git diff
               else
                 echo "No changes detected."
-                exit 1
+                exit 0
               fi
           - name: Set Git config with custom user
             run: |
