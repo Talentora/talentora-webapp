@@ -5,7 +5,7 @@ import { Toaster } from '@/components/Toasts/toaster';
 import { PropsWithChildren, Suspense } from 'react';
 import { getURL } from '@/utils/helpers';
 import 'styles/main.css';
-const title = 'Next.js Subscription Starter';
+const title = 'RoboRecruiter';
 const description = 'Brought to you by Vercel, Stripe, and Supabase.';
 import Loading from '@/components/Loading';
 

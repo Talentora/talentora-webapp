@@ -1,10 +1,10 @@
 import React from 'react';
 
 import Configuration from '../Configuration';
-import HelpTip from '../ui/helptip';
 import { Label } from '../ui/label';
 import { Switch } from '../ui/switch';
 
+import UploadComponent from './Uploads';
 import DeviceSelect from './DeviceSelect';
 
 interface ConfigureProps {
@@ -19,8 +19,12 @@ export const Configure: React.FC<ConfigureProps> = ({
   return (
     <>
       <section className="flex flex-col flex-wrap gap-3 lg:gap-4">
-        <DeviceSelect hideMeter={false} />
-        <Configuration showAllOptions={true} />
+        <DeviceSelect  />
+        <UploadComponent />
+
+        
+        {/* this is the LLM model and voice */}
+        {/* <Configuration /> */}
       </section>
 
       <section className="flex flex-col gap-4 border-y border-primary-hairline py-4 mt-4">

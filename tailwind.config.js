@@ -23,7 +23,8 @@ module.exports = {
           ...colors.gray,
           DEFAULT: colors.gray[900],
           foreground: colors.white,
-          hairline: colors.gray[100]
+          hairline: colors.gray[100],
+          accent: colors.red
         },
         ring: colors.gray[500]
       },

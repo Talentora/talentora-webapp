@@ -7,9 +7,7 @@ import { Voice } from '@/utils/config';
 import ModelSelect from './ModelSelect';
 import VoiceSelect from './VoiceSelect';
 
-const Configuration: React.FC<{ showAllOptions: boolean }> = ({
-  showAllOptions = false
-}) => {
+const Configuration: React.FC<{ showAllOptions: boolean }> = () => {
   const voiceClient = useVoiceClient()!;
 
   const updateConfig = (config: VoiceClientConfigOptions) => {
@@ -53,9 +51,7 @@ const Configuration: React.FC<{ showAllOptions: boolean }> = ({
   return (
     <div className="flex flex-col gap-3">
       <ModelSelect onSelect={(model) => handleModelChange(model)} />
-      {showAllOptions && (
-        <VoiceSelect onSelect={(voice: Voice) => handleVoiceChange(voice)} />
-      )}
+      <VoiceSelect onSelect={(voice: Voice) => handleVoiceChange(voice)} />
     </div>
   );
 };

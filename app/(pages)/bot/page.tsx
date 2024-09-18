@@ -17,7 +17,8 @@ import { createClient } from '@/utils/supabase/server';
 const voiceClient = new VoiceClient({
   baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
   enableMic: true,
-  config: defaultConfig
+  config: defaultConfig,
+  
 });
 
 const page = async () => {

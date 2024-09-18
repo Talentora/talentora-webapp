@@ -11,13 +11,8 @@ import {
   SelectValue
 } from '../ui/select';
 
-interface DeviceSelectProps {
-  hideMeter: boolean;
-}
 
-export const DeviceSelect: React.FC<DeviceSelectProps> = ({
-  hideMeter = false,
-}) => {
+export const DeviceSelect: React.FC<DeviceSelectProps> = () => {
 
   const { availableMics, selectedMic, updateMic } =useVoiceClientMediaDevices();
 
@@ -49,7 +44,7 @@ export const DeviceSelect: React.FC<DeviceSelectProps> = ({
             )}
           </SelectContent>
         </Select>
-        {!hideMeter && <AudioIndicatorBar />}
+        <AudioIndicatorBar />
       </Field>
     </div>
   );
