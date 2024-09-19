@@ -1,17 +1,25 @@
 # Table of Contents
 
+https://github.com/RoboRecruiter-Organization/roborecruiter-codebase
+
 - [Getting started (how to test your code on your machine)](#Getting-Started)
 - [MUST READ BEFORE CONTRIBUTING](#MUST-READ)
+- [File structure](#File-structure)
 - [Troubleshooting](#Troubleshooting)
 
 # Getting Started
 
 The next.js framework covers all functionalities within frontend and backend.
-First, to run, don't fear cause its easy af, but read all these steps carefullly
+First, to run, but read all these steps carefullly
 
-## 1.1 Tools used for next.js
+## 1.1 Tools used
+- next.js: frontend/backend development
+- Vercel: deployment
+- GitHub: repository use, CI/CD
 - stripe: for payment 
 - daily: for video recording
+- ShadCN: UI components
+- [RTVI](#https://github.com/rtvi-ai): Real time voice interface
 - **Supabase**: for auth and database
 
 ## 1.2 To install dependencies
@@ -51,7 +59,7 @@ scoop install supabase
 
 3. dev server is for testing purpose only. The actual code will be built using npm run dev
 
-## 1.4 run the code LFG
+## 1.4 run the test code
 1. Run the docker daemon (docker)
 2. Run the following code
 ```
@@ -116,7 +124,19 @@ You must then setup the frontend which handles the user interface and user inter
 
 (if it's not working make sure supabase is started and stripe is listening)
 
+# File structure
 
+- app
+    - (pages) ->    Holds all the pages components
+        - account -> 
+        - bot -> conversational AI bot page
+        - dashboard -> dashboard displaying all jobs
+        - interviewConfig -> page to edit the job settings
+        - InterviewQuestions -> page to edit the job's interview question settings
+        - JobPage -> displays information about a particular job
+        - pricing -> displays pricing information from stripe
+        - settings -> settings include email, stripe account, etc.
+        - signin
 
 
 
