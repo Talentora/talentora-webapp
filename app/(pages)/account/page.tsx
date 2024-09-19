@@ -12,7 +12,7 @@ const DashboardPage: React.FC = () => {
         <Link href="/bot" className="text-blue-500 hover:underline">
           Bot
         </Link>
-        <Link href="/dashboard" className="text-blue-500 hover:underline">
+        <Link href="/jobs" className="text-blue-500 hover:underline">
           Dashboard
         </Link>
       </div>

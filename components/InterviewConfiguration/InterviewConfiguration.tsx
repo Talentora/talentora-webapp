@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { Mic } from 'lucide-react';
-import Configuration from '@/components/Configuration';
+import Configuration from '@/components/(bot)/Configuration';
 import { AiRecruiterSetup } from '../ai-recruiter-setup';
 import {
   Select,
@@ -128,77 +128,7 @@ export default function Component(
       </Card>
 
       {/* Combined Interview Settings Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Interview Settings</CardTitle>
-          <CardDescription>
-            Configure the interview process and questions.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="interviewDuration">
-              Interview Duration (minutes)
-            </Label>
-            <Select
-              value={config.interviewDuration.toString()}
-              onValueChange={(value) =>
-                handleChange('interviewDuration', parseInt(value))
-              }
-            >
-              <SelectTrigger id="interviewDuration">
-                <SelectValue placeholder="Select duration" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="15">15 minutes</SelectItem>
-                <SelectItem value="30">30 minutes</SelectItem>
-                <SelectItem value="45">45 minutes</SelectItem>
-                <SelectItem value="60">60 minutes</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="questionCount">
-              Number of Questions: {config.questionCount}
-            </Label>
-            <Slider
-              id="questionCount"
-              min={1}
-              max={10}
-              step={1}
-              value={[config.questionCount]}
-              onValueChange={(value) => handleChange('questionCount', value[0])}
-              className="w-full h-2 bg-gray-700 rounded-lg cursor-pointer dark:bg-gray-800"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Question Types</Label>
-            <div className="flex flex-wrap gap-2">
-              {['Technical', 'Behavioral', 'Situational', 'Cultural Fit'].map(
-                (type) => (
-                  <Button
-                    key={type}
-                    type="button"
-                    variant={
-                      config.questionTypes.includes(type)
-                        ? 'default'
-                        : 'outline'
-                    }
-                    onClick={() => {
-                      const updatedTypes = config.questionTypes.includes(type)
-                        ? config.questionTypes.filter((t) => t !== type)
-                        : [...config.questionTypes, type];
-                      handleChange('questionTypes', updatedTypes);
-                    }}
-                  >
-                    {type}
-                  </Button>
-                )
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      
 
       {/* Interviewer Settings Card */}
       <Card>
@@ -264,7 +194,7 @@ export default function Component(
       <Button
         type="button"
         className="w-full"
-        onClick={() => router.push('../bot')}
+        onClick={() => router.push('/bot')}
       >
         Enter Sample Interview
       </Button>

@@ -6,8 +6,8 @@ import {
   useVoiceClientTransportState
 } from 'realtime-ai-react';
 
-import Session from '@/components/Session';
-import { Configure } from '@/components/Setup';
+import Session from '@/components/(bot)/Session';
+import { Configure } from '@/components/(bot)/Setup';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import * as Card from '@/components/ui/card';
