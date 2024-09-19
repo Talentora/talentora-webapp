@@ -127,6 +127,7 @@ export default function App() {
           <Ear className="size-7 md:size-5 text-primary-400" />
           Works best in a quiet environment with a good internet.
         </div>
+        <h1>Transport State {voiceClient.state}</h1>
         <Configure
           startAudioOff={startAudioOff}
           handleStartAudioOff={() => setStartAudioOff(!startAudioOff)}

@@ -54,16 +54,22 @@ export default function Component() {
         const text = await extractTextFromPdf(file);
         if (fileInput.id === "resume") {
           setResumeText(text || "No text could be extracted from the PDF.");
-          voiceClient.appendLLMContext({
-            role: 'assistant',
-            content: `resume: ${text}`
-          });
+        
+        voiceClient.appendLLMContext()(
+            {
+                role: "assistant",
+                content: `resume: ${text}`
+            },
+        )
         } else if (fileInput.id === "job-description") {
           setJobDescriptionText(text || "No text could be extracted from the PDF.");
-          voiceClient.appendLLMContext({
-            role: 'assistant',
-            content: `job and company description: ${text}`
-          });
+        
+          voiceClient.appendLLMContext()(
+            {
+                role: "assistant",
+                content: `job and company description: ${text}`
+            },
+        )
         }
       } catch (err) {
         console.error("Error in handleFileUpload:", err);
@@ -107,11 +113,16 @@ export default function Component() {
               </div>
             )}
           </div>
+        {resumeText && (
+          <div className="text-sm">Resume text: {resumeText}</div>
+        )}
           
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="job-description">Job Description (PDF)</Label>
+          
           <div className="flex items-center gap-2">
+
             <Input id="job-description" type="file" accept=".pdf" onChange={handleFileUpload} />
             {jobDescriptionFile && (
               <div className="flex items-center gap-2">
