@@ -1,3 +1,4 @@
+"use server"
 import { SupabaseClient } from '@supabase/supabase-js';
 import { cache } from 'react';
 import { Tables } from '@/types/types_db';

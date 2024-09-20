@@ -31,6 +31,6 @@ describe('generateQuestion', () => {
     (generateText as jest.Mock).mockRejectedValue(mockError);
 
     // Call the function and expect it to throw
-    await expect(generateQuestion()).rejects.toThrow('API error');
+    await expect(generateQuestion('Technical')).rejects.toThrow('API error');
   });
 });

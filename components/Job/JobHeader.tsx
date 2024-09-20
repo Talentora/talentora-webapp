@@ -22,6 +22,8 @@ import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import 'react-markdown-editor-lite/lib/index.css';
 import ReactMarkdown from 'react-markdown';
+import { updateJob } from '@/utils/supabase/queries';
+
 type Job = Tables<'jobs'>
 const MarkdownEditor = dynamic(() => import('react-markdown-editor-lite'), {
   ssr: false,
@@ -29,10 +31,9 @@ const MarkdownEditor = dynamic(() => import('react-markdown-editor-lite'), {
 
 interface JobHeaderProps {
   job: Job;
-  onUpdate: (Job: Job) => void;
 }
 
-export function JobHeader({ job, onUpdate }: JobHeaderProps) {
+export function JobHeader({ job }: JobHeaderProps) {
   const [jobData, setJobData] = useState({
     department: job.department,
     location: job.location,
@@ -68,87 +69,151 @@ export function JobHeader({ job, onUpdate }: JobHeaderProps) {
     setIsUpdated(hasChanges);
   }, [jobData, job]);
 
-  const updateNewJob = async () => {
-    try {
-      setIsUpdated(false);
-      onUpdate(jobData);
-    } catch (error) {
-      console.error("Error updating job:", error);
-    }
-  };
-
   const handleChange = (field: keyof typeof jobData, value: string) => {
     setJobData(prev => ({ ...prev, [field]: value }));
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">{job.title}</CardTitle>
-        <div className="flex flex-row justify-between mb-4">
-          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            {[
-              { label: jobData.department, icon: <BriefcaseIcon className="mr-1 h-4 w-4" />, field: 'department' },
-              { label: jobData.location, icon: <MapPinIcon className="mr-1 h-4 w-4" />, field: 'location' },
-              { label: jobData.salary_range, icon: <CircleDollarSign className="mr-1 h-4 w-4" />, field: 'salary_range' },
-            ].map(({ label, icon, field }) => (
-              <span className="flex items-center group relative" key={field}>
-                {icon} {label}
+    <form action={async (formData: FormData) => {
+      await updateJob(job.id, jobData);
+      setIsUpdated(false);
+    }}>
+      <Card className="w-full max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">{job.title}</CardTitle>
+          <div className="flex flex-row justify-between mb-4">
+            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+              <span className="flex items-center group relative">
+                <BriefcaseIcon className="mr-1 h-4 w-4" /> {jobData.department}
                 <Edit2 
                   className="ml-2 cursor-pointer absolute right-0 opacity-0 group-hover:opacity-100 transition-opacity" 
-                  onClick={() => toggleEditable(field as keyof typeof isEditable)} 
+                  onClick={() => toggleEditable('department')} 
                 />
-                {isEditable[field as keyof typeof isEditable] && (
+                {isEditable.department && (
                   <Save 
                     className="ml-2 cursor-pointer absolute right-0" 
-                    onClick={() => toggleEditable(field as keyof typeof isEditable)} 
+                    onClick={() => toggleEditable('department')} 
                   />
                 )}
               </span>
-            ))}
+              <span className="flex items-center group relative">
+                <MapPinIcon className="mr-1 h-4 w-4" /> {jobData.location}
+                <Edit2 
+                  className="ml-2 cursor-pointer absolute right-0 opacity-0 group-hover:opacity-100 transition-opacity" 
+                  onClick={() => toggleEditable('location')} 
+                />
+                {isEditable.location && (
+                  <Save 
+                    className="ml-2 cursor-pointer absolute right-0" 
+                    onClick={() => toggleEditable('location')} 
+                  />
+                )}
+              </span>
+              <span className="flex items-center group relative">
+                <CircleDollarSign className="mr-1 h-4 w-4" /> {jobData.salary_range}
+                <Edit2 
+                  className="ml-2 cursor-pointer absolute right-0 opacity-0 group-hover:opacity-100 transition-opacity" 
+                  onClick={() => toggleEditable('salary')} 
+                />
+                {isEditable.salary && (
+                  <Save 
+                    className="ml-2 cursor-pointer absolute right-0" 
+                    onClick={() => toggleEditable('salary')} 
+                  />
+                )}
+              </span>
+            </div>
           </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {[
-          { title: 'Job Description', value: jobData.description, field: 'description', icon: <ClipboardListIcon className="mr-2 h-5 w-5" /> },
-          { title: 'Requirements', value: jobData.requirements, field: 'requirements', icon: <UserIcon className="mr-2 h-5 w-5" /> },
-          { title: 'Qualifications', value: jobData.qualifications, field: 'qualifications', icon: <UserIcon className="mr-2 h-5 w-5" /> },
-        ].map(({ title, value, field, icon }) => (
-          <section key={field} className="group relative">
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <section className="group relative">
             <h3 className="text-lg font-semibold flex items-center mb-2">
-              {icon} {title}
+              <ClipboardListIcon className="mr-2 h-5 w-5" /> Job Description
               <span className="flex items-center ml-auto">
                 <Edit2 
                   className="ml-2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity" 
-                  onClick={() => toggleEditable(field as keyof typeof isEditable)} 
+                  onClick={() => toggleEditable('description')} 
                 />
-                {isEditable[field as keyof typeof isEditable] && (
+                {isEditable.description && (
                   <Save 
                     className="ml-2 cursor-pointer" 
-                    onClick={() => toggleEditable(field as keyof typeof isEditable)} 
+                    onClick={() => toggleEditable('description')} 
                   />
                 )}
               </span>
             </h3>
-            {isEditable[field as keyof typeof isEditable] ? (
+            {isEditable.description ? (
               <MarkdownEditor
-                value={value}
-                onChange={({ text }) => handleChange(field as keyof typeof jobData, text)}
+                value={jobData.description}
+                onChange={({ text }) => handleChange('description', text)}
               />
             ) : (
               <CardDescription>
-                <ReactMarkdown>{value}</ReactMarkdown>
+                <ReactMarkdown>{jobData.description}</ReactMarkdown>
               </CardDescription>
             )}
           </section>
-        ))}
-        {isUpdated && (
-          <Button onClick={updateNewJob} className="mt-4">
-            Update Settings
-          </Button>
-        )}
-      </CardContent>
-    </Card>
+          <section className="group relative">
+            <h3 className="text-lg font-semibold flex items-center mb-2">
+              <UserIcon className="mr-2 h-5 w-5" /> Requirements
+              <span className="flex items-center ml-auto">
+                <Edit2 
+                  className="ml-2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity" 
+                  onClick={() => toggleEditable('requirements')} 
+                />
+                {isEditable.requirements && (
+                  <Save 
+                    className="ml-2 cursor-pointer" 
+                    onClick={() => toggleEditable('requirements')} 
+                  />
+                )}
+              </span>
+            </h3>
+            {isEditable.requirements ? (
+              <MarkdownEditor
+                value={jobData.requirements}
+                onChange={({ text }) => handleChange('requirements', text)}
+              />
+            ) : (
+              <CardDescription>
+                <ReactMarkdown>{jobData.requirements}</ReactMarkdown>
+              </CardDescription>
+            )}
+          </section>
+          <section className="group relative">
+            <h3 className="text-lg font-semibold flex items-center mb-2">
+              <UserIcon className="mr-2 h-5 w-5" /> Qualifications
+              <span className="flex items-center ml-auto">
+                <Edit2 
+                  className="ml-2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity" 
+                  onClick={() => toggleEditable('qualifications')} 
+                />
+                {isEditable.qualifications && (
+                  <Save 
+                    className="ml-2 cursor-pointer" 
+                    onClick={() => toggleEditable('qualifications')} 
+                  />
+                )}
+              </span>
+            </h3>
+            {isEditable.qualifications ? (
+              <MarkdownEditor
+                value={jobData.qualifications}
+                onChange={({ text }) => handleChange('qualifications', text)}
+              />
+            ) : (
+              <CardDescription>
+                <ReactMarkdown>{jobData.qualifications}</ReactMarkdown>
+              </CardDescription>
+            )}
+          </section>
+          {isUpdated && (
+            <Button type="submit" className="mt-4">
+              Update Settings
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+    </form>
   );
 }

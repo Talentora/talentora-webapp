@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
-import { getJob, getApplicants } from '@/utils/supabase/queries';
+import { getJob, getApplicants,updateJob } from '@/utils/supabase/queries';
 import Job from '@/components/Job';
 import { Tables } from '@/types/types_db';
 type Job = Tables<'jobs'>
@@ -18,7 +18,7 @@ export default async function Page({ params }: JobPageProps) {
     return (
       <div>
         <Job job={job} applicants={applicants} />
-      </div>
+        </div>
     );
   } else {
     return (

@@ -14,14 +14,11 @@ interface JobProps {
   applicants: Applicant[];
 }
 
-export default function Job({ job, applicants }: JobProps) {
-  const handleJobUpdate = async (updatedJobData: Job) => {
-    await updateJob(job.id, updatedJobData);
-  };
+export default function Job({ job, applicants}: JobProps) {
 
   return (
     <div className="container mx-auto p-4 space-y-8">
-      <JobHeader job={job} onUpdate={handleJobUpdate}/>
+      <JobHeader job={job} />
       <ApplicantStatistics />
       <RecentApplicants applicants={applicants} />
       <RoboRecruiterConfig job={job} />
