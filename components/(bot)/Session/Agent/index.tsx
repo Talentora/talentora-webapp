@@ -8,7 +8,6 @@ import Avatar from './avatar';
 import ModelBadge from './model';
 import dynamic from 'next/dynamic';
 
-
 export const Agent: React.FC<{
   isReady: boolean;
   statsAggregator: StatsAggregator;
@@ -52,7 +51,6 @@ export const Agent: React.FC<{
             <Avatar />
           )}
         </div>
-        
       </div>
     );
   },

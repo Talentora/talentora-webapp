@@ -1,8 +1,8 @@
-import { useEffect } from "react";
-import { Mic } from "lucide-react";
-import { useVoiceClientMediaDevices } from "realtime-ai-react";
-import { AudioIndicatorBar } from "../AudioIndicator";
-import { Field } from "../../ui/field";
+import { useEffect } from 'react';
+import { Mic } from 'lucide-react';
+import { useVoiceClientMediaDevices } from 'realtime-ai-react';
+import { AudioIndicatorBar } from '../AudioIndicator';
+import { Field } from '../../ui/field';
 import {
   Select,
   SelectTrigger,
@@ -11,10 +11,9 @@ import {
   SelectValue
 } from '../../ui/select';
 
-
 export const DeviceSelect: React.FC<DeviceSelectProps> = () => {
-
-  const { availableMics, selectedMic, updateMic } =useVoiceClientMediaDevices();
+  const { availableMics, selectedMic, updateMic } =
+    useVoiceClientMediaDevices();
 
   useEffect(() => {
     if (selectedMic) {

@@ -28,9 +28,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           id="skip"
           className="min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]"
         >
-          <Suspense fallback={<Loading />}>
-            {children}
-          </Suspense>
+          <Suspense fallback={<Loading />}>{children}</Suspense>
         </main>
         {/* <Footer /> */}
         <Suspense>

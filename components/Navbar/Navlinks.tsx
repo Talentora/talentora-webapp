@@ -36,17 +36,16 @@ export default function Navlinks({ user }: NavlinksProps) {
       <div className="flex justify-end space-x-8">
         {user ? (
           <div className="flex flex-row items-center">
-            {
-              user.full_name ?
+            {user.full_name ? (
               <Label>Hello, {user.full_name}</Label>
-              :
+            ) : (
               <Label>Hello, {user.email}</Label>
-            }
+            )}
             <form onSubmit={(e) => handleRequest(e, SignOut, router)}>
               <input type="hidden" name="pathName" value={usePathname()} />
               <button type="submit" className={s.link}>
-              Sign out
-            </button>
+                Sign out
+              </button>
             </form>
           </div>
         ) : (

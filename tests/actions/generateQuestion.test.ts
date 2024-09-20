@@ -3,7 +3,7 @@ import { generateText } from 'ai';
 
 // Mock the ai module
 jest.mock('ai', () => ({
-  generateText: jest.fn(),
+  generateText: jest.fn()
 }));
 
 describe('generateQuestion', () => {
@@ -21,7 +21,7 @@ describe('generateQuestion', () => {
     // Verify that generateText was called with the correct arguments
     expect(generateText).toHaveBeenCalledWith({
       model: expect.any(Function),
-      prompt: 'What is love?',
+      prompt: 'What is love?'
     });
   });
 

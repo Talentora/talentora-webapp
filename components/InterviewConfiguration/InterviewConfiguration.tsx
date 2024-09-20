@@ -26,10 +26,7 @@ import {
 } from '@/components/ui/card';
 import { Tables } from '@/types/types_db';
 type Job = Tables<'jobs'>;
-export default function Component(
-
-  job: Job
-) {
+export default function Component(job: Job) {
   const router = useRouter();
   const [config, setConfig] = useState({
     recruiterName: '',
@@ -128,7 +125,6 @@ export default function Component(
       </Card>
 
       {/* Combined Interview Settings Card */}
-      
 
       {/* Interviewer Settings Card */}
       <Card>
@@ -184,11 +180,7 @@ export default function Component(
         </CardContent>
       </Card>
 
-    
-
-      <AiRecruiterSetup/>
-
-
+      <AiRecruiterSetup />
 
       {/* Enter Sample Interview Button */}
       <Button

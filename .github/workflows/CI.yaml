@@ -29,7 +29,6 @@ env:
   NEXT_PUBLIC_MANUAL_ROOM_ENTRY: ${{ secrets.NEXT_PUBLIC_MANUAL_ROOM_ENTRY }}
   NEXT_PUBLIC_GROQ_API_KEY: ${{ secrets.NEXT_PUBLIC_GROQ_API_KEY }}
 
-
 jobs:
   install-and-test: # Validation, lint test.
     runs-on: ubuntu-latest
@@ -48,18 +47,18 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: npm install       
+        run: npm install
 
       - name: Run Lint
         run: |
           npm run lint
           npm run prettier-fix
         continue-on-error: true
-        
+
       - name: Run Tests
         run: npm test
         continue-on-error: true
-        
+
       - name: Build Next.js project
         run: npm run build
 

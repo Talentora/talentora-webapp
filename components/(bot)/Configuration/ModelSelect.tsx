@@ -2,7 +2,7 @@ import React from 'react';
 import { Package } from 'lucide-react';
 
 import { LLMModel, llmModels } from '@/utils/config';
-import { Field } from '@/components/ui/field'
+import { Field } from '@/components/ui/field';
 import {
   Select,
   SelectTrigger,
