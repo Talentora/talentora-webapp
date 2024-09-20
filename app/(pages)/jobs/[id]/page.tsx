@@ -18,7 +18,7 @@ export default async function Page({ params }: JobPageProps) {
     return (
       <div>
         <Job job={job} applicants={applicants} />
-        </div>
+      </div>
     );
   } else {
     return (

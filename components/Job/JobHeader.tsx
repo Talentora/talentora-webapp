@@ -19,15 +19,9 @@ import {
 } from 'lucide-react';
 import { Tables } from '@/types/types_db';
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import 'react-markdown-editor-lite/lib/index.css';
-import ReactMarkdown from 'react-markdown';
 import { updateJob } from '@/utils/supabase/queries';
 
 type Job = Tables<'jobs'>
-const MarkdownEditor = dynamic(() => import('react-markdown-editor-lite'), {
-  ssr: false,
-});
 
 interface JobHeaderProps {
   job: Job;
@@ -75,6 +69,7 @@ export function JobHeader({ job }: JobHeaderProps) {
 
   return (
     <form action={async (formData: FormData) => {
+      console.log("updating")
       await updateJob(job.id, jobData);
       setIsUpdated(false);
     }}>
@@ -143,14 +138,13 @@ export function JobHeader({ job }: JobHeaderProps) {
               </span>
             </h3>
             {isEditable.description ? (
-              <MarkdownEditor
-                value={jobData.description}
-                onChange={({ text }) => handleChange('description', text)}
+              <textarea
+                value={jobData.description || ''}
+                onChange={(e) => handleChange('description', e.target.value)}
+                className="w-full p-2 border rounded"
               />
             ) : (
-              <CardDescription>
-                <ReactMarkdown>{jobData.description}</ReactMarkdown>
-              </CardDescription>
+              <CardDescription>{jobData.description}</CardDescription>
             )}
           </section>
           <section className="group relative">
@@ -170,14 +164,13 @@ export function JobHeader({ job }: JobHeaderProps) {
               </span>
             </h3>
             {isEditable.requirements ? (
-              <MarkdownEditor
-                value={jobData.requirements}
-                onChange={({ text }) => handleChange('requirements', text)}
+              <textarea
+                value={jobData.requirements || ''}
+                onChange={(e) => handleChange('requirements', e.target.value)}
+                className="w-full p-2 border rounded"
               />
             ) : (
-              <CardDescription>
-                <ReactMarkdown>{jobData.requirements}</ReactMarkdown>
-              </CardDescription>
+              <CardDescription>{jobData.requirements}</CardDescription>
             )}
           </section>
           <section className="group relative">
@@ -197,14 +190,13 @@ export function JobHeader({ job }: JobHeaderProps) {
               </span>
             </h3>
             {isEditable.qualifications ? (
-              <MarkdownEditor
-                value={jobData.qualifications}
-                onChange={({ text }) => handleChange('qualifications', text)}
+              <textarea
+                value={jobData.qualifications || ''}
+                onChange={(e) => handleChange('qualifications', e.target.value)}
+                className="w-full p-2 border rounded"
               />
             ) : (
-              <CardDescription>
-                <ReactMarkdown>{jobData.qualifications}</ReactMarkdown>
-              </CardDescription>
+              <CardDescription>{jobData.qualifications}</CardDescription>
             )}
           </section>
           {isUpdated && (

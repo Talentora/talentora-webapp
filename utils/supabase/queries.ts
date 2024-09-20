@@ -85,21 +85,30 @@ export const getJob = cache(
   }
 );
 
+/**
+ * Updates a job in the database.
+ * 
+ * @param id - The ID of the job to update.
+ * @param jobData - The new data for the job.
+ * @returns The updated job data.
+ * @throws Error if the update operation fails.
+ */
 export const updateJob = async (
   id: number,
   jobData: Job
-) => {
+): Promise<Job | null> => {
   const supabase = createClient();
   const { data, error } = await supabase
     .from('jobs')
     .update({ ...jobData, id: undefined })
-    .eq('id', id);
+    .eq('id', id)
+    .select();
 
   if (error) {
     throw new Error(`Failed to update job: ${error.message}`);
   }
 
-  return data;
+  return data?.[0] || null;
 };
 
 export const getApplicants = cache(
