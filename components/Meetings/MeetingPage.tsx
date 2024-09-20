@@ -13,12 +13,12 @@ interface Meeting {
     participants: string[] // Assuming participants are represented by strings (e.g., user IDs)
 }
 
-export function MeetingCard({ meeting }: { meeting: Meeting }) {
+export function MeetingPage({ meeting }: { meeting: Meeting }) {
     const startDate = new Date(meeting.start_time * 1000)
     const formattedDate = startDate.toLocaleString()
 
     return (
-      <Link href={`/interviews/${meeting.id}`}>
+      <div >
         {/* Make the card clickable by wrapping with Link */}
         <Card className="w-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 cursor-pointer">
           <CardHeader>
@@ -48,6 +48,6 @@ export function MeetingCard({ meeting }: { meeting: Meeting }) {
             </div>
           </CardContent>
         </Card>
-      </Link>
+      </div>
     )
 }
