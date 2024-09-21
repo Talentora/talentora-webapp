@@ -64,7 +64,7 @@ export const defaultConfig = {
       {
         role: 'system',
         content:
-          "You are interviewing a candidate for a job be friendly, follow up on questions related to the candidates answers, and try to determine if the candidate is a good fit for the role."
+          'You are interviewing a candidate for a job be friendly, follow up on questions related to the candidates answers, and try to determine if the candidate is a good fit for the role.'
         //composeSystemPrompt(defaultLanguage),
       }
     ]

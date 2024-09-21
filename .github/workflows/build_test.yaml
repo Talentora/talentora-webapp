@@ -10,7 +10,7 @@ on:
       - dev
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # SUPABASE
   NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
@@ -32,7 +32,6 @@ env:
   NEXT_PUBLIC_MANUAL_ROOM_ENTRY: ${{ vars.NEXT_PUBLIC_MANUAL_ROOM_ENTRY }}
   NEXT_PUBLIC_GROQ_API_KEY: ${{ vars.NEXT_PUBLIC_GROQ_API_KEY }}
 
-
 jobs:
   install-and-test: # Validation, lint test.
     runs-on: ubuntu-latest
@@ -50,57 +49,54 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: npm install       
+        run: npm install
 
       - name: Run Lint
         run: |
           npm run lint
           npm run prettier-fix
         continue-on-error: true
-        
+
       - name: Run Tests
         run: npm test
         continue-on-error: true
-        
+
       - name: Build Next.js project
         run: npm run build
 
-  generate_types: 
-      runs-on: ubuntu-latest
-      steps:
-          - name: Checkout repository
-            uses: actions/checkout@v2
-          - uses: supabase/setup-cli@v1
-            with:
-              version: latest
-          - name: init supabase
-            run: | 
-              supabase init --force
-              supabase db start
-          - name: Verify generated types match Postgres schema
-            run: |
-              mkdir -p types
-              npx supabase gen types typescript --local --schema public > types/types_db.ts
-              if ! git diff --ignore-space-at-eol --exit-code --quiet types/types_db.ts; then
-                echo "Detected uncommitted changes after build. See status below:"
-                git diff
-              else
-                echo "No changes detected."
-                exit 0
-              fi
-          - name: Set Git config with custom user
-            run: |
-              git config --global user.name "github-actions[bot]"
-              git config --global user.email "github-actions[bot]@users.noreply.github.com"
-              git fetch origin ${{ github.head_ref || github.ref_name }}  # Fetch the branch
-              git checkout ${{ github.head_ref || github.ref_name }}  # Check out the branch to avoid detached HEAD
-              git add types/types_db.ts
-              git commit -m "Update generated types based on Postgres schema" || echo "Nothing to commit"
-              git pull origin ${{ github.head_ref || github.ref_name }}  # Pull the latest changes
-              git push origin ${{ github.head_ref || github.ref_name }}  # Push to the correct branch
-
-
-
+  generate_types:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: init supabase
+        run: |
+          supabase init --force
+          supabase db start
+      - name: Verify generated types match Postgres schema
+        run: |
+          mkdir -p types
+          npx supabase gen types typescript --local --schema public > types/types_db.ts
+          if ! git diff --ignore-space-at-eol --exit-code --quiet types/types_db.ts; then
+            echo "Detected uncommitted changes after build. See status below:"
+            git diff
+          else
+            echo "No changes detected."
+            exit 0
+          fi
+      - name: Set Git config with custom user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin ${{ github.head_ref || github.ref_name }}  # Fetch the branch
+          git checkout ${{ github.head_ref || github.ref_name }}  # Check out the branch to avoid detached HEAD
+          git add types/types_db.ts
+          git commit -m "Update generated types based on Postgres schema" || echo "Nothing to commit"
+          git pull origin ${{ github.head_ref || github.ref_name }}  # Pull the latest changes
+          git push origin ${{ github.head_ref || github.ref_name }}  # Push to the correct branch
 
   deploy-preview: # Make sure this can be deployed. Only run when on a pull request
     runs-on: ubuntu-latest

@@ -19,10 +19,9 @@ export const Configure: React.FC<ConfigureProps> = ({
   return (
     <>
       <section className="flex flex-col flex-wrap gap-3 lg:gap-4">
-        <DeviceSelect  />
+        <DeviceSelect />
         <UploadComponent />
 
-        
         {/* this is the LLM model and voice */}
         {/* <Configuration /> */}
       </section>
@@ -30,7 +29,7 @@ export const Configure: React.FC<ConfigureProps> = ({
       <section className="flex flex-col gap-4 border-y border-primary-hairline py-4 mt-4">
         <div className="flex flex-row justify-between items-center">
           <Label className="flex flex-row gap-1 items-center text-primary-200">
-            Join with mic muted{" "}
+            Join with mic muted{' '}
           </Label>
           <Switch
             checked={startAudioOff}

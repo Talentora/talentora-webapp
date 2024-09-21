@@ -6,11 +6,8 @@ import { createClient } from '@/utils/supabase/server';
 type Job = Tables<'jobs'>;
 
 const Page = async () => {
-  const supabase = createClient()
-  const [jobs] = await Promise.all([
-    getJobs(supabase)
-  ]);
-
+  const supabase = createClient();
+  const [jobs] = await Promise.all([getJobs(supabase)]);
 
   return (
     <div>

@@ -49,18 +49,21 @@ export type Database = {
       }
       companies: {
         Row: {
+          description: string | null
           id: number
           industry: string | null
           location: string | null
           name: string
         }
         Insert: {
+          description?: string | null
           id?: never
           industry?: string | null
           location?: string | null
           name: string
         }
         Update: {
+          description?: string | null
           id?: never
           industry?: string | null
           location?: string | null
@@ -99,6 +102,8 @@ export type Database = {
           description: string | null
           id: number
           location: string | null
+          qualifications: string | null
+          requirements: string | null
           salary_range: string | null
           title: string
         }
@@ -109,6 +114,8 @@ export type Database = {
           description?: string | null
           id?: never
           location?: string | null
+          qualifications?: string | null
+          requirements?: string | null
           salary_range?: string | null
           title: string
         }
@@ -119,6 +126,8 @@ export type Database = {
           description?: string | null
           id?: never
           location?: string | null
+          qualifications?: string | null
+          requirements?: string | null
           salary_range?: string | null
           title?: string
         }
