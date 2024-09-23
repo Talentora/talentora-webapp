@@ -23,7 +23,6 @@ interface DeviceSelectProps {
 }
 
 export const DeviceSelect: React.FC<DeviceSelectProps> = ({
-  hideMeter = false,
 }) => {
   const { availableMics, selectedMic, updateMic, availableCams, selectedCam, updateCam } =
     useVoiceClientMediaDevices();
@@ -41,15 +40,21 @@ export const DeviceSelect: React.FC<DeviceSelectProps> = ({
             <Mic size={24} />
             <SelectValue placeholder="Select a microphone" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-foreground"> {/* Adding a background color */}
             <SelectScrollUpButton />
             <SelectGroup>
               <SelectLabel>Microphones</SelectLabel>
               {availableMics?.length === 0 ? (
-                <SelectItem value="loading">Loading devices...</SelectItem>
+                <SelectItem value="loading" className="bg-foreground">
+                  Loading devices...
+                </SelectItem>
               ) : (
                 availableMics?.map((mic) => (
-                  <SelectItem key={mic.deviceId} value={mic.deviceId || "unknown"}>
+                  <SelectItem
+                    key={mic.deviceId}
+                    value={mic.deviceId || "unknown"}
+                    className="bg-foreground hover:bg-background"  // Adding a background color with hover effect
+                  >
                     {mic.label || "Unknown Device"}
                   </SelectItem>
                 ))
@@ -58,7 +63,7 @@ export const DeviceSelect: React.FC<DeviceSelectProps> = ({
             <SelectScrollDownButton />
           </SelectContent>
         </Select>
-        {!hideMeter && <AudioIndicatorBar />}
+        <AudioIndicatorBar />
       </Field>
       <Field label="Camera" error={false}>
         <Select onValueChange={(value) => updateCam(value)}>
@@ -66,15 +71,21 @@ export const DeviceSelect: React.FC<DeviceSelectProps> = ({
             <Camera size={24} />
             <SelectValue placeholder="Select a camera" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-foreground"> {/* Adding a background color */}
             <SelectScrollUpButton />
             <SelectGroup>
               <SelectLabel>Cameras</SelectLabel>
               {availableCams?.length === 0 ? (
-                <SelectItem value="loading">Loading devices...</SelectItem>
+                <SelectItem value="loading" className="bg-foreground">
+                  Loading devices...
+                </SelectItem>
               ) : (
                 availableCams?.map((camera) => (
-                  <SelectItem key={camera.deviceId} value={camera.deviceId || "unknown"}>
+                  <SelectItem
+                    key={camera.deviceId}
+                    value={camera.deviceId || "unknown"}
+                    className="bg-foreground hover:bg-background"  // Adding a background color with hover effect
+                  >
                     {camera.label || "Unknown Device"}
                   </SelectItem>
                 ))
