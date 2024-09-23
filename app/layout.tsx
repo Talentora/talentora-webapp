@@ -4,7 +4,7 @@ import Navbar from '@/components/Navbar';
 import { Toaster } from '@/components/Toasts/toaster';
 import { PropsWithChildren, Suspense } from 'react';
 import { getURL } from '@/utils/helpers';
-import 'styles/main.css';
+import '@/styles/main.css';
 const title = 'RoboRecruiter';
 const description = 'Brought to you by Vercel, Stripe, and Supabase.';
 import Loading from '@/components/Loading';
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
-      <body className="bg-black p-10">
+      <body className="bg-background p-10">
         <Navbar />
         <main
           id="skip"

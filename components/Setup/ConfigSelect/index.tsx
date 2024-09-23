@@ -3,39 +3,39 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState,
-} from "react";
-import { cx } from "class-variance-authority";
-import { Languages } from "lucide-react";
-import Image from "next/image";
+  useState
+} from 'react';
+import { cx } from 'class-variance-authority';
+import { Languages } from 'lucide-react';
+import Image from 'next/image';
 import {
   VoiceClientConfigOption,
   VoiceClientServices,
-  VoiceEvent,
-} from "realtime-ai";
-import { useVoiceClient, useVoiceClientEvent } from "realtime-ai-react";
+  VoiceEvent
+} from 'realtime-ai';
+import { useVoiceClient, useVoiceClientEvent } from 'realtime-ai-react';
 
-import { AppContext } from "@/components/context";
+import { AppContext } from '@/app/(pages)/bot/context';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { Field } from "@/components/ui/field";
-import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
+  AccordionTrigger
+} from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
+import { Field } from '@/components/ui/field';
+import { Label } from '@/components/ui/label';
+import { Select } from '@/components/ui/select';
 import {
   defaultLLMPrompt,
   LANGUAGES,
   LLM_MODEL_CHOICES,
-  PRESET_CHARACTERS,
-} from "@/rtvi.config";
-import { cn } from "@/utils/tailwind";
+  PRESET_CHARACTERS
+} from '@/utils/rtvi.config';
+import { cn } from '@/utils/cn';
 
-import Prompt from "../Prompt";
-import StopSecs from "../StopSecs";
+import Prompt from '../Prompt';
+import StopSecs from '../StopSecs';
 
 type CharacterData = {
   name: string;
@@ -55,18 +55,18 @@ interface ConfigSelectProps {
 const llmProviders = LLM_MODEL_CHOICES.map((choice) => ({
   label: choice.label,
   value: choice.value,
-  models: choice.models,
+  models: choice.models
 }));
 
 const tileCX = cx(
-  "*:opacity-50 cursor-pointer rounded-xl px-4 py-3 bg-white border border-primary-200 bg-white select-none ring-ring transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+  '*:opacity-50 cursor-pointer rounded-xl px-4 py-3 bg-white border border-primary-200 bg-white select-none ring-ring transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
 );
-const tileActiveCX = cx("*:opacity-100 bg-primary-100/70 border-transparent");
+const tileActiveCX = cx('*:opacity-100 bg-primary-100/70 border-transparent');
 
 export const ConfigSelect: React.FC<ConfigSelectProps> = ({
   onConfigUpdate,
   state,
-  inSession = false,
+  inSession = false
 }) => {
   const voiceClient = useVoiceClient();
   const { character, setCharacter, language, setLanguage } =
@@ -107,13 +107,13 @@ export const ConfigSelect: React.FC<ConfigSelectProps> = ({
 
     // Get the current config llm model
     setLlmModel(
-      voiceClient.getServiceOptionValueFromConfig("llm", "model") as string
+      voiceClient.getServiceOptionValueFromConfig('llm', 'model') as string
     );
 
     // Get the current config vad stop secs
     setVadStopSecs(
       (
-        voiceClient.getServiceOptionValueFromConfig("vad", "params") as {
+        voiceClient.getServiceOptionValueFromConfig('vad', 'params') as {
           stop_secs: number;
         }
       ).stop_secs
@@ -131,70 +131,70 @@ export const ConfigSelect: React.FC<ConfigSelectProps> = ({
     const updatedConfig: VoiceClientConfigOption[] =
       voiceClient.setConfigOptions([
         {
-          service: "vad",
-          options: [{ name: "params", value: { stop_secs: vadStopSecs } }],
+          service: 'vad',
+          options: [{ name: 'params', value: { stop_secs: vadStopSecs } }]
         },
         {
-          service: "tts",
+          service: 'tts',
           options: [
             {
-              name: "voice",
+              name: 'voice',
               value:
                 language !== 0
                   ? LANGUAGES[language].default_voice
-                  : characterData.voice,
+                  : characterData.voice
             },
             {
-              name: "model",
-              value: LANGUAGES[language].tts_model,
+              name: 'model',
+              value: LANGUAGES[language].tts_model
             },
             {
-              name: "language",
-              value: LANGUAGES[language].value,
-            },
-          ],
+              name: 'language',
+              value: LANGUAGES[language].value
+            }
+          ]
         },
         {
-          service: "llm",
+          service: 'llm',
           options: [
             {
-              name: "model",
-              value: llmModel,
+              name: 'model',
+              value: llmModel
             },
             {
-              name: "initial_messages",
+              name: 'initial_messages',
               value: [
                 {
-                  role: "system",
+                  role: 'system',
                   content:
                     language !== 0
                       ? defaultLLMPrompt +
                         `\nRespond only in ${LANGUAGES[language].label} please.`
-                          .split("\n")
+                          .split('\n')
                           .map((line) => line.trim())
-                          .join("\n")
+                          .join('\n')
                       : characterData.prompt
-                          .split("\n")
+                          .split('\n')
                           .map((line) => line.trim())
-                          .join("\n"),
-                },
-              ],
-            },
-          ],
+                          .join('\n')
+                }
+              ]
+            }
+          ]
         },
         {
-          service: "stt",
+          service: 'stt',
           options: [
             {
-              name: "model",
-              value: LANGUAGES[language].stt_model,
+              name: 'model',
+              value: LANGUAGES[language].stt_model
             },
             {
-              name: "language",
-              value: LANGUAGES[language].value,
-            },
-          ],
-        },
+              name: 'language',
+              value: LANGUAGES[language].value
+            }
+          ]
+        }
       ]);
 
     onConfigUpdate(updatedConfig, { llm: llmProvider });
@@ -205,7 +205,7 @@ export const ConfigSelect: React.FC<ConfigSelectProps> = ({
     voiceClient,
     onConfigUpdate,
     bufferedCharacter,
-    vadStopSecs,
+    vadStopSecs
   ]);
 
   const availableModels = LLM_MODEL_CHOICES.find(
@@ -219,9 +219,9 @@ export const ConfigSelect: React.FC<ConfigSelectProps> = ({
           characterPrompt={PRESET_CHARACTERS[bufferedCharacter].prompt}
           handleUpdate={(prompt) => {
             if (!voiceClient) return;
-            const newConfig = voiceClient.setServiceOptionInConfig("llm", {
-              name: inSession ? "messages" : "initial_messages",
-              value: prompt,
+            const newConfig = voiceClient.setServiceOptionInConfig('llm', {
+              name: inSession ? 'messages' : 'initial_messages',
+              value: prompt
             });
 
             onConfigUpdate(newConfig);
@@ -251,7 +251,7 @@ export const ConfigSelect: React.FC<ConfigSelectProps> = ({
                 <Field error={false}>
                   <div className="w-full flex flex-col md:flex-row gap-2">
                     <Select
-                      disabled={inSession && !["ready", "idle"].includes(state)}
+                      disabled={inSession && !['ready', 'idle'].includes(state)}
                       className="flex-1"
                       value={bufferedCharacter}
                       onChange={(e) =>
@@ -289,7 +289,7 @@ export const ConfigSelect: React.FC<ConfigSelectProps> = ({
                           )}
                           key={value}
                           onClick={() => {
-                            if (!["ready", "idle"].includes(state)) return;
+                            if (!['ready', 'idle'].includes(state)) return;
 
                             setLlmProvider(value);
                             setLlmModel(

@@ -1,4 +1,4 @@
-import ExpiryTimer from "@/components/Header/ExpiryTimer";
+import ExpiryTimer from "@/components/Session/ExpiryTimer";
 
 import { Logo } from "./logo";
 

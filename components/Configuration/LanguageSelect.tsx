@@ -2,7 +2,7 @@ import React from 'react';
 import { MessageCircle } from 'lucide-react';
 
 import { ttsVoices, Voice } from '@/utils/config';
-import { Field } from '../ui/field';
+import { Field } from '@/components/ui/field';
 import {
   Select,
   SelectTrigger,

@@ -56,7 +56,7 @@ const StatsTile = ({
           <SparklinesReferenceLine type="mean" />
         </Sparklines>
       </div>
-      <footer className="border-t border-primary-200 flex flex-row justify-between text-[11px] font-mono p-2 px-3"></footer>
+      <footer className="border-t border-primary-200 flex flex-row justify-between text-[11px] font-mono p-2 px-3">
         <div className="uppercase inline-flex flex-row gap-1 leading-none font-bold">
           H:
           <span className="font-normal">
@@ -118,7 +118,7 @@ export const Stats = React.memo(
             <X />
           </Button>
         </div>
-        <div className="select-none p-4 pt-0 overflow-x-scroll flex flex-row gap-8 md:gap-8 md:h-full md:overflow-x-visible md:overflow-y-scroll md:flex-col md:pb-[100px]"></div>
+        <div className="select-none p-4 pt-0 overflow-x-scroll flex flex-row gap-8 md:gap-8 md:h-full md:overflow-x-visible md:overflow-y-scroll md:flex-col md:pb-[100px]">
           <section className="flex flex-row gap-6 md:flex-col md:gap-6">
             {Object.entries(currentStats).length < 1 ? (
               <div>

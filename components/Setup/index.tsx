@@ -1,3 +1,3 @@
-import { Configure } from "./Configure";
+import { Configure } from './Configure';
 
 export { Configure };

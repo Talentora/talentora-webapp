@@ -1,10 +1,10 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
-import clsx from "clsx";
-import { Loader2 } from "lucide-react";
-import { VoiceEvent } from "realtime-ai";
-import { useVoiceClientEvent, VoiceVisualizer } from "realtime-ai-react";
+import React, { memo, useCallback, useEffect, useState } from 'react';
+import clsx from 'clsx';
+import { Loader2 } from 'lucide-react';
+import { VoiceEvent } from 'realtime-ai';
+import { useVoiceClientEvent, VoiceVisualizer } from 'realtime-ai-react';
 
-import ModelBadge from "./model";
+import ModelBadge from './model';
 
 export const Agent: React.FC<{
   isReady: boolean;
@@ -13,22 +13,22 @@ export const Agent: React.FC<{
   ({ isReady, statsAggregator }) => {
     const [hasStarted, setHasStarted] = useState<boolean>(false);
     const [botStatus, setBotStatus] = useState<
-      "initializing" | "connected" | "disconnected"
-    >("initializing");
+      'initializing' | 'connected' | 'disconnected'
+    >('initializing');
     const [botIsTalking, setBotIsTalking] = useState<boolean>(false);
 
     useEffect(() => {
       // Update the started state when the transport enters the ready state
       if (!isReady) return;
       setHasStarted(true);
-      setBotStatus("connected");
+      setBotStatus('connected');
     }, [isReady]);
 
     useVoiceClientEvent(
       VoiceEvent.BotDisconnected,
       useCallback(() => {
         setHasStarted(false);
-        setBotStatus("disconnected");
+        setBotStatus('disconnected');
       }, [])
     );
 
@@ -50,9 +50,9 @@ export const Agent: React.FC<{
     useEffect(() => () => setHasStarted(false), []);
 
     const cx = clsx(
-      "min-w-[400px] aspect-square bg-primary-300 rounded-2xl relative flex items-center justify-center transition-colors duration-2000 overflow-hidden",
-      hasStarted && "bg-gray-600",
-      botIsTalking && "bg-primary-950"
+      'min-w-[400px] aspect-square bg-primary-300 rounded-2xl relative flex items-center justify-center transition-colors duration-2000 overflow-hidden',
+      hasStarted && 'bg-gray-600',
+      botIsTalking && 'bg-primary-950'
     );
 
     return (
@@ -72,6 +72,6 @@ export const Agent: React.FC<{
   },
   (p, n) => p.isReady === n.isReady
 );
-Agent.displayName = "Agent";
+Agent.displayName = 'Agent';
 
 export default Agent;

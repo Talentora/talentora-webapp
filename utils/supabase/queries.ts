@@ -1,4 +1,4 @@
-"use server"
+'use server';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { cache } from 'react';
 import { Tables } from '@/types/types_db';
@@ -87,7 +87,7 @@ export const getJob = cache(
 
 /**
  * Updates a job in the database.
- * 
+ *
  * @param id - The ID of the job to update.
  * @param jobData - The new data for the job.
  * @returns The updated job data.
@@ -126,8 +126,10 @@ export const getApplicants = cache(
   }
 );
 
-
-export const getCompany = async (supabase: SupabaseClient, companyId: number) => {
+export const getCompany = async (
+  supabase: SupabaseClient,
+  companyId: number
+) => {
   try {
     const { data: company, error } = await supabase
       .from('companies')

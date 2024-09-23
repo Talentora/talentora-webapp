@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { VoiceClientConfigOption, VoiceClientServices } from "realtime-ai";
-import { useVoiceClient } from "realtime-ai-react";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { VoiceClientConfigOption, VoiceClientServices } from 'realtime-ai';
+import { useVoiceClient } from 'realtime-ai-react';
 
-import HelpTip from "@/components/ui/helptip";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+import HelpTip from '@/components/ui/helptip';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
-import ConfigSelect from "./ConfigSelect";
-import DeviceSelect from "./DeviceSelect";
+import ConfigSelect from './ConfigSelect';
+import DeviceSelect from './DeviceSelect';
 
 interface ConfigureProps {
   state: string;
@@ -23,7 +23,7 @@ export const Configure: React.FC<ConfigureProps> = React.memo(
     state,
     inSession = false,
     handleStartAudioOff,
-    handleConfigUpdate,
+    handleConfigUpdate
   }) => {
     const voiceClient = useVoiceClient()!;
 
@@ -65,7 +65,7 @@ export const Configure: React.FC<ConfigureProps> = React.memo(
           <section className="flex flex-col gap-4 border-y border-primary-hairline py-4">
             <div className="flex flex-row justify-between items-center">
               <Label className="flex flex-row gap-1 items-center">
-                Join with mic muted{" "}
+                Join with mic muted{' '}
                 <HelpTip text="Start with microphone muted (click to unmute)" />
               </Label>
               <Switch
@@ -83,4 +83,4 @@ export const Configure: React.FC<ConfigureProps> = React.memo(
     prevProps.state === nextProps.state
 );
 
-Configure.displayName = "Configure";
+Configure.displayName = 'Configure';

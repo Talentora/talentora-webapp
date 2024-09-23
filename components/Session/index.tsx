@@ -1,23 +1,27 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import { LineChart, Loader2, LogOut, Settings, StopCircle } from "lucide-react";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { LineChart, Loader2, LogOut, Settings, StopCircle } from 'lucide-react';
 import {
   PipecatMetrics,
   TransportState,
   VoiceClientConfigOption,
-  VoiceEvent,
-} from "realtime-ai";
-import { useVoiceClient, useVoiceClientEvent } from "realtime-ai-react";
+  VoiceEvent
+} from 'realtime-ai';
+import { useVoiceClient, useVoiceClientEvent } from 'realtime-ai-react';
 
-import StatsAggregator from "@/utils/stats_aggregator";
-import { Configure } from "@/components/Setup";
-import { Button } from "@/components/ui/button";
-import * as Card from "@/components/ui/card";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import StatsAggregator from '@/utils/stats_aggregator';
+import { Configure } from '@/components/Setup';
+import { Button } from '@/components/ui/button';
+import * as Card from '@/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 
-import Agent from "./Agent";
-import Stats from "./Stats";
-import UserMicBubble from "./UserMicBubble";
+import Agent from './Agent';
+import Stats from './Stats';
+import UserMicBubble from './UserMicBubble';
 
 let stats_aggregator: StatsAggregator;
 
@@ -50,7 +54,7 @@ export const Session = React.memo(
       VoiceEvent.Metrics,
       useCallback((metrics: PipecatMetrics) => {
         metrics?.ttfb?.map((m: { processor: string; value: number }) => {
-          stats_aggregator.addStat([m.processor, "ttfb", m.value, Date.now()]);
+          stats_aggregator.addStat([m.processor, 'ttfb', m.value, Date.now()]);
         });
       }, [])
     );
@@ -101,7 +105,7 @@ export const Session = React.memo(
 
     useEffect(() => {
       // Leave the meeting if there is an error
-      if (state === "error") {
+      if (state === 'error') {
         onLeave();
       }
     }, [state, onLeave]);
@@ -160,7 +164,7 @@ export const Session = React.memo(
                 }}
               >
                 {updatingConfig && <Loader2 className="animate-spin" />}
-                {updatingConfig ? "Updating..." : "Save Changes"}
+                {updatingConfig ? 'Updating...' : 'Save Changes'}
               </Button>
             </Card.CardFooter>
           </Card.Card>
@@ -172,7 +176,7 @@ export const Session = React.memo(
               statsAggregator={stats_aggregator}
               handleClose={() => setShowStats(false)}
             />,
-            document.getElementById("tray")!
+            document.getElementById('tray')!
           )}
 
         <div className="flex-1 flex flex-col items-center justify-center w-full">
@@ -181,7 +185,7 @@ export const Session = React.memo(
             className="w-full max-w-[320px] sm:max-w-[420px] mt-auto shadow-long"
           >
             <Agent
-              isReady={state === "ready"}
+              isReady={state === 'ready'}
               statsAggregator={stats_aggregator}
             />
           </Card.Card>
@@ -202,9 +206,9 @@ export const Session = React.memo(
                   size="icon"
                   onClick={() => {
                     voiceClient.action({
-                      service: "tts",
-                      action: "interrupt",
-                      arguments: [],
+                      service: 'tts',
+                      action: 'interrupt',
+                      arguments: []
                     });
                   }}
                 >
@@ -217,7 +221,7 @@ export const Session = React.memo(
               <TooltipContent>Show bot statistics panel</TooltipContent>
               <TooltipTrigger asChild>
                 <Button
-                  variant={showStats ? "light" : "ghost"}
+                  variant={showStats ? 'light' : 'ghost'}
                   size="icon"
                   onClick={() => setShowStats(!showStats)}
                 >
@@ -254,6 +258,6 @@ export const Session = React.memo(
   (p, n) => p.state === n.state
 );
 
-Session.displayName = "Session";
+Session.displayName = 'Session';
 
 export default Session;

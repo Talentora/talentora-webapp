@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import { JobHeader } from './JobHeader';
 import ApplicantStatistics from './ApplicantStatistics';
 import { RecentApplicants } from './RecentApplicants';
@@ -12,11 +12,9 @@ interface JobProps {
   applicants: Applicant[];
 }
 
-export default function Job({ job, applicants}: JobProps) {
-
+export default function Job({ job, applicants }: JobProps) {
   return (
     <div className="container mx-auto p-4 space-y-8">
-      
       <JobHeader job={job} />
       <ApplicantStatistics />
       <RecentApplicants applicants={applicants} />

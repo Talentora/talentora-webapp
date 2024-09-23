@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { LLMContextMessage, LLMHelper, VoiceEvent } from "realtime-ai";
 import { useVoiceClient, useVoiceClientEvent } from "realtime-ai-react";
 
-import { Button } from "../ui/button";
-import * as Card from "../ui/card";
-import { Textarea } from "../ui/textarea";
+import { Button } from "@/components/ui/button";
+import * as Card from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 
 type PromptProps = {
   handleUpdate: (context: LLMContextMessage[]) => void;

@@ -33,7 +33,13 @@ describe('getJobs', () => {
     ];
     jest
       .spyOn(supabase.from('jobs'), 'select')
-      .mockResolvedValue({ data: jobs, error: null, count: null, status: 200, statusText: 'OK' });
+      .mockResolvedValue({
+        data: jobs,
+        error: null,
+        count: null,
+        status: 200,
+        statusText: 'OK'
+      });
     const result = await getJobs(supabase);
     expect(result).toEqual(jobs);
   });
@@ -41,16 +47,33 @@ describe('getJobs', () => {
   it('should return an empty array when no jobs are found', async () => {
     jest
       .spyOn(supabase.from('jobs'), 'select')
-      .mockResolvedValue({ data: [], error: null, count: null, status: 200, statusText: 'OK' });
+      .mockResolvedValue({
+        data: [],
+        error: null,
+        count: null,
+        status: 200,
+        statusText: 'OK'
+      });
     const result = await getJobs(supabase);
     expect(result).toEqual([]);
   });
 
   it('should handle errors correctly and return an empty array', async () => {
-    const error = { message: 'Error fetching jobs', details: '', hint: '', code: '' };
+    const error = {
+      message: 'Error fetching jobs',
+      details: '',
+      hint: '',
+      code: ''
+    };
     jest
       .spyOn(supabase.from('jobs'), 'select')
-      .mockResolvedValue({ data: null, error, count: null, status: 500, statusText: 'Internal Server Error' });
+      .mockResolvedValue({
+        data: null,
+        error,
+        count: null,
+        status: 500,
+        statusText: 'Internal Server Error'
+      });
     const result = await getJobs(supabase);
     expect(result).toEqual([]);
   });
@@ -90,7 +113,10 @@ describe('updateJob', () => {
     const result = await updateJob(jobId, updatedJobData as Job);
 
     expect(result).toEqual(mockUpdateResponse.data);
-    expect(supabase.from('jobs').update).toHaveBeenCalledWith({ ...updatedJobData, id: undefined });
+    expect(supabase.from('jobs').update).toHaveBeenCalledWith({
+      ...updatedJobData,
+      id: undefined
+    });
     expect(supabase.from('jobs').update().eq).toHaveBeenCalledWith('id', jobId);
   });
 
@@ -109,8 +135,16 @@ describe('updateJob', () => {
 
     jest
       .spyOn(supabase.from('jobs'), 'update')
-      .mockResolvedValue({ data: null, error: mockError, count: null, status: 500, statusText: 'Internal Server Error' });
+      .mockResolvedValue({
+        data: null,
+        error: mockError,
+        count: null,
+        status: 500,
+        statusText: 'Internal Server Error'
+      });
 
-    await expect(updateJob(jobId, updatedJobData as Job)).rejects.toThrow('Failed to update job: Failed to update job');
+    await expect(updateJob(jobId, updatedJobData as Job)).rejects.toThrow(
+      'Failed to update job: Failed to update job'
+    );
   });
 });

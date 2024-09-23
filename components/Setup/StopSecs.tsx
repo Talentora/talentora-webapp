@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import HelpTip from "@/components/ui/helptip";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import HelpTip from '@/components/ui/helptip';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 
 interface StopSecsProps {
   vadStopSecs: number | undefined;
@@ -11,7 +11,7 @@ interface StopSecsProps {
 
 const StopSecs: React.FC<StopSecsProps> = ({
   vadStopSecs = 0.3,
-  handleChange,
+  handleChange
 }) => {
   const [stopSecs, setStopSecs] = useState<number[]>([vadStopSecs]);
 

@@ -1,6 +1,6 @@
-import React, { createContext, ReactNode, useState } from "react";
+import React, { createContext, ReactNode, useState } from 'react';
 
-import { LANGUAGES } from "@/utils/rtvi.config";
+import { LANGUAGES } from '@/utils/rtvi.config';
 
 interface AppContextType {
   character: number;
@@ -12,14 +12,14 @@ interface AppContextType {
 export const AppContext = createContext<AppContextType>({
   character: 0,
   setCharacter: () => {
-    throw new Error("setCharacter function must be overridden");
+    throw new Error('setCharacter function must be overridden');
   },
   language: 0,
   setLanguage: () => {
-    throw new Error("setLanguage function must be overridden");
-  },
+    throw new Error('setLanguage function must be overridden');
+  }
 });
-AppContext.displayName = "AppContext";
+AppContext.displayName = 'AppContext';
 
 type AppContextProps = {
   children: ReactNode;

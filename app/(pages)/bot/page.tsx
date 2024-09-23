@@ -10,7 +10,6 @@ import App from './App';
 import { defaultConfig } from '@/utils/config';
 import { Splash } from './Splash';
 
-
 const voiceClient = new VoiceClient({
   baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
   enableMic: true,

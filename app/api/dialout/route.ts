@@ -4,8 +4,8 @@ import {
   defaultBotProfile,
   defaultConfig,
   defaultMaxDuration,
-  defaultServices,
-} from "utils/rtvi.config";
+  defaultServices
+} from 'utils/rtvi.config';
 
 export async function POST(request: Request) {
   const dialout_data = await request.json();
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     return new Response(
       `dialout_data or phoneNumber not found on request body`,
       {
-        status: 400,
+        status: 400
       }
     );
   }
@@ -25,19 +25,19 @@ export async function POST(request: Request) {
     max_duration: defaultMaxDuration,
     api_keys: {
       together: process.env.TOGETHER_API_KEY,
-      cartesia: process.env.CARTESIA_API_KEY,
+      cartesia: process.env.CARTESIA_API_KEY
     },
     config: defaultConfig,
-    dialout_settings: dialout_data,
+    dialout_settings: dialout_data
   };
 
   const req = await fetch(process.env.DAILY_BOTS_URL, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.DAILY_API_KEY}`,
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.DAILY_API_KEY}`
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(payload)
   });
 
   const res = await req.json();

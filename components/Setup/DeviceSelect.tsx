@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { Mic } from "lucide-react";
 import { useVoiceClientMediaDevices } from "realtime-ai-react";
 
-import { Field } from "../ui/field";
-import { Select } from "../ui/select";
+import { Field } from "@/components/ui/field";
+import { Select } from "@/components/ui/select";
 
 import { AudioIndicatorBar } from "./AudioIndicator";
 

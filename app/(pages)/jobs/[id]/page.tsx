@@ -1,8 +1,8 @@
 import { createClient } from '@/utils/supabase/server';
-import { getJob, getApplicants,updateJob } from '@/utils/supabase/queries';
+import { getJob, getApplicants, updateJob } from '@/utils/supabase/queries';
 import Job from '@/components/Job';
 import { Tables } from '@/types/types_db';
-type Job = Tables<'jobs'>
+type Job = Tables<'jobs'>;
 
 interface JobPageProps {
   params: { id: string };

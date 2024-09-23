@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 import {
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-  Card,
+  Card
 } from '@/components/ui/card';
 import { Button } from '../ui/button';
 import {
@@ -15,13 +15,13 @@ import {
   Edit2,
   Save,
   ClipboardListIcon,
-  UserIcon,
+  UserIcon
 } from 'lucide-react';
 import { Tables } from '@/types/types_db';
 import { useState, useEffect } from 'react';
 import { updateJob } from '@/utils/supabase/queries';
 
-type Job = Tables<'jobs'>
+type Job = Tables<'jobs'>;
 
 interface JobHeaderProps {
   job: Job;
@@ -38,7 +38,7 @@ export function JobHeader({ job }: JobHeaderProps) {
     applicant_count: job.applicant_count,
     company_id: job.company_id,
     id: job.id,
-    title: job.title,
+    title: job.title
   });
 
   const [isEditable, setIsEditable] = useState({
@@ -47,7 +47,7 @@ export function JobHeader({ job }: JobHeaderProps) {
     salary: false,
     description: false,
     requirements: false,
-    qualifications: false,
+    qualifications: false
   });
 
   const [isUpdated, setIsUpdated] = useState(false);
@@ -64,15 +64,17 @@ export function JobHeader({ job }: JobHeaderProps) {
   }, [jobData, job]);
 
   const handleChange = (field: keyof typeof jobData, value: string) => {
-    setJobData(prev => ({ ...prev, [field]: value }));
+    setJobData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
-    <form action={async (formData: FormData) => {
-      console.log("updating")
-      await updateJob(job.id, jobData);
-      setIsUpdated(false);
-    }}>
+    <form
+      action={async (formData: FormData) => {
+        console.log('updating');
+        await updateJob(job.id, jobData);
+        setIsUpdated(false);
+      }}
+    >
       <Card className="w-full max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">{job.title}</CardTitle>
@@ -80,40 +82,41 @@ export function JobHeader({ job }: JobHeaderProps) {
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <span className="flex items-center group relative">
                 <BriefcaseIcon className="mr-1 h-4 w-4" /> {jobData.department}
-                <Edit2 
-                  className="ml-2 cursor-pointer absolute right-0 opacity-0 group-hover:opacity-100 transition-opacity" 
-                  onClick={() => toggleEditable('department')} 
+                <Edit2
+                  className="ml-2 cursor-pointer absolute right-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => toggleEditable('department')}
                 />
                 {isEditable.department && (
-                  <Save 
-                    className="ml-2 cursor-pointer absolute right-0" 
-                    onClick={() => toggleEditable('department')} 
+                  <Save
+                    className="ml-2 cursor-pointer absolute right-0"
+                    onClick={() => toggleEditable('department')}
                   />
                 )}
               </span>
               <span className="flex items-center group relative">
                 <MapPinIcon className="mr-1 h-4 w-4" /> {jobData.location}
-                <Edit2 
-                  className="ml-2 cursor-pointer absolute right-0 opacity-0 group-hover:opacity-100 transition-opacity" 
-                  onClick={() => toggleEditable('location')} 
+                <Edit2
+                  className="ml-2 cursor-pointer absolute right-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => toggleEditable('location')}
                 />
                 {isEditable.location && (
-                  <Save 
-                    className="ml-2 cursor-pointer absolute right-0" 
-                    onClick={() => toggleEditable('location')} 
+                  <Save
+                    className="ml-2 cursor-pointer absolute right-0"
+                    onClick={() => toggleEditable('location')}
                   />
                 )}
               </span>
               <span className="flex items-center group relative">
-                <CircleDollarSign className="mr-1 h-4 w-4" /> {jobData.salary_range}
-                <Edit2 
-                  className="ml-2 cursor-pointer absolute right-0 opacity-0 group-hover:opacity-100 transition-opacity" 
-                  onClick={() => toggleEditable('salary')} 
+                <CircleDollarSign className="mr-1 h-4 w-4" />{' '}
+                {jobData.salary_range}
+                <Edit2
+                  className="ml-2 cursor-pointer absolute right-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => toggleEditable('salary')}
                 />
                 {isEditable.salary && (
-                  <Save 
-                    className="ml-2 cursor-pointer absolute right-0" 
-                    onClick={() => toggleEditable('salary')} 
+                  <Save
+                    className="ml-2 cursor-pointer absolute right-0"
+                    onClick={() => toggleEditable('salary')}
                   />
                 )}
               </span>
@@ -125,14 +128,14 @@ export function JobHeader({ job }: JobHeaderProps) {
             <h3 className="text-lg font-semibold flex items-center mb-2">
               <ClipboardListIcon className="mr-2 h-5 w-5" /> Job Description
               <span className="flex items-center ml-auto">
-                <Edit2 
-                  className="ml-2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity" 
-                  onClick={() => toggleEditable('description')} 
+                <Edit2
+                  className="ml-2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => toggleEditable('description')}
                 />
                 {isEditable.description && (
-                  <Save 
-                    className="ml-2 cursor-pointer" 
-                    onClick={() => toggleEditable('description')} 
+                  <Save
+                    className="ml-2 cursor-pointer"
+                    onClick={() => toggleEditable('description')}
                   />
                 )}
               </span>
@@ -151,14 +154,14 @@ export function JobHeader({ job }: JobHeaderProps) {
             <h3 className="text-lg font-semibold flex items-center mb-2">
               <UserIcon className="mr-2 h-5 w-5" /> Requirements
               <span className="flex items-center ml-auto">
-                <Edit2 
-                  className="ml-2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity" 
-                  onClick={() => toggleEditable('requirements')} 
+                <Edit2
+                  className="ml-2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => toggleEditable('requirements')}
                 />
                 {isEditable.requirements && (
-                  <Save 
-                    className="ml-2 cursor-pointer" 
-                    onClick={() => toggleEditable('requirements')} 
+                  <Save
+                    className="ml-2 cursor-pointer"
+                    onClick={() => toggleEditable('requirements')}
                   />
                 )}
               </span>
@@ -177,14 +180,14 @@ export function JobHeader({ job }: JobHeaderProps) {
             <h3 className="text-lg font-semibold flex items-center mb-2">
               <UserIcon className="mr-2 h-5 w-5" /> Qualifications
               <span className="flex items-center ml-auto">
-                <Edit2 
-                  className="ml-2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity" 
-                  onClick={() => toggleEditable('qualifications')} 
+                <Edit2
+                  className="ml-2 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => toggleEditable('qualifications')}
                 />
                 {isEditable.qualifications && (
-                  <Save 
-                    className="ml-2 cursor-pointer" 
-                    onClick={() => toggleEditable('qualifications')} 
+                  <Save
+                    className="ml-2 cursor-pointer"
+                    onClick={() => toggleEditable('qualifications')}
                   />
                 )}
               </span>

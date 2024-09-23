@@ -1,8 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { VoiceEvent } from "realtime-ai";
-import { useVoiceClientEvent } from "realtime-ai-react";
-
-import styles from "@/styles.module.css";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { VoiceEvent } from 'realtime-ai';
+import { useVoiceClientEvent } from 'realtime-ai-react';
 
 const TranscriptOverlay: React.FC = () => {
   const [sentences, setSentences] = useState<string[]>([]);
@@ -32,14 +30,16 @@ const TranscriptOverlay: React.FC = () => {
   }, [sentencesBuffer, sentences]);
 
   return (
-    <div className={styles.container}>
+    <div className="absolute left-4 right-4 bottom-6 top-6 text-white z-50 mx-auto flex flex-col gap-2 items-center justify-end text-center">
       {sentences.map((sentence, index) => (
         <abbr
           key={index}
-          className={`${styles.transcript} ${styles.sentence}`}
+          className="font-semibold text-sm max-w-xs opacity-1 m-0 animate-fadeOut"
           onAnimationEnd={() => setSentences((s) => s.slice(1))}
         >
-          <span>{sentence}</span>
+          <span className="box-decoration-clone bg-primary-800/30 rounded-md px-2 py-1 leading-none">
+            {sentence}
+          </span>
         </abbr>
       ))}
     </div>
