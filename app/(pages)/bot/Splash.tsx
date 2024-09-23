@@ -26,10 +26,14 @@ export const Splash: React.FC<SplashProps> = ({ handleReady }) => {
           RoboRecruiter
         </h1>
 
-        <Button onClick={handleReady} disabled={!isReady}>
+        <Button 
+          onClick={handleReady} 
+          disabled={!isReady} 
+          className="hover:text-foreground"
+        >
           {isReady ? 'Try demo' : 'Downloading assets...'}
         </Button>
-      </div>
+        </div>
     </main>
   );
 };

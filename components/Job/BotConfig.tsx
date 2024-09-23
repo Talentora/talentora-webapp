@@ -21,7 +21,7 @@ export function RoboRecruiterConfig({ job }: RoboRecruiterConfigProps) {
         <div className="space-y-6">
           <Link
             href={`/jobs/${job.id}/settings`}
-            className="w-full bg-primary-400 p-5 rounded-2xl block text-center"
+            className="w-full bg-primary-dark p-5 rounded-2xl block text-center text-foreground"
           >
             Customize Your RoboRecruiter
           </Link>

@@ -75,7 +75,7 @@ export function JobHeader({ job }: JobHeaderProps) {
         setIsUpdated(false);
       }}
     >
-      <Card className="w-full max-w-4xl mx-auto">
+      <Card className="w-full max-w-4xl">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">{job.title}</CardTitle>
           <div className="flex flex-row justify-between mb-4">

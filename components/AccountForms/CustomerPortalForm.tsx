@@ -52,31 +52,35 @@ export default function CustomerPortalForm({ subscription }: Props) {
   };
 
   return (
-    <Card shadow className="my-8">
+    <Card className="my-8 bg-card text-card-foreground">
       <CardHeader>
-        <CardTitle>Your Plan</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-primary">Your Plan</CardTitle>
+        <CardDescription className="text-muted-foreground">
           {subscription
             ? `You are currently on the ${subscription?.prices?.products?.name} plan.`
             : 'You are not currently subscribed to any plan.'}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="mt-8 mb-4 text-xl font-semibold">
+        <div className="mt-8 mb-4 text-xl font-semibold text-primary">
           {subscription ? (
             `${subscriptionPrice}/${subscription?.prices?.interval}`
           ) : (
-            <Link href="/">Choose your plan</Link>
+            <Link href="/" className="text-link">
+              Choose your plan
+            </Link>
           )}
         </div>
       </CardContent>
       <CardFooter>
         <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center w-full">
-          <p className="pb-4 sm:pb-0">Manage your subscription on Stripe.</p>
+          <p className="pb-4 sm:pb-0 text-muted-foreground">
+            Manage your subscription on Stripe.
+          </p>
           <Button
-            // variant="slim"
             onClick={handleStripePortalRequest}
             loading={isSubmitting}
+            className="bg-button-primary text-button-primary-foreground"
           >
             Open customer portal
           </Button>

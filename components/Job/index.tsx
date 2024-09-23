@@ -14,7 +14,7 @@ interface JobProps {
 
 export default function Job({ job, applicants }: JobProps) {
   return (
-    <div className="container mx-auto p-4 space-y-8">
+    <div className="container mx-auto">
       <JobHeader job={job} />
       <ApplicantStatistics />
       <RecentApplicants applicants={applicants} />

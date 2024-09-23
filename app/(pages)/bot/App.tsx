@@ -131,7 +131,7 @@ export default function App() {
           state={appState}
         />
       </Card.CardContent>
-      <Card.CardFooter isButtonArray>
+      <Card.CardFooter>
         <Button key="start" onClick={() => start()} disabled={!isReady}>
           {!isReady && <Loader2 className="animate-spin" />}
           {status_text[transportState as keyof typeof status_text]}

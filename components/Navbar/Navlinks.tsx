@@ -7,6 +7,14 @@ import Logo from '@/components/icons/Logo';
 import { usePathname, useRouter } from 'next/navigation';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import { Label } from '../ui/label';
+import { useState } from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
+import { User } from 'lucide-react';
 
 interface NavlinksProps {
   user?: any;
@@ -32,7 +40,7 @@ export default function Navlinks({ user }: NavlinksProps) {
           <Logo />
         </Link>
         <nav className="ml-6 space-x-2 lg:block">
-          {links.map((link) => (
+          {links.map((link) =>
             (!link.requiresAuth || user) && (
               <Link
                 key={link.href}
@@ -42,23 +50,46 @@ export default function Navlinks({ user }: NavlinksProps) {
                 {link.label}
               </Link>
             )
-          ))}
+          )}
         </nav>
       </div>
       <div className="flex justify-end space-x-8">
         {user ? (
-          <div className="flex flex-row items-center">
-            <Label>Hello, {user.full_name || user.email}</Label>
-            <form onSubmit={(e) => handleRequest(e, SignOut, router)}>
-              <input type="hidden" name="pathName" value={pathname} />
-              <button
-                type="submit"
-                className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-primary-light focus:ring-2 focus:ring-accent focus:ring-opacity-50"
-              >
-                Sign out
-              </button>
-            </form>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-primary-light focus:ring-2 focus:ring-accent focus:ring-opacity-50">
+              <User className="h-6 w-6" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg"
+            >
+              <DropdownMenuItem>
+                <Label className="text-lg font-semibold text-primary">
+                  Hello,{' '}
+                  {user.full_name ? (
+                    <strong>{user.full_name}</strong>
+                  ) : (
+                    <strong>{user.email}</strong>
+                  )}
+                </Label>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleRequest(e, SignOut, router);
+                  }}
+                >
+                  <input type="hidden" name="pathName" value={pathname} />
+                  <button
+                    type="submit"
+                    className="w-full text-left inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-primary-light focus:ring-2 focus:ring-accent focus:ring-opacity-50"
+                  >
+                    Sign out
+                  </button>
+                </form>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : (
           <Link
             href="/signin"

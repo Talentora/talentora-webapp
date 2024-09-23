@@ -35,10 +35,10 @@ export default function EmailForm({
   };
 
   return (
-    <Card shadow className="my-8">
+    <Card className="my-8 bg-card text-card-foreground">
       <CardHeader>
-        <CardTitle>Your Email</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-primary">Your Email</CardTitle>
+        <CardDescription className="text-muted-foreground">
           Please enter the email address you want to use to login.
         </CardDescription>
       </CardHeader>
@@ -47,7 +47,7 @@ export default function EmailForm({
           <input
             type="text"
             name="newEmail"
-            className="w-full p-3 rounded-md bg-neutral-800"
+            className="w-full p-3 rounded-md bg-input text-input-foreground"
             defaultValue={userEmail ?? ''}
             placeholder="Your email"
             maxLength={64}
@@ -55,12 +55,13 @@ export default function EmailForm({
         </form>
       </CardContent>
       <CardFooter className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
-        <p className="pb-4 sm:pb-0">We will email you to verify the change.</p>
+        <p className="pb-4 sm:pb-0 text-muted-foreground">We will email you to verify the change.</p>
         <Button
           variant="default"
           type="submit"
           form="emailForm"
           loading={isSubmitting}
+          className="bg-button-primary text-button-primary-foreground"
         >
           Update Email
         </Button>
