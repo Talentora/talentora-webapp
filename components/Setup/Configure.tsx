@@ -52,13 +52,13 @@ export const Configure: React.FC<ConfigureProps> = React.memo(
 
     return (
       <>
-        <section className="flex flex-col flex-wrap gap-3 lg:gap-4">
+        <section >
           <DeviceSelect hideMeter={false} />
-          <ConfigSelect
+          {/* <ConfigSelect
             state={state}
             onConfigUpdate={updateConfig}
             inSession={inSession}
-          />
+          /> */}
         </section>
 
         {!inSession && (
