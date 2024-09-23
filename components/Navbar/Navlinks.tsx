@@ -14,6 +14,12 @@ interface NavlinksProps {
 
 export default function Navlinks({ user }: NavlinksProps) {
   const router = getRedirectMethod() === 'client' ? useRouter() : null;
+  const pathname = usePathname();
+
+  const links = [
+    { href: '/pricing', label: 'Pricing' },
+    { href: '/account', label: 'Account', requiresAuth: true },
+  ];
 
   return (
     <div className="relative flex flex-row justify-between py-4 align-center md:py-6 sticky top-0 bg-background z-40 transition-all duration-150 h-16 md:h-20">
@@ -26,35 +32,28 @@ export default function Navlinks({ user }: NavlinksProps) {
           <Logo />
         </Link>
         <nav className="ml-6 space-x-2 lg:block">
-          <Link
-            href="/pricing"
-            className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-zinc-200 rounded-md p-1 hover:text-zinc-100 focus:outline-none focus:text-zinc-100 focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50"
-          >
-            Pricing
-          </Link>
-          {user && (
-            <Link
-              href="/account"
-              className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-zinc-200 rounded-md p-1 hover:text-zinc-100 focus:outline-none focus:text-zinc-100 focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50"
-            >
-              Account
-            </Link>
-          )}
+          {links.map((link) => (
+            (!link.requiresAuth || user) && (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-primary-light focus:ring-2 focus:ring-accent focus:ring-opacity-50"
+              >
+                {link.label}
+              </Link>
+            )
+          ))}
         </nav>
       </div>
       <div className="flex justify-end space-x-8">
         {user ? (
           <div className="flex flex-row items-center">
-            {user.full_name ? (
-              <Label>Hello, {user.full_name}</Label>
-            ) : (
-              <Label>Hello, {user.email}</Label>
-            )}
+            <Label>Hello, {user.full_name || user.email}</Label>
             <form onSubmit={(e) => handleRequest(e, SignOut, router)}>
-              <input type="hidden" name="pathName" value={usePathname()} />
+              <input type="hidden" name="pathName" value={pathname} />
               <button
                 type="submit"
-                className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-zinc-100 focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50"
+                className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-primary-light focus:ring-2 focus:ring-accent focus:ring-opacity-50"
               >
                 Sign out
               </button>
@@ -63,7 +62,7 @@ export default function Navlinks({ user }: NavlinksProps) {
         ) : (
           <Link
             href="/signin"
-            className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-zinc-100 focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50"
+            className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-primary-light focus:ring-2 focus:ring-accent focus:ring-opacity-50"
           >
             Sign In
           </Link>

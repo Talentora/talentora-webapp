@@ -10,21 +10,23 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-sans)', ...fontFamily.sans],
+        poppins: ["Poppins", "sans-serif"],
+        oswald: ["Oswald", "sans-serif"],
       },
       colors: {
         primary: {
-          DEFAULT: '#102C57',  // Primary color (dark blue)
-          light: '#DAC0A3',    // Light shade of primary (light brown)
-          dark: '#081C40',     // Darker shade of primary if needed
+          DEFAULT: '#1A73E8',  // Primary color (blue, clean and professional)
+          light: '#4A90E2',    // Lighter shade for hover/focus (light blue)
+          dark: '#174EA6',     // Darker shade for buttons/important elements (dark blue)
         },
-        foreground: '#FEFAF6',  // Foreground (light color for text)
-        background: '#EADBC8',  // Background (light beige)
+        foreground: '#FFFFFF',  // Foreground (pure white for text readability)
+        background: '#F5F6FA',  // Background (very light grey for a clean feel)
         accent: {
-          DEFAULT: '#DAC0A3',  // Accent color (light brown)
-          light: '#EADBC8',    // Lighter version of accent
+          DEFAULT: '#FFB74D',  // Accent color (warm yellow/orange for highlights)
+          light: '#FFD180',    // Lighter accent for hover states
+          dark: '#F57C00',     // Darker accent for contrast
         },
-        muted: '#F5F5F7',  // Muted, subtle color for less emphasis
+        muted: '#E0E0E0',  // Muted, subtle color for borders and less emphasis (light grey)
       },
     },
   },
