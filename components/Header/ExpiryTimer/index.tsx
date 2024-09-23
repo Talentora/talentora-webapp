@@ -1,13 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Timer } from 'lucide-react';
-import { VoiceEvent } from 'realtime-ai';
-import { useVoiceClient, useVoiceClientEvent } from 'realtime-ai-react';
+import React, { useCallback, useEffect, useState } from "react";
+import { Timer } from "lucide-react";
+import { VoiceEvent } from "realtime-ai";
+import { useVoiceClient, useVoiceClientEvent } from "realtime-ai-react";
 
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger
-} from '@/components/ui/tooltip';
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/utils/cn";
+
+import styles from "@/styles.module.css";
 
 const ExpiryTimer: React.FC = () => {
   const voiceClient = useVoiceClient();
@@ -19,6 +22,14 @@ const ExpiryTimer: React.FC = () => {
     useCallback(() => setExp(voiceClient?.transportExpiry), [voiceClient])
   );
 
+  useVoiceClientEvent(
+    VoiceEvent.Disconnected,
+    useCallback(() => {
+      setExp(undefined);
+      setTime({ minutes: 0, seconds: 0 });
+    }, [])
+  );
+
   const noExpiry = !exp || exp === 0;
 
   useEffect(() => {
@@ -28,6 +39,7 @@ const ExpiryTimer: React.FC = () => {
 
     // Function to update time
     const updateTime = () => {
+      if (noExpiry) clearInterval(interval);
       const currentTimestamp = Math.floor(Date.now() / 1000);
       const differenceInSeconds = futureTimestamp! - currentTimestamp;
       const minutes = Math.floor(differenceInSeconds / 60);
@@ -52,14 +64,12 @@ const ExpiryTimer: React.FC = () => {
   return (
     <Tooltip>
       <TooltipTrigger>
-        <div className="ml-auto flex items-center text-sm bg-primary-100 rounded-lg px-3 py-2 border-t border-primary-200 gap-1.5">
-          <Timer size={20} className="text-primary-400" />
-          <span
-            className={`font-semibold tracking-wider w-16 ${isExpired ? 'text-primary-400' : ''}`}
-          >
+        <div className={styles.expiry}>
+          <Timer size={20} />
+          <span className={cn(styles.time, isExpired && styles.expired)}>
             {isExpired
-              ? '--:--'
-              : `${time.minutes}m ${time.seconds.toString().padStart(2, '0')}s`}
+              ? "--:--"
+              : `${time.minutes}m ${time.seconds.toString().padStart(2, "0")}s`}
           </span>
         </div>
       </TooltipTrigger>

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { Mic } from 'lucide-react';
-import Configuration from '@/components/(bot)/Configuration';
+import Configuration from '@/components/Configuration';
 import { AiRecruiterSetup } from '../ai-recruiter-setup';
 import {
   Select,

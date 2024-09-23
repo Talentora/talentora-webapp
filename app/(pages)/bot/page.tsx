@@ -9,13 +9,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import App from './App';
 import { defaultConfig } from '@/utils/config';
 import { Splash } from './Splash';
-import {
-  getUser,
-  getUserDetails,
-  getSubscription
-} from '@/utils/supabase/queries';
-import { redirect } from 'next/navigation';
-import { createClient } from '@/utils/supabase/server';
+
 
 const voiceClient = new VoiceClient({
   baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
@@ -23,7 +17,7 @@ const voiceClient = new VoiceClient({
   config: defaultConfig
 });
 
-const page = async () => {
+const Page = () => {
   const [showSplash, setShowSplash] = useState<boolean>(true);
 
   if (showSplash) {
@@ -46,4 +40,4 @@ const page = async () => {
   );
 };
 
-export default page;
+export default Page;
