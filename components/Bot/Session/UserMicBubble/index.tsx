@@ -43,6 +43,8 @@ export default function UserMicBubble({
     <div className="relative z-20 flex flex-col mx-auto pt-5 md:pt-0">
       <div className={`relative cursor-pointer box-border w-24 h-24 rounded-full flex justify-center items-center mx-auto z-20 transition-all duration-500 ease opacity-50 border-6 border-primary-300 outline-6 outline-primary-300 ${cx}`} onClick={() => handleMute()}>
         <div className="relative z-20 opacity-30 transition-opacity duration-500 ease leading-none">
+          <h1>Is active {String(active)}</h1>
+          <h1>Can talk {String(canTalk)}</h1>
           {!active ? (
             <Pause size={42} className="size-8 md:size-10" />
           ) : canTalk ? (

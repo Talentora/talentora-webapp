@@ -5,13 +5,10 @@ import { PipecatMetrics, TransportState, VoiceEvent } from "realtime-ai";
 import { useVoiceClient, useVoiceClientEvent } from "realtime-ai-react";
 
 import StatsAggregator from "@/utils/stats_aggregator";
-import { Configure } from "../Setup";
 import { Button } from "@/components/ui/button";
 import * as Card from "@/components/ui/card";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 import Agent from "./Agent";
-import Stats from "./Stats";
 import UserMicBubble from "./UserMicBubble";
 
 let stats_aggregator: StatsAggregator;
@@ -28,7 +25,6 @@ export const Session = React.memo(
     const voiceClient = useVoiceClient()!;
     const [hasStarted, setHasStarted] = useState<boolean>(false);
     const [showDevices, setShowDevices] = useState<boolean>(false);
-    const [showStats, setShowStats] = useState<boolean>(false);
     const [muted, setMuted] = useState(startAudioOff);
     const modalRef = useRef<HTMLDialogElement>(null);
 
@@ -96,28 +92,9 @@ export const Session = React.memo(
 
     return (
       <>
-        <dialog ref={modalRef}>
-          <Card.Card className="w-svw max-w-full md:max-w-md lg:max-w-lg">
-            <Card.CardHeader>
-              <Card.CardTitle>Configuration</Card.CardTitle>
-            </Card.CardHeader>
-            <Card.CardContent>
-              <Configure state={state} inSession={true} />
-            </Card.CardContent>
-            <Card.CardFooter>
-              <Button onClick={() => setShowDevices(false)}>Close</Button>
-            </Card.CardFooter>
-          </Card.Card>
-        </dialog>
+        
 
-        {showStats &&
-          createPortal(
-            <Stats
-              statsAggregator={stats_aggregator}
-              handleClose={() => setShowStats(false)}
-            />,
-            document.getElementById("tray")!
-          )}
+        
 
         <div className="flex-1 flex flex-col items-center justify-center w-full">
           <Card.Card
@@ -138,53 +115,12 @@ export const Session = React.memo(
 
         <footer className="w-full flex flex-row mt-auto self-end md:w-auto">
           <div className="flex flex-row justify-between gap-3 w-full md:w-auto">
-            <Tooltip>
-              <TooltipContent>Interrupt bot</TooltipContent>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    voiceClient.sendAction({
-                      service: "tts",
-                      action: "interrupt",
-                      arguments: [],
-                    });
-                  }}
-                >
-                  <StopCircle />
-                </Button>
-              </TooltipTrigger>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipContent>Show bot statistics panel</TooltipContent>
-              <TooltipTrigger asChild>
-                <Button
-                  variant={showStats ? "ghost" : "ghost"}
-                  size="icon"
-                  onClick={() => setShowStats(!showStats)}
-                >
-                  <LineChart />
-                </Button>
-              </TooltipTrigger>
-            </Tooltip>
-            <Tooltip>
-              <TooltipContent>Configure</TooltipContent>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setShowDevices(true)}
-                >
-                  <Settings />
-                </Button>
-              </TooltipTrigger>
-            </Tooltip>
-            <Button onClick={() => onLeave()} className="ml-auto">
-              <LogOut size={16} />
-              End
-            </Button>
+            <div className="ml-auto fixed bottom-4 right-4">
+              <Button onClick={() => onLeave()}>
+                <LogOut size={16} />
+                End
+              </Button>
+            </div>
           </div>
         </footer>
       </>
