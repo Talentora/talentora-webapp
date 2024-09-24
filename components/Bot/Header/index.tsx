@@ -1,4 +1,4 @@
-import ExpiryTimer from "@/components/Session/ExpiryTimer";
+import ExpiryTimer from "@/components/Bot/Header/ExpiryTimer";
 
 import { Logo } from "./logo";
 
@@ -9,7 +9,7 @@ export function Header() {
   return (
     <header
       id="header"
-      className="w-full flex self-start items-center p-[--app-padding] pb-0 justify-between"
+      className="w-full flex self-start items-center p-[--app-padding] justify-between"
     >
       <div className="group flex gap-8">
         <span className="border border-primary-200 rounded-xl p-2 flex place-content-center transition-all bg-white shadow-short hover:shadow-mid">

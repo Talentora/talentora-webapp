@@ -1,6 +1,6 @@
-import React from 'react';
-import { VoiceEvent } from 'realtime-ai';
-import { useVoiceClient, useVoiceClientEvent } from 'realtime-ai-react';
+import React from "react";
+import { VoiceEvent } from "realtime-ai";
+import { useVoiceClient, useVoiceClientEvent } from "realtime-ai-react";
 
 const ModelBadge: React.FC = () => {
   const voiceClient = useVoiceClient()!;
@@ -9,9 +9,11 @@ const ModelBadge: React.FC = () => {
   const getModelFromConfig = () => {
     if (!voiceClient) return;
 
-    setModel(
-      voiceClient.getServiceOptionValueFromConfig('llm', 'model') as string
-    );
+    voiceClient.getServiceOptionsFromConfig("llm").options.find((option: any) => {
+      if (option.name === "model") {
+        setModel(option.value as string);
+      }
+    });
   };
 
   useVoiceClientEvent(VoiceEvent.ConfigUpdated, () => {

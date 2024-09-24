@@ -1,42 +1,65 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { VoiceClient } from 'realtime-ai';
-import { VoiceClientAudio, VoiceClientProvider } from 'realtime-ai-react';
+import { useEffect, useRef, useState } from "react";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { LLMHelper } from "realtime-ai";
+import { DailyVoiceClient } from "realtime-ai-daily";
+import { VoiceClientAudio, VoiceClientProvider } from "realtime-ai-react";
 
-import { Header } from '@/components/ui/header';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import App from './App';
-import { defaultConfig } from '@/utils/config';
-import { Splash } from './Splash';
+import App from "@/components/Bot/App";
+import { CharacterProvider } from "@/components/Bot/context";
+import Splash from "@/components/Bot/Splash";
+import {
+  BOT_READY_TIMEOUT,
+  defaultConfig,
+  defaultServices,
+} from "@/utils/rtvi.config";
 
-const voiceClient = new VoiceClient({
-  baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
-  enableMic: true,
-  config: defaultConfig
-});
+export default function Home() {
+  const [showSplash, setShowSplash] = useState(true);
+  const voiceClientRef = useRef<DailyVoiceClient | null>(null);
 
-const Page = () => {
-  const [showSplash, setShowSplash] = useState<boolean>(true);
+  useEffect(() => {
+    if (!showSplash || voiceClientRef.current) {
+      return;
+    }
+    const voiceClient = new DailyVoiceClient({
+      baseUrl: process.env.NEXT_PUBLIC_BASE_URL || "/api",
+      services: defaultServices,
+      config: defaultConfig,
+      timeout: BOT_READY_TIMEOUT,
+      enableCam: true,
+    });
+    const llmHelper = new LLMHelper({
+      callbacks: {
+        onLLMFunctionCall: () => {
+          const audio = new Audio("shutter.mp3");
+          audio.play();
+        },
+      },
+    });
+    voiceClient.registerHelper("llm", llmHelper);
+
+    voiceClientRef.current = voiceClient;
+  }, [showSplash]);
 
   if (showSplash) {
     return <Splash handleReady={() => setShowSplash(false)} />;
   }
 
   return (
-    <VoiceClientProvider voiceClient={voiceClient}>
-      <TooltipProvider>
-        <main>
-          <Header />
-          <div id="app">
-            <App />
-          </div>
-        </main>
-        <aside id="tray" />
-        <VoiceClientAudio />
-      </TooltipProvider>
+    <VoiceClientProvider voiceClient={voiceClientRef.current!}>
+      <CharacterProvider>
+        <TooltipProvider>
+          <main>
+            <div id="app">
+              <App />
+            </div>
+          </main>
+          <aside id="tray" />
+        </TooltipProvider>
+      </CharacterProvider>
+      <VoiceClientAudio />
     </VoiceClientProvider>
   );
-};
-
-export default Page;
+}

@@ -10,7 +10,7 @@ import {
 export async function POST(request: Request) {
   const dialout_data = await request.json();
 
-  if (!dialout_data || !process.env.DAILY_BOTS_URL) {
+  if (!dialout_data || !process.env.NEXT_PUBLIC_DAILY_BOTS_URL) {
     return new Response(
       `dialout_data or phoneNumber not found on request body`,
       {
@@ -31,11 +31,11 @@ export async function POST(request: Request) {
     dialout_settings: dialout_data
   };
 
-  const req = await fetch(process.env.DAILY_BOTS_URL, {
+  const req = await fetch(process.env.NEXT_PUBLIC_DAILY_BOTS_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.DAILY_API_KEY}`
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_DAILY_BOTS_URL}`
     },
     body: JSON.stringify(payload)
   });

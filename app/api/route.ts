@@ -4,7 +4,7 @@ import { defaultBotProfile, defaultMaxDuration } from '@/utils/rtvi.config';
 export async function POST(request: Request) {
   const { services, config } = await request.json();
 
-  if (!services || !config || !process.env.DAILY_BOTS_URL) {
+  if (!services || !config || !process.env.NEXT_PUBLIC_DAILY_BOTS_URL) {
     return new Response(`Services or config not found on request body`, {
       status: 400
     });
@@ -20,11 +20,11 @@ export async function POST(request: Request) {
     config: [...config]
   };
 
-  const req = await fetch(process.env.DAILY_BOTS_URL, {
+  const req = await fetch(process.env.NEXT_PUBLIC_DAILY_BOTS_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.DAILY_API_KEY}`
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_DAILY_API_KEY}`
     },
     body: JSON.stringify(payload)
   });

@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
-import { Ear, Loader2 } from 'lucide-react';
-import { VoiceError, VoiceEvent, VoiceMessage } from 'realtime-ai';
+import { useCallback, useEffect, useState } from "react";
+import { Ear, Loader2 } from "lucide-react";
+import { VoiceError, VoiceEvent, VoiceMessage } from "realtime-ai";
 import {
   useVoiceClient,
   useVoiceClientEvent,
-  useVoiceClientTransportState
-} from 'realtime-ai-react';
+  useVoiceClientTransportState,
+} from "realtime-ai-react";
 
-import { Alert } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import * as Card from '@/components/ui/card';
-import Session from '@/components/Session';
-import { Configure } from '@/components/Setup';
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import * as Card from "@/components/ui/card";
+import Session from "./Session";
+import { Configure } from "./Setup";
 
 const status_text = {
-  idle: 'Initializing...',
-  initializing: 'Initializing...',
-  initialized: 'Start',
-  authenticating: 'Requesting bot...',
-  connecting: 'Connecting...'
+  idle: "Initializing...",
+  initializing: "Initializing...",
+  initialized: "Start",
+  authenticating: "Requesting bot...",
+  connecting: "Connecting...",
 };
 
 export default function App() {
@@ -28,8 +28,8 @@ export default function App() {
   const transportState = useVoiceClientTransportState();
 
   const [appState, setAppState] = useState<
-    'idle' | 'ready' | 'connecting' | 'connected'
-  >('idle');
+    "idle" | "ready" | "connecting" | "connected"
+  >("idle");
   const [error, setError] = useState<string | null>(null);
   const [startAudioOff, setStartAudioOff] = useState<boolean>(false);
 
@@ -44,7 +44,7 @@ export default function App() {
 
   useEffect(() => {
     // Initialize local audio devices
-    if (!voiceClient || appState !== 'idle') return;
+    if (!voiceClient || appState !== "idle") return;
     voiceClient.initDevices();
   }, [appState, voiceClient]);
 
@@ -53,19 +53,19 @@ export default function App() {
     // We only need a subset of states to determine the ui state,
     // so this effect helps avoid excess inline conditionals.
     switch (transportState) {
-      case 'initialized':
-        setAppState('ready');
+      case "initialized":
+        setAppState("ready");
         break;
-      case 'authenticating':
-      case 'connecting':
-        setAppState('connecting');
+      case "authenticating":
+      case "connecting":
+        setAppState("connecting");
         break;
-      case 'connected':
-      case 'ready':
-        setAppState('connected');
+      case "connected":
+      case "ready":
+        setAppState("connected");
         break;
       default:
-        setAppState('idle');
+        setAppState("idle");
     }
   }, [transportState]);
 
@@ -77,9 +77,11 @@ export default function App() {
       // Disable the mic until the bot has joined
       // to avoid interrupting the bot's welcome message
       voiceClient.enableMic(false);
+      console.log("Voice Client: ",voiceClient)
+      console.log("Starting")
       await voiceClient.start();
     } catch (e) {
-      setError((e as VoiceError).message || 'Unknown error occured');
+      setError((e as VoiceError).message || "Unknown error occured");
       voiceClient.disconnect();
     }
   }
@@ -102,7 +104,7 @@ export default function App() {
   }
 
   // Connected: show session view
-  if (appState === 'connected') {
+  if (appState === "connected") {
     return (
       <Session
         state={transportState}
@@ -113,10 +115,10 @@ export default function App() {
   }
 
   // Default: show setup view
-  const isReady = appState === 'ready';
+  const isReady = appState === "ready";
 
   return (
-    <Card.Card className='w-1/3 mx-auto'>
+    <Card.Card shadow className="animate-appear max-w-lg mb-14">
       <Card.CardHeader>
         <Card.CardTitle>Configuration</Card.CardTitle>
       </Card.CardHeader>
@@ -132,7 +134,12 @@ export default function App() {
         />
       </Card.CardContent>
       <Card.CardFooter>
-        <Button key="start" onClick={() => start()} disabled={!isReady}>
+        <Button
+          key="start"
+          fullWidthMobile
+          onClick={() => start()}
+          disabled={!isReady}
+        >
           {!isReady && <Loader2 className="animate-spin" />}
           {status_text[transportState as keyof typeof status_text]}
         </Button>
