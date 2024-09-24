@@ -63,15 +63,7 @@ export default function Bot({job}:BotProps) {
       <CharacterProvider>
         <TooltipProvider>
                 <main>
-                <Card className="job-info p-4 bg-white shadow-md rounded-lg">
-                    <CardHeader>
-                        <CardTitle className="job-info__title text-2xl font-bold mb-4">Job Information</CardTitle>
-                    </CardHeader>
-                    <CardContent className="job-info__details space-y-2">
-                        <p className="text-lg"><strong>ID:</strong> {job?.id || "Missing ID"}</p>
-                        <p className="text-lg"><strong>Title:</strong> {job?.title || "Missing Job"}</p>
-                    </CardContent>
-                </Card>
+                
                 <div id="app">
                 {job && <App job={job} />}
                 </div>

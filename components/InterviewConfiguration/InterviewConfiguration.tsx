@@ -180,7 +180,6 @@ const InterviewConfiguration: React.FC<InterviewConfigurationProps> = ({ job }) 
       <AiRecruiterSetup />
 
       {/* Enter Sample Interview Button */}
-      <h1>Job id: {job?.id || 'missing'}</h1>
       <Button
         type="button"
         className="w-full"
