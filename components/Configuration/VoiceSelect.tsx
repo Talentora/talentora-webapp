@@ -11,16 +11,26 @@ import {
   SelectValue
 } from '@/components/ui/select';
 
+type Voice = {
+  id: string;
+  label: string;
+};
+
 type VoiceSelectProps = {
-  onSelect: (voice: { id: string; label: string }) => void;
+  onSelect: (voice: Voice) => void;
 };
 
 const VoiceSelect: React.FC<VoiceSelectProps> = ({ onSelect }) => {
+  const voices: Voice[] = LANGUAGES.map(lang => ({
+    id: lang.default_voice,
+    label: `${lang.label} Voice`
+  }));
+
   return (
     <Field label="Voice:">
       <Select
         onValueChange={(value) =>
-          onSelect(LANGUAGES.find((voice) => voice.default_voice === value)!)
+          onSelect(voices.find((voice) => voice.id === value)!)
         }
       >
         <SelectTrigger className="w-full">
@@ -28,8 +38,8 @@ const VoiceSelect: React.FC<VoiceSelectProps> = ({ onSelect }) => {
           <SelectValue placeholder="Select a voice" />
         </SelectTrigger>
         <SelectContent>
-          {LANGUAGES.map((voice) => (
-            <SelectItem key={voice.default_voice} value={voice.default_voice}>
+          {voices.map((voice) => (
+            <SelectItem key={voice.id} value={voice.id}>
               {voice.label}
             </SelectItem>
           ))}

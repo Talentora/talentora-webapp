@@ -86,10 +86,11 @@ export default function App(
       {
           role: "user",
           content: 
-              `Job Title: ${job.title}, 
-              Job Description: ${job.description}, 
-              Job Requirements: ${job.requirements}, 
-              Job Qualifications: ${job.qualifications}`
+              JSON.stringify(job)
+              // `Job Title: ${job.title}, 
+              // Job Description: ${job.description}, 
+              // Job Requirements: ${job.requirements}, 
+              // Job Qualifications: ${job.qualifications}`
       },
       true
   );
@@ -162,7 +163,7 @@ export default function App(
         <Card.CardFooter>
           <Button
             key="start"
-            fullWidthMobile
+            // fullWidthMobile
             onClick={() => start()}
             disabled={!isReady}
           >

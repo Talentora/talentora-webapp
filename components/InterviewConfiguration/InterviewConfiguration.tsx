@@ -128,7 +128,7 @@ const InterviewConfiguration: React.FC<InterviewConfigurationProps> = ({ job }) 
         <CardHeader>
           <CardTitle>Interviewer Settings</CardTitle>
           <CardDescription>
-            Configure the AI interviewer's name and voice.
+            Configure the AI interviewer&apos;s name and voice.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -166,7 +166,7 @@ const InterviewConfiguration: React.FC<InterviewConfigurationProps> = ({ job }) 
                 id="listenerInput"
                 value={listenerInput}
                 onChange={(e) => setListenerInput(e.target.value)}
-                placeholder={`Hi, I\'m ${config.interviewerName}. Welcome to the interview.`}
+                placeholder={`Hi, I&apos;m ${config.interviewerName}. Welcome to the interview.`}
                 className="text-primary-900"
               />
               <Button type="button" onClick={()=>{}}>

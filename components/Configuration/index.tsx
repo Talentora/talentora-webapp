@@ -2,10 +2,15 @@ import React from 'react';
 import { VoiceClientConfigOption } from 'realtime-ai';
 import { useVoiceClient } from 'realtime-ai-react';
 
-import { LANGUAGES, LLM_MODEL_CHOICES, PRESET_CHARACTERS } from '@/utils/rtvi.config';
+import { LANGUAGES } from '@/utils/rtvi.config';
 
-import ModelSelect from './ModelSelect';
-import VoiceSelect from './VoiceSelect';
+import ModelSelect from '@/components/Configuration/ModelSelect';
+import VoiceSelect from '@/components/Configuration/VoiceSelect';
+
+type Voice = {
+  id: string;
+  label: string;
+};
 
 const Configuration: React.FC<{ showAllOptions: boolean }> = () => {
   const voiceClient = useVoiceClient()!;
@@ -16,7 +21,7 @@ const Configuration: React.FC<{ showAllOptions: boolean }> = () => {
         ? { sendPartial: true }
         : { useDeepMerge: true };
 
-    voiceClient.updateConfig(config, updateOpts);
+    voiceClient.updateConfig(config);
   };
 
   const handleVoiceChange = (voice: Voice) => {
@@ -25,7 +30,7 @@ const Configuration: React.FC<{ showAllOptions: boolean }> = () => {
     });
 
     // Prompt the LLM to speak
-    voiceClient.appendLLMContext({
+    voiceClient.sendMessage({
       role: 'assistant',
       content: 'Ask if the user prefers the new voice you have been given.'
     });
@@ -37,10 +42,10 @@ const Configuration: React.FC<{ showAllOptions: boolean }> = () => {
     });
 
     if (voiceClient.state === 'ready') {
-      voiceClient.interrupt();
+      voiceClient.stop();
 
       setTimeout(() => {
-        voiceClient.appendLLMContext({
+        voiceClient.sendMessage({
           role: 'user',
           content: `I just changed your model to use ${model}! Thank me for the change.`
         });
@@ -50,14 +55,8 @@ const Configuration: React.FC<{ showAllOptions: boolean }> = () => {
 
   return (
     <div className="flex flex-col gap-3">
-      <ModelSelect
-        models={LLM_MODEL_CHOICES}
-        onSelect={(model) => handleModelChange(model)}
-      />
-      <VoiceSelect
-        voices={LANGUAGES.map(lang => ({ id: lang.default_voice, label: lang.label }))}
-        onSelect={(voice: Voice) => handleVoiceChange(voice)}
-      />
+      <ModelSelect onSelect={handleModelChange} />
+      <VoiceSelect onSelect={handleVoiceChange} />
     </div>
   );
 };

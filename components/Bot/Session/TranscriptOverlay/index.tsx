@@ -34,7 +34,7 @@ const TranscriptOverlay: React.FC = () => {
       {sentences.map((sentence, index) => (
         <abbr
           key={index}
-          className="font-semibold text-sm max-w-xs opacity-1 m-0 animate-fadeOut animation-delay-1000 leading-8"
+          className="font-semibold text-sm text-primary max-w-xs opacity-1 m-0 animate-fadeOut animation-delay-1000 leading-8"
           onAnimationEnd={() => setSentences((s) => s.slice(1))}
         >
           <span className="box-decoration-clone bg-primary-800/30 rounded-md px-2 py-1 leading-none">

@@ -42,6 +42,7 @@
     "@supabase/ssr": "^0.1.0",
     "@supabase/supabase-js": "^2.45.4",
     "@svgr/webpack": "^8.1.0",
+    "@types/react-beautiful-dnd": "^13.1.8",
     "ai": "^3.4.0",
     "class-variance-authority": "^0.7.0",
     "classnames": "^2.5.1",
@@ -71,8 +72,8 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "web-vad": "^0.0.6",
-    "zod": "^3.23.8",
-    "webpack":"^5.27.0"
+    "webpack": "^5.27.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^14.2.13",

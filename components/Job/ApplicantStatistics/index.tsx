@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 
-const page = () => {
+const ApplicantStatistics = () => {
   const [visible, setVisible] = useState(true);
 
   return (
@@ -36,4 +36,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ApplicantStatistics;

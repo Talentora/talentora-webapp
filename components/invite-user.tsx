@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/components/Toasts/use-toast';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
@@ -95,8 +95,7 @@ export function InviteUserComponent() {
                 required
               />
               {emailError && (
-                <Alert variant="destructive">
-                  <AlertCircle className="h-4 w-4" />
+                <Alert intent="danger">
                   <AlertTitle>Error</AlertTitle>
                   <AlertDescription>{emailError}</AlertDescription>
                 </Alert>

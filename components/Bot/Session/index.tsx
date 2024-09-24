@@ -77,7 +77,7 @@ export const Session = React.memo(
         <div className="flex flex-1 flex-col items-center justify-center w-full">
           <Card.Card className="w-2/3 h-1/2 shadow-long">
             <Agent isReady={state === "ready"} />
-            {/* <TranscriptOverlay/> */}
+            {/* <TranscriptOverlay /> */}
           </Card.Card>
           <UserMicBubble
             active={hasStarted}

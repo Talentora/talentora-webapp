@@ -4,10 +4,9 @@ import Link from 'next/link';
 import { SignOut } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import Logo from '@/components/icons/Logo';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import { Label } from '../ui/label';
-import { useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -21,13 +20,18 @@ interface NavlinksProps {
 }
 
 export default function Navlinks({ user }: NavlinksProps) {
-  const router = getRedirectMethod() === 'client' ? useRouter() : null;
   const pathname = usePathname();
 
   const links = [
     { href: '/pricing', label: 'Pricing' },
     { href: '/account', label: 'Account', requiresAuth: true },
   ];
+
+  const handleSignOut = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const router = getRedirectMethod() === 'client' ? require('next/navigation').useRouter() : null;
+    handleRequest(e, SignOut, router);
+  };
 
   return (
     <div className="relative flex flex-row justify-between py-4 align-center md:py-6 sticky top-0 bg-background z-40 transition-all duration-150 h-16 md:h-20">
@@ -73,12 +77,7 @@ export default function Navlinks({ user }: NavlinksProps) {
                 </Label>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleRequest(e, SignOut, router);
-                  }}
-                >
+                <form onSubmit={handleSignOut}>
                   <input type="hidden" name="pathName" value={pathname} />
                   <button
                     type="submit"

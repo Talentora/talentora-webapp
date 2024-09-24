@@ -24,8 +24,8 @@ const ModelSelect: React.FC<ModelSelectProps> = ({ onSelect }) => {
           <SelectValue placeholder="Select a model" />
         </SelectTrigger>
         <SelectContent>
-          {LLM_MODEL_CHOICES.map((choice) =>
-            choice.models.map((model) => (
+          {LLM_MODEL_CHOICES.flatMap((provider) =>
+            provider.models.map((model) => (
               <SelectItem key={model.value} value={model.value}>
                 {model.label}
               </SelectItem>

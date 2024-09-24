@@ -1,4 +1,4 @@
-import 
+import { InviteUserComponent } from "@/components/invite-user";
  
 const page = () => {
     return (

@@ -1,36 +1,36 @@
 import React from 'react';
 import { MessageCircle } from 'lucide-react';
 
-import { ttsVoices, Voice } from '@/utils/rtvi.config';
-import { Field } from '@/components/ui/field';
+import { LANGUAGES } from '@/utils/rtvi.config';
+import { Field } from '../ui/field';
 import {
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
   SelectValue
-} from '@/components/ui/select';
+} from '../ui/select';
 
 type LanguageSelectProps = {
-  onSelect: (voice: Voice) => void;
+  onSelect: (language: typeof LANGUAGES[0]) => void;
 };
 
 const LanguageSelect: React.FC<LanguageSelectProps> = ({ onSelect }) => {
   return (
-    <Field label="Voice:">
+    <Field label="Language:">
       <Select
         onValueChange={(value) =>
-          onSelect(ttsVoices.find((voice) => voice.id === value)!)
+          onSelect(LANGUAGES.find((lang) => lang.value === value)!)
         }
       >
         <SelectTrigger className="w-full">
           <MessageCircle className="mr-2 h-4 w-4" />
-          <SelectValue placeholder="Select a voice" />
+          <SelectValue placeholder="Select a language" />
         </SelectTrigger>
         <SelectContent>
-          {ttsVoices.map((voice: Voice) => (
-            <SelectItem key={voice.id} value={voice.id}>
-              {voice.label}
+          {LANGUAGES.map((language) => (
+            <SelectItem key={language.value} value={language.value}>
+              {language.label}
             </SelectItem>
           ))}
         </SelectContent>
