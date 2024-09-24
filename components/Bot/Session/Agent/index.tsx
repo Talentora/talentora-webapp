@@ -35,8 +35,8 @@ const Agent: React.FC<{ isReady: boolean }> = memo(({ isReady }) => {
   return (
     <div className="flex flex-col items-center justify-center h-full w-full">
       <div className={`relative flex flex-col items-center justify-center w-full h-full border-2 border-solid rounded-lg ${hasStarted ? "border-light" : "border-foreground"} ${botIsTalking ? "bg-green-100" : "bg-white"}`}>
-        {!hasStarted ? (
-          <span className="absolute inset-0 flex items-center justify-center">
+        {!hasStarted ? ( // if session hasn't start yet display loading
+          <span >
             <Loader2 size={32} className="animate-spin text-gray-500" />
           </span>
         ) : (

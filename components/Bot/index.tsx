@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { LLMHelper } from "realtime-ai";
 import { DailyVoiceClient } from "realtime-ai-daily";
 import { VoiceClientAudio, VoiceClientProvider } from "realtime-ai-react";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import App from "@/components/Bot/App";
 import { CharacterProvider } from "@/components/Bot/context";
@@ -48,25 +48,11 @@ export default function Bot({job}:BotProps) {
         },
       },
     });
-
-    if (job) {
-        // adding job info to the bot context
-        llmHelper.appendToMessages(
-            {
-                role: "system",
-                content: 
-                    `Job Title: ${job?.title}, Job Description: ${job.description}, 
-                    Job Requirements: ${job.requirements}, Job Qualifications: ${job.qualifications}`
-            },
-            true
-        );
-    }
     
     voiceClient.registerHelper("llm", llmHelper);
 
-
     voiceClientRef.current = voiceClient;
-  }, [showSplash]);
+  }, [showSplash, job]);
 
   if (showSplash) {
     return <Splash handleReady={() => setShowSplash(false)} />;
@@ -76,20 +62,21 @@ export default function Bot({job}:BotProps) {
     <VoiceClientProvider voiceClient={voiceClientRef.current!}>
       <CharacterProvider>
         <TooltipProvider>
-          <main>
-            <div className="job-info p-4 bg-white shadow-md rounded-lg">
-              <h2 className="job-info__title text-2xl font-bold mb-4">Job Information</h2>
-              <div className="job-info__details space-y-2">
-                <p className="text-lg"><strong>ID:</strong> {job?.id}</p>
-                <p className="text-lg"><strong>Title:</strong> {job?.title}</p>
-                <p className="text-lg"><strong>Context:</strong> {}</p>
-
-              </div>
-            </div>
-            <div id="app">
-              <App />
-            </div>
+                <main>
+                <Card className="job-info p-4 bg-white shadow-md rounded-lg">
+                    <CardHeader>
+                        <CardTitle className="job-info__title text-2xl font-bold mb-4">Job Information</CardTitle>
+                    </CardHeader>
+                    <CardContent className="job-info__details space-y-2">
+                        <p className="text-lg"><strong>ID:</strong> {job?.id || "Missing ID"}</p>
+                        <p className="text-lg"><strong>Title:</strong> {job?.title || "Missing Job"}</p>
+                    </CardContent>
+                </Card>
+                <div id="app">
+                {job && <App job={job} />}
+                </div>
           </main>
+          
           <aside id="tray" />
         </TooltipProvider>
       </CharacterProvider>

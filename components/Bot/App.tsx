@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Ear, Loader2 } from "lucide-react";
-import { VoiceError, VoiceEvent, VoiceMessage } from "realtime-ai";
+import { LLMHelper, VoiceError, VoiceEvent, VoiceMessage } from "realtime-ai";
 import {
   useVoiceClient,
   useVoiceClientEvent,
@@ -23,7 +23,17 @@ const status_text = {
   connecting: "Connecting...",
 };
 
-export default function App() {
+import { Tables } from "@/types/types_db";
+type Job = Tables<'jobs'>;
+
+interface AppProps {
+  job:Job
+}
+
+export default function App(
+  {job}:AppProps
+
+) {
   const voiceClient = useVoiceClient()!;
   const transportState = useVoiceClientTransportState();
 
@@ -69,6 +79,22 @@ export default function App() {
     }
   }, [transportState]);
 
+
+  function addJobContext() {
+    const llmHelper = voiceClient.getHelper("llm") as LLMHelper;
+    llmHelper.appendToMessages(
+      {
+          role: "user",
+          content: 
+              `Job Title: ${job.title}, 
+              Job Description: ${job.description}, 
+              Job Requirements: ${job.requirements}, 
+              Job Qualifications: ${job.qualifications}`
+      },
+      true
+  );
+  }
+
   async function start() {
     if (!voiceClient) return;
 
@@ -77,8 +103,7 @@ export default function App() {
       // Disable the mic until the bot has joined
       // to avoid interrupting the bot's welcome message
       voiceClient.enableMic(false);
-      console.log("Voice Client: ",voiceClient)
-      console.log("Starting")
+      addJobContext();
       await voiceClient.start();
     } catch (e) {
       setError((e as VoiceError).message || "Unknown error occured");
