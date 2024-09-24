@@ -1,65 +1,27 @@
-"use client";
+import Bot from "@/components/Bot";
+import { getJob } from "@/utils/supabase/queries";
+import { createClient } from "@/utils/supabase/server";
+import { Tables } from "@/types/types_db";
 
-import { useEffect, useRef, useState } from "react";
-import { TooltipProvider } from "@radix-ui/react-tooltip";
-import { LLMHelper } from "realtime-ai";
-import { DailyVoiceClient } from "realtime-ai-daily";
-import { VoiceClientAudio, VoiceClientProvider } from "realtime-ai-react";
+type Job = Tables<'jobs'>;
 
-import App from "@/components/Bot/App";
-import { CharacterProvider } from "@/components/Bot/context";
-import Splash from "@/components/Bot/Splash";
-import {
-  BOT_READY_TIMEOUT,
-  defaultConfig,
-  defaultServices,
-} from "@/utils/rtvi.config";
+interface PageProps {
+  searchParams: { jobId?: string };
+}
 
-export default function Home() {
-  const [showSplash, setShowSplash] = useState(true);
-  const voiceClientRef = useRef<DailyVoiceClient | null>(null);
+export default async function Page({ searchParams }: PageProps) {
+  const jobId = searchParams.jobId;
+  const supabase = createClient();
 
-  useEffect(() => {
-    if (!showSplash || voiceClientRef.current) {
-      return;
-    }
-    const voiceClient = new DailyVoiceClient({
-      baseUrl: process.env.NEXT_PUBLIC_BASE_URL || "/api",
-      services: defaultServices,
-      config: defaultConfig,
-      timeout: BOT_READY_TIMEOUT,
-      enableCam: true,
-    });
-    const llmHelper = new LLMHelper({
-      callbacks: {
-        onLLMFunctionCall: () => {
-          const audio = new Audio("shutter.mp3");
-          audio.play();
-        },
-      },
-    });
-    voiceClient.registerHelper("llm", llmHelper);
+  let job: Job | null = null;
 
-    voiceClientRef.current = voiceClient;
-  }, [showSplash]);
-
-  if (showSplash) {
-    return <Splash handleReady={() => setShowSplash(false)} />;
+  if (jobId) {
+    job = await getJob(supabase, parseInt(jobId, 10));
   }
 
   return (
-    <VoiceClientProvider voiceClient={voiceClientRef.current!}>
-      <CharacterProvider>
-        <TooltipProvider>
-          <main>
-            <div id="app">
-              <App />
-            </div>
-          </main>
-          <aside id="tray" />
-        </TooltipProvider>
-      </CharacterProvider>
-      <VoiceClientAudio />
-    </VoiceClientProvider>
+    <div>
+      <Bot job={job} />
+    </div>
   );
 }
