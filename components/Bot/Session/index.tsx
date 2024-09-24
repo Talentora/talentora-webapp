@@ -1,17 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import { LineChart, LogOut, Settings, StopCircle } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { PipecatMetrics, TransportState, VoiceEvent } from "realtime-ai";
 import { useVoiceClient, useVoiceClientEvent } from "realtime-ai-react";
 
-import StatsAggregator from "@/utils/stats_aggregator";
 import { Button } from "@/components/ui/button";
 import * as Card from "@/components/ui/card";
-
+import TranscriptOverlay from "./TranscriptOverlay";
 import Agent from "./Agent";
 import UserMicBubble from "./UserMicBubble";
-
-let stats_aggregator: StatsAggregator;
 
 interface SessionProps {
   state: TransportState;
@@ -31,16 +27,7 @@ export const Session = React.memo(
     // ---- Voice Client Events
 
     useVoiceClientEvent(
-      VoiceEvent.Metrics,
-      useCallback((metrics: PipecatMetrics) => {
-        metrics?.ttfb?.forEach((m: { processor: string; value: number }) => {
-          stats_aggregator.addStat([m.processor, "ttfb", m.value, Date.now()]);
-        });
-      }, [])
-    );
-
-    useVoiceClientEvent(
-      VoiceEvent.BotStoppedTalking,
+      VoiceEvent.BotStoppedSpeaking,
       useCallback(() => {
         if (hasStarted) return;
         setHasStarted(true);
@@ -59,11 +46,6 @@ export const Session = React.memo(
       if (!hasStarted || startAudioOff) return;
       voiceClient.enableMic(true);
     }, [voiceClient, startAudioOff, hasStarted]);
-
-    useEffect(() => {
-      // Create new stats aggregator on mount (removes stats from previous session)
-      stats_aggregator = new StatsAggregator();
-    }, []);
 
     useEffect(() => {
       // Leave the meeting if there is an error
@@ -92,19 +74,9 @@ export const Session = React.memo(
 
     return (
       <>
-        
-
-        
-
-        <div className="flex-1 flex flex-col items-center justify-center w-full">
-          <Card.Card
-            fullWidthMobile={false}
-            className="w-full max-w-[320px] sm:max-w-[420px] mt-auto shadow-long"
-          >
-            <Agent
-              isReady={state === "ready"}
-              statsAggregator={stats_aggregator}
-            />
+        <div className="flex flex-1 flex-col items-center justify-center w-full">
+          <Card.Card className="w-2/3 h-1/2 shadow-long">
+            <Agent isReady={state === "ready"} />
           </Card.Card>
           <UserMicBubble
             active={hasStarted}
@@ -112,9 +84,8 @@ export const Session = React.memo(
             handleMute={() => toggleMute()}
           />
         </div>
-
-        <footer className="w-full flex flex-row mt-auto self-end md:w-auto">
-          <div className="flex flex-row justify-between gap-3 w-full md:w-auto">
+        <footer className="w-full flex mt-auto self-end md:w-auto">
+          <div className="flex justify-between gap-3 w-full md:w-auto">
             <div className="ml-auto fixed bottom-4 right-4">
               <Button onClick={() => onLeave()}>
                 <LogOut size={16} />

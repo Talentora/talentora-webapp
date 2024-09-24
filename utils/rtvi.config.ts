@@ -62,13 +62,12 @@ export const defaultServices = {
   stt: 'deepgram'
 };
 
-export const defaultLLMPrompt = `You are a assistant called ExampleBot. You can ask me anything.
-Keep responses brief and legible.
+export const defaultLLMPrompt = `You are interviewing a candidate for a job. Stick to normal interview questions and follow up after the candidate responds.
 Your responses will converted to audio. Please do not include any special characters in your response other than '!' or '?'.
 Start by briefly introducing yourself.`;
 
 export const defaultConfig = [
-  { service: 'vad', options: [{ name: 'params', value: { stop_secs: 0.3 } }] },
+  { service: 'vad', options: [{ name: 'params', value: { stop_secs: 0.4 } }] },
   {
     service: 'tts',
     options: [
