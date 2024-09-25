@@ -1,7 +1,7 @@
-import React from "react";
-import { Book, Info } from "lucide-react";
+import React from 'react';
+import { Book, Info } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 type SplashProps = {
   handleReady: () => void;
@@ -20,8 +20,6 @@ export const Splash: React.FC<SplashProps> = ({ handleReady }) => {
         </p>
 
         <Button onClick={() => handleReady()}>Try Demo</Button>
-
-        
       </div>
     </main>
   );

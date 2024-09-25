@@ -11,7 +11,7 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuItem
 } from '@/components/ui/dropdown-menu';
 import { User } from 'lucide-react';
 
@@ -24,12 +24,15 @@ export default function Navlinks({ user }: NavlinksProps) {
 
   const links = [
     { href: '/pricing', label: 'Pricing' },
-    { href: '/account', label: 'Account', requiresAuth: true },
+    { href: '/account', label: 'Account', requiresAuth: true }
   ];
 
   const handleSignOut = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const router = getRedirectMethod() === 'client' ? require('next/navigation').useRouter() : null;
+    const router =
+      getRedirectMethod() === 'client'
+        ? require('next/navigation').useRouter()
+        : null;
     handleRequest(e, SignOut, router);
   };
 
@@ -44,16 +47,17 @@ export default function Navlinks({ user }: NavlinksProps) {
           <Logo />
         </Link>
         <nav className="ml-6 space-x-2 lg:block">
-          {links.map((link) =>
-            (!link.requiresAuth || user) && (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-primary-light focus:ring-2 focus:ring-accent focus:ring-opacity-50"
-              >
-                {link.label}
-              </Link>
-            )
+          {links.map(
+            (link) =>
+              (!link.requiresAuth || user) && (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-primary-light focus:ring-2 focus:ring-accent focus:ring-opacity-50"
+                >
+                  {link.label}
+                </Link>
+              )
           )}
         </nav>
       </div>
@@ -63,9 +67,7 @@ export default function Navlinks({ user }: NavlinksProps) {
             <DropdownMenuTrigger className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-primary-light focus:ring-2 focus:ring-accent focus:ring-opacity-50">
               <User className="h-6 w-6" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg"
-            >
+            <DropdownMenuContent className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
               <DropdownMenuItem>
                 <Label className="text-lg font-semibold text-primary">
                   Hello,{' '}

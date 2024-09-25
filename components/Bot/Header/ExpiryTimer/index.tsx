@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Timer } from "lucide-react";
-import { VoiceEvent } from "realtime-ai";
-import { useVoiceClient, useVoiceClientEvent } from "realtime-ai-react";
+import React, { useCallback, useEffect, useState } from 'react';
+import { Timer } from 'lucide-react';
+import { VoiceEvent } from 'realtime-ai';
+import { useVoiceClient, useVoiceClientEvent } from 'realtime-ai-react';
 
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { cn } from "@/utils/cn";
+  TooltipTrigger
+} from '@/components/ui/tooltip';
+import { cn } from '@/utils/cn';
 
 const ExpiryTimer: React.FC = () => {
   const voiceClient = useVoiceClient();
@@ -64,10 +64,15 @@ const ExpiryTimer: React.FC = () => {
       <TooltipTrigger>
         <div className="ml-auto flex flex-row items-center gap-1.5 bg-primary-100 rounded-lg p-2 border-t border-primary-200">
           <Timer size={20} className="text-primary-400" />
-          <span className={cn("font-semibold tracking-wider w-20", isExpired ? "text-primary-400" : "")}>
+          <span
+            className={cn(
+              'font-semibold tracking-wider w-20',
+              isExpired ? 'text-primary-400' : ''
+            )}
+          >
             {isExpired
-              ? "--:--"
-              : `${time.minutes}m ${time.seconds.toString().padStart(2, "0")}s`}
+              ? '--:--'
+              : `${time.minutes}m ${time.seconds.toString().padStart(2, '0')}s`}
           </span>
         </div>
       </TooltipTrigger>

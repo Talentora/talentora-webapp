@@ -19,15 +19,15 @@ export function RoboRecruiterConfig({ job }: RoboRecruiterConfigProps) {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-        <Link
-          href={{
-            pathname: `/jobs/${job.id}/settings`,
-            query: { job: JSON.stringify(job) }
-          }}
-          className="w-full bg-primary-dark p-5 rounded-2xl block text-center text-foreground"
-        >
-          Customize Your RoboRecruiter
-        </Link>
+          <Link
+            href={{
+              pathname: `/jobs/${job.id}/settings`,
+              query: { job: JSON.stringify(job) }
+            }}
+            className="w-full bg-primary-dark p-5 rounded-2xl block text-center text-foreground"
+          >
+            Customize Your RoboRecruiter
+          </Link>
         </div>
       </CardContent>
     </Card>

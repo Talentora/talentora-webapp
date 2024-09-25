@@ -1,8 +1,6 @@
 import React from 'react';
-import { VoiceClientConfigOption } from 'realtime-ai';
+import { VoiceClientConfigOption, VoiceMessage } from 'realtime-ai';
 import { useVoiceClient } from 'realtime-ai-react';
-
-import { LANGUAGES } from '@/utils/rtvi.config';
 
 import ModelSelect from '@/components/Configuration/ModelSelect';
 import VoiceSelect from '@/components/Configuration/VoiceSelect';
@@ -21,7 +19,7 @@ const Configuration: React.FC<{ showAllOptions: boolean }> = () => {
         ? { sendPartial: true }
         : { useDeepMerge: true };
 
-    voiceClient.updateConfig(config);
+    voiceClient.updateConfig([config], updateOpts);
   };
 
   const handleVoiceChange = (voice: Voice) => {
@@ -30,10 +28,10 @@ const Configuration: React.FC<{ showAllOptions: boolean }> = () => {
     });
 
     // Prompt the LLM to speak
-    voiceClient.sendMessage({
-      role: 'assistant',
+    const message: VoiceMessage = {
       content: 'Ask if the user prefers the new voice you have been given.'
-    });
+    };
+    voiceClient.sendMessage(message);
   };
 
   const handleModelChange = (model: string) => {
@@ -42,13 +40,13 @@ const Configuration: React.FC<{ showAllOptions: boolean }> = () => {
     });
 
     if (voiceClient.state === 'ready') {
-      voiceClient.stop();
+      voiceClient.stopPlayback();
 
       setTimeout(() => {
-        voiceClient.sendMessage({
-          role: 'user',
+        const message: VoiceMessage = {
           content: `I just changed your model to use ${model}! Thank me for the change.`
-        });
+        };
+        voiceClient.sendMessage(message);
       }, 500);
     }
   };

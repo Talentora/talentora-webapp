@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mic } from 'lucide-react';
-import Configuration from '@/components/Configuration';
+// import Configuration from '@/components/Configuration';
 import { AiRecruiterSetup } from '../ai-recruiter-setup';
 
 import {
@@ -23,7 +23,9 @@ interface InterviewConfigurationProps {
   job: Job;
 }
 
-const InterviewConfiguration: React.FC<InterviewConfigurationProps> = ({ job }) => {
+const InterviewConfiguration: React.FC<InterviewConfigurationProps> = ({
+  job
+}) => {
   const router = useRouter();
   const [config, setConfig] = useState({
     recruiterName: '',
@@ -143,7 +145,7 @@ const InterviewConfiguration: React.FC<InterviewConfigurationProps> = ({ job }) 
             />
           </div>
           <div className="space-y-2">
-            <Configuration showAllOptions={true} />
+            {/* <Configuration showAllOptions={true} /> */}
           </div>
         </CardContent>
       </Card>
@@ -169,7 +171,7 @@ const InterviewConfiguration: React.FC<InterviewConfigurationProps> = ({ job }) 
                 placeholder={`Hi, I&apos;m ${config.interviewerName}. Welcome to the interview.`}
                 className="text-primary-900"
               />
-              <Button type="button" onClick={()=>{}}>
+              <Button type="button" onClick={() => {}}>
                 <Mic className="mr-2 h-4 w-4" /> Speak
               </Button>
             </div>
@@ -193,6 +195,6 @@ const InterviewConfiguration: React.FC<InterviewConfigurationProps> = ({ job }) 
       </Button>
     </form>
   );
-}
+};
 
 export default InterviewConfiguration;

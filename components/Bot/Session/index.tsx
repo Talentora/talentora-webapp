@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { LogOut } from "lucide-react";
-import { PipecatMetrics, TransportState, VoiceEvent } from "realtime-ai";
-import { useVoiceClient, useVoiceClientEvent } from "realtime-ai-react";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { LogOut } from 'lucide-react';
+import { PipecatMetrics, TransportState, VoiceEvent } from 'realtime-ai';
+import { useVoiceClient, useVoiceClientEvent } from 'realtime-ai-react';
 
-import { Button } from "@/components/ui/button";
-import * as Card from "@/components/ui/card";
-import TranscriptOverlay from "./TranscriptOverlay";
-import Agent from "./Agent";
-import UserMicBubble from "./UserMicBubble";
+import { Button } from '@/components/ui/button';
+import * as Card from '@/components/ui/card';
+import TranscriptOverlay from './TranscriptOverlay';
+import Agent from './Agent';
+import UserMicBubble from './UserMicBubble';
 
 interface SessionProps {
   state: TransportState;
@@ -49,7 +49,7 @@ export const Session = React.memo(
 
     useEffect(() => {
       // Leave the meeting if there is an error
-      if (state === "error") {
+      if (state === 'error') {
         onLeave();
       }
     }, [state, onLeave]);
@@ -76,7 +76,7 @@ export const Session = React.memo(
       <>
         <div className="flex flex-1 flex-col items-center justify-center w-full">
           <Card.Card className="w-2/3 h-1/2 shadow-long">
-            <Agent isReady={state === "ready"} />
+            <Agent isReady={state === 'ready'} />
             {/* <TranscriptOverlay /> */}
           </Card.Card>
           <UserMicBubble
@@ -101,6 +101,6 @@ export const Session = React.memo(
   (p, n) => p.state === n.state
 );
 
-Session.displayName = "Session";
+Session.displayName = 'Session';
 
 export default Session;

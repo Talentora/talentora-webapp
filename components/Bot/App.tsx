@@ -1,45 +1,42 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useState } from "react";
-import { Ear, Loader2 } from "lucide-react";
-import { LLMHelper, VoiceError, VoiceEvent, VoiceMessage } from "realtime-ai";
+import { useCallback, useEffect, useState } from 'react';
+import { CoinsIcon, Ear, Loader2 } from 'lucide-react';
+import { LLMHelper, VoiceError, VoiceEvent, VoiceMessage } from 'realtime-ai';
 import {
   useVoiceClient,
   useVoiceClientEvent,
-  useVoiceClientTransportState,
-} from "realtime-ai-react";
+  useVoiceClientTransportState
+} from 'realtime-ai-react';
 
-import { Alert } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import * as Card from "@/components/ui/card";
-import Session from "./Session";
-import { Configure } from "./Setup";
+import { Alert } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import * as Card from '@/components/ui/card';
+import Session from './Session';
+import { Configure } from './Setup';
 
 const status_text = {
-  idle: "Initializing...",
-  initializing: "Initializing...",
-  initialized: "Start",
-  authenticating: "Requesting bot...",
-  connecting: "Connecting...",
+  idle: 'Initializing...',
+  initializing: 'Initializing...',
+  initialized: 'Start',
+  authenticating: 'Requesting bot...',
+  connecting: 'Connecting...'
 };
 
-import { Tables } from "@/types/types_db";
+import { Tables } from '@/types/types_db';
 type Job = Tables<'jobs'>;
 
 interface AppProps {
-  job:Job
+  job: Job;
 }
 
-export default function App(
-  {job}:AppProps
-
-) {
+export default function App({ job }: AppProps) {
   const voiceClient = useVoiceClient()!;
   const transportState = useVoiceClientTransportState();
 
   const [appState, setAppState] = useState<
-    "idle" | "ready" | "connecting" | "connected"
-  >("idle");
+    'idle' | 'ready' | 'connecting' | 'connected'
+  >('idle');
   const [error, setError] = useState<string | null>(null);
   const [startAudioOff, setStartAudioOff] = useState<boolean>(false);
 
@@ -54,7 +51,7 @@ export default function App(
 
   useEffect(() => {
     // Initialize local audio devices
-    if (!voiceClient || appState !== "idle") return;
+    if (!voiceClient || appState !== 'idle') return;
     voiceClient.initDevices();
   }, [appState, voiceClient]);
 
@@ -63,37 +60,42 @@ export default function App(
     // We only need a subset of states to determine the ui state,
     // so this effect helps avoid excess inline conditionals.
     switch (transportState) {
-      case "initialized":
-        setAppState("ready");
+      case 'initialized':
+        setAppState('ready');
         break;
-      case "authenticating":
-      case "connecting":
-        setAppState("connecting");
+      case 'authenticating':
+      case 'connecting':
+        setAppState('connecting');
         break;
-      case "connected":
-      case "ready":
-        setAppState("connected");
+      case 'connected':
+      case 'ready':
+        setAppState('connected');
         break;
       default:
-        setAppState("idle");
+        setAppState('idle');
     }
   }, [transportState]);
 
-
   function addJobContext() {
-    const llmHelper = voiceClient.getHelper("llm") as LLMHelper;
-    llmHelper.appendToMessages(
+    if (!voiceClient) return;
+
+    const llmHelper = voiceClient.getHelper('llm') as LLMHelper;
+    llmHelper.setContext(
       {
-          role: "user",
-          content: 
-              JSON.stringify(job)
-              // `Job Title: ${job.title}, 
-              // Job Description: ${job.description}, 
-              // Job Requirements: ${job.requirements}, 
-              // Job Qualifications: ${job.qualifications}`
+        messages: [
+          {
+            role: 'system',
+            content: `You are an AI interviewer for a ${job.title} role. 
+          The job requirements are: ${job.requirements}
+          The qualifications needed are: ${job.qualifications}
+          Here's a brief description of the role: ${job.description}. Conduct a real interview.
+          When you greet the applicant, introduce yourself and mention the job title.
+          Conduct the interview based on this information.`
+          }
+        ]
       },
       true
-  );
+    );
   }
 
   async function start() {
@@ -107,7 +109,7 @@ export default function App(
       addJobContext();
       await voiceClient.start();
     } catch (e) {
-      setError((e as VoiceError).message || "Unknown error occured");
+      setError((e as VoiceError).message || 'Unknown error occured');
       voiceClient.disconnect();
     }
   }
@@ -130,7 +132,7 @@ export default function App(
   }
 
   // Connected: show session view
-  if (appState === "connected") {
+  if (appState === 'connected') {
     return (
       <Session
         state={transportState}
@@ -141,7 +143,7 @@ export default function App(
   }
 
   // Default: show setup view
-  const isReady = appState === "ready";
+  const isReady = appState === 'ready';
 
   return (
     <div className="flex justify-center items-center min-h-screen">

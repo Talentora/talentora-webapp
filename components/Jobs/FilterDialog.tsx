@@ -1,6 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -13,17 +12,16 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { FilterIcon } from 'lucide-react';
 
+import { Dispatch, SetStateAction } from 'react';
+
 interface FilterDialogProps {
-  filters: { departments: string[]; locations: string[]; statuses: string[] };
-  setFilters: (filters: {
-    departments: string[];
-    locations: string[];
-    // statuses: string[];
-  }) => void;
+  filters: { departments: string[]; locations: string[] };
+  setFilters: Dispatch<
+    SetStateAction<{ departments: string[]; locations: string[] }>
+  >;
   filterOptions: {
     departments: string[];
     locations: string[];
-    // statuses: string[];
   };
   activeFilterCount: number;
 }
@@ -34,7 +32,11 @@ export default function FilterDialog({
   filterOptions,
   activeFilterCount
 }: FilterDialogProps) {
-  const handleCheckedChange = (type: 'departments' | 'locations', checked: boolean, option: string) => {
+  const handleCheckedChange = (
+    type: keyof typeof filters,
+    checked: boolean,
+    option: string
+  ) => {
     setFilters((prev) => ({
       ...prev,
       [type]: checked
@@ -61,13 +63,15 @@ export default function FilterDialog({
           <DialogTitle>Filter Jobs</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4 md:grid-cols-2">
-          {['departments', 'locations'].map((type) => (
+          {(['departments', 'locations'] as const).map((type) => (
             <FilterSection
               key={type}
               title={type.charAt(0).toUpperCase() + type.slice(1)}
               options={filterOptions[type]}
               selectedOptions={filters[type]}
-              onCheckedChange={(checked: boolean, option: string) => handleCheckedChange(type as 'departments' | 'locations', checked, option)}
+              onCheckedChange={(checked: boolean, option: string) =>
+                handleCheckedChange(type, checked, option)
+              }
             />
           ))}
         </div>
@@ -97,7 +101,9 @@ function FilterSection({
           <Checkbox
             id={`${title.toLowerCase()}-${option}`}
             checked={selectedOptions.includes(option)}
-            onCheckedChange={(checked: boolean) => onCheckedChange(checked, option)}
+            onCheckedChange={(checked: boolean) =>
+              onCheckedChange(checked, option)
+            }
           />
           <label htmlFor={`${title.toLowerCase()}-${option}`}>{option}</label>
         </div>

@@ -5,8 +5,12 @@ type Job = Tables<'jobs'>;
 
 interface DashboardPageProps {
   jobs: Job[];
+  onDeleteJob: (jobId: number) => Promise<void>;
 }
 
-export default function DashboardPage({ jobs }: DashboardPageProps) {
-  return <Dashboard jobs={jobs} />;
+export default function DashboardPage({
+  jobs,
+  onDeleteJob
+}: DashboardPageProps) {
+  return <Dashboard dashboardData={{ initialJobs: jobs, onDeleteJob }}/>;
 }

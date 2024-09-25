@@ -6,7 +6,10 @@ const DashboardPage: React.FC = () => {
     <div>
       <h1 className="text-2xl font-bold">Account</h1>
       <div className="flex flex-col">
-        <Link href="/account/settings" className="text-blue-500 hover:underline">
+        <Link
+          href="/account/settings"
+          className="text-blue-500 hover:underline"
+        >
           Settings
         </Link>
         <Link href="/bot" className="text-blue-500 hover:underline">

@@ -1,24 +1,34 @@
-'use client';
-
 import { LayoutGridIcon, ListIcon } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Tables } from '@/types/types_db';
-import {CardView} from './CardView';
+import { CardView } from './CardView';
 import { TableView } from './TableView';
+import { deleteJob } from '@/utils/supabase/queries';
 
 type Job = Tables<'jobs'>;
 
 interface JobListProps {
-  filteredJobs: Job[];
-  isCardView: boolean;
-  toggleView: () => void;
+  jobListData: {
+    filteredJobs: Job[];
+    isCardView: boolean;
+    toggleView: () => void;
+    onDeleteJob: (id: number) => Promise<void>;
+  };
 }
 
-export default function JobList({
-  filteredJobs,
-  isCardView,
-  toggleView
-}: JobListProps) {
+export default function JobList({ jobListData }: JobListProps) {
+  const { filteredJobs, isCardView, toggleView, onDeleteJob } = jobListData;
+
+  async function handleDeleteJob(id: number): Promise<void> {
+    try {
+      console.log('delete job');
+      await deleteJob(id);
+      await onDeleteJob(id);
+    } catch (error) {
+      console.error('Error deleting job:', error);
+    }
+  }
+
   return (
     <>
       <div className="flex items-center space-x-2">
@@ -34,9 +44,13 @@ export default function JobList({
         </label>
       </div>
       {isCardView ? (
-        <CardView filteredJobs={filteredJobs} />
+        <CardView
+          cardViewData={{ filteredJobs, onDeleteJob: handleDeleteJob }}
+        />
       ) : (
-        <TableView filteredJobs={filteredJobs} />
+        <TableView
+          tableViewData={{ filteredJobs, onDeleteJob: handleDeleteJob }}
+        />
       )}
     </>
   );

@@ -52,7 +52,9 @@ export default function NameForm({ userName }: { userName: string }) {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
-        <p className="pb-4 sm:pb-0 text-muted-foreground">64 characters maximum</p>
+        <p className="pb-4 sm:pb-0 text-muted-foreground">
+          64 characters maximum
+        </p>
         <Button
           variant="default"
           type="submit"

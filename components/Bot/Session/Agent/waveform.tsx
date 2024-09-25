@@ -1,12 +1,12 @@
-import React, { useEffect, useRef } from "react";
-import { useVoiceClientMediaTrack } from "realtime-ai-react";
+import React, { useEffect, useRef } from 'react';
+import { useVoiceClientMediaTrack } from 'realtime-ai-react';
 
 const WaveForm: React.FC = React.memo(() => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const track: MediaStreamTrack | null = useVoiceClientMediaTrack(
-    "audio",
-    "bot"
+    'audio',
+    'bot'
   );
 
   useEffect(() => {
@@ -29,11 +29,11 @@ const WaveForm: React.FC = React.memo(() => {
       canvas.style.width = `${containerWidth}px`;
       canvas.style.height = `${containerHeight}px`;
 
-      canvasCtx.lineCap = "round";
+      canvasCtx.lineCap = 'round';
       canvasCtx.scale(scaleFactor, scaleFactor);
     };
 
-    const canvasCtx = canvas.getContext("2d")!;
+    const canvasCtx = canvas.getContext('2d')!;
     resizeCanvas();
 
     const audioContext = new AudioContext();
@@ -48,14 +48,14 @@ const WaveForm: React.FC = React.memo(() => {
 
     const frequencyData = new Uint8Array(analyser.frequencyBinCount);
 
-    canvasCtx.lineCap = "round";
+    canvasCtx.lineCap = 'round';
 
     const bands = [
       { startFreq: 85, endFreq: 255, smoothValue: 0 }, // Covers fundamental frequencies for male and female voices
       { startFreq: 255, endFreq: 500, smoothValue: 0 }, // Lower formants and some harmonics
       { startFreq: 500, endFreq: 2000, smoothValue: 0 }, // Vowel formants and key consonant frequencies
       { startFreq: 2000, endFreq: 4000, smoothValue: 0 }, // Higher formants, "clarity" of speech
-      { startFreq: 4000, endFreq: 8000, smoothValue: 0 }, // Sibilance and high-frequency consonants
+      { startFreq: 4000, endFreq: 8000, smoothValue: 0 } // Sibilance and high-frequency consonants
     ];
 
     const barWidth = 30; // Fixed bar width
@@ -127,7 +127,7 @@ const WaveForm: React.FC = React.memo(() => {
           canvasCtx.moveTo(x + barWidth / 2, yTop);
           canvasCtx.lineTo(x + barWidth / 2, yBottom);
           canvasCtx.lineWidth = barWidth;
-          canvasCtx.strokeStyle = "white";
+          canvasCtx.strokeStyle = 'white';
           canvasCtx.stroke();
         } else {
           canvasCtx.beginPath();
@@ -138,7 +138,7 @@ const WaveForm: React.FC = React.memo(() => {
             0,
             2 * Math.PI
           );
-          canvasCtx.fillStyle = "white";
+          canvasCtx.fillStyle = 'white';
           canvasCtx.fill();
           canvasCtx.closePath();
         }
@@ -162,7 +162,7 @@ const WaveForm: React.FC = React.memo(() => {
 
         canvasCtx.beginPath();
         canvasCtx.arc(x + barWidth / 2, y, circleRadius, 0, 2 * Math.PI);
-        canvasCtx.fillStyle = "white";
+        canvasCtx.fillStyle = 'white';
         canvasCtx.fill();
         canvasCtx.closePath();
       });
@@ -171,11 +171,11 @@ const WaveForm: React.FC = React.memo(() => {
     drawSpectrum();
 
     // Handle resizing
-    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener('resize', resizeCanvas);
 
     return () => {
       audioContext.close();
-      window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener('resize', resizeCanvas);
     };
   }, [track]);
 
@@ -183,14 +183,14 @@ const WaveForm: React.FC = React.memo(() => {
     <canvas
       ref={canvasRef}
       style={{
-        display: "block",
-        width: "100%",
-        height: "100%",
+        display: 'block',
+        width: '100%',
+        height: '100%'
       }}
     />
   );
 });
 
-WaveForm.displayName = "WaveForm";
+WaveForm.displayName = 'WaveForm';
 
 export default WaveForm;

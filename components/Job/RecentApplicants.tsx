@@ -61,7 +61,7 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
                 <ApplicantRow
                   key={applicant.id}
                   name={`${applicant.first_name} ${applicant.last_name}`}
-                  status={applicant.status || ''}
+                  // status={applicant.status || ''}
                   resume={applicant.resume || ''}
                   email={applicant.email || ''}
                   phone_number={applicant.phone_number || ''}
@@ -77,7 +77,6 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
 
 interface ApplicantRowProps {
   name: string;
-  status: string;
   resume: string;
   email: string;
   phone_number: string;
@@ -85,7 +84,6 @@ interface ApplicantRowProps {
 
 function ApplicantRow({
   name,
-  status,
   resume,
   email,
   phone_number

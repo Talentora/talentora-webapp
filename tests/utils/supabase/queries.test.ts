@@ -31,29 +31,25 @@ describe('getJobs', () => {
         requirements: null
       }
     ];
-    jest
-      .spyOn(supabase.from('jobs'), 'select')
-      .mockResolvedValue({
-        data: jobs,
-        error: null,
-        count: null,
-        status: 200,
-        statusText: 'OK'
-      });
+    jest.spyOn(supabase.from('jobs'), 'select').mockResolvedValue({
+      data: jobs,
+      error: null,
+      count: null,
+      status: 200,
+      statusText: 'OK'
+    });
     const result = await getJobs(supabase);
     expect(result).toEqual(jobs);
   });
 
   it('should return an empty array when no jobs are found', async () => {
-    jest
-      .spyOn(supabase.from('jobs'), 'select')
-      .mockResolvedValue({
-        data: [],
-        error: null,
-        count: null,
-        status: 200,
-        statusText: 'OK'
-      });
+    jest.spyOn(supabase.from('jobs'), 'select').mockResolvedValue({
+      data: [],
+      error: null,
+      count: null,
+      status: 200,
+      statusText: 'OK'
+    });
     const result = await getJobs(supabase);
     expect(result).toEqual([]);
   });
@@ -65,15 +61,13 @@ describe('getJobs', () => {
       hint: '',
       code: ''
     };
-    jest
-      .spyOn(supabase.from('jobs'), 'select')
-      .mockResolvedValue({
-        data: null,
-        error,
-        count: null,
-        status: 500,
-        statusText: 'Internal Server Error'
-      });
+    jest.spyOn(supabase.from('jobs'), 'select').mockResolvedValue({
+      data: null,
+      error,
+      count: null,
+      status: 500,
+      statusText: 'Internal Server Error'
+    });
     const result = await getJobs(supabase);
     expect(result).toEqual([]);
   });
@@ -133,15 +127,13 @@ describe('updateJob', () => {
       code: 'ERROR'
     };
 
-    jest
-      .spyOn(supabase.from('jobs'), 'update')
-      .mockResolvedValue({
-        data: null,
-        error: mockError,
-        count: null,
-        status: 500,
-        statusText: 'Internal Server Error'
-      });
+    jest.spyOn(supabase.from('jobs'), 'update').mockResolvedValue({
+      data: null,
+      error: mockError,
+      count: null,
+      status: 500,
+      statusText: 'Internal Server Error'
+    });
 
     await expect(updateJob(jobId, updatedJobData as Job)).rejects.toThrow(
       'Failed to update job: Failed to update job'

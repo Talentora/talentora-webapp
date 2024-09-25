@@ -17,14 +17,18 @@ import { MoreVerticalIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import { Tables } from '@/types/types_db';
-type Job = Tables<'jobs'>
-
+type Job = Tables<'jobs'>;
 
 interface TableViewProps {
-  filteredJobs: Job[];
+  tableViewData: {
+    filteredJobs: Job[];
+    onDeleteJob: (id: number) => Promise<void>;
+  };
 }
 
-export function TableView({ filteredJobs }: TableViewProps) {
+export function TableView({ tableViewData }: TableViewProps) {
+  const { filteredJobs, onDeleteJob } = tableViewData;
+
   return (
     <Table>
       <TableHeader>
@@ -47,15 +51,15 @@ export function TableView({ filteredJobs }: TableViewProps) {
             <TableCell className="text-right">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <MoreVerticalIcon className="h-4 w-4" />
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                     <span className="sr-only">Open menu</span>
+                    <MoreVerticalIcon className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem>Edit</DropdownMenuItem>
-                  <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                  <DropdownMenuItem>Archive</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onDeleteJob(job.id)}>
+                    Delete
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>

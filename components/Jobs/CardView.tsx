@@ -15,18 +15,24 @@ import {
 import { Button } from '@/components/ui/button';
 import { UsersIcon, MoreVerticalIcon } from 'lucide-react';
 import { Tables } from '@/types/types_db';
-type Job = Tables<'jobs'>
+
+type Job = Tables<'jobs'>;
 
 interface CardViewProps {
-  filteredJobs: Job[];
+  cardViewData: {
+    filteredJobs: Job[];
+    onDeleteJob: (id: number) => void;
+  };
 }
 
-export function CardView({ filteredJobs }: CardViewProps) {
+export function CardView({ cardViewData }: CardViewProps) {
+  const { filteredJobs, onDeleteJob } = cardViewData;
+
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 ">
       {filteredJobs.map((job) => (
-        <Link key={job.id} href={`./jobs/${job.id}`}>
-          <Card className="hover:bg-primary-800 p-4">
+        <Card key={job.id} className="hover:bg-primary-800 p-4 relative">
+          <Link href={`./jobs/${job.id}`}>
             <CardHeader>
               <CardTitle>{job.title}</CardTitle>
             </CardHeader>
@@ -42,23 +48,28 @@ export function CardView({ filteredJobs }: CardViewProps) {
                 </span>
               </div>
             </CardContent>
-            <CardFooter className="flex justify-between">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <MoreVerticalIcon className="h-4 w-4" />
-                    <span className="sr-only">Open menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>Edit</DropdownMenuItem>
-                  <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                  <DropdownMenuItem>Archive</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </CardFooter>
-          </Card>
-        </Link>
+          </Link>
+          <CardFooter className="absolute top-2 right-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <MoreVerticalIcon className="h-4 w-4" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    onDeleteJob(job.id);
+                  }}
+                >
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </CardFooter>
+        </Card>
       ))}
     </div>
   );

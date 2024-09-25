@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useContext, useState } from 'react';
 
 interface CharacterContextType {
   character: number;
@@ -8,10 +8,10 @@ interface CharacterContextType {
 export const CharacterContext = createContext<CharacterContextType>({
   character: 0,
   setCharacter: () => {
-    throw new Error("setCharacter function must be overridden");
-  },
+    throw new Error('setCharacter function must be overridden');
+  }
 });
-CharacterContext.displayName = "CharacterContext";
+CharacterContext.displayName = 'CharacterContext';
 
 type CharacterProviderProps = {
   children: ReactNode;

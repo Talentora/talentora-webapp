@@ -1,9 +1,9 @@
-import ExpiryTimer from "@/components/Bot/Header/ExpiryTimer";
+import ExpiryTimer from '@/components/Bot/Header/ExpiryTimer';
 
-import { Logo } from "./logo";
+import { Logo } from './logo';
 
 const aCx =
-  "underline decoration-primary-400/0 hover:decoration-primary-400 underline-offset-4 transition-all duration-300";
+  'underline decoration-primary-400/0 hover:decoration-primary-400 underline-offset-4 transition-all duration-300';
 
 export function Header() {
   return (

@@ -51,10 +51,6 @@ export const AlertDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
-  <p
-    ref={ref}
-    className={cn('text-sm', className)}
-    {...props}
-  />
+  <p ref={ref} className={cn('text-sm', className)} {...props} />
 ));
 AlertDescription.displayName = 'AlertDescription';

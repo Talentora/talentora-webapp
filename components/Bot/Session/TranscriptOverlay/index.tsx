@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { VoiceEvent } from "realtime-ai";
-import { useVoiceClientEvent } from "realtime-ai-react";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { VoiceEvent } from 'realtime-ai';
+import { useVoiceClientEvent } from 'realtime-ai-react';
 
 const TranscriptOverlay: React.FC = () => {
   const [sentences, setSentences] = useState<string[]>([]);
@@ -70,4 +70,4 @@ export default TranscriptOverlay;
   .animation-delay-1000 {
     animation-delay: 1s;
   }
-`}</style>
+`}</style>;

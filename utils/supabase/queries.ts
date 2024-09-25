@@ -65,6 +65,43 @@ export const getJobs = cache(
   }
 );
 
+/**
+ * Creates a new job in the database.
+ *
+ * @param jobData - The data for the new job.
+ * @returns The created job data.
+ * @throws Error if the creation operation fails.
+ */
+export const createJob = async (jobData: Omit<Job, 'id'>): Promise<Job> => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('jobs')
+    .insert(jobData)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to create job: ${error.message}`);
+  }
+
+  return data;
+};
+
+/*
+ * @returns A boolean indicating whether the deletion was successful.
+ * @throws Error if the deletion operation fails.
+ */
+export const deleteJob = async (id: number): Promise<boolean> => {
+  const supabase = createClient();
+  const { error } = await supabase.from('jobs').delete().eq('id', id);
+
+  if (error) {
+    throw new Error(`Failed to delete job: ${error.message}`);
+  }
+
+  return true;
+};
+
 export const getJob = cache(
   async (supabase: SupabaseClient, id: number): Promise<Job | null> => {
     try {
