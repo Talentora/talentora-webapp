@@ -19,12 +19,11 @@ type Job = Tables<'jobs'>;
 interface DashboardProps {
   dashboardData: {
     initialJobs: Job[];
-    onDeleteJob: (jobId: number) => Promise<void>;
   };
 }
 
 export default function Dashboard({ dashboardData }: DashboardProps) {
-  const { initialJobs, onDeleteJob } = dashboardData;
+  const { initialJobs } = dashboardData;
   const [jobs, setJobs] = useState<Job[]>(initialJobs);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCardView, setIsCardView] = useState(true);
@@ -94,7 +93,6 @@ export default function Dashboard({ dashboardData }: DashboardProps) {
     filteredJobs,
     isCardView,
     toggleView: () => setIsCardView(!isCardView),
-    onDeleteJob
   };
 
   return (

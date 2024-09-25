@@ -12,18 +12,18 @@ interface JobListProps {
     filteredJobs: Job[];
     isCardView: boolean;
     toggleView: () => void;
-    onDeleteJob: (id: number) => Promise<void>;
   };
 }
 
 export default function JobList({ jobListData }: JobListProps) {
-  const { filteredJobs, isCardView, toggleView, onDeleteJob } = jobListData;
+  const { filteredJobs, isCardView, toggleView } = jobListData;
 
   async function handleDeleteJob(id: number): Promise<void> {
     try {
-      console.log('delete job');
+      console.log('Before delete job');
       await deleteJob(id);
-      await onDeleteJob(id);
+      console.log('After delete job');
+      // await onDeleteJob(id);
     } catch (error) {
       console.error('Error deleting job:', error);
     }

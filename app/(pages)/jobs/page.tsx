@@ -7,24 +7,14 @@ import { revalidatePath } from 'next/cache';
 type Job = Tables<'jobs'>;
 
 const Page = async () => {
+ 
   const supabase = createClient();
   const jobs = await getJobs(supabase);
-
-  const handleDeleteJob = async (jobId: number) => {
-    'use server';
-    try {
-      await deleteJob(jobId);
-      console.log('deleting job');
-      revalidatePath('/jobs');
-    } catch (error) {
-      console.error('Error deleting job:', error);
-    }
-  };
 
   return (
     <div>
       {jobs && jobs.length > 0 ? (
-        <Dashboard jobs={jobs} onDeleteJob={handleDeleteJob} />
+        <Dashboard jobs={jobs}  />
       ) : (
         <h1>Error fetching jobs or no jobs available</h1>
       )}
