@@ -1,6 +1,5 @@
-"use server"
+'use server';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { cache } from 'react';
 import { Tables } from '@/types/types_db';
 import { createClient } from '@/utils/supabase/server';
 
@@ -12,14 +11,14 @@ type Job = Tables<'jobs'>;
 
 // const supabase  = createClient();
 
-export const getUser = cache(async (supabase: SupabaseClient) => {
+export const getUser = async (supabase: SupabaseClient) => {
   const {
     data: { user }
   } = await supabase.auth.getUser();
   return user;
-});
+};
 
-export const getSubscription = cache(async (supabase: SupabaseClient) => {
+export const getSubscription = async (supabase: SupabaseClient) => {
   const { data: subscription, error } = await supabase
     .from('subscriptions')
     .select('*, prices(*, products(*))')
@@ -27,9 +26,9 @@ export const getSubscription = cache(async (supabase: SupabaseClient) => {
     .maybeSingle();
 
   return subscription;
-});
+};
 
-export const getProducts = cache(async (supabase: SupabaseClient) => {
+export const getProducts = async (supabase: SupabaseClient) => {
   const { data: products, error } = await supabase
     .from('products')
     .select('*, prices(*)')
@@ -39,17 +38,17 @@ export const getProducts = cache(async (supabase: SupabaseClient) => {
     .order('unit_amount', { referencedTable: 'prices' });
 
   return products;
-});
+};
 
-export const getUserDetails = cache(async (supabase: SupabaseClient) => {
+export const getUserDetails = async (supabase: SupabaseClient) => {
   const { data: userDetails } = await supabase
     .from('users')
     .select('*')
     .single();
   return userDetails;
-});
+};
 
-export const getJobs = cache(
+export const getJobs = 
   async (supabase: SupabaseClient): Promise<Job[]> => {
     try {
       const { data: jobs, error } = await supabase.from('jobs').select('*');
@@ -63,9 +62,52 @@ export const getJobs = cache(
       return [];
     }
   }
-);
+;
 
-export const getJob = cache(
+/**
+ * Creates a new job in the database.
+ *
+ * @param jobData - The data for the new job.
+ * @returns The created job data.
+ * @throws Error if the creation operation fails.
+ */
+export const createJob = async (jobData: Omit<Job, 'id'>): Promise<Job> => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('jobs')
+    .insert(jobData)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to create job: ${error.message}`);
+  }
+
+  return data;
+};
+
+/*
+ * @returns A boolean indicating whether the deletion was successful.
+ * @throws Error if the deletion operation fails.
+ */
+
+export const deleteJob = async (id: number): Promise<boolean> => {
+  const supabase = createClient();
+  const { error } = await supabase
+    .from('jobs')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Failed to delete job:', error.message);  // Log the error message for debugging
+    return false;
+  }
+
+  console.log('Job deleted successfully');  // Add success log to confirm deletion
+  return true;
+};
+
+export const getJob = 
   async (supabase: SupabaseClient, id: number): Promise<Job | null> => {
     try {
       const { data: job, error } = await supabase
@@ -83,11 +125,11 @@ export const getJob = cache(
       return null;
     }
   }
-);
+;
 
 /**
  * Updates a job in the database.
- * 
+ *
  * @param id - The ID of the job to update.
  * @param jobData - The new data for the job.
  * @returns The updated job data.
@@ -111,7 +153,7 @@ export const updateJob = async (
   return data?.[0] || null;
 };
 
-export const getApplicants = cache(
+export const getApplicants = 
   async (supabase: SupabaseClient, jobId: number) => {
     const { data: applicants, error } = await supabase
       .from('applicants')
@@ -124,10 +166,12 @@ export const getApplicants = cache(
 
     return applicants || [];
   }
-);
+;
 
-
-export const getCompany = async (supabase: SupabaseClient, companyId: number) => {
+export const getCompany = async (
+  supabase: SupabaseClient,
+  companyId: number
+) => {
   try {
     const { data: company, error } = await supabase
       .from('companies')

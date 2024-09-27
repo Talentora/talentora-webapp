@@ -14,7 +14,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Trash2, Plus, Wand2, Edit, GripVertical } from 'lucide-react';
-import { generateQuestion } from '@/app/(api)/actions/generateQuestion';
+import { generateQuestion } from '@/utils/ai/generateQuestion';
 import {
   DragDropContext,
   Droppable,
@@ -146,7 +146,7 @@ export function AiRecruiterSetup() {
 
   return (
     <div className="container mx-auto p-4 bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-4 text-primary-foreground">
+      <h1 className="text-2xl font-bold mb-4 text-primary">
         Interview Questions
       </h1>
 
@@ -169,7 +169,7 @@ export function AiRecruiterSetup() {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className="p-4 bg-card text-card-foreground"
+                      className="p-4 bg-card text-primary"
                     >
                       {editingQuestionId === question.id ? (
                         <div className="flex flex-col space-y-4">
@@ -213,7 +213,7 @@ export function AiRecruiterSetup() {
                             <Button
                               variant="outline"
                               onClick={handleCancelEdit}
-                              className="bg-secondary text-secondary-foreground"
+                              className="border-secondary text-secondary-foreground"
                             >
                               Cancel
                             </Button>
@@ -240,7 +240,7 @@ export function AiRecruiterSetup() {
                               onCheckedChange={() =>
                                 handleToggleMustAsk(question.id)
                               }
-                              className="bg-primary text-primary-foreground"
+                              className="bg-background text-foreground"
                             />
                             <label
                               htmlFor={`must-ask-${question.id}`}
@@ -287,7 +287,7 @@ export function AiRecruiterSetup() {
                 placeholder="Enter question text"
                 value={newQuestionText}
                 onChange={(e) => setNewQuestionText(e.target.value)}
-                className="bg-input text-primary"
+                className="bg-input text-input-foreground"
               />
               <Select
                 value={newQuestionType}
@@ -316,7 +316,7 @@ export function AiRecruiterSetup() {
                 </Button>
                 <Button
                   onClick={handleGenerateQuestion}
-                  className="flex-1 bg-secondary text-secondary-foreground"
+                  className="flex-1 bg-primary text-secondary-foreground"
                 >
                   <Wand2 className="mr-2 h-4 w-4" /> Generate with AI
                 </Button>
