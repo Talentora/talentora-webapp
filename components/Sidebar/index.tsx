@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { BriefcaseIcon, HomeIcon, UserIcon, UsersIcon, Bot, ClipboardListIcon } from "lucide-react"
+import { BriefcaseIcon, HomeIcon, UserIcon, UsersIcon, Bot, ClipboardListIcon, SettingsIcon } from "lucide-react"
 
 const Page = () => {
     return (
@@ -24,6 +24,10 @@ const Page = () => {
             <Link className="flex items-center space-x-2 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded" href="/onboarding">
               <ClipboardListIcon className="h-5 w-5" />
               <span>Onboarding</span>
+            </Link>
+            <Link className="flex items-center space-x-2 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded" href="dashboard/settings">
+              <SettingsIcon className="h-5 w-5" />
+              <span>Settings</span>
             </Link>
           </nav>
         </div>
