@@ -17,9 +17,9 @@ export const generateQuestion = async (type: string) => {
     model: groq('llama-3.1-8b-instant'),
     system: `You are an interviewer at ${company}. Only generate question text.`,
     prompt: `Generate a ${type} question for a job interview for a ${role} position.`,
-    responseSchema: z.object({
-      text: z.string()
-    })
+    // responseSchema: z.object({
+    //   text: z.string()
+    // })
   });
   console.log('text', text);
   return text;

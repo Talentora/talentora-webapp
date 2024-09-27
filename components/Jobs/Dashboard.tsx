@@ -46,9 +46,9 @@ export default function Dashboard({ dashboardData }: DashboardProps) {
     }
     return {
       departments: [
-        ...new Set(jobs.map((job) => job.department).filter(Boolean))
+        ...new Set(jobs.map((job) => job.department).filter((dept): dept is string => !!dept))
       ],
-      locations: [...new Set(jobs.map((job) => job.location).filter(Boolean))]
+      locations: [...new Set(jobs.map((job) => job.location).filter((loc): loc is string => !!loc))]
     };
   }, [jobs]);
 
