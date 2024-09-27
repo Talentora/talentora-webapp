@@ -24,7 +24,7 @@ export default function Navlinks({ user }: NavlinksProps) {
 
   const links = [
     { href: '/pricing', label: 'Pricing' },
-    { href: '/account', label: 'Account', requiresAuth: true }
+    { href: '/dashboard', label: 'Dashboard', requiresAuth: true }
   ];
 
   const handleSignOut = (e: React.FormEvent<HTMLFormElement>) => {
