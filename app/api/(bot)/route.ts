@@ -8,7 +8,9 @@ export async function POST(request: Request) {
   console.log('Parsed request body:', { services, config });
 
   if (!services || !config || !process.env.NEXT_PUBLIC_DAILY_BOTS_URL) {
-    console.error('Services or config not found on request body or environment variable missing');
+    console.error(
+      'Services or config not found on request body or environment variable missing'
+    );
     return new Response(`Services or config not found on request body`, {
       status: 400
     });

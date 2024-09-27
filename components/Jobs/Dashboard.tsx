@@ -27,7 +27,10 @@ export default function Dashboard({ dashboardData }: DashboardProps) {
   const [jobs, setJobs] = useState<Job[]>(initialJobs);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCardView, setIsCardView] = useState(true);
-  const [filters, setFilters] = useState<{ departments: string[]; locations: string[] }>({
+  const [filters, setFilters] = useState<{
+    departments: string[];
+    locations: string[];
+  }>({
     departments: [],
     locations: []
   });
@@ -46,9 +49,17 @@ export default function Dashboard({ dashboardData }: DashboardProps) {
     }
     return {
       departments: [
-        ...new Set(jobs.map((job) => job.department).filter((dept): dept is string => !!dept))
+        ...new Set(
+          jobs
+            .map((job) => job.department)
+            .filter((dept): dept is string => !!dept)
+        )
       ],
-      locations: [...new Set(jobs.map((job) => job.location).filter((loc): loc is string => !!loc))]
+      locations: [
+        ...new Set(
+          jobs.map((job) => job.location).filter((loc): loc is string => !!loc)
+        )
+      ]
     };
   }, [jobs]);
 
@@ -92,7 +103,7 @@ export default function Dashboard({ dashboardData }: DashboardProps) {
   const jobListData = {
     filteredJobs,
     isCardView,
-    toggleView: () => setIsCardView(!isCardView),
+    toggleView: () => setIsCardView(!isCardView)
   };
 
   return (

@@ -62,7 +62,6 @@ export const Configure: React.FC<ConfigureProps> = React.memo(
 
     return (
       <div className="flex flex-col gap-0">
-
         <section className="flex flex-col flex-wrap">
           <DeviceSelect />
         </section>
