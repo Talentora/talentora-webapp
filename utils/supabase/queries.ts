@@ -190,3 +190,22 @@ export const getCompany = async (
     return null;
   }
 };
+
+export async function inviteUser(email: string) {
+  const supabase = createClient();
+
+  try {
+    const { data, error } = await supabase.auth.admin.inviteUserByEmail(
+      email=email
+    );
+    if (error) {
+      console.error("Error inviting user:", error);
+      return { success: false, error };
+    }
+    return { success: true, data };
+  } catch (err) {
+    console.error("Error inviting user:", err);
+    return { success: false, error: err };
+  }
+}
+
