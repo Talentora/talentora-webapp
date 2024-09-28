@@ -1,105 +1,132 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { SignOut } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import Logo from '@/components/icons/Logo';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
-import { Label } from '../ui/label';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem
-} from '@/components/ui/dropdown-menu';
-import { User } from 'lucide-react';
+import { Button } from "@/components/ui/button"
+import { User, LogOut } from 'lucide-react';
 
 interface NavlinksProps {
   user?: any;
 }
 
 export default function Navlinks({ user }: NavlinksProps) {
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const router = useRouter();
 
   const links = [
     { href: '/pricing', label: 'Pricing' },
-    { href: '/account', label: 'Account', requiresAuth: true }
+    { href: '/account', label: 'Account', requiresAuth: true },
   ];
 
-  const handleSignOut = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const router =
-      getRedirectMethod() === 'client'
-        ? require('next/navigation').useRouter()
-        : null;
-    handleRequest(e, SignOut, router);
+    if (getRedirectMethod() === 'client') {
+      await handleRequest(e, SignOut, router);
+    }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative flex flex-row justify-between py-4 align-center md:py-6 sticky top-0 bg-background z-40 transition-all duration-150 h-16 md:h-20">
-      <div className="flex items-center flex-1">
-        <Link
-          href="/"
-          className="cursor-pointer rounded-full transform duration-100 ease-in-out"
-          aria-label="Logo"
-        >
-          <Logo />
-        </Link>
-        <nav className="ml-6 space-x-2 lg:block">
-          {links.map(
-            (link) =>
+    <div className="sticky top-0 z-40 w-full bg-background">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between py-4 md:py-6">
+          <div className="flex items-center">
+            <Link href="/" className="mr-6" aria-label="Logo">
+              <Logo />
+            </Link>
+            <nav className="hidden md:flex space-x-4">
+              {links.map((link) =>
+                (!link.requiresAuth || user) && (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                )
+              )}
+            </nav>
+          </div>
+          <div className="flex items-center">
+            {user ? (
+              <div className="relative" ref={userMenuRef}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  aria-label="User menu"
+                  className="relative z-20"
+                >
+                  <User className="h-5 w-5" />
+                </Button>
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-background border border-border rounded-md shadow-lg p-2 z-10">
+                    <div className="px-4 py-2">
+                      <p className="text-sm font-medium text-muted-foreground">Signed in as</p>
+                      <p className="text-sm font-bold truncate">
+                        {user.full_name || user.email}
+                      </p>
+                    </div>
+                    <div className="border-t border-border my-2"></div>
+                    <form onSubmit={handleSignOut}>
+                      <input type="hidden" name="pathName" value={pathname} />
+                      <Button
+                        type="submit"
+                        variant="ghost"
+                        className="w-full justify-start text-sm"
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign out
+                      </Button>
+                    </form>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link href="/signin">
+                <Button variant="ghost" size="sm">Sign In</Button>
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+      <nav className="md:hidden border-t border-border">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between py-2">
+            {links.map((link) =>
               (!link.requiresAuth || user) && (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-primary-light focus:ring-2 focus:ring-accent focus:ring-opacity-50"
+                  className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2"
                 >
                   {link.label}
                 </Link>
               )
-          )}
-        </nav>
-      </div>
-      <div className="flex justify-end space-x-8">
-        {user ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-primary-light focus:ring-2 focus:ring-accent focus:ring-opacity-50">
-              <User className="h-6 w-6" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
-              <DropdownMenuItem>
-                <Label className="text-lg font-semibold text-primary">
-                  Hello,{' '}
-                  {user.full_name ? (
-                    <strong>{user.full_name}</strong>
-                  ) : (
-                    <strong>{user.email}</strong>
-                  )}
-                </Label>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <form onSubmit={handleSignOut}>
-                  <input type="hidden" name="pathName" value={pathname} />
-                  <button
-                    type="submit"
-                    className="w-full text-left inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-primary-light focus:ring-2 focus:ring-accent focus:ring-opacity-50"
-                  >
-                    Sign out
-                  </button>
-                </form>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <Link
-            href="/signin"
-            className="inline-flex items-center leading-6 font-medium transition ease-in-out duration-75 cursor-pointer text-primary rounded-md p-1 hover:text-primary-light focus:outline-none focus:text-primary-light focus:ring-2 focus:ring-accent focus:ring-opacity-50"
-          >
-            Sign In
-          </Link>
-        )}
-      </div>
+            )}
+          </div>
+        </div>
+      </nav>
     </div>
   );
 }
