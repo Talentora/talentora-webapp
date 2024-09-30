@@ -29,10 +29,6 @@ const Page = () => {
               <SettingsIcon className="h-5 w-5" />
               <span>Settings</span>
             </Link>
-            <Link className="flex items-center space-x-2 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded" href="interviews/invite">
-              <SettingsIcon className="h-5 w-5" />
-              <span>Invite</span>
-            </Link>
           </nav>
         </div>
     )
