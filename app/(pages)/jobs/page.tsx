@@ -12,11 +12,7 @@ const Page = async () => {
 
   return (
     <div>
-      {jobs && jobs.length > 0 ? (
         <Dashboard jobs={jobs} />
-      ) : (
-        <h1>Error fetching jobs or no jobs available</h1>
-      )}
     </div>
   );
 };

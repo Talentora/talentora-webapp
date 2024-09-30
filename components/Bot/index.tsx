@@ -32,7 +32,7 @@ export default function Bot({ job }: BotProps) {
       return;
     }
     const voiceClient = new DailyVoiceClient({
-      baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '/api',
+      baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '/api/(bot)/',
       services: defaultServices,
       config: defaultConfig,
       timeout: BOT_READY_TIMEOUT,
