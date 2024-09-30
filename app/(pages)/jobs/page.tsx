@@ -7,14 +7,13 @@ import { revalidatePath } from 'next/cache';
 type Job = Tables<'jobs'>;
 
 const Page = async () => {
- 
   const supabase = createClient();
   const jobs = await getJobs(supabase);
 
   return (
     <div>
       {jobs && jobs.length > 0 ? (
-        <Dashboard jobs={jobs}  />
+        <Dashboard jobs={jobs} />
       ) : (
         <h1>Error fetching jobs or no jobs available</h1>
       )}

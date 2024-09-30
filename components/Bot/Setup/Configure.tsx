@@ -62,12 +62,6 @@ export const Configure: React.FC<ConfigureProps> = React.memo(
 
     return (
       <div className="flex flex-col gap-0">
-        <section className="mt-4 border-t border-primary-hairline pt-4">
-          <h3 className="text-lg font-semibold mb-2">Current LLM Context:</h3>
-          <pre className="bg-gray-100 p-4 rounded-md overflow-auto max-h-60">
-            {context}
-          </pre>
-        </section>
         <section className="flex flex-col flex-wrap">
           <DeviceSelect />
         </section>
