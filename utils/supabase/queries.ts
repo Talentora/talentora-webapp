@@ -48,21 +48,19 @@ export const getUserDetails = async (supabase: SupabaseClient) => {
   return userDetails;
 };
 
-export const getJobs = 
-  async (supabase: SupabaseClient): Promise<Job[]> => {
-    try {
-      const { data: jobs, error } = await supabase.from('jobs').select('*');
+export const getJobs = async (supabase: SupabaseClient): Promise<Job[]> => {
+  try {
+    const { data: jobs, error } = await supabase.from('jobs').select('*');
 
-      if (error) {
-        console.error('Error fetching jobs:', error);
-      }
-      return jobs || [];
-    } catch (err) {
-      console.error('Unexpected error fetching jobs:', err);
-      return [];
+    if (error) {
+      console.error('Error fetching jobs:', error);
     }
+    return jobs || [];
+  } catch (err) {
+    console.error('Unexpected error fetching jobs:', err);
+    return [];
   }
-;
+};
 
 /**
  * Creates a new job in the database.
@@ -93,39 +91,37 @@ export const createJob = async (jobData: Omit<Job, 'id'>): Promise<Job> => {
 
 export const deleteJob = async (id: number): Promise<boolean> => {
   const supabase = createClient();
-  const { error } = await supabase
-    .from('jobs')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from('jobs').delete().eq('id', id);
 
   if (error) {
-    console.error('Failed to delete job:', error.message);  // Log the error message for debugging
+    console.error('Failed to delete job:', error.message); // Log the error message for debugging
     return false;
   }
 
-  console.log('Job deleted successfully');  // Add success log to confirm deletion
+  console.log('Job deleted successfully'); // Add success log to confirm deletion
   return true;
 };
 
-export const getJob = 
-  async (supabase: SupabaseClient, id: number): Promise<Job | null> => {
-    try {
-      const { data: job, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .eq('id', id)
-        .single();
+export const getJob = async (
+  supabase: SupabaseClient,
+  id: number
+): Promise<Job | null> => {
+  try {
+    const { data: job, error } = await supabase
+      .from('jobs')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-      if (error) {
-        console.error('Error fetching job:', error);
-      }
-      return job || null;
-    } catch (err) {
-      console.error('Unexpected error fetching job:', err);
-      return null;
+    if (error) {
+      console.error('Error fetching job:', error);
     }
+    return job || null;
+  } catch (err) {
+    console.error('Unexpected error fetching job:', err);
+    return null;
   }
-;
+};
 
 /**
  * Updates a job in the database.
@@ -153,20 +149,21 @@ export const updateJob = async (
   return data?.[0] || null;
 };
 
-export const getApplicants = 
-  async (supabase: SupabaseClient, jobId: number) => {
-    const { data: applicants, error } = await supabase
-      .from('applicants')
-      .select('*')
-      .eq('job_id', jobId);
+export const getApplicants = async (
+  supabase: SupabaseClient,
+  jobId: number
+) => {
+  const { data: applicants, error } = await supabase
+    .from('applicants')
+    .select('*')
+    .eq('job_id', jobId);
 
-    if (error) {
-      console.error('Error fetching applicants:', error);
-    }
-
-    return applicants || [];
+  if (error) {
+    console.error('Error fetching applicants:', error);
   }
-;
+
+  return applicants || [];
+};
 
 export const getCompany = async (
   supabase: SupabaseClient,
@@ -190,3 +187,22 @@ export const getCompany = async (
     return null;
   }
 };
+
+export async function inviteUser(email: string) {
+  const supabase = createClient();
+
+  try {
+    const { data, error } = await supabase.auth.admin.inviteUserByEmail(
+      email=email
+    );
+    if (error) {
+      console.error("Error inviting user:", error);
+      return { success: false, error };
+    }
+    return { success: true, data };
+  } catch (err) {
+    console.error("Error inviting user:", err);
+    return { success: false, error: err };
+  }
+}
+

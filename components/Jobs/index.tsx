@@ -7,8 +7,6 @@ interface DashboardPageProps {
   jobs: Job[];
 }
 
-export default function DashboardPage({
-  jobs,
-}: DashboardPageProps) {
-  return <Dashboard dashboardData={{ initialJobs: jobs }}/>;
+export default function DashboardPage({ jobs }: DashboardPageProps) {
+  return <Dashboard dashboardData={{ initialJobs: jobs }} />;
 }
