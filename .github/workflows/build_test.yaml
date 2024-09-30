@@ -76,13 +76,15 @@ jobs:
           version: latest
       - name: Link Supabase project
         run: |
-          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+          supabase link --project-ref build
+
       - name: init supabase
         run: |
           supabase db remote set ${{ secrets.SUPABASE_CONNECTION_STRING }}
           supabase db pull
-          supabase init --force
+          supabase init
           supabase db start
+
       - name: Verify generated types match Postgres schema
         run: |
           mkdir -p types
