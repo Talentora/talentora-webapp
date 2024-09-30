@@ -45,6 +45,7 @@
     "@svgr/webpack": "^8.1.0",
     "@types/react-beautiful-dnd": "^13.1.8",
     "ai": "^3.4.0",
+    "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",

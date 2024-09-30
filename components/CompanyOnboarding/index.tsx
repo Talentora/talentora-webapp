@@ -71,7 +71,7 @@ export default function OnboardingPage() {
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle>Welcome to RoboRecruiter</CardTitle>
-          <CardDescription>Let's get your company set up in just a few steps</CardDescription>
+          <CardDescription>Let&apos;s get your company set up in just a few steps</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="mb-6">
@@ -91,7 +91,7 @@ export default function OnboardingPage() {
           {step === 1 && (
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Welcome to RoboRecruiter!</h3>
-              <p>We're excited to have you on board. Here's a quick overview of what you can expect:</p>
+              <p>We&apos;re excited to have you on board. Here&apos;s a quick overview of what you can expect:</p>
               <ul className="list-disc list-inside space-y-2">
                 <li><strong>Step 1:</strong> Enter your company information including name, location, and size.</li>
                 <li><strong>Step 2:</strong> Invite your team members to join your workspace.</li>
@@ -142,7 +142,7 @@ export default function OnboardingPage() {
           {step === 3 && (
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Invite Your Team</h3>
-              <p>Add team members' email addresses to invite them to your workspace.</p>
+              <p>Add team members&apos; email addresses to invite them to your workspace.</p>
               <div className="grid w-full items-center gap-1.5">
                 <Label htmlFor="team-emails">Team Emails</Label>
                 <Textarea 
@@ -157,9 +157,9 @@ export default function OnboardingPage() {
 
           {step === 4 && (
             <div className="space-y-4 text-center p-4">
-              <h3 className="text-lg font-medium">You're All Set!</h3>
+              <h3 className="text-lg font-medium">You&apos;re All Set!</h3>
               <p>Congratulations! Your account is now ready to use.</p>
-              <p>We've sent invitations to your team members. They'll be able to join your workspace soon.</p>
+              <p>We&apos;ve sent invitations to your team members. They&apos;ll be able to join your workspace soon.</p>
               <Link href='/account' passHref >
                 <Button as="a" >
                   Get Started
