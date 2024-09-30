@@ -1,4 +1,4 @@
-import ExpiryTimer from '@/components/(bot)/Session/ExpiryTimer';
+import ExpiryTimer from '@/components/Bot/Header/ExpiryTimer';
 
 export function Header() {
   return (

@@ -10,7 +10,12 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Tables } from '@/types/types_db';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
 
 type Applicant = Tables<'applicants'>;
@@ -33,11 +38,7 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
           <CardTitle className="text-xl font-semibold">
             Recent Applicants
           </CardTitle>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={toggleVisibility}
-          >
+          <Button variant="outline" size="sm" onClick={toggleVisibility}>
             {visible ? 'Hide' : 'Show'} Applicants
           </Button>
         </div>
@@ -60,7 +61,7 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
                 <ApplicantRow
                   key={applicant.id}
                   name={`${applicant.first_name} ${applicant.last_name}`}
-                  status={applicant.status || ''}
+                  // status={applicant.status || ''}
                   resume={applicant.resume || ''}
                   email={applicant.email || ''}
                   phone_number={applicant.phone_number || ''}
@@ -76,13 +77,17 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
 
 interface ApplicantRowProps {
   name: string;
-  status: string;
   resume: string;
   email: string;
   phone_number: string;
 }
 
-function ApplicantRow({ name, status, resume, email, phone_number }: ApplicantRowProps) {
+function ApplicantRow({
+  name,
+  resume,
+  email,
+  phone_number
+}: ApplicantRowProps) {
   return (
     <TableRow>
       <TableCell className="font-medium">{name}</TableCell>

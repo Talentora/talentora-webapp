@@ -1,60 +1,132 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { SignOut } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import Logo from '@/components/icons/Logo';
 import { usePathname, useRouter } from 'next/navigation';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
-import s from './Navbar.module.css';
-import { Label } from '../ui/label';
+import { Button } from "@/components/ui/button"
+import { User, LogOut } from 'lucide-react';
 
 interface NavlinksProps {
   user?: any;
 }
 
 export default function Navlinks({ user }: NavlinksProps) {
-  const router = getRedirectMethod() === 'client' ? useRouter() : null;
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const links = [
+    { href: '/pricing', label: 'Pricing' },
+    { href: '/account', label: 'Account', requiresAuth: true },
+  ];
+
+  const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (getRedirectMethod() === 'client') {
+      await handleRequest(e, SignOut, router);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div className="relative flex flex-row justify-between py-4 align-center md:py-6">
-      <div className="flex items-center flex-1">
-        <Link href="/" className={s.logo} aria-label="Logo">
-          <Logo />
-        </Link>
-        <nav className="ml-6 space-x-2 lg:block">
-          <Link href="/pricing" className={s.link}>
-            Pricing
-          </Link>
-          {user && (
-            <Link href="/account" className={s.link}>
-              Account
+    <div className="sticky top-0 z-40 w-full bg-background">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between py-4 md:py-6">
+          <div className="flex items-center">
+            <Link href="/" className="mr-6" aria-label="Logo">
+              <Logo />
             </Link>
-          )}
-        </nav>
-      </div>
-      <div className="flex justify-end space-x-8">
-        {user ? (
-          <div className="flex flex-row items-center">
-            {
-              user.full_name ?
-              <Label>Hello, {user.full_name}</Label>
-              :
-              <Label>Hello, {user.email}</Label>
-            }
-            <form onSubmit={(e) => handleRequest(e, SignOut, router)}>
-              <input type="hidden" name="pathName" value={usePathname()} />
-              <button type="submit" className={s.link}>
-              Sign out
-            </button>
-            </form>
+            <nav className="hidden md:flex space-x-4">
+              {links.map((link) =>
+                (!link.requiresAuth || user) && (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                )
+              )}
+            </nav>
           </div>
-        ) : (
-          <Link href="/signin" className={s.link}>
-            Sign In
-          </Link>
-        )}
+          <div className="flex items-center">
+            {user ? (
+              <div className="relative" ref={userMenuRef}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  aria-label="User menu"
+                  className="relative z-20"
+                >
+                  <User className="h-5 w-5" />
+                </Button>
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-background border border-border rounded-md shadow-lg p-2 z-10">
+                    <div className="px-4 py-2">
+                      <p className="text-sm font-medium text-muted-foreground">Signed in as</p>
+                      <p className="text-sm font-bold truncate">
+                        {user.full_name || user.email}
+                      </p>
+                    </div>
+                    <div className="border-t border-border my-2"></div>
+                    <form onSubmit={handleSignOut}>
+                      <input type="hidden" name="pathName" value={pathname} />
+                      <Button
+                        type="submit"
+                        variant="ghost"
+                        className="w-full justify-start text-sm"
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign out
+                      </Button>
+                    </form>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link href="/signin">
+                <Button variant="ghost" size="sm">Sign In</Button>
+              </Link>
+            )}
+          </div>
+        </div>
       </div>
+      <nav className="md:hidden border-t border-border">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between py-2">
+            {links.map((link) =>
+              (!link.requiresAuth || user) && (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors py-2"
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
+          </div>
+        </div>
+      </nav>
     </div>
   );
 }

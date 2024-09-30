@@ -5,18 +5,10 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Slider } from '@/components/ui/slider';
 import { Mic } from 'lucide-react';
-import Configuration from '@/components/(bot)/Configuration';
+// import Configuration from '@/components/Configuration';
 import { AiRecruiterSetup } from '../ai-recruiter-setup';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
+
 import {
   Card,
   CardContent,
@@ -26,10 +18,14 @@ import {
 } from '@/components/ui/card';
 import { Tables } from '@/types/types_db';
 type Job = Tables<'jobs'>;
-export default function Component(
 
-  job: Job
-) {
+interface InterviewConfigurationProps {
+  job: Job;
+}
+
+const InterviewConfiguration: React.FC<InterviewConfigurationProps> = ({
+  job
+}) => {
   const router = useRouter();
   const [config, setConfig] = useState({
     recruiterName: '',
@@ -54,16 +50,16 @@ export default function Component(
     console.log('Submitted config:', config);
   };
 
-  const handleSpeak = () => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(
-        listenerInput || "Hello, I'm your RoboRecruiter!"
-      );
-      speechSynthesis.speak(utterance);
-    } else {
-      alert('Speech synthesis is not supported in your browser.');
-    }
-  };
+  // const handleSpeak = () => {
+  //   if ('speechSynthesis' in window) {
+  //     const utterance = new SpeechSynthesisUtterance(
+  //       listenerInput || "Hello, I'm your RoboRecruiter!"
+  //     );
+  //     speechSynthesis.speak(utterance);
+  //   } else {
+  //     alert('Speech synthesis is not supported in your browser.');
+  //   }
+  // };
 
   const handleCustomQuestionChange = (index: number, value: string) => {
     const updatedQuestions = [...customQuestions];
@@ -128,14 +124,13 @@ export default function Component(
       </Card>
 
       {/* Combined Interview Settings Card */}
-      
 
       {/* Interviewer Settings Card */}
       <Card>
         <CardHeader>
           <CardTitle>Interviewer Settings</CardTitle>
           <CardDescription>
-            Configure the AI interviewer's name and voice.
+            Configure the AI interviewer&apos;s name and voice.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -150,7 +145,7 @@ export default function Component(
             />
           </div>
           <div className="space-y-2">
-            <Configuration showAllOptions={true} />
+            {/* <Configuration showAllOptions={true} /> */}
           </div>
         </CardContent>
       </Card>
@@ -173,10 +168,10 @@ export default function Component(
                 id="listenerInput"
                 value={listenerInput}
                 onChange={(e) => setListenerInput(e.target.value)}
-                placeholder={`Hi, I\'m ${config.interviewerName}. Welcome to the interview.`}
+                placeholder={`Hi, I&apos;m ${config.interviewerName}. Welcome to the interview.`}
                 className="text-primary-900"
               />
-              <Button type="button" onClick={handleSpeak}>
+              <Button type="button" onClick={() => {}}>
                 <Mic className="mr-2 h-4 w-4" /> Speak
               </Button>
             </div>
@@ -184,17 +179,13 @@ export default function Component(
         </CardContent>
       </Card>
 
-    
-
-      <AiRecruiterSetup/>
-
-
+      <AiRecruiterSetup />
 
       {/* Enter Sample Interview Button */}
       <Button
         type="button"
         className="w-full"
-        onClick={() => router.push('/bot')}
+        onClick={() => router.push(`/bot?jobId=${job.id}`)}
       >
         Enter Sample Interview
       </Button>
@@ -204,4 +195,6 @@ export default function Component(
       </Button>
     </form>
   );
-}
+};
+
+export default InterviewConfiguration;

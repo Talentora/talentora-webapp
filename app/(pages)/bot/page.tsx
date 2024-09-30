@@ -1,49 +1,56 @@
-'use client';
-
-import React, { useState } from "react";
-import { VoiceClient } from "realtime-ai";
-import { VoiceClientAudio, VoiceClientProvider } from "realtime-ai-react";
-
-import { Header } from '@/components/ui/header';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import App from './App';
-import { defaultConfig } from '@/utils/config';
-import { Splash } from './Splash';
-import { getUser, getUserDetails, getSubscription } from '@/utils/supabase/queries';
-import { redirect } from 'next/navigation';
+import Bot from '@/components/Bot';
+import { getJob } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/server';
+import { Tables } from '@/types/types_db';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'; // Import missing components
 
+type Job = Tables<'jobs'>;
 
-const voiceClient = new VoiceClient({
-  baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
-  enableMic: true,
-  config: defaultConfig,
-  
-});
+interface PageProps {
+  searchParams: { jobId?: string };
+}
 
-const page = async () => {
+export default async function Page({ searchParams }: PageProps) {
+  const jobId = searchParams.jobId;
+  const supabase = createClient();
 
+  let job: Job | null = null;
 
-  const [showSplash, setShowSplash] = useState<boolean>(true);
-
-  if (showSplash) {
-    return <Splash handleReady={() => setShowSplash(false)} />;
+  if (jobId) {
+    job = await getJob(supabase, parseInt(jobId, 10));
   }
-  
-  return (
-    <VoiceClientProvider voiceClient={voiceClient}>
-      <TooltipProvider>
-        <main>
-          <Header />
-          <div id="app">
-            <App />
-          </div>
-        </main>
-        <aside id="tray" />
-        <VoiceClientAudio />
-      </TooltipProvider>
-    </VoiceClientProvider>
-  );
-};
 
-export default page;
+  return (
+    <div>
+      <Card className="job-info p-4 bg-white shadow-md rounded-lg">
+        <CardHeader>
+          <CardTitle className="job-info__title text-2xl font-bold mb-1">
+            Job Information
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="job-info__details grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-lg">
+              <strong>Title:</strong> {job?.title || 'Missing Job'}
+            </p>
+            {/* <p className="text-lg">
+              <strong>Description:</strong>{' '}
+              {job?.description || 'Missing Description'}
+            </p> */}
+          </div>
+          {/* <div>
+            <p className="text-lg">
+              <strong>Requirements:</strong>{' '}
+              {job?.requirements || 'Missing Requirements'}
+            </p>
+            <p className="text-lg">
+              <strong>Qualifications:</strong>{' '}
+              {job?.qualifications || 'Missing Qualifications'}
+            </p>
+          </div> */}
+        </CardContent>
+      </Card>
+      <Bot job={job} />
+    </div>
+  );
+}

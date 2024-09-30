@@ -1,6 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -13,13 +12,16 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { FilterIcon } from 'lucide-react';
 
+import { Dispatch, SetStateAction } from 'react';
+
 interface FilterDialogProps {
-  filters: { departments: string[]; locations: string[]; statuses: string[] };
-  setFilters: (filters: any) => void;
+  filters: { departments: string[]; locations: string[] };
+  setFilters: Dispatch<
+    SetStateAction<{ departments: string[]; locations: string[] }>
+  >;
   filterOptions: {
     departments: string[];
     locations: string[];
-    statuses: string[];
   };
   activeFilterCount: number;
 }
@@ -30,6 +32,19 @@ export default function FilterDialog({
   filterOptions,
   activeFilterCount
 }: FilterDialogProps) {
+  const handleCheckedChange = (
+    type: keyof typeof filters,
+    checked: boolean,
+    option: string
+  ) => {
+    setFilters((prev) => ({
+      ...prev,
+      [type]: checked
+        ? [...prev[type], option]
+        : prev[type].filter((item: string) => item !== option)
+    }));
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -43,66 +58,52 @@ export default function FilterDialog({
           )}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[80vw] h-[80vh] sm:max-w-[600px] overflow-auto">
         <DialogHeader>
           <DialogTitle>Filter Jobs</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <FilterSection
-            title="Department"
-            options={filterOptions.departments}
-            selectedOptions={filters.departments}
-            onCheckedChange={(checked, option) =>
-              setFilters((prev) => ({
-                ...prev,
-                departments: checked
-                  ? [...prev.departments, option]
-                  : prev.departments.filter((d) => d !== option)
-              }))
-            }
-          />
-          <FilterSection
-            title="Location"
-            options={filterOptions.locations}
-            selectedOptions={filters.locations}
-            onCheckedChange={(checked, option) =>
-              setFilters((prev) => ({
-                ...prev,
-                locations: checked
-                  ? [...prev.locations, option]
-                  : prev.locations.filter((l) => l !== option)
-              }))
-            }
-          />
-          <FilterSection
-            title="Status"
-            options={filterOptions.statuses}
-            selectedOptions={filters.statuses}
-            onCheckedChange={(checked, option) =>
-              setFilters((prev) => ({
-                ...prev,
-                statuses: checked
-                  ? [...prev.statuses, option]
-                  : prev.statuses.filter((s) => s !== option)
-              }))
-            }
-          />
+        <div className="grid gap-4 py-4 md:grid-cols-2">
+          {(['departments', 'locations'] as const).map((type) => (
+            <FilterSection
+              key={type}
+              title={type.charAt(0).toUpperCase() + type.slice(1)}
+              options={filterOptions[type]}
+              selectedOptions={filters[type]}
+              onCheckedChange={(checked: boolean, option: string) =>
+                handleCheckedChange(type, checked, option)
+              }
+            />
+          ))}
         </div>
       </DialogContent>
     </Dialog>
   );
 }
 
-function FilterSection({ title, options, selectedOptions, onCheckedChange }) {
+interface FilterSectionProps {
+  title: string;
+  options: string[];
+  selectedOptions: string[];
+  onCheckedChange: (checked: boolean, option: string) => void;
+}
+
+function FilterSection({
+  title,
+  options,
+  selectedOptions,
+  onCheckedChange
+}: FilterSectionProps) {
   return (
     <div className="grid gap-2">
       <h3 className="font-medium">{title}</h3>
-      {options.map((option) => (
+      {options?.map((option: string) => (
         <div key={option} className="flex items-center space-x-2">
           <Checkbox
             id={`${title.toLowerCase()}-${option}`}
             checked={selectedOptions.includes(option)}
-            onCheckedChange={(checked) => onCheckedChange(checked, option)}
+            onCheckedChange={(checked: boolean) =>
+              onCheckedChange(checked, option)
+            }
           />
           <label htmlFor={`${title.toLowerCase()}-${option}`}>{option}</label>
         </div>
