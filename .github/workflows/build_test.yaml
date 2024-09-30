@@ -73,6 +73,9 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
+      - name: Link Supabase project
+        run: |
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
       - name: init supabase
         run: |
           supabase db remote set ${{ secrets.SUPABASE_CONNECTION_STRING }}
