@@ -163,6 +163,26 @@ export async function signInWithPassword(formData: FormData) {
   return redirectPath;
 }
 
+/**
+ * Signs up a new user using the provided form data.
+ *
+ * @param {FormData} formData - The form data containing the user's email and password.
+ * @returns {Promise<string>} - A promise that resolves to a redirect path based on the outcome of the sign-up process.
+ *
+ * The function performs the following steps:
+ * 1. Extracts and trims the email and password from the form data.
+ * 2. Validates the email format.
+ * 3. Creates a Supabase client and attempts to sign up the user.
+ * 4. Handles various outcomes of the sign-up process:
+ *    - Invalid email address.
+ *    - Sign-up failure with an error message.
+ *    - Successful sign-up with an active session.
+ *    - Existing account with no identities.
+ *    - Successful sign-up requiring email confirmation.
+ *    - General failure.
+ *
+ * The function returns a redirect path based on the outcome, which can be used to navigate the user to the appropriate page.
+ */
 export async function signUp(formData: FormData) {
   const callbackURL = getURL('/auth/callback');
 
