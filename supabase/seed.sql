@@ -313,27 +313,6 @@ SELECT pg_catalog.setval('"pgsodium"."key_key_id_seq"', 1, false);
 
 
 --
--- Name: applicants_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('"public"."applicants_id_seq"', 8, true);
-
-
---
--- Name: companies_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('"public"."companies_id_seq"', 5, true);
-
-
---
--- Name: jobs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('"public"."jobs_id_seq"', 7, true);
-
-
---
 -- PostgreSQL database dump complete
 --
 
