@@ -76,7 +76,7 @@ jobs:
           version: latest
       - name: init supabase
         run: |
-          supabase init
+          supabase init --force
           supabase db start
 
       - name: Verify generated types match Postgres schema
