@@ -213,15 +213,15 @@ INSERT INTO "public"."jobs" ("id", "title", "description", "salary_range", "comp
 -- Data for Name: applicants; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO "public"."applicants" ("id", "first_name", "last_name", "email", "phone_number", "resume", "job_id") OVERRIDING SYSTEM VALUE VALUES
-	('00000000-0000-0000-0000-000000000011', 'John', 'Doe', 'john.doe@example.com', '555-1234', 'Resume content here...', '00000000-0000-0000-0000-000000000001'),
-	('00000000-0000-0000-0000-000000000012', 'Jane', 'Smith', 'jane.smith@example.com', '555-5678', 'Resume content here...', '00000000-0000-0000-0000-000000000001'),
-	('00000000-0000-0000-0000-000000000013', 'Emily', 'Johnson', 'emily.johnson@example.com', '555-8765', 'Resume content here...', '00000000-0000-0000-0000-000000000001'),
-	('00000000-0000-0000-0000-000000000014', 'Michael', 'Brown', 'michael.brown@example.com', '555-4321', 'Resume content here...', '00000000-0000-0000-0000-000000000002'),
-	('00000000-0000-0000-0000-000000000015', 'Sarah', 'Davis', 'sarah.davis@example.com', '555-1111', 'Resume content here...', '00000000-0000-0000-0000-000000000005'),
-	('00000000-0000-0000-0000-000000000016', 'David', 'Wilson', 'david.wilson@example.com', '555-2222', 'Resume content here...', '00000000-0000-0000-0000-000000000005'),
-	('00000000-0000-0000-0000-000000000017', 'Emma', 'Thomas', 'emma.thomas@example.com', '555-3333', 'Resume content here...', '00000000-0000-0000-0000-000000000001'),
-	('00000000-0000-0000-0000-000000000018', 'Daniel', 'Taylor', 'daniel.taylor@example.com', '555-4444', 'Resume content here...', '00000000-0000-0000-0000-000000000001');
+INSERT INTO "public"."applicants" ("id", "first_name", "last_name", "email", "phone_number", "resume") OVERRIDING SYSTEM VALUE VALUES
+	('00000000-0000-0000-0000-000000000011', 'John', 'Doe', 'john.doe@example.com', '555-1234', 'Resume content here...'),
+	('00000000-0000-0000-0000-000000000012', 'Jane', 'Smith', 'jane.smith@example.com', '555-5678', 'Resume content here...'),
+	('00000000-0000-0000-0000-000000000013', 'Emily', 'Johnson', 'emily.johnson@example.com', '555-8765', 'Resume content here...'),
+	('00000000-0000-0000-0000-000000000014', 'Michael', 'Brown', 'michael.brown@example.com', '555-4321', 'Resume content here...'),
+	('00000000-0000-0000-0000-000000000015', 'Sarah', 'Davis', 'sarah.davis@example.com', '555-1111', 'Resume content here...'),
+	('00000000-0000-0000-0000-000000000016', 'David', 'Wilson', 'david.wilson@example.com', '555-2222', 'Resume content here...'),
+	('00000000-0000-0000-0000-000000000017', 'Emma', 'Thomas', 'emma.thomas@example.com', '555-3333', 'Resume content here...'),
+	('00000000-0000-0000-0000-000000000018', 'Daniel', 'Taylor', 'daniel.taylor@example.com', '555-4444', 'Resume content here...');
 
 
 --
