@@ -188,25 +188,25 @@ INSERT INTO "auth"."refresh_tokens" ("instance_id", "id", "token", "user_id", "r
 --
 
 INSERT INTO "public"."companies" ("id", "name", "location", "industry") OVERRIDING SYSTEM VALUE VALUES
-	(1, 'Tech Innovators Inc.', 'San Francisco, CA', 'Technology'),
-	(2, 'Health Solutions LLC', 'New York, NY', 'Healthcare'),
-	(3, 'FinTech Partners', 'Chicago, IL', 'Finance'),
-	(4, 'Green Energy Corp.', 'Austin, TX', 'Energy'),
-	(5, 'Retail World Ltd.', 'Boston, MA', 'Retail');
+	('f26a1a9f-2688-42b2-84b3-b931c6890b06', 'Tech Innovators Inc.', 'San Francisco, CA', 'Technology'),
+	('f26a1a9f-2688-42b2-84b3-b931c6890b01', 'Health Solutions LLC', 'New York, NY', 'Healthcare'),
+	('f26a1a9f-2688-42b2-84b3-b931c6890b02', 'FinTech Partners', 'Chicago, IL', 'Finance'),
+	('f26a1a9f-2688-42b2-84b3-b931c6890b03', 'Green Energy Corp.', 'Austin, TX', 'Energy'),
+	('f26a1a9f-2688-42b2-84b3-b931c6890b04', 'Retail World Ltd.', 'Boston, MA', 'Retail');
 
 
 --
 -- Data for Name: jobs; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO "public"."jobs" ("id", "title", "description", "salary_range", "company_id", "applicant_count", "location", "department") OVERRIDING SYSTEM VALUE VALUES
-	(1, 'Senior Software Engineer', 'Develop and maintain web applications', '$120k - $150k', 1, 2, 'Boston, MA', 'Marketing'),
-	(2, 'Data Analyst', 'Analyze and interpret complex data sets', '$80k - $110k', 3, 1, 'Boston, MA', 'Marketing'),
-	(3, 'Product Manager', 'Oversee product development and strategy', '$100k - $130k', 1, 1, 'Boston, MA', 'Marketing'),
-	(4, 'Nurse Practitioner', 'Provide healthcare services in a clinical setting', '$90k - $120k', 2, 1, 'Boston, MA', 'Marketing'),
-	(5, 'Marketing Specialist', 'Plan and execute marketing campaigns', '$70k - $90k', 5, 1, 'Boston, MA', 'Marketing'),
-	(6, 'Renewable Energy Engineer', 'Design and develop renewable energy systems', '$95k - $125k', 4, 1, 'Boston, MA', 'Marketing'),
-	(7, 'Sales Associate', 'Assist customers with product selection and purchases', '$40k - $60k', 5, 1, 'Boston, MA', 'Marketing');
+INSERT INTO "public"."jobs" ("id", "title", "description", "salary_range", "company_id", "location", "department") OVERRIDING SYSTEM VALUE VALUES
+	('00000000-0000-0000-0000-000000000001', 'Senior Software Engineer', 'Develop and maintain web applications', '$120k - $150k', 'f26a1a9f-2688-42b2-84b3-b931c6890b06', 'Boston, MA', 'Marketing'),
+	('00000000-0000-0000-0000-000000000002', 'Data Analyst', 'Analyze and interpret complex data sets', '$80k - $110k', 'f26a1a9f-2688-42b2-84b3-b931c6890b01', 'Boston, MA', 'Marketing'),
+	('00000000-0000-0000-0000-000000000003', 'Product Manager', 'Oversee product development and strategy', '$100k - $130k', 'f26a1a9f-2688-42b2-84b3-b931c6890b01', 'Boston, MA', 'Marketing'),
+	('00000000-0000-0000-0000-000000000004', 'Nurse Practitioner', 'Provide healthcare services in a clinical setting', '$90k - $120k', 'f26a1a9f-2688-42b2-84b3-b931c6890b01', 'Boston, MA', 'Marketing'),
+	('00000000-0000-0000-0000-000000000005', 'Marketing Specialist', 'Plan and execute marketing campaigns', '$70k - $90k', 'f26a1a9f-2688-42b2-84b3-b931c6890b01', 'Boston, MA', 'Marketing'),
+	('00000000-0000-0000-0000-000000000006', 'Renewable Energy Engineer', 'Design and develop renewable energy systems', '$95k - $125k', 'f26a1a9f-2688-42b2-84b3-b931c6890b01', 'Boston, MA', 'Marketing'),
+	('00000000-0000-0000-0000-000000000007', 'Sales Associate', 'Assist customers with product selection and purchases', '$40k - $60k', 'f26a1a9f-2688-42b2-84b3-b931c6890b01', 'Boston, MA', 'Marketing');
 
 
 --
@@ -214,14 +214,14 @@ INSERT INTO "public"."jobs" ("id", "title", "description", "salary_range", "comp
 --
 
 INSERT INTO "public"."applicants" ("id", "first_name", "last_name", "email", "phone_number", "resume", "job_id") OVERRIDING SYSTEM VALUE VALUES
-	(1, 'John', 'Doe', 'john.doe@example.com', '555-1234', 'Resume content here...', 1),
-	(2, 'Jane', 'Smith', 'jane.smith@example.com', '555-5678', 'Resume content here...', 2),
-	(3, 'Emily', 'Johnson', 'emily.johnson@example.com', '555-8765', 'Resume content here...', 3),
-	(4, 'Michael', 'Brown', 'michael.brown@example.com', '555-4321', 'Resume content here...', 4),
-	(5, 'Sarah', 'Davis', 'sarah.davis@example.com', '555-1111', 'Resume content here...', 5),
-	(6, 'David', 'Wilson', 'david.wilson@example.com', '555-2222', 'Resume content here...', 6),
-	(7, 'Emma', 'Thomas', 'emma.thomas@example.com', '555-3333', 'Resume content here...', 1),
-	(8, 'Daniel', 'Taylor', 'daniel.taylor@example.com', '555-4444', 'Resume content here...', 7);
+	('00000000-0000-0000-0000-000000000011', 'John', 'Doe', 'john.doe@example.com', '555-1234', 'Resume content here...', '00000000-0000-0000-0000-000000000001'),
+	('00000000-0000-0000-0000-000000000012', 'Jane', 'Smith', 'jane.smith@example.com', '555-5678', 'Resume content here...', '00000000-0000-0000-0000-000000000001'),
+	('00000000-0000-0000-0000-000000000013', 'Emily', 'Johnson', 'emily.johnson@example.com', '555-8765', 'Resume content here...', '00000000-0000-0000-0000-000000000001'),
+	('00000000-0000-0000-0000-000000000014', 'Michael', 'Brown', 'michael.brown@example.com', '555-4321', 'Resume content here...', '00000000-0000-0000-0000-000000000002'),
+	('00000000-0000-0000-0000-000000000015', 'Sarah', 'Davis', 'sarah.davis@example.com', '555-1111', 'Resume content here...', '00000000-0000-0000-0000-000000000005'),
+	('00000000-0000-0000-0000-000000000016', 'David', 'Wilson', 'david.wilson@example.com', '555-2222', 'Resume content here...', '00000000-0000-0000-0000-000000000005'),
+	('00000000-0000-0000-0000-000000000017', 'Emma', 'Thomas', 'emma.thomas@example.com', '555-3333', 'Resume content here...', '00000000-0000-0000-0000-000000000001'),
+	('00000000-0000-0000-0000-000000000018', 'Daniel', 'Taylor', 'daniel.taylor@example.com', '555-4444', 'Resume content here...', '00000000-0000-0000-0000-000000000001');
 
 
 --
