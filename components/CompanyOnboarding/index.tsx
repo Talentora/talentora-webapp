@@ -111,7 +111,7 @@ export default function OnboardingPage() {
               <h3 className="text-lg font-medium">You&apos;re All Set!</h3>
               <p>Congratulations! Your account is now ready to use.</p>
               <p>We&apos;ve sent invitations to your team members. They&apos;ll be able to join your workspace soon.</p>
-              <Link href='/account' passHref>
+              <Link href='/dashboard' passHref>
                 <Button>
                   Get Started
                 </Button>
