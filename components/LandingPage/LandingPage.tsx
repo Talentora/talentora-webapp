@@ -11,11 +11,11 @@ export default function LandingPage() {
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                  AI-Powered Recruiting
-                  <span className="text-primary"> Simplified</span>
+                  Build your dream team with
+                  <span className="text-primary"> RoboRecruiter</span>
                 </h1>
                 <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-                  Streamline your hiring process with our cutting-edge AI recruiter. Find the perfect candidates faster and smarter.
+                  Streamline your hiring process with our conversaiontal AI assessments. Find the perfect candidates faster and smarter.
                 </p>
               </div>
               <div className="space-x-4">
