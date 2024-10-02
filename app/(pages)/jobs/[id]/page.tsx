@@ -13,7 +13,7 @@ export default async function Page({ params }: JobPageProps) {
   const job = await getJob(supabase, Number(params.id));
 
   if (job) {
-    const applicants = await getApplicants(supabase, job.id);
+    const applicants = await getApplicants(supabase, Number(job.id));
 
     return (
       <div>

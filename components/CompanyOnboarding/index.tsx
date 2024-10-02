@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -8,58 +8,10 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import Link from 'next/link'
-declare global {
-  interface Window {
-    google: typeof google;
-  }
-}
 
 export default function OnboardingPage() {
   const [step, setStep] = useState<number>(1);
   const [companySize, setCompanySize] = useState<string>("");
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const loadGoogleMapsScript = () => {
-      const existingScript = document.getElementById('google-maps-script');
-      if (!existingScript) {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_MAPS_API_KEY}&libraries=places`;
-        script.async = true;
-        script.defer = true;
-        script.id = 'google-maps-script';
-        document.head.appendChild(script);
-
-        script.onload = initializeAutocomplete;
-      } else {
-        initializeAutocomplete();
-      }
-    };
-
-    const initializeAutocomplete = () => {
-      if (inputRef.current && window.google) {
-        autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {
-          types: ['(cities)'],
-        });
-        autocompleteRef.current.addListener('place_changed', () => {
-          const place = autocompleteRef.current?.getPlace();
-          if (place && place.formatted_address) {
-            inputRef.current!.value = place.formatted_address;
-          }
-        });
-      }
-    };
-
-    loadGoogleMapsScript();
-
-    return () => {
-      const script = document.getElementById('google-maps-script');
-      if (script) {
-        document.head.removeChild(script);
-      }
-    };
-  }, []);
 
   const totalSteps = 4;
 
@@ -110,11 +62,10 @@ export default function OnboardingPage() {
               </div>
               <div className="grid w-full items-center gap-1.5">
                 <Label htmlFor="headquarters">Headquarters Location</Label>
-                <Input  
-                  type="text" 
+                <Input 
+                  type="text"
                   id="headquarters" 
-                  placeholder="City, Country" 
-                  ref={inputRef}
+                  placeholder="Enter your company's headquarters location"
                 />
               </div>
               <div className="grid w-full items-center gap-1.5">
@@ -160,8 +111,8 @@ export default function OnboardingPage() {
               <h3 className="text-lg font-medium">You&apos;re All Set!</h3>
               <p>Congratulations! Your account is now ready to use.</p>
               <p>We&apos;ve sent invitations to your team members. They&apos;ll be able to join your workspace soon.</p>
-              <Link href='/account' passHref >
-                <Button as="a" >
+              <Link href='/account' passHref>
+                <Button>
                   Get Started
                 </Button>
               </Link>
