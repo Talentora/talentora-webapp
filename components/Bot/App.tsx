@@ -154,7 +154,7 @@ export default function App({ job }: AppProps) {
   }
 
   // Render session view if connected
-  // if (appState === 'connected') {
+  if (appState === 'connected') {
   return (
     // <Session
     //   state={transportState}
@@ -168,7 +168,7 @@ export default function App({ job }: AppProps) {
       job={job}
     />
   );
-  // }
+  }
 
   // Render setup view by default
   const isReady = appState === 'ready';
@@ -195,9 +195,8 @@ export default function App({ job }: AppProps) {
             key="start"
             onClick={() => start()}
             disabled={
-              !isReady &&
-              !Boolean(voiceClient.selectedMic?.label) &&
-              !Boolean(voiceClient.selectedCam?.label)
+              !isReady 
+            
             }
           >
             {!isReady && <Loader2 className="animate-spin" />}

@@ -83,33 +83,34 @@ export default function VoiceInterviewSession({
   useVoiceClientEvent(VoiceEvent.BotTranscript, handleBotTranscript);
   useVoiceClientEvent(VoiceEvent.UserTranscript, handleUserTranscript);
 
-  return (
-    <div className="flex h-100vh flex-col bg-gray-100">
-      <InterviewHeader job={job} />
-  
-      <main className="flex-grow flex p-5 space-x-5">
-        <div className="w-1/2 flex flex-col space-y-5 gap-5">
-          <div className="flex-grow h-1/3">
-            <AIInterviewer isReady={state === 'ready'} />
+
+    return (
+      <div className="flex flex-col h-screen">
+        <InterviewHeader job={job} />
+    
+        <main className="flex-grow grid grid-cols-3 gap-4 p-4">
+          <div className=" h-screen col-span-1 flex justify-between flex-col gap-1">
+            <div className="h-1/2">
+              <AIInterviewer isReady={state === 'ready'} />
+            </div>
+            <div className="h-1/2">
+              <TranscriptPanel transcript={transcript} />
+            </div>
           </div>
-          <div className="flex-grow h-1/3">
-            <TranscriptPanel transcript={transcript} />
+          <div className="col-span-2 h-full">
+            <CandidateVideo isCameraOn={isCameraOn} />
           </div>
-        </div>
-        <div className="w-1/2">
-          <CandidateVideo isCameraOn={isCameraOn} />
-        </div>
-      </main>
+        </main>
   
-      <ControlPanel
-        isMuted={muted}
-        isCameraOn={isCameraOn}
-        isAudioEnabled={isAudioEnabled}
-        onMicToggle={handleMicToggle}
-        onCameraToggle={handleCameraToggle}
-        onAudioToggle={handleAudioToggle}
-        onLeave={onLeave}
-      />
-    </div>
-  );
-}
+        <ControlPanel
+          isMuted={muted}
+          isCameraOn={isCameraOn}
+          isAudioEnabled={isAudioEnabled}
+          onMicToggle={handleMicToggle}
+          onCameraToggle={handleCameraToggle}
+          onAudioToggle={handleAudioToggle}
+          onLeave={onLeave}
+        />
+      </div>
+    );
+  }

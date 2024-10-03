@@ -78,7 +78,6 @@ export const Configure: React.FC<ConfigureProps> = React.memo(
           <DeviceSelect />
         </section>
 
-        {!inSession && (
           <section className="flex flex-col gap-4 border-y border-primary-hairline py-4 mt-4">
             <div className="flex flex-row justify-between items-center">
               <Label className="flex flex-row gap-1 items-center">
@@ -90,7 +89,7 @@ export const Configure: React.FC<ConfigureProps> = React.memo(
               />
             </div>
           </section>
-        )}
+        
       </div>
     );
   },
