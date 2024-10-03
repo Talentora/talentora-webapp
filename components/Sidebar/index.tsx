@@ -50,7 +50,7 @@ const Page = () => {
         </Link>
         <Link
           className="flex items-center space-x-2 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded"
-          href="dashboard/settings"
+          href="/settings"
         >
           <SettingsIcon className="h-5 w-5" />
           <span>Settings</span>
