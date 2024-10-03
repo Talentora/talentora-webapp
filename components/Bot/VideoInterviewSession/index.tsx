@@ -1,25 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  Camera,
-  CameraOff,
-  Mic,
-  MicOff,
-  Volume2,
-  VolumeX,
-  LogOut
-} from 'lucide-react';
-import { Transcript, TransportState, VoiceEvent } from 'realtime-ai';
-import {
-  useVoiceClient,
-  useVoiceClientEvent,
-  VoiceClientVideo
-} from 'realtime-ai-react';
+import { TransportState, VoiceEvent, Transcript } from 'realtime-ai';
+import { useVoiceClient, useVoiceClientEvent } from 'realtime-ai-react';
 
 import InterviewHeader from './InterviewHeader';
 import AIInterviewer from './AIInterviewer';
@@ -27,6 +10,7 @@ import CandidateVideo from './CandidateVideo';
 import TranscriptPanel from './TranscriptPanel';
 import ControlPanel from './ControlPanel';
 import { Tables } from '@/types/types_db';
+
 type Job = Tables<'jobs'>;
 
 interface VoiceInterviewSessionProps {
@@ -47,25 +31,24 @@ export default function VoiceInterviewSession({
   const [muted, setMuted] = useState(startAudioOff);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(!startAudioOff);
-  const [transcript, setTranscript] = useState<
-    { speaker: string; text: string }[]
-  >([]);
+  const [transcript, setTranscript] = useState<{ speaker: string; text: string }[]>([]);
 
-  useVoiceClientEvent(
-    VoiceEvent.BotStoppedSpeaking,
-    useCallback(() => {
-      if (hasStarted) return;
+  const handleBotStoppedSpeaking = useCallback(() => {
+    if (!hasStarted) {
       setHasStarted(true);
-    }, [hasStarted])
-  );
+    }
+  }, [hasStarted]);
+
+  useVoiceClientEvent(VoiceEvent.BotStoppedSpeaking, handleBotStoppedSpeaking);
 
   useEffect(() => {
     setHasStarted(false);
   }, []);
 
   useEffect(() => {
-    if (!hasStarted || startAudioOff) return;
-    voiceClient.enableMic(true);
+    if (hasStarted && !startAudioOff) {
+      voiceClient.enableMic(true);
+    }
   }, [voiceClient, startAudioOff, hasStarted]);
 
   useEffect(() => {
@@ -89,43 +72,35 @@ export default function VoiceInterviewSession({
     // Implement audio toggle logic here
   };
 
-  useVoiceClientEvent(
-    VoiceEvent.BotTranscript,
-    useCallback((text: string) => {
-      setTranscript((prev) => [...prev, { speaker: 'AI', text: text.trim() }]);
-    }, [])
-  );
+  const handleBotTranscript = useCallback((text: string) => {
+    setTranscript((prev) => [...prev, { speaker: 'AI', text: text.trim() }]);
+  }, []);
 
-  useVoiceClientEvent(
-    VoiceEvent.UserTranscript,
-    useCallback((data: Transcript) => {
-      setTranscript((prev) => [
-        ...prev,
-        { speaker: 'You', text: data.text.trim() }
-      ]);
-    }, [])
-  );
+  const handleUserTranscript = useCallback((data: Transcript) => {
+    setTranscript((prev) => [...prev, { speaker: 'You', text: data.text.trim() }]);
+  }, []);
+
+  useVoiceClientEvent(VoiceEvent.BotTranscript, handleBotTranscript);
+  useVoiceClientEvent(VoiceEvent.UserTranscript, handleUserTranscript);
 
   return (
-    <div className="flex h-100vh flex-col bg-gray-100 gap-5 justify-between">
+    <div className="flex h-100vh flex-col bg-gray-100">
       <InterviewHeader job={job} />
-
-      <main>
-        <div className="flex flex-row gap-5">
-          <div className="w-1/2 flex flex-col gap-5">
-            <div className="h-1/2">
-              <AIInterviewer isReady={state === 'ready'} />
-            </div>
-            <div className="h-1/2">
-              <TranscriptPanel transcript={transcript} />
-            </div>
+  
+      <main className="flex-grow flex p-5 space-x-5">
+        <div className="w-1/2 flex flex-col space-y-5 gap-5">
+          <div className="flex-grow h-1/3">
+            <AIInterviewer isReady={state === 'ready'} />
           </div>
-          <div className="w-1/2">
-            <CandidateVideo isCameraOn={isCameraOn} />
+          <div className="flex-grow h-1/3">
+            <TranscriptPanel transcript={transcript} />
           </div>
         </div>
+        <div className="w-1/2">
+          <CandidateVideo isCameraOn={isCameraOn} />
+        </div>
       </main>
-
+  
       <ControlPanel
         isMuted={muted}
         isCameraOn={isCameraOn}

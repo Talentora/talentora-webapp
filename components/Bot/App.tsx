@@ -12,7 +12,6 @@ import VoiceInterviewSession from '@/components/Bot/VideoInterviewSession';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import * as Card from '@/components/ui/card';
-import { Session } from './Session';
 import { Configure } from './Setup';
 
 import { Tables } from '@/types/types_db';

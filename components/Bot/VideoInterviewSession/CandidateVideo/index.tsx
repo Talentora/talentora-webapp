@@ -7,7 +7,7 @@ interface CandidateVideoProps {
 
 export default function CandidateVideo({ isCameraOn }: CandidateVideoProps) {
   return (
-    <div className="relative bg-black rounded-lg overflow-hidden">
+    <div className="relative bg-black rounded-lg overflow-hidden h-full">
       {isCameraOn ? (
         <VoiceClientVideo
           participant="local"
