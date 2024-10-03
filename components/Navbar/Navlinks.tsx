@@ -49,7 +49,7 @@ export default function Navlinks({ user }: NavlinksProps) {
   }, []);
 
   return (
-    <div className="sticky top-0 z-40 w-full bg-background">
+    <div className="sticky top-0 z-40 w-full ">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4 md:py-6">
           <div className="flex items-center">

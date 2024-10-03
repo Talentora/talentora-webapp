@@ -6,8 +6,11 @@ import { LLMHelper, VoiceError, VoiceEvent, VoiceMessage } from 'realtime-ai';
 import {
   useVoiceClient,
   useVoiceClientEvent,
-  useVoiceClientTransportState
+  useVoiceClientTransportState,
 } from 'realtime-ai-react';
+
+import { useRecording } from '@daily-co/daily-react';
+
 import VoiceInterviewSession from '@/components/Bot/VideoInterviewSession';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -47,6 +50,7 @@ interface AppProps {
 export default function App({ job }: AppProps) {
   const voiceClient = useVoiceClient()!;
   const transportState = useVoiceClientTransportState();
+  const recording = useRecording();
 
   const [appState, setAppState] = useState<
     'idle' | 'ready' | 'connecting' | 'connected'
@@ -129,6 +133,7 @@ export default function App({ job }: AppProps) {
     try {
       voiceClient.enableMic(false);
       voiceClient.enableCam(true);
+      recording.startRecording();
       addJobContext();
       await voiceClient.start();
     } catch (e) {
@@ -154,7 +159,7 @@ export default function App({ job }: AppProps) {
   }
 
   // Render session view if connected
-  // if (appState === 'connected') {
+  if (appState === 'connected') {
   return (
     // <Session
     //   state={transportState}
@@ -168,7 +173,7 @@ export default function App({ job }: AppProps) {
       job={job}
     />
   );
-  // }
+  }
 
   // Render setup view by default
   const isReady = appState === 'ready';
@@ -195,9 +200,8 @@ export default function App({ job }: AppProps) {
             key="start"
             onClick={() => start()}
             disabled={
-              !isReady &&
-              !Boolean(voiceClient.selectedMic?.label) &&
-              !Boolean(voiceClient.selectedCam?.label)
+              !isReady 
+            
             }
           >
             {!isReady && <Loader2 className="animate-spin" />}
