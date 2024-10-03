@@ -8,13 +8,18 @@ import {
   useVoiceClientEvent,
   useVoiceClientTransportState
 } from 'realtime-ai-react';
-
+import VoiceInterviewSession from '@/components/Bot/VideoInterviewSession';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import * as Card from '@/components/ui/card';
-import Session from './Session';
+import { Session } from './Session';
 import { Configure } from './Setup';
 
+import { Tables } from '@/types/types_db';
+
+/**
+ * Mapping of transport states to status text
+ */
 const status_text = {
   idle: 'Initializing...',
   initializing: 'Initializing...',
@@ -23,13 +28,23 @@ const status_text = {
   connecting: 'Connecting...'
 };
 
-import { Tables } from '@/types/types_db';
+/**
+ * Type definition for Job from database schema
+ */
 type Job = Tables<'jobs'>;
 
+/**
+ * Props interface for App component
+ */
 interface AppProps {
   job: Job;
 }
 
+/**
+ * Main App component for the AI interviewer
+ * @param {AppProps} props - The props for the App component
+ * @returns {JSX.Element} The rendered App component
+ */
 export default function App({ job }: AppProps) {
   const voiceClient = useVoiceClient()!;
   const transportState = useVoiceClientTransportState();
@@ -40,6 +55,9 @@ export default function App({ job }: AppProps) {
   const [error, setError] = useState<string | null>(null);
   const [startAudioOff, setStartAudioOff] = useState<boolean>(false);
 
+  /**
+   * Handle fatal errors from the voice client
+   */
   useVoiceClientEvent(
     VoiceEvent.Error,
     useCallback((message: VoiceMessage) => {
@@ -49,16 +67,18 @@ export default function App({ job }: AppProps) {
     }, [])
   );
 
+  /**
+   * Initialize local audio devices when the app is idle
+   */
   useEffect(() => {
-    // Initialize local audio devices
     if (!voiceClient || appState !== 'idle') return;
     voiceClient.initDevices();
   }, [appState, voiceClient]);
 
+  /**
+   * Update app state based on voice client transport state
+   */
   useEffect(() => {
-    // Update app state based on voice client transport state.
-    // We only need a subset of states to determine the ui state,
-    // so this effect helps avoid excess inline conditionals.
     switch (transportState) {
       case 'initialized':
         setAppState('ready');
@@ -76,6 +96,9 @@ export default function App({ job }: AppProps) {
     }
   }, [transportState]);
 
+  /**
+   * Add job context to the LLM helper
+   */
   function addJobContext() {
     if (!voiceClient) return;
 
@@ -98,31 +121,31 @@ export default function App({ job }: AppProps) {
     );
   }
 
+  /**
+   * Start the interview session
+   */
   async function start() {
     if (!voiceClient) return;
 
-    // Join the session
     try {
-      // Disable the mic until the bot has joined
-      // to avoid interrupting the bot's welcome message
       voiceClient.enableMic(false);
+      voiceClient.enableCam(true);
       addJobContext();
       await voiceClient.start();
     } catch (e) {
-      setError((e as VoiceError).message || 'Unknown error occured');
+      setError((e as VoiceError).message || 'Unknown error occurred');
       voiceClient.disconnect();
     }
   }
 
+  /**
+   * Leave the interview session
+   */
   async function leave() {
     await voiceClient.disconnect();
   }
 
-  /**
-   * UI States
-   */
-
-  // Error: show full screen message
+  // Render error message if an error occurred
   if (error) {
     return (
       <Alert intent="danger" title="An error occurred">
@@ -131,18 +154,24 @@ export default function App({ job }: AppProps) {
     );
   }
 
-  // Connected: show session view
-  if (appState === 'connected') {
-    return (
-      <Session
-        state={transportState}
-        onLeave={() => leave()}
-        startAudioOff={startAudioOff}
-      />
-    );
-  }
+  // Render session view if connected
+  // if (appState === 'connected') {
+  return (
+    // <Session
+    //   state={transportState}
+    //   onLeave={() => leave()}
+    //   startAudioOff={startAudioOff}
+    // />
+    <VoiceInterviewSession
+      state={transportState}
+      onLeave={() => leave()}
+      startAudioOff={startAudioOff}
+      job={job}
+    />
+  );
+  // }
 
-  // Default: show setup view
+  // Render setup view by default
   const isReady = appState === 'ready';
 
   return (
@@ -165,9 +194,12 @@ export default function App({ job }: AppProps) {
         <Card.CardFooter>
           <Button
             key="start"
-            // fullWidthMobile
             onClick={() => start()}
-            disabled={!isReady}
+            disabled={
+              !isReady &&
+              !Boolean(voiceClient.selectedMic?.label) &&
+              !Boolean(voiceClient.selectedCam?.label)
+            }
           >
             {!isReady && <Loader2 className="animate-spin" />}
             {status_text[transportState as keyof typeof status_text]}

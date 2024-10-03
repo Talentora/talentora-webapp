@@ -12,7 +12,7 @@ const Page = async () => {
 
   return (
     <div>
-        <Dashboard jobs={jobs} />
+      <Dashboard jobs={jobs} />
     </div>
   );
 };
