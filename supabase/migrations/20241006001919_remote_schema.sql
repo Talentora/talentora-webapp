@@ -220,8 +220,8 @@ CREATE TABLE IF NOT EXISTS "public"."companies" (
     "description" "text",
     "email_extension" "text",
     "website_url" "text",
-    "id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
-    "subscription_id" "text" DEFAULT "gen_random_uuid"()
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "subscription_id" "text"
 );
 
 
@@ -261,7 +261,7 @@ CREATE TABLE IF NOT EXISTS "public"."jobs" (
     "department" "text" DEFAULT 'Marketing'::"text",
     "requirements" "text",
     "qualifications" "text",
-    "id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "interview_questions" "text"[],
     "company_id" "uuid"
 );
@@ -341,6 +341,29 @@ CREATE TABLE IF NOT EXISTS "public"."products" (
 ALTER TABLE "public"."products" OWNER TO "postgres";
 
 
+CREATE TABLE IF NOT EXISTS "public"."recruiters" (
+    "id" "uuid" NOT NULL,
+    "avatar_url" "text",
+    "billing_address" "jsonb",
+    "payment_method" "jsonb",
+    "email" "text",
+    "company_id" "uuid",
+    "role" "public"."role" DEFAULT 'recruiter'::"public"."role" NOT NULL,
+    "full_name" "text"
+);
+
+
+ALTER TABLE "public"."recruiters" OWNER TO "postgres";
+
+
+COMMENT ON COLUMN "public"."recruiters"."email" IS 'User email';
+
+
+
+COMMENT ON COLUMN "public"."recruiters"."company_id" IS 'ID for company';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."subscriptions" (
     "id" "text" NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -364,34 +387,20 @@ ALTER TABLE "public"."subscriptions" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."users" (
-    "id" "uuid" NOT NULL,
-    "last_name" "text",
-    "avatar_url" "text",
-    "billing_address" "jsonb",
-    "payment_method" "jsonb",
-    "first_name" "text",
-    "email" "text",
-    "company_id" "uuid",
-    "role" "public"."role" DEFAULT 'recruiter'::"public"."role" NOT NULL
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "recruiter_id" "uuid",
+    "applicant_id" "uuid"
 );
 
 
 ALTER TABLE "public"."users" OWNER TO "postgres";
 
 
-COMMENT ON COLUMN "public"."users"."last_name" IS 'Last name of the user';
+COMMENT ON COLUMN "public"."users"."recruiter_id" IS 'recruiter id. Is NULL if this user is an applicant';
 
 
 
-COMMENT ON COLUMN "public"."users"."first_name" IS 'First name of the user';
-
-
-
-COMMENT ON COLUMN "public"."users"."email" IS 'User email';
-
-
-
-COMMENT ON COLUMN "public"."users"."company_id" IS 'ID for company';
+COMMENT ON COLUMN "public"."users"."applicant_id" IS 'applicant id. Is NULL if this user is a recruiter';
 
 
 
@@ -417,6 +426,11 @@ ALTER TABLE ONLY "public"."applications"
 
 ALTER TABLE ONLY "public"."companies"
     ADD CONSTRAINT "companies_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."companies"
+    ADD CONSTRAINT "companies_subscription_id_key" UNIQUE ("subscription_id");
 
 
 
@@ -455,8 +469,13 @@ ALTER TABLE ONLY "public"."subscriptions"
 
 
 
-ALTER TABLE ONLY "public"."users"
+ALTER TABLE ONLY "public"."recruiters"
     ADD CONSTRAINT "users_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."users"
+    ADD CONSTRAINT "users_pkey1" PRIMARY KEY ("id");
 
 
 
@@ -501,7 +520,7 @@ ALTER TABLE ONLY "public"."jobs_posted"
 
 
 ALTER TABLE ONLY "public"."jobs_posted"
-    ADD CONSTRAINT "jobs_posted_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT "jobs_posted_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."recruiters"("id") ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
@@ -521,12 +540,22 @@ ALTER TABLE ONLY "public"."subscriptions"
 
 
 ALTER TABLE ONLY "public"."users"
+    ADD CONSTRAINT "users_applicant_id_fkey" FOREIGN KEY ("applicant_id") REFERENCES "public"."applicants"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."recruiters"
     ADD CONSTRAINT "users_company_id_fkey" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
-ALTER TABLE ONLY "public"."users"
+ALTER TABLE ONLY "public"."recruiters"
     ADD CONSTRAINT "users_id_fkey" FOREIGN KEY ("id") REFERENCES "auth"."users"("id");
+
+
+
+ALTER TABLE ONLY "public"."users"
+    ADD CONSTRAINT "users_recruiter_id_fkey" FOREIGN KEY ("recruiter_id") REFERENCES "public"."recruiters"("id") ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
@@ -548,11 +577,11 @@ CREATE POLICY "Can only view own subs data." ON "public"."subscriptions" FOR SEL
 
 
 
-CREATE POLICY "Can update own user data." ON "public"."users" FOR UPDATE USING (("auth"."uid"() = "id"));
+CREATE POLICY "Can update own user data." ON "public"."recruiters" FOR UPDATE USING (("auth"."uid"() = "id"));
 
 
 
-CREATE POLICY "Can view own user data." ON "public"."users" FOR SELECT USING (("auth"."uid"() = "id"));
+CREATE POLICY "Can view own user data." ON "public"."recruiters" FOR SELECT USING (("auth"."uid"() = "id"));
 
 
 
@@ -560,7 +589,11 @@ CREATE POLICY "Enable insert for authenticated users only" ON "public"."jobs" FO
 
 
 
-CREATE POLICY "Enable insert for users based on user_id" ON "public"."users" FOR INSERT WITH CHECK ((( SELECT "auth"."uid"() AS "uid") = "id"));
+CREATE POLICY "Enable insert for authenticated users only" ON "public"."users" FOR INSERT TO "authenticated" WITH CHECK (true);
+
+
+
+CREATE POLICY "Enable insert for users based on user_id" ON "public"."recruiters" FOR INSERT WITH CHECK ((( SELECT "auth"."uid"() AS "uid") = "id"));
 
 
 
@@ -594,6 +627,9 @@ ALTER TABLE "public"."prices" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."products" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."recruiters" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."subscriptions" ENABLE ROW LEVEL SECURITY;
@@ -898,6 +934,12 @@ GRANT ALL ON TABLE "public"."prices" TO "service_role";
 GRANT ALL ON TABLE "public"."products" TO "anon";
 GRANT ALL ON TABLE "public"."products" TO "authenticated";
 GRANT ALL ON TABLE "public"."products" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."recruiters" TO "anon";
+GRANT ALL ON TABLE "public"."recruiters" TO "authenticated";
+GRANT ALL ON TABLE "public"."recruiters" TO "service_role";
 
 
 

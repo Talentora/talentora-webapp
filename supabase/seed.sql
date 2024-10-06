@@ -244,6 +244,8 @@ INSERT INTO "public"."prices" ("id", "product_id", "active", "description", "uni
 -- Data for Name: jobs; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO "public"."jobs" ("title", "description", "salary_range", "location", "department", "requirements", "qualifications", "id", "interview_questions", "company_id") VALUES
+	('Associate Software Engineer', 'software engineering', '$100,000 - $150,000', 'Boston, MA', 'Finance', 'Finance degree & CS degree', '10 years of experience', '214a3876-8e8a-4ed6-9d6b-cde132719f26', NULL, NULL);
 
 
 --
@@ -259,13 +261,19 @@ INSERT INTO "public"."prices" ("id", "product_id", "active", "description", "uni
 
 
 --
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: recruiters; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 
 
 --
 -- Data for Name: jobs_posted; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 
