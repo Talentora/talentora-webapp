@@ -35,7 +35,7 @@ export default function OnboardingPage() {
     <div className="container mx-auto py-10">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle>Welcome to RoboRecruiter</CardTitle>
+          <CardTitle>Welcome to Talentora</CardTitle>
           <CardDescription>
             Let&apos;s get your company set up in just a few steps
           </CardDescription>

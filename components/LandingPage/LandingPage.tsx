@@ -12,7 +12,7 @@ export default function LandingPage() {
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
                   Build your dream team with
-                  <span className="text-primary"> RoboRecruiter</span>
+                  <span className="text-primary"> Talentora</span>
                 </h1>
                 <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
                   Streamline your hiring process with our conversaiontal AI assessments. Find the perfect candidates faster and smarter.
