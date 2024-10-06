@@ -122,6 +122,22 @@ $$;
 
 ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
 
+
+CREATE OR REPLACE FUNCTION "public"."update_applicant_count"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    AS $$
+begin
+    update jobs
+    set applicant_count = (select count(*) from applicants where job_id = NEW.id)
+    where id = NEW.id;
+    
+    return NEW;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."update_applicant_count"() OWNER TO "postgres";
+
 SET default_tablespace = '';
 
 SET default_table_access_method = "heap";
@@ -834,6 +850,12 @@ GRANT USAGE ON SCHEMA "public" TO "service_role";
 GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "anon";
 GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."update_applicant_count"() TO "anon";
+GRANT ALL ON FUNCTION "public"."update_applicant_count"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."update_applicant_count"() TO "service_role";
 
 
 
