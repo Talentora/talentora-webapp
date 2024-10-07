@@ -44,7 +44,7 @@ export default function Bot({ job }: BotProps) {
 
     // Create a new DailyVoiceClient instance
     const voiceClient = new DailyVoiceClient({
-      baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '/api/(bot)/',
+      baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
       services: defaultServices,
       config: defaultConfig,
       timeout: BOT_READY_TIMEOUT,

@@ -17,7 +17,7 @@ export default async function Page({ searchParams }: PageProps) {
   let job: Job | null = null;
 
   if (jobId) {
-    job = await getJob(supabase, parseInt(jobId, 10));
+    job = await getJob(supabase, jobId);
   }
 
   return (

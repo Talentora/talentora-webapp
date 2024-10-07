@@ -104,7 +104,7 @@ export const deleteJob = async (id: number): Promise<boolean> => {
 
 export const getJob = async (
   supabase: SupabaseClient,
-  id: number
+  id: string
 ): Promise<Job | null> => {
   try {
     const { data: job, error } = await supabase

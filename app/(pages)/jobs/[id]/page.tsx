@@ -10,7 +10,8 @@ interface JobPageProps {
 
 export default async function Page({ params }: JobPageProps) {
   const supabase = createClient();
-  const job = await getJob(supabase, Number(params.id));
+  console.log("fetching job: ", params.id);
+  const job = await getJob(supabase, params.id);
 
   if (job) {
     const applicants = await getApplicants(supabase, Number(job.id));
