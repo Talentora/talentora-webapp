@@ -25,7 +25,14 @@ const Page = () => {
           href="/interviews"
         >
           <UserIcon className="h-5 w-5" />
-          <span>Interviews</span>
+          <span>Interviews (old)</span>
+        </Link>
+        <Link
+          className="flex items-center space-x-2 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded"
+          href="/applicants"
+        >
+          <UserIcon className="h-5 w-5" />
+          <span>Applicants</span>
         </Link>
         <Link
           className="flex items-center space-x-2 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded"
@@ -34,6 +41,7 @@ const Page = () => {
           <BriefcaseIcon className="h-5 w-5" />
           <span>Jobs</span>
         </Link>
+        
         <Link
           className="flex items-center space-x-2 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded"
           href="/bot"

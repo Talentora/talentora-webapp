@@ -49,6 +49,9 @@ export default function CandidateList() {
               <Button variant="outline" size="icon">
                 <Search className="h-4 w-4" />
               </Button>
+                <Link href="/applicants/invite">
+                <Button className="bg-primary text-foreground" variant="outline">Invite Candidates</Button>
+                </Link>
             </div>
             <Table>
               <TableHeader>
