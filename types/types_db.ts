@@ -357,7 +357,7 @@ export type Database = {
           company_id?: string | null
           email?: string | null
           full_name?: string | null
-          id: string
+          id?: string
           payment_method?: Json | null
           role?: Database["public"]["Enums"]["role"]
         }
@@ -377,13 +377,6 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "users_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -474,6 +467,13 @@ export type Database = {
           recruiter_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "recruiters_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "users_applicant_id_fkey"
             columns: ["applicant_id"]
