@@ -103,11 +103,8 @@ export default function Pricing({ user, products, subscription }: Props) {
             <h1 className="text-4xl font-extrabold text-primary sm:text-center sm:text-6xl">
               Pricing Plans
             </h1>
-            <p className="max-w-2xl m-auto mt-5 text-xl text-secondary sm:text-center sm:text-2xl">
-              Start building for free, then add a site plan to go live. Account
-              plans unlock additional features.
-            </p>
-            <div className="relative self-center mt-6 bg-muted rounded-lg p-0.5 flex sm:mt-8 border border-border">
+           
+            <div className="relative self-center mt-6 rounded-lg p-0.5 flex sm:mt-8">
               {intervals.includes('month') && (
                 <button
                   onClick={() => setBillingInterval('month')}
@@ -178,7 +175,7 @@ export default function Pricing({ user, products, subscription }: Props) {
                     <Button
                       type="button"
                       onClick={() => handleStripeCheckout(price)}
-                      className="block w-full py-2 mt-8 text-sm font-semibold text-center text-primary rounded-md hover:bg-muted"
+                      className="block w-full py-2 mt-8 text-sm font-semibold text-center text-muted rounded-md hover:bg-accent"
                     >
                       {subscription ? 'Manage' : 'Subscribe'}
                     </Button>
