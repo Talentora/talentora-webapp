@@ -144,7 +144,7 @@ export type Database = {
           {
             foreignKeyName: "companies_subscription_id_fkey"
             columns: ["subscription_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "subscriptions"
             referencedColumns: ["id"]
           },
@@ -258,7 +258,7 @@ export type Database = {
             foreignKeyName: "jobs_posted_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
-            referencedRelation: "users"
+            referencedRelation: "recruiters"
             referencedColumns: ["id"]
           },
         ]
@@ -340,6 +340,54 @@ export type Database = {
         }
         Relationships: []
       }
+      recruiters: {
+        Row: {
+          avatar_url: string | null
+          billing_address: Json | null
+          company_id: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          payment_method: Json | null
+          role: Database["public"]["Enums"]["role"]
+        }
+        Insert: {
+          avatar_url?: string | null
+          billing_address?: Json | null
+          company_id?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          payment_method?: Json | null
+          role?: Database["public"]["Enums"]["role"]
+        }
+        Update: {
+          avatar_url?: string | null
+          billing_address?: Json | null
+          company_id?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          payment_method?: Json | null
+          role?: Database["public"]["Enums"]["role"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "users_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "users_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           cancel_at: string | null
@@ -411,48 +459,33 @@ export type Database = {
       }
       users: {
         Row: {
-          avatar_url: string | null
-          billing_address: Json | null
-          company_id: string | null
-          email: string | null
-          full_name: string | null
+          applicant_id: string | null
           id: string
-          payment_method: Json | null
-          role: Database["public"]["Enums"]["role"]
+          recruiter_id: string | null
         }
         Insert: {
-          avatar_url?: string | null
-          billing_address?: Json | null
-          company_id?: string | null
-          email?: string | null
-          full_name?: string | null
-          id: string
-          payment_method?: Json | null
-          role?: Database["public"]["Enums"]["role"]
+          applicant_id?: string | null
+          id?: string
+          recruiter_id?: string | null
         }
         Update: {
-          avatar_url?: string | null
-          billing_address?: Json | null
-          company_id?: string | null
-          email?: string | null
-          full_name?: string | null
+          applicant_id?: string | null
           id?: string
-          payment_method?: Json | null
-          role?: Database["public"]["Enums"]["role"]
+          recruiter_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "users_company_id_fkey"
-            columns: ["company_id"]
+            foreignKeyName: "users_applicant_id_fkey"
+            columns: ["applicant_id"]
             isOneToOne: false
-            referencedRelation: "companies"
+            referencedRelation: "applicants"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "users_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
+            foreignKeyName: "users_recruiter_id_fkey"
+            columns: ["recruiter_id"]
+            isOneToOne: false
+            referencedRelation: "recruiters"
             referencedColumns: ["id"]
           },
         ]

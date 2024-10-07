@@ -2,7 +2,7 @@
 import { JobHeader } from './JobHeader';
 import ApplicantStatistics from './ApplicantStatistics';
 import { RecentApplicants } from './RecentApplicants';
-import { RoboRecruiterConfig } from './BotConfig';
+import { BotConfig } from './BotConfig';
 import { Tables } from '@/types/types_db';
 type Job = Tables<'jobs'>;
 type Applicant = Tables<'applicants'>;
@@ -18,7 +18,7 @@ export default function Job({ job, applicants }: JobProps) {
       <JobHeader job={job} />
       <ApplicantStatistics />
       <RecentApplicants applicants={applicants} />
-      <RoboRecruiterConfig job={job} />
+      <BotConfig job={job} />
     </div>
   );
 }
