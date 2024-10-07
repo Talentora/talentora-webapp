@@ -206,6 +206,7 @@ export async function signUp(formData: FormData) {
       emailRedirectTo: callbackURL
     }
   });
+  console.log("reaches here 2", data);
 
   if (error) {
     redirectPath = getErrorRedirect(
@@ -330,6 +331,7 @@ export async function updateName(formData: FormData) {
   const fullName = String(formData.get('fullName')).trim();
 
   const supabase = createClient();
+  console.log("access name")
   const { error, data } = await supabase.auth.updateUser({
     data: { full_name: fullName }
   });
