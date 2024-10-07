@@ -122,22 +122,6 @@ $$;
 
 ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
 
-
-CREATE OR REPLACE FUNCTION "public"."update_applicant_count"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
-    AS $$
-begin
-    update jobs
-    set applicant_count = (select count(*) from applicants where job_id = NEW.id)
-    where id = NEW.id;
-    
-    return NEW;
-end;
-$$;
-
-
-ALTER FUNCTION "public"."update_applicant_count"() OWNER TO "postgres";
-
 SET default_tablespace = '';
 
 SET default_table_access_method = "heap";
@@ -342,7 +326,7 @@ ALTER TABLE "public"."products" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."recruiters" (
-    "id" "uuid" NOT NULL,
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "avatar_url" "text",
     "billing_address" "jsonb",
     "payment_method" "jsonb",
@@ -529,6 +513,11 @@ ALTER TABLE ONLY "public"."prices"
 
 
 
+ALTER TABLE ONLY "public"."users"
+    ADD CONSTRAINT "recruiters_id_fkey" FOREIGN KEY ("id") REFERENCES "auth"."users"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."subscriptions"
     ADD CONSTRAINT "subscriptions_price_id_fkey" FOREIGN KEY ("price_id") REFERENCES "public"."prices"("id");
 
@@ -546,11 +535,6 @@ ALTER TABLE ONLY "public"."users"
 
 ALTER TABLE ONLY "public"."recruiters"
     ADD CONSTRAINT "users_company_id_fkey" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON UPDATE CASCADE ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."recruiters"
-    ADD CONSTRAINT "users_id_fkey" FOREIGN KEY ("id") REFERENCES "auth"."users"("id");
 
 
 
@@ -594,10 +578,6 @@ CREATE POLICY "Enable insert for authenticated users only" ON "public"."users" F
 
 
 CREATE POLICY "Enable insert for users based on user_id" ON "public"."recruiters" FOR INSERT WITH CHECK ((( SELECT "auth"."uid"() AS "uid") = "id"));
-
-
-
-CREATE POLICY "Enable update for users based on email" ON "public"."jobs" FOR UPDATE TO "authenticated" USING (((( SELECT "auth"."jwt"() AS "jwt") ->> 'email'::"text") = "title")) WITH CHECK (((( SELECT "auth"."jwt"() AS "jwt") ->> 'email'::"text") = "title"));
 
 
 
@@ -850,12 +830,6 @@ GRANT USAGE ON SCHEMA "public" TO "service_role";
 GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "anon";
 GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "service_role";
-
-
-
-GRANT ALL ON FUNCTION "public"."update_applicant_count"() TO "anon";
-GRANT ALL ON FUNCTION "public"."update_applicant_count"() TO "authenticated";
-GRANT ALL ON FUNCTION "public"."update_applicant_count"() TO "service_role";
 
 
 
