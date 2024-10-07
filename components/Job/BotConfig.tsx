@@ -5,11 +5,11 @@ import Link from 'next/link';
 
 type Job = Tables<'jobs'>;
 
-interface RoboRecruiterConfigProps {
+interface BotConfigProps {
   job: Job;
 }
 
-export function RoboRecruiterConfig({ job }: RoboRecruiterConfigProps) {
+export function BotConfig({ job }: BotConfigProps) {
   return (
     <Card>
       <CardHeader>
@@ -26,7 +26,7 @@ export function RoboRecruiterConfig({ job }: RoboRecruiterConfigProps) {
             }}
             className="w-full bg-primary-dark p-5 rounded-2xl block text-center text-foreground"
           >
-            Customize Your RoboRecruiter
+            Customize Your Bot
           </Link>
         </div>
       </CardContent>

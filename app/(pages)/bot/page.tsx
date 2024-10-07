@@ -17,39 +17,11 @@ export default async function Page({ searchParams }: PageProps) {
   let job: Job | null = null;
 
   if (jobId) {
-    job = await getJob(supabase, parseInt(jobId, 10));
+    job = await getJob(supabase, jobId);
   }
 
   return (
     <div>
-      <Card className="job-info p-4 bg-white shadow-md rounded-lg">
-        <CardHeader>
-          <CardTitle className="job-info__title text-2xl font-bold mb-1">
-            Job Information
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="job-info__details grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-lg">
-              <strong>Title:</strong> {job?.title || 'Missing Job'}
-            </p>
-            {/* <p className="text-lg">
-              <strong>Description:</strong>{' '}
-              {job?.description || 'Missing Description'}
-            </p> */}
-          </div>
-          {/* <div>
-            <p className="text-lg">
-              <strong>Requirements:</strong>{' '}
-              {job?.requirements || 'Missing Requirements'}
-            </p>
-            <p className="text-lg">
-              <strong>Qualifications:</strong>{' '}
-              {job?.qualifications || 'Missing Qualifications'}
-            </p>
-          </div> */}
-        </CardContent>
-      </Card>
       <Bot job={job} />
     </div>
   );

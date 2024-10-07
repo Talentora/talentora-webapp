@@ -1,18 +1,30 @@
 import React, { useEffect, useRef, useState } from 'react';
-
-// import HelpTip from "@/components/ui/helptip";
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useVoiceClient } from 'realtime-ai-react';
 import { LLMHelper } from 'realtime-ai';
 import DeviceSelect from './DeviceSelect';
 
+/**
+ * Props for the Configure component
+ */
 interface ConfigureProps {
+  /** Current state of the application */
   state: string;
+  /** Whether to start with audio off */
   startAudioOff?: boolean;
+  /** Function to handle toggling startAudioOff */
   handleStartAudioOff?: () => void;
+  /** Whether the component is being used in an active session */
   inSession?: boolean;
 }
+
+/**
+ * Configure component for setting up audio devices and preferences
+ *
+ * @param {ConfigureProps} props - The props for the Configure component
+ * @returns {JSX.Element} The rendered Configure component
+ */
 export const Configure: React.FC<ConfigureProps> = React.memo(
   ({ startAudioOff, handleStartAudioOff, inSession = false }) => {
     const [showPrompt, setshowPrompt] = useState<boolean>(false);
@@ -66,12 +78,10 @@ export const Configure: React.FC<ConfigureProps> = React.memo(
           <DeviceSelect />
         </section>
 
-        {!inSession && (
           <section className="flex flex-col gap-4 border-y border-primary-hairline py-4 mt-4">
             <div className="flex flex-row justify-between items-center">
               <Label className="flex flex-row gap-1 items-center">
-                Join with mic muted{' '}
-                {/* <HelpTip text="Start with microphone muted (click to unmute)" /> */}
+                Join with mic muted
               </Label>
               <Switch
                 checked={startAudioOff}
@@ -79,7 +89,7 @@ export const Configure: React.FC<ConfigureProps> = React.memo(
               />
             </div>
           </section>
-        )}
+        
       </div>
     );
   },
@@ -87,4 +97,5 @@ export const Configure: React.FC<ConfigureProps> = React.memo(
     prevProps.startAudioOff === nextProps.startAudioOff &&
     prevProps.state === nextProps.state
 );
+
 Configure.displayName = 'Configure';

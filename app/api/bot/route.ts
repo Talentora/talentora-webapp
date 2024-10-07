@@ -2,12 +2,16 @@
 import { defaultBotProfile, defaultMaxDuration } from '@/utils/rtvi.config';
 
 export async function POST(request: Request) {
+
+  const OPENAI_API_KEY= process.env.OPENAI_API_KEY;
+  const DAILY_API_KEY=process.env.NEXT_PUBLIC_DAILY_API_KEY
+
   console.log('Received request:', request);
 
   const { services, config } = await request.json();
   console.log('Parsed request body:', { services, config });
 
-  if (!services || !config || !process.env.NEXT_PUBLIC_DAILY_BOTS_URL) {
+  if (!services || !config) {
     console.error(
       'Services or config not found on request body or environment variable missing'
     );
@@ -21,17 +25,18 @@ export async function POST(request: Request) {
     max_duration: defaultMaxDuration,
     services,
     api_keys: {
-      openai: process.env.OPENAI_API_KEY
+      openai: OPENAI_API_KEY
     },
     config: [...config]
   };
   console.log('Payload to be sent:', payload);
 
-  const req = await fetch(process.env.NEXT_PUBLIC_DAILY_BOTS_URL, {
+  console.log('Sending request to external API...',DAILY_API_KEY);
+  const req = await fetch("https://api.daily.co/v1/bots/start", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.NEXT_PUBLIC_DAILY_API_KEY}`
+      Authorization: `Bearer ${DAILY_API_KEY}`
     },
     body: JSON.stringify(payload)
   });

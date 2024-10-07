@@ -9,37 +9,99 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      AI_config: {
+        Row: {
+          created_at: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      AI_summary: {
+        Row: {
+          created_at: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       applicants: {
         Row: {
-          email: string
-          first_name: string
-          id: number
-          job_id: number | null
-          last_name: string
+          email: string | null
+          first_name: string | null
+          id: string
+          last_name: string | null
           phone_number: string | null
           resume: string | null
         }
         Insert: {
-          email: string
-          first_name: string
-          id?: never
-          job_id?: number | null
-          last_name: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
           phone_number?: string | null
           resume?: string | null
         }
         Update: {
-          email?: string
-          first_name?: string
-          id?: never
-          job_id?: number | null
-          last_name?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
           phone_number?: string | null
           resume?: string | null
         }
+        Relationships: []
+      }
+      applications: {
+        Row: {
+          AI_summary: string | null
+          applicant_id: string
+          created_at: string
+          job_id: string
+        }
+        Insert: {
+          AI_summary?: string | null
+          applicant_id: string
+          created_at?: string
+          job_id: string
+        }
+        Update: {
+          AI_summary?: string | null
+          applicant_id?: string
+          created_at?: string
+          job_id?: string
+        }
         Relationships: [
           {
-            foreignKeyName: "applicants_job_id_fkey"
+            foreignKeyName: "applications_AI_summary_fkey"
+            columns: ["AI_summary"]
+            isOneToOne: false
+            referencedRelation: "AI_summary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_applicant_id_fkey"
+            columns: ["applicant_id"]
+            isOneToOne: false
+            referencedRelation: "applicants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_job_id_fkey"
             columns: ["job_id"]
             isOneToOne: false
             referencedRelation: "jobs"
@@ -49,24 +111,44 @@ export type Database = {
       }
       companies: {
         Row: {
-          id: number
+          description: string | null
+          email_extension: string | null
+          id: string
           industry: string | null
           location: string | null
           name: string
+          subscription_id: string | null
+          website_url: string | null
         }
         Insert: {
-          id?: never
+          description?: string | null
+          email_extension?: string | null
+          id?: string
           industry?: string | null
           location?: string | null
           name: string
+          subscription_id?: string | null
+          website_url?: string | null
         }
         Update: {
-          id?: never
+          description?: string | null
+          email_extension?: string | null
+          id?: string
           industry?: string | null
           location?: string | null
           name?: string
+          subscription_id?: string | null
+          website_url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "companies_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: true
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       customers: {
         Row: {
@@ -93,32 +175,38 @@ export type Database = {
       }
       jobs: {
         Row: {
-          applicant_count: number | null
-          company_id: number | null
+          company_id: string | null
           department: string | null
           description: string | null
-          id: number
+          id: string
+          interview_questions: string[] | null
           location: string | null
+          qualifications: string | null
+          requirements: string | null
           salary_range: string | null
           title: string
         }
         Insert: {
-          applicant_count?: number | null
-          company_id?: number | null
+          company_id?: string | null
           department?: string | null
           description?: string | null
-          id?: never
+          id?: string
+          interview_questions?: string[] | null
           location?: string | null
+          qualifications?: string | null
+          requirements?: string | null
           salary_range?: string | null
           title: string
         }
         Update: {
-          applicant_count?: number | null
-          company_id?: number | null
+          company_id?: string | null
           department?: string | null
           description?: string | null
-          id?: never
+          id?: string
+          interview_questions?: string[] | null
           location?: string | null
+          qualifications?: string | null
+          requirements?: string | null
           salary_range?: string | null
           title?: string
         }
@@ -128,6 +216,49 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs_posted: {
+        Row: {
+          AI_config_id: string | null
+          created_at: string
+          job_id: string
+          user_id: string
+        }
+        Insert: {
+          AI_config_id?: string | null
+          created_at?: string
+          job_id: string
+          user_id: string
+        }
+        Update: {
+          AI_config_id?: string | null
+          created_at?: string
+          job_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_posted_AI_config_id_fkey"
+            columns: ["AI_config_id"]
+            isOneToOne: false
+            referencedRelation: "AI_config"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jobs_posted_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: true
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jobs_posted_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "recruiters"
             referencedColumns: ["id"]
           },
         ]
@@ -209,6 +340,47 @@ export type Database = {
         }
         Relationships: []
       }
+      recruiters: {
+        Row: {
+          avatar_url: string | null
+          billing_address: Json | null
+          company_id: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          payment_method: Json | null
+          role: Database["public"]["Enums"]["role"]
+        }
+        Insert: {
+          avatar_url?: string | null
+          billing_address?: Json | null
+          company_id?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          payment_method?: Json | null
+          role?: Database["public"]["Enums"]["role"]
+        }
+        Update: {
+          avatar_url?: string | null
+          billing_address?: Json | null
+          company_id?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          payment_method?: Json | null
+          role?: Database["public"]["Enums"]["role"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "users_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           cancel_at: string | null
@@ -280,32 +452,40 @@ export type Database = {
       }
       users: {
         Row: {
-          avatar_url: string | null
-          billing_address: Json | null
-          full_name: string | null
+          applicant_id: string | null
           id: string
-          payment_method: Json | null
+          recruiter_id: string | null
         }
         Insert: {
-          avatar_url?: string | null
-          billing_address?: Json | null
-          full_name?: string | null
-          id: string
-          payment_method?: Json | null
+          applicant_id?: string | null
+          id?: string
+          recruiter_id?: string | null
         }
         Update: {
-          avatar_url?: string | null
-          billing_address?: Json | null
-          full_name?: string | null
+          applicant_id?: string | null
           id?: string
-          payment_method?: Json | null
+          recruiter_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "users_id_fkey"
+            foreignKeyName: "recruiters_id_fkey"
             columns: ["id"]
             isOneToOne: true
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "users_applicant_id_fkey"
+            columns: ["applicant_id"]
+            isOneToOne: false
+            referencedRelation: "applicants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "users_recruiter_id_fkey"
+            columns: ["recruiter_id"]
+            isOneToOne: false
+            referencedRelation: "recruiters"
             referencedColumns: ["id"]
           },
         ]
@@ -320,6 +500,7 @@ export type Database = {
     Enums: {
       pricing_plan_interval: "day" | "week" | "month" | "year"
       pricing_type: "one_time" | "recurring"
+      role: "recruiter" | "candidate"
       subscription_status:
         | "trialing"
         | "active"

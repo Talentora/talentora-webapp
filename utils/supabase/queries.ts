@@ -104,7 +104,7 @@ export const deleteJob = async (id: number): Promise<boolean> => {
 
 export const getJob = async (
   supabase: SupabaseClient,
-  id: number
+  id: string
 ): Promise<Job | null> => {
   try {
     const { data: job, error } = await supabase
@@ -193,16 +193,15 @@ export async function inviteUser(email: string) {
 
   try {
     const { data, error } = await supabase.auth.admin.inviteUserByEmail(
-      email=email
+      (email = email)
     );
     if (error) {
-      console.error("Error inviting user:", error);
+      console.error('Error inviting user:', error);
       return { success: false, error };
     }
     return { success: true, data };
   } catch (err) {
-    console.error("Error inviting user:", err);
+    console.error('Error inviting user:', err);
     return { success: false, error: err };
   }
 }
-

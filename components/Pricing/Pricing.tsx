@@ -84,19 +84,14 @@ export default function Pricing({ user, products, subscription }: Props) {
     return (
       <section className="bg-background">
         <div className="max-w-6xl px-4 py-8 mx-auto sm:py-24 sm:px-6 lg:px-8">
-          <div className="sm:flex sm:flex-col sm:align-center"></div>
-          <p className="text-4xl font-extrabold text-primary sm:text-center sm:text-6xl">
-            No subscription pricing plans found. Create them in your{' '}
-            <a
-              className="text-accent underline"
-              href="https://dashboard.stripe.com/products"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Stripe Dashboard
-            </a>
-            .
-          </p>
+          <div className="sm:flex sm:flex-col sm:align-center">
+            <h2 className="text-4xl font-extrabold text-primary sm:text-center sm:text-6xl">
+              Pricing Unavailable
+            </h2>
+            <p className="mt-6 text-xl text-secondary sm:text-center sm:text-2xl max-w-2xl mx-auto">
+              We're sorry, but our pricing information is not available at the moment. Please check back later for updates on our subscription plans.
+            </p>
+          </div>
         </div>
       </section>
     );
@@ -108,11 +103,8 @@ export default function Pricing({ user, products, subscription }: Props) {
             <h1 className="text-4xl font-extrabold text-primary sm:text-center sm:text-6xl">
               Pricing Plans
             </h1>
-            <p className="max-w-2xl m-auto mt-5 text-xl text-secondary sm:text-center sm:text-2xl">
-              Start building for free, then add a site plan to go live. Account
-              plans unlock additional features.
-            </p>
-            <div className="relative self-center mt-6 bg-muted rounded-lg p-0.5 flex sm:mt-8 border border-border">
+           
+            <div className="relative self-center mt-6 rounded-lg p-0.5 flex sm:mt-8">
               {intervals.includes('month') && (
                 <button
                   onClick={() => setBillingInterval('month')}
@@ -183,7 +175,7 @@ export default function Pricing({ user, products, subscription }: Props) {
                     <Button
                       type="button"
                       onClick={() => handleStripeCheckout(price)}
-                      className="block w-full py-2 mt-8 text-sm font-semibold text-center text-primary rounded-md hover:bg-muted"
+                      className="block w-full py-2 mt-8 text-sm font-semibold text-center text-muted rounded-md hover:bg-accent"
                     >
                       {subscription ? 'Manage' : 'Subscribe'}
                     </Button>

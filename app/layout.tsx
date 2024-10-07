@@ -9,7 +9,7 @@ import Loading from '@/components/Loading';
 import NextTopLoader from 'nextjs-toploader'; // Import NextTopLoader
 import Head from 'next/head';
 
-const title = 'RoboRecruiter';
+const title = 'Talentora';
 const description = 'Brought to you by Vercel, Stripe, and Supabase.';
 
 export const metadata: Metadata = {
