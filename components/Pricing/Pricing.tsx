@@ -89,7 +89,7 @@ export default function Pricing({ user, products, subscription }: Props) {
               Pricing Unavailable
             </h2>
             <p className="mt-6 text-xl text-secondary sm:text-center sm:text-2xl max-w-2xl mx-auto">
-              We're sorry, but our pricing information is not available at the moment. Please check back later for updates on our subscription plans.
+            We&apos;re sorry, but our pricing information is not available at the moment. Please check back later for updates on our subscription plans.
             </p>
           </div>
         </div>

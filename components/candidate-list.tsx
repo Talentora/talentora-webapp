@@ -11,7 +11,15 @@ import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CalendarDays, Download, Mail, Phone, Play, Search, ThumbsDown, ThumbsUp } from "lucide-react"
 
-const candidates = [
+type Candidate = {
+  id: number
+  name: string
+  role: string
+  status: string
+  progress: number
+}
+
+const candidates: Candidate[] = [
   { id: 1, name: "Emily Johnson", role: "Software Engineer", status: "Technical Interview", progress: 75 },
   { id: 2, name: "Michael Chen", role: "Product Manager", status: "First Round", progress: 25 },
   { id: 3, name: "Sarah Davis", role: "UX Designer", status: "Final Interview", progress: 90 },
@@ -20,8 +28,8 @@ const candidates = [
 ]
 
 export default function CandidateList() {
-  const [selectedCandidate, setSelectedCandidate] = useState(null)
-  const [searchTerm, setSearchTerm] = useState("")
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null)
+  const [searchTerm, setSearchTerm] = useState<string>("")
 
   const filteredCandidates = candidates.filter(
     (candidate) =>
@@ -49,9 +57,9 @@ export default function CandidateList() {
               <Button variant="outline" size="icon">
                 <Search className="h-4 w-4" />
               </Button>
-                <Link href="/applicants/invite">
+              <Link href="/applicants/invite">
                 <Button className="bg-primary text-foreground" variant="outline">Invite Candidates</Button>
-                </Link>
+              </Link>
             </div>
             <Table>
               <TableHeader>
@@ -88,11 +96,16 @@ export default function CandidateList() {
   )
 }
 
-function CandidatePortal({ candidate, onBack }) {
+type CandidatePortalProps = {
+  candidate: Candidate
+  onBack: () => void
+}
+
+function CandidatePortal({ candidate, onBack }: CandidatePortalProps) {
   return (
     <div className="space-y-4">
       <Button onClick={onBack} variant="link">
-        ← Back to Candidate List
+        &larr; Back to Candidate List
       </Button>
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="flex-1 space-y-6">
@@ -147,7 +160,7 @@ function CandidatePortal({ candidate, onBack }) {
                   <TabsTrigger value="question3">Question 3</TabsTrigger>
                 </TabsList>
                 <TabsContent value="question1" className="mt-4">
-                  <h3 className="font-semibold mb-2">Describe a challenging project you've worked on.</h3>
+                  <h3 className="font-semibold mb-2">Describe a challenging project you&apos;ve worked on.</h3>
                   <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
                     <Play className="w-12 h-12 text-muted-foreground" />
                   </div>

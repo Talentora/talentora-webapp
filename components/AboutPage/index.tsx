@@ -15,7 +15,7 @@ export default function AboutPage() {
                   About Talentora
                 </h1>
                 <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-                  We're on a mission to revolutionize the hiring experience using AI.
+                 We&apos;re on a mission to revolutionize the hiring experience using AI.
                 </p>
               </div>
             </div>
@@ -48,7 +48,7 @@ export default function AboutPage() {
                   <Clock className="h-12 w-12 text-primary" />
                   <h3 className="text-xl font-bold">Our History</h3>
                   <p className="text-center text-muted-foreground">
-                    Founded in 2024, we're a agile group of builders hoping to make a lasting impact on the world.
+                    Founded in 2024, We&apos;re a agile group of builders hoping to make a lasting impact on the world.
                   </p>
                 </CardContent>
               </Card>
@@ -88,10 +88,10 @@ export default function AboutPage() {
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Our Story</h2>
                 <p className="text-muted-foreground">
                   Founded in 2010, our company began with a simple idea: to create innovative solutions that make a difference. 
-                  Over the years, we've grown from a small team of dreamers to a global organization, but our core mission remains the same.
+                  Over the years, We&apos;ve  grown from a small team of dreamers to a global organization, but our core mission remains the same.
                 </p>
                 <p className="text-muted-foreground">
-                  We've faced challenges, celebrated victories, and learned valuable lessons along the way. 
+                We&apos;ve faced challenges, celebrated victories, and learned valuable lessons along the way. 
                   Our journey is a testament to the power of perseverance, creativity, and teamwork.
                 </p>
                 {/* <Button className="mt-4">Learn More About Our Journey</Button> */}
@@ -115,7 +115,13 @@ export default function AboutPage() {
   )
 }
 
-function TeamMember({ name, role, imageSrc }) {
+interface TeamMemberProps {
+  name: string;
+  role: string;
+  imageSrc: string;
+}
+
+function TeamMember({ name, role, imageSrc }: TeamMemberProps) {
   return (
     <div className="flex flex-col items-center space-y-4">
       <Image
