@@ -1,7 +1,6 @@
+"use client"
 import Dashboard from './Dashboard';
-import { Tables } from '@/types/types_db';
-
-type Job = Tables<'jobs'>;
+import { Job } from '@/types/greenhouse';
 
 interface DashboardPageProps {
   jobs: Job[];
@@ -10,3 +9,4 @@ interface DashboardPageProps {
 export default function DashboardPage({ jobs }: DashboardPageProps) {
   return <Dashboard dashboardData={{ initialJobs: jobs }} />;
 }
+

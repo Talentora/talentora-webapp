@@ -1,27 +1,47 @@
-// app/api/applications/route.ts
 import { NextResponse } from 'next/server';
+import { Application, Candidate } from '@/types/greenhouse';
 
 export async function GET() {
   const apiKey = process.env.NEXT_PUBLIC_GREENHOUSE_API_KEY;
-  const baseURL = `https://harvest.greenhouse.io/v1/applications`;
+  const baseURL = `https://harvest.greenhouse.io/v1`;
 
   if (!apiKey) {
     return NextResponse.json({ error: 'API key not found' }, { status: 500 });
   }
 
   try {
-    const response = await fetch(baseURL, {
+    const applicationsResponse = await fetch(`${baseURL}/applications`, {
       headers: {
         Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
       },
     });
 
-    if (!response.ok) {
-      return NextResponse.json({ error: 'Failed to fetch applications' }, { status: response.status });
+    if (!applicationsResponse.ok) {
+      return NextResponse.json({ error: 'Failed to fetch applications' }, { status: applicationsResponse.status });
     }
 
-    const applications = await response.json();
-    return NextResponse.json(applications, { status: 200 });
+    const applications: Application[] = await applicationsResponse.json();
+
+    // Fetch candidate data for each application
+    const applicationsWithCandidates = await Promise.all(
+      applications.map(async (application) => {
+        const candidateResponse = await fetch(`${baseURL}/candidates/${application.candidate_id}`, {
+          headers: {
+            Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
+          },
+        });
+
+        if (!candidateResponse.ok) {
+          console.error(`Failed to fetch candidate data for application ${application.id}`);
+          return application;
+        }
+
+        const candidate: Candidate = await candidateResponse.json();
+        return { ...application, candidate };
+      })
+    );
+
+    return NextResponse.json(applicationsWithCandidates, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: 'An error occurred while fetching applications' }, { status: 500 });
   }

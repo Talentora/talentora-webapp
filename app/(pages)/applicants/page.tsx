@@ -1,9 +1,15 @@
+// import CandidateList from "@/components/Applicants/candidate-list";
+import ApplicantList from "@/components/Applicants/ApplicantList";
+import { Application } from "@/types/greenhouse";
 
-import CandidateList from "@/components/candidate-list";
+const Page = async () => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/applications`, { cache: 'no-store' });
+    const applications: Application[] = await response.json();
 
-const Page = () => {
     return (
-        <CandidateList/>
+        <ApplicantList
+            applications={applications}
+        />
     )
 }
 

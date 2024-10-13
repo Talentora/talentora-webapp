@@ -14,10 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { MoreVerticalIcon } from 'lucide-react';
-import Link from 'next/link';
-
-import { Tables } from '@/types/types_db';
-type Job = Tables<'jobs'>;
+import { Job } from '@/types/greenhouse';
 
 interface TableViewProps {
   tableViewData: {
@@ -36,7 +33,6 @@ export function TableView({ tableViewData }: TableViewProps) {
           <TableHead>Title</TableHead>
           <TableHead>Department</TableHead>
           <TableHead>Location</TableHead>
-          <TableHead>Applicants</TableHead>
           <TableHead>Status</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
@@ -44,10 +40,10 @@ export function TableView({ tableViewData }: TableViewProps) {
       <TableBody>
         {filteredJobs.map((job) => (
           <TableRow key={job.id} className="hover:bg-primary-800">
-            <TableCell className="font-medium">{job.title}</TableCell>
-            <TableCell>{job.department}</TableCell>
-            <TableCell>{job.location}</TableCell>
-            <TableCell>{job.applicant_count}</TableCell>
+            <TableCell className="font-medium">{job.name}</TableCell>
+            <TableCell>{job.departments.join(', ')}</TableCell>
+            <TableCell>{job.offices.join(', ')}</TableCell>
+            <TableCell>{job.status}</TableCell>
             <TableCell className="text-right">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

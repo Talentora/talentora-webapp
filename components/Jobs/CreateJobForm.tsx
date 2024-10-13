@@ -2,9 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Tables } from '@/types/types_db';
-
-type Job = Tables<'jobs'>;
+import { Job } from '@/types/greenhouse';
 
 interface CreateJobFormProps {
   formData: {
@@ -15,26 +13,42 @@ interface CreateJobFormProps {
 
 export function CreateJobForm({ formData }: CreateJobFormProps) {
   const { onSubmit, onCancel } = formData;
-  const [title, setTitle] = useState('');
+  const [name, setName] = useState('');
   const [department, setDepartment] = useState('');
-  const [location, setLocation] = useState('');
-  const [description, setDescription] = useState('');
-  const [qualifications, setQualifications] = useState('');
-  const [requirements, setRequirements] = useState('');
-  const [salaryRange, setSalaryRange] = useState('');
+  const [office, setOffice] = useState('');
+  const [notes, setNotes] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onSubmit({
-      title,
-      department,
-      location,
-      description,
-      qualifications,
-      requirements,
-      salary_range: salaryRange,
-      applicant_count: 0,
-      company_id: 1
+      name,
+      departments: [department],
+      offices: [office],
+      notes,
+      requisition_id: null,
+      confidential: false,
+      status: 'open',
+      created_at: new Date().toISOString(),
+      opened_at: new Date().toISOString(),
+      closed_at: null,
+      updated_at: new Date().toISOString(),
+      is_template: false,
+      copied_from_id: null,
+      hiring_team: {
+        hiring_managers: [],
+        recruiters: [],
+        coordinators: [],
+        sourcers: []
+      },
+      openings: [],
+      custom_fields: {
+        employment_type: null,
+        reason_for_hire: null
+      },
+      keyed_custom_fields: {
+        employment_type: null,
+        reason_for_hire: null
+      }
     });
   };
 
@@ -42,8 +56,8 @@ export function CreateJobForm({ formData }: CreateJobFormProps) {
     <form onSubmit={handleSubmit} className="space-y-4 h-1/2">
       <Input
         placeholder="Job Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        value={name}
+        onChange={(e) => setName(e.target.value)}
         required
       />
       <Input
@@ -53,34 +67,15 @@ export function CreateJobForm({ formData }: CreateJobFormProps) {
         required
       />
       <Input
-        placeholder="Location"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
+        placeholder="Office"
+        value={office}
+        onChange={(e) => setOffice(e.target.value)}
         required
       />
       <Textarea
-        placeholder="Job Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        required
-      />
-      <Textarea
-        placeholder="Qualifications"
-        value={qualifications}
-        onChange={(e) => setQualifications(e.target.value)}
-        required
-      />
-      <Textarea
-        placeholder="Requirements"
-        value={requirements}
-        onChange={(e) => setRequirements(e.target.value)}
-        required
-      />
-      <Input
-        placeholder="Salary Range"
-        value={salaryRange}
-        onChange={(e) => setSalaryRange(e.target.value)}
-        required
+        placeholder="Job Notes"
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
       />
       <div className="flex justify-end space-x-2">
         <Button type="button" variant="outline" onClick={onCancel}>
