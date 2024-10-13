@@ -154,12 +154,8 @@ COMMENT ON TABLE "public"."AI_summary" IS 'Summarized information per applicant 
 
 
 CREATE TABLE IF NOT EXISTS "public"."applicants" (
-    "first_name" "text",
-    "last_name" "text",
-    "email" "text",
-    "phone_number" "text",
-    "resume" "text",
-    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "harvest_applicants" bigint
 );
 
 
@@ -174,11 +170,16 @@ COMMENT ON COLUMN "public"."applicants"."id" IS 'id';
 
 
 
+COMMENT ON COLUMN "public"."applicants"."harvest_applicants" IS 'harvest id for applicants object';
+
+
+
 CREATE TABLE IF NOT EXISTS "public"."applications" (
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "AI_summary" "uuid",
     "applicant_id" "uuid" NOT NULL,
-    "job_id" "uuid" NOT NULL
+    "job_id" "uuid" NOT NULL,
+    "harvest_applications" bigint
 );
 
 
@@ -194,6 +195,10 @@ COMMENT ON COLUMN "public"."applications"."applicant_id" IS 'applicant unique id
 
 
 COMMENT ON COLUMN "public"."applications"."job_id" IS 'unique id for jobs';
+
+
+
+COMMENT ON COLUMN "public"."applications"."harvest_applications" IS 'harvest id for applications object';
 
 
 
@@ -238,16 +243,10 @@ ALTER TABLE "public"."customers" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."jobs" (
-    "title" "text" NOT NULL,
-    "description" "text",
-    "salary_range" "text",
-    "location" "text" DEFAULT 'Boston, MA'::"text",
-    "department" "text" DEFAULT 'Marketing'::"text",
-    "requirements" "text",
-    "qualifications" "text",
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
-    "interview_questions" "text"[],
-    "company_id" "uuid"
+    "company_id" "uuid",
+    "harvest_jobs" bigint,
+    "AIconfig_id" "uuid"
 );
 
 
@@ -258,38 +257,15 @@ COMMENT ON COLUMN "public"."jobs"."id" IS 'Job id';
 
 
 
-COMMENT ON COLUMN "public"."jobs"."interview_questions" IS 'Interview questions, stored as a list';
-
-
-
 COMMENT ON COLUMN "public"."jobs"."company_id" IS 'company id';
 
 
 
-CREATE TABLE IF NOT EXISTS "public"."jobs_posted" (
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "user_id" "uuid" NOT NULL,
-    "job_id" "uuid" NOT NULL,
-    "AI_config_id" "uuid"
-);
-
-
-ALTER TABLE "public"."jobs_posted" OWNER TO "postgres";
-
-
-COMMENT ON TABLE "public"."jobs_posted" IS 'The posted job information';
+COMMENT ON COLUMN "public"."jobs"."harvest_jobs" IS 'id for jobs object in harvest';
 
 
 
-COMMENT ON COLUMN "public"."jobs_posted"."user_id" IS 'User (recruiter) id';
-
-
-
-COMMENT ON COLUMN "public"."jobs_posted"."job_id" IS 'ID for the jobs';
-
-
-
-COMMENT ON COLUMN "public"."jobs_posted"."AI_config_id" IS 'ID for the AI configuration for this job';
+COMMENT ON COLUMN "public"."jobs"."AIconfig_id" IS 'id for AI config';
 
 
 
@@ -330,21 +306,19 @@ CREATE TABLE IF NOT EXISTS "public"."recruiters" (
     "avatar_url" "text",
     "billing_address" "jsonb",
     "payment_method" "jsonb",
-    "email" "text",
     "company_id" "uuid",
-    "role" "public"."role" DEFAULT 'recruiter'::"public"."role" NOT NULL,
-    "full_name" "text"
+    "harvest_recruiters" integer
 );
 
 
 ALTER TABLE "public"."recruiters" OWNER TO "postgres";
 
 
-COMMENT ON COLUMN "public"."recruiters"."email" IS 'User email';
-
-
-
 COMMENT ON COLUMN "public"."recruiters"."company_id" IS 'ID for company';
+
+
+
+COMMENT ON COLUMN "public"."recruiters"."harvest_recruiters" IS 'id for harvest recruiters object';
 
 
 
@@ -399,7 +373,17 @@ ALTER TABLE ONLY "public"."AI_summary"
 
 
 ALTER TABLE ONLY "public"."applicants"
+    ADD CONSTRAINT "applicants_harvest_applicants_key" UNIQUE ("harvest_applicants");
+
+
+
+ALTER TABLE ONLY "public"."applicants"
     ADD CONSTRAINT "applicants_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."applications"
+    ADD CONSTRAINT "applications_harvest_applications_key" UNIQUE ("harvest_applications");
 
 
 
@@ -424,17 +408,12 @@ ALTER TABLE ONLY "public"."customers"
 
 
 ALTER TABLE ONLY "public"."jobs"
+    ADD CONSTRAINT "jobs_harvest_jobs_key" UNIQUE ("harvest_jobs");
+
+
+
+ALTER TABLE ONLY "public"."jobs"
     ADD CONSTRAINT "jobs_pkey" PRIMARY KEY ("id");
-
-
-
-ALTER TABLE ONLY "public"."jobs_posted"
-    ADD CONSTRAINT "jobs_posted_job_id_key" UNIQUE ("job_id");
-
-
-
-ALTER TABLE ONLY "public"."jobs_posted"
-    ADD CONSTRAINT "jobs_posted_pkey" PRIMARY KEY ("user_id");
 
 
 
@@ -445,6 +424,11 @@ ALTER TABLE ONLY "public"."prices"
 
 ALTER TABLE ONLY "public"."products"
     ADD CONSTRAINT "products_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."recruiters"
+    ADD CONSTRAINT "recruiters_harvest_recruiters_key" UNIQUE ("harvest_recruiters");
 
 
 
@@ -489,22 +473,12 @@ ALTER TABLE ONLY "public"."customers"
 
 
 ALTER TABLE ONLY "public"."jobs"
+    ADD CONSTRAINT "jobs_AIconfig_id_fkey" FOREIGN KEY ("AIconfig_id") REFERENCES "public"."AI_config"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."jobs"
     ADD CONSTRAINT "jobs_company_id_fkey" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON UPDATE CASCADE ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."jobs_posted"
-    ADD CONSTRAINT "jobs_posted_AI_config_id_fkey" FOREIGN KEY ("AI_config_id") REFERENCES "public"."AI_config"("id") ON UPDATE CASCADE ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."jobs_posted"
-    ADD CONSTRAINT "jobs_posted_job_id_fkey" FOREIGN KEY ("job_id") REFERENCES "public"."jobs"("id") ON UPDATE CASCADE ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."jobs_posted"
-    ADD CONSTRAINT "jobs_posted_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."recruiters"("id") ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
@@ -598,9 +572,6 @@ ALTER TABLE "public"."customers" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."jobs" ENABLE ROW LEVEL SECURITY;
-
-
-ALTER TABLE "public"."jobs_posted" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."prices" ENABLE ROW LEVEL SECURITY;
@@ -890,12 +861,6 @@ GRANT ALL ON TABLE "public"."customers" TO "service_role";
 GRANT ALL ON TABLE "public"."jobs" TO "anon";
 GRANT ALL ON TABLE "public"."jobs" TO "authenticated";
 GRANT ALL ON TABLE "public"."jobs" TO "service_role";
-
-
-
-GRANT ALL ON TABLE "public"."jobs_posted" TO "anon";
-GRANT ALL ON TABLE "public"."jobs_posted" TO "authenticated";
-GRANT ALL ON TABLE "public"."jobs_posted" TO "service_role";
 
 
 
