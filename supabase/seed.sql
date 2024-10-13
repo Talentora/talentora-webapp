@@ -72,7 +72,8 @@ INSERT INTO "auth"."audit_log_entries" ("instance_id", "id", "payload", "created
 	('00000000-0000-0000-0000-000000000000', '8b6e4e77-96e3-4fd0-9216-ac41363ad7cd', '{"action":"user_signedup","actor_id":"0d3eda96-4065-4387-8315-6b552862f1f6","actor_username":"heather.davies253@gmail.com","actor_via_sso":false,"log_type":"team","traits":{"provider":"github"}}', '2024-09-21 00:35:54.992727+00', ''),
 	('00000000-0000-0000-0000-000000000000', 'db21e862-fe67-4d20-bfbd-7ffa5aff8698', '{"action":"login","actor_id":"0d3eda96-4065-4387-8315-6b552862f1f6","actor_username":"heather.davies253@gmail.com","actor_via_sso":false,"log_type":"account","traits":{"provider_type":"github"}}', '2024-09-21 00:35:56.324644+00', ''),
 	('00000000-0000-0000-0000-000000000000', '6f446cde-e838-41c3-aa21-7223658ce2b7', '{"action":"user_repeated_signup","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"user","traits":{"provider":"email"}}', '2024-09-30 01:28:43.607719+00', ''),
-	('00000000-0000-0000-0000-000000000000', '103ec850-aad8-4db6-ac5c-784a51434fc6', '{"action":"user_deleted","actor_id":"00000000-0000-0000-0000-000000000000","actor_username":"service_role","actor_via_sso":false,"log_type":"team","traits":{"user_email":"bengardiner18@gmail.com","user_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","user_phone":""}}', '2024-09-30 18:42:10.329204+00', '');
+	('00000000-0000-0000-0000-000000000000', '103ec850-aad8-4db6-ac5c-784a51434fc6', '{"action":"user_deleted","actor_id":"00000000-0000-0000-0000-000000000000","actor_username":"service_role","actor_via_sso":false,"log_type":"team","traits":{"user_email":"bengardiner18@gmail.com","user_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","user_phone":""}}', '2024-09-30 18:42:10.329204+00', ''),
+	('00000000-0000-0000-0000-000000000000', '8c67e385-404d-40c2-9cbc-4ae1d3616010', '{"action":"user_signedup","actor_id":"00000000-0000-0000-0000-000000000000","actor_username":"service_role","actor_via_sso":false,"log_type":"team","traits":{"user_email":"asdf@gmail.com","user_id":"afcb16c2-89d8-45c1-a095-4f79c30f4c0f","user_phone":""}}', '2024-10-07 03:40:48.195679+00', '');
 
 
 --
@@ -101,7 +102,8 @@ INSERT INTO "auth"."flow_state" ("id", "user_id", "auth_code", "code_challenge_m
 --
 
 INSERT INTO "auth"."users" ("instance_id", "id", "aud", "role", "email", "encrypted_password", "email_confirmed_at", "invited_at", "confirmation_token", "confirmation_sent_at", "recovery_token", "recovery_sent_at", "email_change_token_new", "email_change", "email_change_sent_at", "last_sign_in_at", "raw_app_meta_data", "raw_user_meta_data", "is_super_admin", "created_at", "updated_at", "phone", "phone_confirmed_at", "phone_change", "phone_change_token", "phone_change_sent_at", "email_change_token_current", "email_change_confirm_status", "banned_until", "reauthentication_token", "reauthentication_sent_at", "is_sso_user", "deleted_at", "is_anonymous") VALUES
-	('00000000-0000-0000-0000-000000000000', '0d3eda96-4065-4387-8315-6b552862f1f6', 'authenticated', 'authenticated', 'heather.davies253@gmail.com', NULL, '2024-09-21 00:35:54.999619+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-09-21 00:35:56.325912+00', '{"provider": "github", "providers": ["github"]}', '{"iss": "https://api.github.com", "sub": "26665300", "email": "heather.davies253@gmail.com", "user_name": "heather2535", "avatar_url": "https://avatars.githubusercontent.com/u/26665300?v=4", "provider_id": "26665300", "email_verified": true, "phone_verified": false, "preferred_username": "heather2535"}', NULL, '2024-09-21 00:35:54.97124+00', '2024-09-21 00:35:56.352732+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false);
+	('00000000-0000-0000-0000-000000000000', '0d3eda96-4065-4387-8315-6b552862f1f6', 'authenticated', 'authenticated', 'heather.davies253@gmail.com', NULL, '2024-09-21 00:35:54.999619+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-09-21 00:35:56.325912+00', '{"provider": "github", "providers": ["github"]}', '{"iss": "https://api.github.com", "sub": "26665300", "email": "heather.davies253@gmail.com", "user_name": "heather2535", "avatar_url": "https://avatars.githubusercontent.com/u/26665300?v=4", "provider_id": "26665300", "email_verified": true, "phone_verified": false, "preferred_username": "heather2535"}', NULL, '2024-09-21 00:35:54.97124+00', '2024-09-21 00:35:56.352732+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
+	('00000000-0000-0000-0000-000000000000', 'afcb16c2-89d8-45c1-a095-4f79c30f4c0f', 'authenticated', 'authenticated', 'asdf@gmail.com', '$2a$10$rwW3zI6CKtWWu8/a46Zfn./tkH51RL2kRPrQDS6oWTIYpemTCAc1O', '2024-10-07 03:40:48.205269+00', NULL, '', NULL, '', NULL, '', '', NULL, NULL, '{"provider": "email", "providers": ["email"]}', '{}', NULL, '2024-10-07 03:40:48.181277+00', '2024-10-07 03:40:48.205524+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false);
 
 
 --
@@ -109,7 +111,8 @@ INSERT INTO "auth"."users" ("instance_id", "id", "aud", "role", "email", "encryp
 --
 
 INSERT INTO "auth"."identities" ("provider_id", "user_id", "identity_data", "provider", "last_sign_in_at", "created_at", "updated_at", "id") VALUES
-	('26665300', '0d3eda96-4065-4387-8315-6b552862f1f6', '{"iss": "https://api.github.com", "sub": "26665300", "email": "heather.davies253@gmail.com", "user_name": "heather2535", "avatar_url": "https://avatars.githubusercontent.com/u/26665300?v=4", "provider_id": "26665300", "email_verified": true, "phone_verified": false, "preferred_username": "heather2535"}', 'github', '2024-09-21 00:35:54.986191+00', '2024-09-21 00:35:54.98624+00', '2024-09-21 00:35:54.98624+00', '0c913ed6-f933-4457-a3e2-d01d54742746');
+	('26665300', '0d3eda96-4065-4387-8315-6b552862f1f6', '{"iss": "https://api.github.com", "sub": "26665300", "email": "heather.davies253@gmail.com", "user_name": "heather2535", "avatar_url": "https://avatars.githubusercontent.com/u/26665300?v=4", "provider_id": "26665300", "email_verified": true, "phone_verified": false, "preferred_username": "heather2535"}', 'github', '2024-09-21 00:35:54.986191+00', '2024-09-21 00:35:54.98624+00', '2024-09-21 00:35:54.98624+00', '0c913ed6-f933-4457-a3e2-d01d54742746'),
+	('afcb16c2-89d8-45c1-a095-4f79c30f4c0f', 'afcb16c2-89d8-45c1-a095-4f79c30f4c0f', '{"sub": "afcb16c2-89d8-45c1-a095-4f79c30f4c0f", "email": "asdf@gmail.com", "email_verified": false, "phone_verified": false}', 'email', '2024-10-07 03:40:48.189137+00', '2024-10-07 03:40:48.189762+00', '2024-10-07 03:40:48.189762+00', 'ba45a73b-c016-4425-bca9-034fcfc31d46');
 
 
 --
@@ -283,7 +286,8 @@ INSERT INTO "public"."jobs" ("title", "description", "salary_range", "location",
 --
 
 INSERT INTO "storage"."buckets" ("id", "name", "owner", "created_at", "updated_at", "public", "avif_autodetection", "file_size_limit", "allowed_mime_types", "owner_id") VALUES
-	('Interviews', 'Interviews', NULL, '2024-08-14 21:31:13.400571+00', '2024-08-14 21:31:13.400571+00', false, false, NULL, NULL, NULL);
+	('Interviews', 'Interviews', NULL, '2024-08-14 21:31:13.400571+00', '2024-08-14 21:31:13.400571+00', false, false, NULL, NULL, NULL),
+	('Resumes', 'Resumes', NULL, '2024-10-10 05:14:10.554591+00', '2024-10-10 05:14:10.554591+00', false, false, NULL, NULL, NULL);
 
 
 --
@@ -291,7 +295,8 @@ INSERT INTO "storage"."buckets" ("id", "name", "owner", "created_at", "updated_a
 --
 
 INSERT INTO "storage"."objects" ("id", "bucket_id", "name", "owner", "created_at", "updated_at", "last_accessed_at", "metadata", "version", "owner_id", "user_metadata") VALUES
-	('4d52434a-9cd4-45de-aa72-0b6a81914813', 'Interviews', 'Untitled folder/.emptyFolderPlaceholder', NULL, '2024-08-14 21:31:26.907506+00', '2024-08-14 21:31:26.907506+00', '2024-08-14 21:31:26.907506+00', '{"eTag": "\"d41d8cd98f00b204e9800998ecf8427e\"", "size": 0, "mimetype": "application/octet-stream", "cacheControl": "max-age=3600", "lastModified": "2024-08-14T21:31:27.000Z", "contentLength": 0, "httpStatusCode": 200}', '0b10d928-4988-4619-b000-d5a4220fdd6c', NULL, '{}');
+	('4d52434a-9cd4-45de-aa72-0b6a81914813', 'Interviews', 'Untitled folder/.emptyFolderPlaceholder', NULL, '2024-08-14 21:31:26.907506+00', '2024-08-14 21:31:26.907506+00', '2024-08-14 21:31:26.907506+00', '{"eTag": "\"d41d8cd98f00b204e9800998ecf8427e\"", "size": 0, "mimetype": "application/octet-stream", "cacheControl": "max-age=3600", "lastModified": "2024-08-14T21:31:27.000Z", "contentLength": 0, "httpStatusCode": 200}', '0b10d928-4988-4619-b000-d5a4220fdd6c', NULL, '{}'),
+	('e502db4c-3636-4c27-9400-8ada09769a14', 'Resumes', 'alex_resume', NULL, '2024-10-10 05:18:17.813273+00', '2024-10-10 05:18:17.813273+00', '2024-10-10 05:18:17.813273+00', '{"eTag": "\"54231afee72d9c5513cbfc588a5a6e03-1\"", "size": 40565, "mimetype": "binary/octet-stream", "cacheControl": "max-age=3600", "lastModified": "2024-10-10T05:18:18.000Z", "contentLength": 40565, "httpStatusCode": 200}', '33ad92ce-301b-43bd-9b41-9106e2ef5978', NULL, NULL);
 
 
 --

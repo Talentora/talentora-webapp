@@ -326,7 +326,7 @@ ALTER TABLE "public"."products" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."recruiters" (
-    "id" "uuid" NOT NULL,
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "avatar_url" "text",
     "billing_address" "jsonb",
     "payment_method" "jsonb",
@@ -513,6 +513,11 @@ ALTER TABLE ONLY "public"."prices"
 
 
 
+ALTER TABLE ONLY "public"."users"
+    ADD CONSTRAINT "recruiters_id_fkey" FOREIGN KEY ("id") REFERENCES "auth"."users"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."subscriptions"
     ADD CONSTRAINT "subscriptions_price_id_fkey" FOREIGN KEY ("price_id") REFERENCES "public"."prices"("id");
 
@@ -530,11 +535,6 @@ ALTER TABLE ONLY "public"."users"
 
 ALTER TABLE ONLY "public"."recruiters"
     ADD CONSTRAINT "users_company_id_fkey" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON UPDATE CASCADE ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."recruiters"
-    ADD CONSTRAINT "users_id_fkey" FOREIGN KEY ("id") REFERENCES "auth"."users"("id");
 
 
 
@@ -578,10 +578,6 @@ CREATE POLICY "Enable insert for authenticated users only" ON "public"."users" F
 
 
 CREATE POLICY "Enable insert for users based on user_id" ON "public"."recruiters" FOR INSERT WITH CHECK ((( SELECT "auth"."uid"() AS "uid") = "id"));
-
-
-
-CREATE POLICY "Enable update for users based on email" ON "public"."jobs" FOR UPDATE TO "authenticated" USING (((( SELECT "auth"."jwt"() AS "jwt") ->> 'email'::"text") = "title")) WITH CHECK (((( SELECT "auth"."jwt"() AS "jwt") ->> 'email'::"text") = "title"));
 
 
 
