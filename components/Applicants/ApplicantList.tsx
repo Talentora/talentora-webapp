@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Application } from "@/types/greenhouse"
 import ApplicantTable from "@/components/Applicants/ApplicantTable"
-import ApplicantPortal from "@/components/Applicants/Applicant/ApplicantPortal"
 import SearchBar from "@/components/Applicants/Searchbar"
 
 interface ApplicantListProps {
@@ -11,7 +10,6 @@ interface ApplicantListProps {
 }
 
 export default function ApplicantList({ applications }: ApplicantListProps) {
-  const [selectedApplicant, setSelectedApplicant] = useState<Application | null>(null)
   const [searchTerm, setSearchTerm] = useState<string>("")
 
   const filteredApplicants = applications.filter((application) => {
@@ -25,17 +23,13 @@ export default function ApplicantList({ applications }: ApplicantListProps) {
         <h1 className="text-lg font-semibold">Applicant Management System</h1>
       </header>
       <main className="flex-1 p-4 lg:p-6">
-        {selectedApplicant ? (
-          <ApplicantPortal application={selectedApplicant} onBack={() => setSelectedApplicant(null)} />
-        ) : (
-          <div className="space-y-4">
-            <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-            <ApplicantTable 
-              applicants={filteredApplicants} 
-              onSelectApplicant={setSelectedApplicant} 
-            />
-          </div>
-        )}
+        <div className="space-y-4">
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <ApplicantTable 
+            applicants={filteredApplicants} 
+            disablePortal={false} 
+          />
+        </div>
       </main>
     </div>
   )

@@ -184,13 +184,19 @@ export async function signInWithPassword(formData: FormData) {
  * The function returns a redirect path based on the outcome, which can be used to navigate the user to the appropriate page.
  */
 export async function signUp(formData: FormData) {
+  console.log('Starting sign-up process...');
   const callbackURL = getURL('/auth/callback');
 
   const email = String(formData.get('email')).trim();
   const password = String(formData.get('password')).trim();
+  const fullName = String(formData.get('fullName')).trim();
   let redirectPath: string;
 
+  console.log(`Email: ${email}`);
+  console.log(`Password: ${'*'.repeat(password.length)}`); // Masking the password for security
+
   if (!isValidEmail(email)) {
+    console.log('Invalid email format detected.');
     redirectPath = getErrorRedirect(
       '/signin/signup',
       'Invalid email address.',
@@ -199,40 +205,45 @@ export async function signUp(formData: FormData) {
   }
 
   const supabase = createClient();
+  console.log('Supabase client created. Attempting to sign up user...');
   const { error, data } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: callbackURL
-    }
-  });
-  console.log("reaches here 2", data);
+      emailRedirectTo: callbackURL,
+      data: { role: 'recruiter', full_name:fullName } // Add role and fullName to metadata
+  }});
 
   if (error) {
+    console.log('Sign-up failed with error:', error.message);
     redirectPath = getErrorRedirect(
       '/signin/signup',
       'Sign up failed.',
       error.message
     );
   } else if (data.session) {
+    console.log('Sign-up successful with active session.');
     redirectPath = getStatusRedirect('/', 'Success!', 'You are now signed in.');
   } else if (
     data.user &&
     data.user.identities &&
     data.user.identities.length == 0
   ) {
+    console.log('Sign-up failed: Account already exists with no identities.');
     redirectPath = getErrorRedirect(
       '/signin/signup',
       'Sign up failed.',
       'There is already an account associated with this email address. Try resetting your password.'
     );
   } else if (data.user) {
+    console.log('Sign-up successful: Email confirmation required.');
     redirectPath = getStatusRedirect(
       '/',
       'Success!',
       'Please check your email for a confirmation link. You may now close this tab.'
     );
   } else {
+    console.log('Sign-up failed: Unknown error.');
     redirectPath = getErrorRedirect(
       '/signin/signup',
       'Hmm... Something went wrong.',
@@ -240,6 +251,7 @@ export async function signUp(formData: FormData) {
     );
   }
 
+  console.log('Sign-up process completed. Redirecting...');
   return redirectPath;
 }
 

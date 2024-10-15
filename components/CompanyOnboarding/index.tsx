@@ -8,28 +8,51 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
+  CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import Link from 'next/link';
+import { createCompany } from '@/utils/supabase/queries';
+import { Tables } from '@/types/types_db';
+
+type Company = Omit<Tables<'companies'>, 'id'>;
 
 export default function OnboardingPage() {
   const [step, setStep] = useState<number>(1);
-  const [companySize, setCompanySize] = useState<string>('');
+  const [companyName, setCompanyName] = useState<string>('');
+  const [headquarters, setHeadquarters] = useState<string>('');
+  const [industry, setIndustry] = useState<string>('');
 
   const totalSteps = 4;
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, totalSteps));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const companyData: Company = {
+      name: companyName,
+      location: headquarters,
+      industry,
+      description: null,
+      email_extension: null,
+      subscription_id: null,
+      website_url: null,
+    };
+
+    try {
+      const createdCompany = await createCompany(companyData);
+      if (!createdCompany) {
+        throw new Error('Failed to save company information');
+      }
+      console.log('Company information saved successfully');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   return (
     <div className="container mx-auto py-10">
@@ -76,52 +99,48 @@ export default function OnboardingPage() {
                   RoboRecruiter!
                 </li>
               </ul>
-              <p>
-                If you have any questions, feel free to reach out to our support
-                team at any time.
-              </p>
             </div>
           )}
 
           {step === 2 && (
-            <div className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <h3 className="text-lg font-medium">Company Information</h3>
               <div className="grid w-full items-center gap-1.5">
                 <Label htmlFor="company">Company Name</Label>
-                <Input type="text" id="company" placeholder="Acme Inc." />
+                <Input
+                  type="text"
+                  id="company"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  placeholder="Acme Inc."
+                  required
+                />
               </div>
               <div className="grid w-full items-center gap-1.5">
                 <Label htmlFor="headquarters">Headquarters Location</Label>
                 <Input
                   type="text"
                   id="headquarters"
+                  value={headquarters}
+                  onChange={(e) => setHeadquarters(e.target.value)}
                   placeholder="Enter your company's headquarters location"
+                  required
                 />
               </div>
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="size">Number of Employees</Label>
-                <Select value={companySize} onValueChange={setCompanySize}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select company size" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1-10">1-10 employees</SelectItem>
-                    <SelectItem value="11-50">11-50 employees</SelectItem>
-                    <SelectItem value="51-200">51-200 employees</SelectItem>
-                    <SelectItem value="201-500">201-500 employees</SelectItem>
-                    <SelectItem value="501+">501+ employees</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+
               <div className="grid w-full items-center gap-1.5">
                 <Label htmlFor="industry">Industry</Label>
                 <Input
                   type="text"
                   id="industry"
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value)}
                   placeholder="e.g., Technology, Healthcare, Finance"
+                  required
                 />
               </div>
-            </div>
+              <Button type="submit">Save</Button>
+            </form>
           )}
 
           {step === 3 && (
@@ -139,9 +158,6 @@ export default function OnboardingPage() {
                   rows={4}
                 />
               </div>
-              <p className="text-sm text-muted-foreground">
-                You can always invite more team members later.
-              </p>
             </div>
           )}
 
@@ -149,10 +165,6 @@ export default function OnboardingPage() {
             <div className="space-y-4 text-center p-4">
               <h3 className="text-lg font-medium">You&apos;re All Set!</h3>
               <p>Congratulations! Your account is now ready to use.</p>
-              <p>
-                We&apos;ve sent invitations to your team members. They&apos;ll
-                be able to join your workspace soon.
-              </p>
               <Link href="/dashboard" passHref>
                 <Button>Get Started</Button>
               </Link>

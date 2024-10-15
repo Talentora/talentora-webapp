@@ -24,8 +24,8 @@ export default function Dashboard({ dashboardData }: DashboardProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isCardView, setIsCardView] = useState(true);
   const [filters, setFilters] = useState<{
-    departments: (string | null)[];
-    offices: any[];
+    departments: string[];
+    offices: string[];
   }>({
     departments: [],
     offices: []
@@ -53,7 +53,7 @@ export default function Dashboard({ dashboardData }: DashboardProps) {
       ],
       offices: [
         ...new Set(
-          jobs.flatMap((job) => job.offices).filter((office) => !!office)
+          jobs.flatMap((job) => job.offices).filter((office): office is string => !!office)
         )
       ]
     };

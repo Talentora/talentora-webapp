@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,17 +12,17 @@ import {
   UserIcon,
   UsersIcon
 } from 'lucide-react';
-
-import { Tables } from '@/types/types_db';
-type Job = Tables<'jobs'>;
-type Applicant = Tables<'applicants'>;
-
+import ApplicantTable from '../Applicants/ApplicantTable';
+import { Job,Application } from '@/types/greenhouse';
 interface DashboardProps {
   jobs: Job[];
-  // applicants:Applicant[]
+  applicants:Application[]
 }
+import { useState } from 'react';
 
-export default function Dashboard({ jobs }: DashboardProps) {
+export default function Dashboard({ jobs,applicants }: DashboardProps) {
+
+
   return (
     <div className="flex h-screen bg-primary-background">
       <main className="flex-1 p-8 overflow-auto">
@@ -31,17 +32,42 @@ export default function Dashboard({ jobs }: DashboardProps) {
           <Card className="border p-5 border-gray-300 rounded-lg shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Total Applicants
+                Total Applicants This Month
               </CardTitle>
               <Link href="/applicants">
                 <UsersIcon className="h-4 w-4 text-muted-foreground cursor-pointer" />
               </Link>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">1,234</div>
-              <p className="text-xs text-muted-foreground">
-                +21% from last month
-              </p>
+              {(() => {
+                const currentMonth = new Date().getMonth();
+                const currentYear = new Date().getFullYear();
+                const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+                const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+                const currentMonthApplicants = applicants.filter(applicant => {
+                  const appliedDate = new Date(applicant.applied_at);
+                  return appliedDate.getMonth() === currentMonth && appliedDate.getFullYear() === currentYear;
+                }).length;
+
+                const lastMonthApplicants = applicants.filter(applicant => {
+                  const appliedDate = new Date(applicant.applied_at);
+                  return appliedDate.getMonth() === lastMonth && appliedDate.getFullYear() === lastMonthYear;
+                }).length;
+
+                const percentageChange = lastMonthApplicants === 0 
+                  ? (currentMonthApplicants > 0 ? 100 : 0) 
+                  : ((currentMonthApplicants - lastMonthApplicants) / lastMonthApplicants) * 100;
+
+                return (
+                  <>
+                    <div className="text-2xl font-bold">{currentMonthApplicants}</div>
+                    <p className="text-xs text-muted-foreground">
+                      {percentageChange >= 0 ? '+' : ''}{percentageChange.toFixed(2)}% from last month
+                    </p>
+                  </>
+                );
+              })()}
             </CardContent>
           </Card>
 
@@ -49,7 +75,8 @@ export default function Dashboard({ jobs }: DashboardProps) {
           <Card className="border p-5 border-gray-300 rounded-lg shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                AI Interviews Completed
+                AI Interviews Completed 
+                <span className="text-xs text-red-500 ml-2">(Update)</span>
               </CardTitle>
               <Link href="/interviews">
                 <UserIcon className="h-4 w-4 text-muted-foreground cursor-pointer" />
@@ -86,7 +113,7 @@ export default function Dashboard({ jobs }: DashboardProps) {
                       className="bg-gray-200 p-4 rounded shadow-sm relative group"
                     >
                       <p className="font-medium">
-                        Job {job.id} - {job.title}
+                        {job.name} - {job.id}
                       </p>
                       <div
                         className={`w-1/4 px-2 py-1 rounded text-xs font-medium ${job.department === 'Engineering' ? 'bg-blue-100 text-blue-800' : job.department === 'Marketing' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}
@@ -113,79 +140,12 @@ export default function Dashboard({ jobs }: DashboardProps) {
             </CardContent>
           </Card>
 
-          {/* applicant overview */}
           <Card className="col-span-2 p-5 row-span-2 border border-gray-300 rounded-lg shadow-sm">
             <CardHeader>
               <CardTitle>Applicant Overview</CardTitle>
-              {/* <Navigate className="h-4 w-4 text-muted-foreground cursor-pointer" /> */}
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">John Doe</p>
-                    <p className="text-sm text-muted-foreground">
-                      Software Engineer
-                    </p>
-                  </div>
-                  <div className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                    Score: 95
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Jane Smith</p>
-                    <p className="text-sm text-muted-foreground">
-                      Product Manager
-                    </p>
-                  </div>
-                  <div className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                    Score: 92
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Mike Johnson</p>
-                    <p className="text-sm text-muted-foreground">UX Designer</p>
-                  </div>
-                  <div className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                    Score: 78
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Emily Brown</p>
-                    <p className="text-sm text-muted-foreground">
-                      Data Scientist
-                    </p>
-                  </div>
-                  <div className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                    Score: 65
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Alex Lee</p>
-                    <p className="text-sm text-muted-foreground">
-                      Frontend Developer
-                    </p>
-                  </div>
-                  <div className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                    Score: 88
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Sarah Wilson</p>
-                    <p className="text-sm text-muted-foreground">
-                      Marketing Specialist
-                    </p>
-                  </div>
-                  <div className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                    Score: 76
-                  </div>
-                </div>
-              </div>
+              <ApplicantTable applicants={applicants} disablePortal={true} rowLimit={5} />
             </CardContent>
           </Card>
 

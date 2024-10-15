@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import JobPage from '@/components/Job';
+import JobPage from '@/components/Jobs/Job';
 import { Job as GreenhouseJob } from '@/types/greenhouse';
 
 interface JobPageProps {
@@ -12,7 +12,7 @@ export default async function Page({ params }: JobPageProps) {
 
   if (response.ok) {
     const job: GreenhouseJob = await response.json();
-    const applicantsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/applicants?jobId=${jobId}`);
+    const applicantsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/applications?jobId${jobId}`);
     const applicants = applicantsResponse.ok ? await applicantsResponse.json() : [];
 
     return (
