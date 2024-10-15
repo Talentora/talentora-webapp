@@ -431,7 +431,6 @@ export type Database = {
     Enums: {
       pricing_plan_interval: "day" | "week" | "month" | "year"
       pricing_type: "one_time" | "recurring"
-      role: "recruiter" | "candidate"
       subscription_status:
         | "trialing"
         | "active"
