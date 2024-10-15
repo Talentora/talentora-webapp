@@ -1,11 +1,9 @@
 import { LayoutGridIcon, ListIcon } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
-import { Tables } from '@/types/types_db';
 import { CardView } from './CardView';
 import { TableView } from './TableView';
 import { deleteJob } from '@/utils/supabase/queries';
-
-type Job = Tables<'jobs'>;
+import { Job } from '@/types/greenhouse';
 
 interface JobListProps {
   jobListData: {

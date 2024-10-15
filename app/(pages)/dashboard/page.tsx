@@ -1,12 +1,12 @@
 import Dashboard from '@/components/Dashboard';
-import { getJobs } from '@/utils/supabase/queries';
-import { createClient } from '@/utils/supabase/server';
 import Sidebar from '@/components/Sidebar';
 
 const DashboardPage: React.FC = async () => {
-  const supabase = createClient();
+  const jobsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/jobs`);
+  const applicationsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/applications`);
 
-  const jobs = await getJobs(supabase);
+  const jobs = jobsResponse.ok ? await jobsResponse.json() : [];
+  const applicants = applicationsResponse.ok ? await applicationsResponse.json() : [];
 
   return (
     <div className="flex flex-row">
@@ -14,7 +14,7 @@ const DashboardPage: React.FC = async () => {
         <Sidebar />
       </div>
       <div className="w-5/6">
-        <Dashboard jobs={jobs} />
+        <Dashboard jobs={jobs} applicants={applicants} />
       </div>
     </div>
   );

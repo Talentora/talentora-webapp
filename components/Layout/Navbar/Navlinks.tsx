@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { SignOut } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
-import Logo from '@/components/icons/Logo';
+import Logo from '@/components/ui/icons/Logo';
 import { usePathname, useRouter } from 'next/navigation';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import { Button } from '@/components/ui/button';

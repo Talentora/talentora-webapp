@@ -14,9 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { UsersIcon, MoreVerticalIcon } from 'lucide-react';
-import { Tables } from '@/types/types_db';
-
-type Job = Tables<'jobs'>;
+import { Job } from '@/types/greenhouse';
 
 interface CardViewProps {
   cardViewData: {
@@ -34,17 +32,17 @@ export function CardView({ cardViewData }: CardViewProps) {
         <Card key={job.id} className="hover:bg-primary-800 p-4 relative">
           <Link href={`./jobs/${job.id}`}>
             <CardHeader>
-              <CardTitle>{job.title}</CardTitle>
+              <CardTitle>{job.name}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                <div>{job.department}</div>
-                <div>{job.location}</div>
+                <div>{job.departments.join(', ')}</div>
+                <div>{job.offices.join(', ')}</div>
               </div>
               <div className="mt-2 flex items-center space-x-2">
                 <UsersIcon className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
-                  {job.applicant_count} applicants
+                  {job.openings.length} openings
                 </span>
               </div>
             </CardContent>

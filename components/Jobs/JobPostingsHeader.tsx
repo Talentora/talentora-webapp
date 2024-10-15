@@ -2,8 +2,8 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { SearchIcon, PlusIcon } from 'lucide-react';
-import FilterDialog from './FilterDialog';
+import { PlusIcon, SearchIcon } from 'lucide-react';
+import FilterDialog from '@/components/Jobs/FilterDialog';
 
 interface JobPostingsHeaderProps {
   headerData: {
@@ -11,17 +11,17 @@ interface JobPostingsHeaderProps {
     setSearchTerm: (term: string) => void;
     filters: {
       departments: string[];
-      locations: string[];
+      offices: string[];
     };
     setFilters: React.Dispatch<
       React.SetStateAction<{
         departments: string[];
-        locations: string[];
+        offices: string[];
       }>
     >;
     filterOptions: {
       departments: string[];
-      locations: string[];
+      offices: string[];
     };
     onCreateJob: () => void;
   };

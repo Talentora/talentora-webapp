@@ -1,9 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Settings } from 'lucide-react';
-import { Tables } from '@/types/types_db';
+import { Job } from '@/types/greenhouse';
 import Link from 'next/link';
 
-type Job = Tables<'jobs'>;
 
 interface BotConfigProps {
   job: Job;

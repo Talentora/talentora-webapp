@@ -1,24 +1,23 @@
-import { createClient } from '@/utils/supabase/server';
-import { getJob, getApplicants, updateJob } from '@/utils/supabase/queries';
-import Job from '@/components/Job';
-import { Tables } from '@/types/types_db';
-type Job = Tables<'jobs'>;
+import { NextResponse } from 'next/server';
+import JobPage from '@/components/Jobs/Job';
+import { Job as GreenhouseJob } from '@/types/greenhouse';
 
 interface JobPageProps {
   params: { id: string };
 }
 
 export default async function Page({ params }: JobPageProps) {
-  const supabase = createClient();
-  console.log("fetching job: ", params.id);
-  const job = await getJob(supabase, params.id);
+  const jobId = params.id;
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/jobs/${jobId}`);
 
-  if (job) {
-    const applicants = await getApplicants(supabase, Number(job.id));
+  if (response.ok) {
+    const job: GreenhouseJob = await response.json();
+    const applicantsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/applications?jobId${jobId}`);
+    const applicants = applicantsResponse.ok ? await applicantsResponse.json() : [];
 
     return (
       <div>
-        <Job job={job} applicants={applicants} />
+        <JobPage job={job} applicants={applicants} />
       </div>
     );
   } else {

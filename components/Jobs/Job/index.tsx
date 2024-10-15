@@ -3,20 +3,19 @@ import { JobHeader } from './JobHeader';
 import ApplicantStatistics from './ApplicantStatistics';
 import { RecentApplicants } from './RecentApplicants';
 import { BotConfig } from './BotConfig';
-import { Tables } from '@/types/types_db';
-type Job = Tables<'jobs'>;
-type Applicant = Tables<'applicants'>;
+import { Job } from '@/types/greenhouse';
 
+import { Application } from '@/types/greenhouse';
 interface JobProps {
   job: Job;
-  applicants: Applicant[];
+  applicants: Application[];
 }
 
-export default function Job({ job, applicants }: JobProps) {
+export default function JobPage({ job, applicants }: JobProps) {
   return (
     <div className="container mx-auto">
       <JobHeader job={job} />
-      <ApplicantStatistics />
+      {/* <ApplicantStatistics /> */}
       <RecentApplicants applicants={applicants} />
       <BotConfig job={job} />
     </div>
