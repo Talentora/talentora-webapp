@@ -16,13 +16,14 @@ import OauthSignIn from '@/components/AuthForms/OauthSignIn';
 import ForgotPassword from '@/components/AuthForms/ForgotPassword';
 import UpdatePassword from '@/components/AuthForms/UpdatePassword';
 import SignUp from '@/components/AuthForms/Signup';
+import { Button } from '@/components/ui/button';
 
 export default async function SignIn({
   params,
   searchParams
 }: {
   params: { id: string };
-  searchParams: { disable_button: boolean };
+  searchParams: { disable_button: boolean; role?: string };
 }) {
   const { allowOauth, allowEmail, allowPassword } = getAuthTypes();
   const viewTypes = getViewTypes();
@@ -30,13 +31,16 @@ export default async function SignIn({
 
   let viewProp: string;
 
+  const role = searchParams.role || 'applicant';
+
+
   if (typeof params.id === 'string' && viewTypes.includes(params.id)) {
     viewProp = params.id;
   } else {
     const preferredSignInView =
       cookies().get('preferredSignInView')?.value || null;
     viewProp = getDefaultSignInView(preferredSignInView);
-    return redirect(`/signin/${viewProp}`);
+    return redirect(`/signin/${viewProp}${role ? `?role=${role}` : 'applicant'}`);
   }
 
   const supabase = createClient();
@@ -51,6 +55,7 @@ export default async function SignIn({
     return redirect('/signin');
   }
 
+
   return (
     <div className="flex justify-center height-screen-helper">
       <div className="flex flex-col justify-between max-w-lg p-3 m-auto w-80 ">
@@ -60,20 +65,41 @@ export default async function SignIn({
         <Card shadow className="w-full max-w-lg">
           <CardHeader>
             <CardTitle>
-              {viewProp === 'forgot_password'
+              {viewProp === 'choose_role'
+                ? 'Choose Your Role'
+                : viewProp === 'forgot_password'
                 ? 'Reset Password'
                 : viewProp === 'update_password'
-                  ? 'Update Password'
-                  : viewProp === 'signup'
-                    ? 'Sign Up'
-                    : 'Sign In'}
+                ? 'Update Password'
+                : viewProp === 'signup'
+                ? `Sign up as a ${role}`
+                : `Sign in as a ${role}`}
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {viewProp === 'choose_role' && (
+              <div className="flex flex-col space-y-4">
+                <Button
+                  onClick={() => redirect('/signin/password_signin?role=recruiter')}
+                  className="w-full"
+                  variant="outline"
+                >
+                  Sign in as Recruiter
+                </Button>
+                <Button
+                  onClick={() => redirect('/signin/password_signin?role=applicant')}
+                  className="w-full"
+                  variant="outline"
+                >
+                  Sign in as Applicant
+                </Button>
+              </div>
+            )}
             {viewProp === 'password_signin' && (
               <PasswordSignIn
                 allowEmail={allowEmail}
                 redirectMethod={redirectMethod}
+                role={role ?? 'default'}
               />
             )}
             {viewProp === 'email_signin' && (
@@ -94,7 +120,11 @@ export default async function SignIn({
               <UpdatePassword redirectMethod={redirectMethod} />
             )}
             {viewProp === 'signup' && (
-              <SignUp allowEmail={allowEmail} redirectMethod={redirectMethod} />
+              <SignUp
+                allowEmail={allowEmail}
+                redirectMethod={redirectMethod}
+                role={searchParams.role ?? 'default'}
+              />
             )}
             {viewProp !== 'update_password' &&
               viewProp !== 'signup' &&

@@ -1,10 +1,5 @@
 import Bot from '@/components/Bot';
-import { getJob } from '@/utils/supabase/queries';
-import { createClient } from '@/utils/supabase/server';
-import { Tables } from '@/types/types_db';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'; // Import missing components
-
-type Job = Tables<'jobs'>;
+import { Job } from '@/types/greenhouse';
 
 interface PageProps {
   searchParams: { jobId?: string };
@@ -12,12 +7,14 @@ interface PageProps {
 
 export default async function Page({ searchParams }: PageProps) {
   const jobId = searchParams.jobId;
-  const supabase = createClient();
 
   let job: Job | null = null;
 
   if (jobId) {
-    job = await getJob(supabase, jobId);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/jobs/${jobId}`);
+    if (response.ok) {
+      job = await response.json();
+    }
   }
 
   return (

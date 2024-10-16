@@ -7,23 +7,25 @@ import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-// Define prop type with allowEmail boolean
 interface PasswordSignInProps {
   allowEmail: boolean;
   redirectMethod: string;
+  role: string;
+  // userType: 'recruiter' | 'candidate';
 }
 
 export default function PasswordSignIn({
   allowEmail,
-  redirectMethod
+  redirectMethod,
+  role,
+  // userType
 }: PasswordSignInProps) {
-  // const router = redirectMethod === 'client' ? useRouter() : null;
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    setIsSubmitting(true); // Disable the button while the request is being handled
-    await handleRequest(e, signInWithPassword, router);
+    setIsSubmitting(true);
+    await handleRequest(e, signInWithPassword, router, role);
     setIsSubmitting(false);
   };
 
@@ -66,19 +68,19 @@ export default function PasswordSignIn({
         </Button>
       </form>
       <p>
-        <Link href="/signin/forgot_password" className="font-light text-sm">
+        <Link href={`/signin/forgot_password?role=${role}`} className="font-light text-sm">
           Forgot your password?
         </Link>
       </p>
       {allowEmail && (
         <p>
-          <Link href="/signin/email_signin" className="font-light text-sm">
+          <Link href={`/signin/email_signin?role=${role}`} className="font-light text-sm">
             Sign in via magic link
           </Link>
         </p>
       )}
       <p>
-        <Link href="/signin/signup" className="font-light text-sm">
+        <Link href={`/signin/signup?role=${role}`} className="font-light text-sm">
           Don&apos;t have an account? Sign up
         </Link>
       </p>
