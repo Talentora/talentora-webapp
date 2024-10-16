@@ -46,7 +46,7 @@ export type Database = {
         }
         Insert: {
           harvest_applicants?: number | null
-          id?: string
+          id: string
         }
         Update: {
           harvest_applicants?: number | null
@@ -291,7 +291,7 @@ export type Database = {
           billing_address?: Json | null
           company_id?: string | null
           harvest_recruiters?: number | null
-          id?: string
+          id: string
           payment_method?: Json | null
         }
         Update: {
@@ -377,46 +377,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      users: {
-        Row: {
-          applicant_id: string | null
-          id: string
-          recruiter_id: string | null
-        }
-        Insert: {
-          applicant_id?: string | null
-          id?: string
-          recruiter_id?: string | null
-        }
-        Update: {
-          applicant_id?: string | null
-          id?: string
-          recruiter_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "recruiters_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "users_applicant_id_fkey"
-            columns: ["applicant_id"]
-            isOneToOne: false
-            referencedRelation: "applicants"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "users_recruiter_id_fkey"
-            columns: ["recruiter_id"]
-            isOneToOne: false
-            referencedRelation: "recruiters"
             referencedColumns: ["id"]
           },
         ]
