@@ -1,5 +1,5 @@
 import Dashboard from '@/components/Dashboard';
-import Sidebar from '@/components/Sidebar';
+import Sidebar from '@/components/Layout/Sidebar';
 
 const DashboardPage: React.FC = async () => {
   const jobsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/jobs`);
