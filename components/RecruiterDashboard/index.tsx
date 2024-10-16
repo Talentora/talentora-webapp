@@ -20,7 +20,7 @@ interface DashboardProps {
 }
 import { useState } from 'react';
 
-export default function Dashboard({ jobs,applicants }: DashboardProps) {
+export default function RecruiterDashboard({ jobs,applicants }: DashboardProps) {
 
 
   return (

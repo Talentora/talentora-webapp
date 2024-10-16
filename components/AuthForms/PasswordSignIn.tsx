@@ -11,7 +11,6 @@ interface PasswordSignInProps {
   allowEmail: boolean;
   redirectMethod: string;
   role: string;
-  // userType: 'recruiter' | 'candidate';
 }
 
 export default function PasswordSignIn({

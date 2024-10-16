@@ -193,6 +193,7 @@ export async function signUp(formData: FormData,role:string) {
   const fullName = String(formData.get('fullName')).trim();
   let redirectPath: string;
 
+  console.log(`Signing up as a ${role}`)
   console.log(`Email: ${email}`);
   console.log(`Password: ${'*'.repeat(password.length)}`); // Masking the password for security
 

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
 export default function SignIn() {
-  const [selectedType, setSelectedType] = useState<'recruiter' | 'candidate' | null>(null);
+  const [selectedType, setSelectedType] = useState<'recruiter' | 'applicant' | null>(null);
   const router = useRouter();
 
   const handleUserTypeSelection = (type: 'recruiter' | 'candidate') => {
