@@ -40,15 +40,21 @@ export default async function Account() {
         <CustomerPortalForm subscription={subscription} />
         <NameForm userName={userDetails?.full_name ?? ''} />
         <EmailForm userEmail={user.email} />
-        {/* <CompanyForm
+        <CompanyForm
           companyName={userDetails?.company_name ?? ''}
           companySize={userDetails?.company_size ?? ''}
           industry={userDetails?.industry ?? ''}
-        /> */}
+        />
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4">Invite Teammates</h2>
           <Link href="/settings/invite">
             <Button>Invite Your Teammates</Button>
+          </Link>
+        </div>
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">Company Onboarding</h2>
+          <Link href="/settings/onboarding">
+            <Button>Get your company setup</Button>
           </Link>
         </div>
       </div>

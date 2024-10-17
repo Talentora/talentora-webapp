@@ -1,7 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useToast } from "@/components/Toasts/use-toast"
+import { ToastAction } from "@/components/Toasts/toast"
 import { Button } from '@/components/ui/button';
+import { createClient } from '@/utils/supabase/client';
 import {
   Card,
   CardContent,
@@ -20,19 +23,52 @@ import { Tables } from '@/types/types_db';
 type Company = Omit<Tables<'companies'>, 'id'>;
 
 export default function OnboardingPage() {
+  const { toast } = useToast()
+
   const [step, setStep] = useState<number>(1);
   const [companyName, setCompanyName] = useState<string>('');
   const [headquarters, setHeadquarters] = useState<string>('');
   const [industry, setIndustry] = useState<string>('');
+  const [hasCompanyId, setHasCompanyId] = useState<boolean>(false);
+  const [user, setUser] = useState<any>(null);
 
   const totalSteps = 4;
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, totalSteps));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
+  useEffect(() => {
+    const fetchUserAndCompanyData = async () => {
+      const supabase = createClient();
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error || !user) {
+        console.error('Error fetching user:', error);
+        return;
+      }
+      setUser(user);
+
+      // Get the recruiter's company_id from the recruiters table
+      const { data: recruiterData, error: recruiterError } = await supabase
+        .from('recruiters')
+        .select('company_id')
+        .eq('id', user.id)
+        .single();
+
+      if (recruiterError) {
+        console.error('Error fetching recruiter data:', recruiterError);
+        return;
+      }
+
+      const companyId = recruiterData?.company_id;
+      setHasCompanyId(!!companyId);
+    };
+
+    fetchUserAndCompanyData();
+  }, []);
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
+    
     const companyData: Company = {
       name: companyName,
       location: headquarters,
@@ -42,15 +78,32 @@ export default function OnboardingPage() {
       subscription_id: null,
       website_url: null,
     };
-
+  
     try {
-      const createdCompany = await createCompany(companyData);
+      if (!user) {
+        throw new Error('No user found');
+      }
+      const createdCompany = await createCompany(
+        companyData,
+        user.id
+      );
       if (!createdCompany) {
         throw new Error('Failed to save company information');
       }
-      console.log('Company information saved successfully');
+      toast({
+        title: "Success!",
+        description: "Company information saved successfully",
+        duration: 5000,
+      })
+      nextStep(); // Move to the next step after successful creation
     } catch (error) {
       console.error('Error:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to save company information. Please try again.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      })
     }
   };
 
@@ -103,44 +156,53 @@ export default function OnboardingPage() {
           )}
 
           {step === 2 && (
-            <form className="space-y-4" onSubmit={handleSubmit}>
-              <h3 className="text-lg font-medium">Company Information</h3>
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="company">Company Name</Label>
-                <Input
-                  type="text"
-                  id="company"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                  placeholder="Acme Inc."
-                  required
-                />
-              </div>
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="headquarters">Headquarters Location</Label>
-                <Input
-                  type="text"
-                  id="headquarters"
-                  value={headquarters}
-                  onChange={(e) => setHeadquarters(e.target.value)}
-                  placeholder="Enter your company's headquarters location"
-                  required
-                />
-              </div>
+            <>
+              {hasCompanyId ? (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Company Information</h3>
+                  <p>You are already associated with a company. If you need to update your company information, please contact support.</p>
+                </div>
+              ) : (
+                <form className="space-y-4" onSubmit={handleSubmit}>
+                  <h3 className="text-lg font-medium">Company Information</h3>
+                  <div className="grid w-full items-center gap-1.5">
+                    <Label htmlFor="company">Company Name</Label>
+                    <Input
+                      type="text"
+                      id="company"
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      placeholder="Acme Inc."
+                      required
+                    />
+                  </div>
+                  <div className="grid w-full items-center gap-1.5">
+                    <Label htmlFor="headquarters">Headquarters Location</Label>
+                    <Input
+                      type="text"
+                      id="headquarters"
+                      value={headquarters}
+                      onChange={(e) => setHeadquarters(e.target.value)}
+                      placeholder="Enter your company's headquarters location"
+                      required
+                    />
+                  </div>
 
-              <div className="grid w-full items-center gap-1.5">
-                <Label htmlFor="industry">Industry</Label>
-                <Input
-                  type="text"
-                  id="industry"
-                  value={industry}
-                  onChange={(e) => setIndustry(e.target.value)}
-                  placeholder="e.g., Technology, Healthcare, Finance"
-                  required
-                />
-              </div>
-              <Button type="submit">Save</Button>
-            </form>
+                  <div className="grid w-full items-center gap-1.5">
+                    <Label htmlFor="industry">Industry</Label>
+                    <Input
+                      type="text"
+                      id="industry"
+                      value={industry}
+                      onChange={(e) => setIndustry(e.target.value)}
+                      placeholder="e.g., Technology, Healthcare, Finance"
+                      required
+                    />
+                  </div>
+                  <Button type="submit">Save</Button>
+                </form>
+              )}
+            </>
           )}
 
           {step === 3 && (

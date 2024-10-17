@@ -1,4 +1,5 @@
-
+"use client"
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,14 +14,31 @@ import {
   UsersIcon
 } from 'lucide-react';
 import ApplicantTable from '../Applicants/ApplicantTable';
-import { Job,Application } from '@/types/greenhouse';
-interface DashboardProps {
-  jobs: Job[];
-  applicants:Application[]
-}
-import { useState } from 'react';
+import { Job, Application } from '@/types/greenhouse';
 
-export default function RecruiterDashboard({ jobs,applicants }: DashboardProps) {
+export default function RecruiterDashboard() {
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [applicants, setApplicants] = useState<Application[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const jobsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/jobs`);
+      const applicationsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/applications`);
+
+      if (jobsResponse.ok) {
+        const jobsData = await jobsResponse.json();
+        setJobs(jobsData);
+      }
+
+      if (applicationsResponse.ok) {
+        const applicantsData = await applicationsResponse.json();
+        setApplicants(applicantsData);
+      }
+    };
+
+    fetchData();
+  }, []);
+
 
 
   return (
