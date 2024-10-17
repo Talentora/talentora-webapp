@@ -43,20 +43,19 @@ export async function middleware(request: NextRequest) {
   // Check user role
   const { role } = user.user_metadata;
 
-  if (role === 'applicant') {
-    // ... existing applicant logic ...
-  } else if (role === 'recruiter') {
-    // Check if the recruiter has a company ID in the recruits table
+  if (role === 'recruiter') {
+    // Check if the recruiter has a company ID in the recruiters table
     const { data: recruitData, error } = await supabase
       .from('recruiters')
       .select('company_id')
-      .eq('user_id', user.id)
+      .eq('id', user.id)
       .single();
+
 
     if (error || !recruitData || !recruitData.company_id) {
       // If there's an error, no data, or no company_id, and trying to access a protected route,
       // redirect to the onboarding page
-      if (!allUnprotectedRoutes.some(route => route.test(pathname))) {
+      if (!allUnprotectedRoutes.some(route => route.test(pathname)) && pathname !== '/settings/onboarding') {
         return NextResponse.redirect(new URL('/settings/onboarding', request.url));
       }
     }
@@ -65,7 +64,6 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
-// ... existing config ...
 
 export const config = {
   matcher: [
