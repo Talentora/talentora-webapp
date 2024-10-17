@@ -196,7 +196,7 @@ export async function signUp(formData: FormData,role:string) {
   console.log(`Signing up as a ${role}`)
   console.log(`Email: ${email}`);
   console.log(`Password: ${'*'.repeat(password.length)}`); // Masking the password for security
-
+  
   if (!isValidEmail(email)) {
     console.log('Invalid email format detected.');
     redirectPath = getErrorRedirect(
@@ -213,10 +213,12 @@ export async function signUp(formData: FormData,role:string) {
     password,
     options: {
       emailRedirectTo: callbackURL,
+
       data: { role: role, full_name: fullName }
     }
   });
 
+  
   if (error) {
     console.log('Sign-up failed with error:', error.message);
     redirectPath = getErrorRedirect(

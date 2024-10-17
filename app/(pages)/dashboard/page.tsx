@@ -1,3 +1,4 @@
+
 import RecruiterDashboard from '@/components/RecruiterDashboard';
 import Sidebar from '@/components/Layout/Sidebar';
 import { createClient } from '@/utils/supabase/server';
