@@ -3,6 +3,7 @@ import { updateSession } from '@/utils/supabase/middleware';
 import { NextResponse } from 'next/server';
 import { createClient } from './utils/supabase/server';
 
+
 // List of unprotected routes as regular expressions
 const unprotectedRoutes = [
   /^\/$/, // Matches '/'
@@ -19,6 +20,7 @@ const applicantRoutes = [
 
 // Combine unprotected and applicant routes
 const allUnprotectedRoutes = [...unprotectedRoutes, ...applicantRoutes];
+
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -38,17 +40,32 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/signin', request.url));
   }
 
-  // Check if the user is an applicant and restrict access to only applicant/unprotected routes
+  // Check user role
   const { role } = user.user_metadata;
+
   if (role === 'applicant') {
-    // If the applicant is trying to access a protected route, redirect to /bot or another unprotected route
-    if (!allUnprotectedRoutes.some(route => route.test(pathname))) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
+    // ... existing applicant logic ...
+  } else if (role === 'recruiter') {
+    // Check if the recruiter has a company ID in the recruits table
+    const { data: recruitData, error } = await supabase
+      .from('recruiters')
+      .select('company_id')
+      .eq('user_id', user.id)
+      .single();
+
+    if (error || !recruitData || !recruitData.company_id) {
+      // If there's an error, no data, or no company_id, and trying to access a protected route,
+      // redirect to the onboarding page
+      if (!allUnprotectedRoutes.some(route => route.test(pathname))) {
+        return NextResponse.redirect(new URL('/settings/onboarding', request.url));
+      }
     }
   }
 
   return response;
 }
+
+// ... existing config ...
 
 export const config = {
   matcher: [
