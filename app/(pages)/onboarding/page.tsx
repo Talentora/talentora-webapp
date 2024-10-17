@@ -1,4 +1,4 @@
-import OnboardingPage from '@/components/CompanyOnboarding';
+import OnboardingPage from '@/components/RecruiterDashboard/CompanyOnboarding';
 
 export default function Onboarding() {
   return <OnboardingPage />;

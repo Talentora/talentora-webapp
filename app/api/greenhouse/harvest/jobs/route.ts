@@ -1,5 +1,8 @@
 import { Job } from '@/types/greenhouse';
 import { NextResponse } from 'next/server';
+
+const TIMEOUT_MS = 10000; // 10 seconds timeout
+
 export async function GET() {
   const apiKey = process.env.NEXT_PUBLIC_GREENHOUSE_API_KEY;
   const baseURL = 'https://harvest.greenhouse.io/v1/jobs';
@@ -9,11 +12,17 @@ export async function GET() {
   }
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
     const response = await fetch(baseURL, {
       headers: {
         Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
       },
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       return NextResponse.json({ error: 'Failed to fetch jobs' }, { status: response.status });
@@ -22,6 +31,9 @@ export async function GET() {
     const jobs: Job[] = await response.json();
     return NextResponse.json(jobs, { status: 200 });
   } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      return NextResponse.json({ error: 'Request timed out' }, { status: 504 });
+    }
     return NextResponse.json({ error: 'An error occurred while fetching jobs' }, { status: 500 });
   }
 }

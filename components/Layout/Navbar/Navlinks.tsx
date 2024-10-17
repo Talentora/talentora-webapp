@@ -18,6 +18,7 @@ export default function Navlinks({ user }: NavlinksProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  
   const router = useRouter();
 
   const links = [
@@ -29,7 +30,7 @@ export default function Navlinks({ user }: NavlinksProps) {
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (getRedirectMethod() === 'client') {
-      await handleRequest(e, SignOut, router);
+      await handleRequest(e, SignOut, router,'');
     }
   };
 
@@ -91,7 +92,10 @@ export default function Navlinks({ user }: NavlinksProps) {
                         Signed in as
                       </p>
                       <p className="text-sm font-bold truncate">
-                        {user.full_name || user.email}
+                        {user.user_metadata.full_name || user.email}
+                      </p>
+                      <p className="text-xs text-muted-foreground capitalize">
+                        {user.user_metadata?.role}
                       </p>
                     </div>
                     <div className="border-t border-border my-2"></div>
