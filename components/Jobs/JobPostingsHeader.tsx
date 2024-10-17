@@ -23,7 +23,6 @@ interface JobPostingsHeaderProps {
       departments: string[];
       offices: string[];
     };
-    onCreateJob: () => void;
   };
 }
 
@@ -36,7 +35,7 @@ export default function JobPostingsHeader({
     filters,
     setFilters,
     filterOptions,
-    onCreateJob
+    
   } = headerData;
 
   const activeFilterCount = Object.values(filters).flat().length;
@@ -45,10 +44,7 @@ export default function JobPostingsHeader({
     <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4">
       <h1 className="text-2xl font-bold">Job Postings</h1>
       <div className="flex items-center space-x-4">
-        <Button onClick={onCreateJob}>
-          <PlusIcon className="mr-2 h-4 w-4" />
-          Create Job
-        </Button>
+        
         <form className="relative">
           <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input

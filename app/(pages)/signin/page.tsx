@@ -7,7 +7,7 @@ export default function SignIn() {
   const [selectedType, setSelectedType] = useState<'recruiter' | 'applicant' | null>(null);
   const router = useRouter();
 
-  const handleUserTypeSelection = (type: 'recruiter' | 'candidate') => {
+  const handleUserTypeSelection = (type: 'recruiter' | 'applicant') => {
     setSelectedType(type);
   };
 
@@ -32,9 +32,9 @@ export default function SignIn() {
         </div>
         <div
           className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-white shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
-            selectedType === 'candidate' ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+            selectedType === 'applicant' ? 'ring-2 ring-blue-500 bg-blue-50' : ''
           }`}
-          onClick={() => handleUserTypeSelection('candidate')}
+          onClick={() => handleUserTypeSelection('applicant')}
         >
           <h2 className="text-2xl font-semibold mb-2 text-gray-700">Applicant</h2>
           <p className="text-center text-gray-600">I'm looking for job opportunities</p>
