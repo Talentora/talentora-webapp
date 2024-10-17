@@ -15,10 +15,8 @@ import {
   defaultServices
 } from '@/utils/rtvi.config';
 
-import { Tables } from '@/types/types_db';
-
+import { Job } from '@/types/greenhouse';
 // Define the Job type from the database schema
-type Job = Tables<'jobs'>;
 
 // Define the props for the Bot component
 interface BotProps {
@@ -41,6 +39,7 @@ export default function Bot({ job }: BotProps) {
     if (!showSplash || voiceClientRef.current) {
       return;
     }
+    console.log("Creating client")
 
     // Create a new DailyVoiceClient instance
     const voiceClient = new DailyVoiceClient({
@@ -82,8 +81,8 @@ export default function Bot({ job }: BotProps) {
           <main>
             <p></p>
             <div id="app">
-              {/* Render the App component only if a job is provided */}
-              {job && <App job={job} />}
+              {/* Render the App component if a job is provided, otherwise show "Job not found" */}
+              {job ? <App job={job} /> : <div>Job not found</div>}
             </div>
           </main>
           <aside id="tray" />

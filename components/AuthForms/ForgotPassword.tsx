@@ -6,6 +6,7 @@ import { requestPasswordUpdate } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   Card,
   CardHeader,
@@ -28,10 +29,11 @@ export default function ForgotPassword({
 }: ForgotPasswordProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const searchParams = useSearchParams();
+  const role: string = searchParams.get('role') ?? 'unknown';
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true); // Disable the button while the request is being handled
-    await handleRequest(e, requestPasswordUpdate, router);
+    await handleRequest(e, requestPasswordUpdate, router, role);
     setIsSubmitting(false);
   };
 
@@ -72,7 +74,7 @@ export default function ForgotPassword({
       </CardContent>
       <CardFooter className="flex flex-col items-start space-y-2">
         <p>
-          <Link href="/signin/password_signin" className="font-light text-sm">
+          <Link href={`/signin/password_signin?role=${role}`} className="font-light text-sm">
             Sign in with email and password
           </Link>
         </p>
@@ -84,7 +86,7 @@ export default function ForgotPassword({
           </p>
         )}
         <p>
-          <Link href="/signin/signup" className="font-light text-sm">
+          <Link href={`/signin/signup?role=${role}`} className="font-light text-sm">
             Don&apos;t have an account? Sign up
           </Link>
         </p>

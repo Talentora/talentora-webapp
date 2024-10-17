@@ -17,8 +17,7 @@ import { Button } from '@/components/ui/button';
 import * as Card from '@/components/ui/card';
 import { Configure } from './Setup';
 
-import { Tables } from '@/types/types_db';
-
+import { Job } from '@/types/greenhouse';
 /**
  * Mapping of transport states to status text
  */
@@ -33,7 +32,6 @@ const status_text = {
 /**
  * Type definition for Job from database schema
  */
-type Job = Tables<'jobs'>;
 
 /**
  * Props interface for App component

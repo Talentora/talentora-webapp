@@ -131,7 +131,7 @@ export async function requestPasswordUpdate(formData: FormData) {
   return redirectPath;
 }
 
-export async function signInWithPassword(formData: FormData) {
+export async function signInWithPassword(formData: FormData,role:string) {
   const cookieStore = cookies();
   const email = String(formData.get('email')).trim();
   const password = String(formData.get('password')).trim();
@@ -141,6 +141,7 @@ export async function signInWithPassword(formData: FormData) {
   const { error, data } = await supabase.auth.signInWithPassword({
     email,
     password
+
   });
 
   if (error) {
@@ -183,7 +184,7 @@ export async function signInWithPassword(formData: FormData) {
  *
  * The function returns a redirect path based on the outcome, which can be used to navigate the user to the appropriate page.
  */
-export async function signUp(formData: FormData) {
+export async function signUp(formData: FormData,role:string) {
   console.log('Starting sign-up process...');
   const callbackURL = getURL('/auth/callback');
 
@@ -192,6 +193,7 @@ export async function signUp(formData: FormData) {
   const fullName = String(formData.get('fullName')).trim();
   let redirectPath: string;
 
+  console.log(`Signing up as a ${role}`)
   console.log(`Email: ${email}`);
   console.log(`Password: ${'*'.repeat(password.length)}`); // Masking the password for security
   
@@ -211,8 +213,10 @@ export async function signUp(formData: FormData) {
     password,
     options: {
       emailRedirectTo: callbackURL,
-      data: { role: 'applicant' } // Add role and fullName to metadata
-  }});
+
+      data: { role: role, full_name: fullName }
+    }
+  });
 
   
   if (error) {
@@ -224,7 +228,7 @@ export async function signUp(formData: FormData) {
     );
   } else if (data.session) {
     console.log('Sign-up successful with active session.');
-    redirectPath = getStatusRedirect('/', 'Success!', 'You are now signed in.');
+    redirectPath = getStatusRedirect('/', 'Success!', `You are now signed in as a ${role}.`);
   } else if (
     data.user &&
     data.user.identities &&
@@ -252,11 +256,10 @@ export async function signUp(formData: FormData) {
     );
   }
 
-  console.log('Sign-up process completed. Redirecting...');
   return redirectPath;
 }
 
-export async function updatePassword(formData: FormData) {
+  export async function updatePassword(formData: FormData) {
   const password = String(formData.get('password')).trim();
   const passwordConfirm = String(formData.get('passwordConfirm')).trim();
   let redirectPath: string;
