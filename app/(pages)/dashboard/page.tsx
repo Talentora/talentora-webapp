@@ -28,16 +28,10 @@ const DashboardPage: React.FC = async () => {
   }
 
   return (
-    <div>
-      {role === 'recruiter' && (
-      <div className="flex flex-row">
-        <h1>User role : {role}</h1>
-        <div className="w-1/6 py-5">
-          <Sidebar />
-        </div>
-        <div className="w-5/6">
-            <RecruiterDashboard jobs={jobs} applicants={applicants} />
-        </div>
+    <div className="flex flex-row">
+    
+      <div className="w-full">
+        <Dashboard jobs={jobs} />
       </div>
       )}
 

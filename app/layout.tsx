@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
-import Footer from '@/components/Layout/Footer';
-import Navbar from '@/components/Layout/Navbar';
+import Footer from '@/components/Footer';
+import Navbar from '@/components/Navbar';
+import Sidebar from '@/components/Sidebar';
 import { Toaster } from '@/components/Toasts/toaster';
 import { PropsWithChildren, Suspense } from 'react';
 import { getURL } from '@/utils/helpers';
@@ -16,10 +17,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(getURL()),
   title: title,
   description: description,
-  openGraph: {
-    title: title,
-    description: description
-  }
+  // openGraph: {
+  //   title: title,
+  //   description: description,
+  // },
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {
@@ -32,19 +33,32 @@ export default function RootLayout({ children }: PropsWithChildren) {
           defer
         ></script>
       </Head> */}
-      <body className="bg-background p-10">
+      <body className="w-full bg-background p-0">
         <NextTopLoader />
-        <Navbar />
-        <main
-          id="skip"
-          className="min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]"
-        >
-          <Suspense fallback={<Loading />}>{children}</Suspense>
-        </main>
+        <Navbar/>
+        {/* Use flexbox for sidebar and content alignment */}
+        <div className="flex">
+          {/* Sidebar aligned to the left */}
+          <aside className="w-200 bg-gray-100 p-0">
+           
+          </aside>
+          
+          {/* Main content on the right in another column */}
+          <main
+            id="skip"
+            className="flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)] p-6"
+          >
+            <Suspense fallback={<Loading />}>{children}</Suspense>
+          </main>
+        </div>
         {/* <Footer /> */}
         <Suspense>
           <Toaster />
         </Suspense>
+
+    
+        {/* Use flexbox for sidebar and content alignment */}
+   
       </body>
     </html>
   );

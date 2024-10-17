@@ -1,7 +1,17 @@
-"use client"
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import { redirect } from 'next/navigation';
+import Navbar from '@/components/Navbar';
+import { getDefaultSignInView } from '@/utils/auth-helpers/settings';
+import { cookies } from 'next/headers';
+import { Sidebar } from 'lucide-react';
+import NextTopLoader from 'nextjs-toploader'; 
+
+<body className=" w-full bg-background p-10">
+  <NextTopLoader />
+  <Navbar/>
+
+</body>
+
+
 
 export default function SignIn() {
   const [selectedType, setSelectedType] = useState<'recruiter' | 'applicant' | null>(null);
