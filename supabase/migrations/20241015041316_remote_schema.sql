@@ -1,3 +1,3 @@
-drop type "public"."role";
+-- drop type "public"."role";
 
 
