@@ -22,6 +22,7 @@ export default function RecruiterDashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
+      
       const jobsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/jobs`);
       const applicationsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/applications`);
 

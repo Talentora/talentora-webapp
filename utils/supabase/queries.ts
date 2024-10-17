@@ -3,10 +3,11 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Tables } from '@/types/types_db';
 import { createClient } from '@/utils/supabase/server';
 
-type User = Tables<'users'>;
+// type User = Tables<'users'>;
+type Recruiter = Tables<'recruiters'>
 type Subscription = Tables<'subscriptions'>;
 type Product = Tables<'products'>;
-type UserDetails = Tables<'users'>;
+// type UserDetails = Tables<'users'>;
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
 
@@ -21,7 +22,7 @@ type Company = Tables<'companies'>;
  */
 export const getCompany = async (
   supabase: SupabaseClient,
-  companyId: number
+  companyId: string
 ): Promise<Company | null> => {
   try {
     const { data: company, error } = await supabase
@@ -303,3 +304,34 @@ export async function inviteUser(name:string,email: string) {
     return { success: false, error: err };
   }
 }
+
+/**
+ * Fetches a recruiter by their ID.
+ *
+ * @param supabase - The Supabase client instance.
+ * @param recruiterId - The ID of the recruiter to fetch.
+ * @returns The recruiter data or null if not found.
+ */
+export const getRecruiter = async (
+  supabase: SupabaseClient,
+  id: string
+): Promise<Recruiter | null> => {
+  try {
+    const { data: recruiter, error } = await supabase
+      .from('recruiters')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      console.error('Error fetching recruiter:', error);
+      return null;
+    }
+
+    return recruiter;
+  } catch (err) {
+    console.error('Unexpected error fetching recruiter:', err);
+    return null;
+  }
+};
+
