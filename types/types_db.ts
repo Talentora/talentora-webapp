@@ -129,6 +129,7 @@ export type Database = {
         Row: {
           description: string | null
           email_extension: string | null
+          greenhouse_api_key: string | null
           id: string
           industry: string | null
           location: string | null
@@ -139,6 +140,7 @@ export type Database = {
         Insert: {
           description?: string | null
           email_extension?: string | null
+          greenhouse_api_key?: string | null
           id?: string
           industry?: string | null
           location?: string | null
@@ -149,6 +151,7 @@ export type Database = {
         Update: {
           description?: string | null
           email_extension?: string | null
+          greenhouse_api_key?: string | null
           id?: string
           industry?: string | null
           location?: string | null

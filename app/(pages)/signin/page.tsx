@@ -19,6 +19,7 @@ export default function SignIn() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+      <h1 className="text-4xl font-bold mb-4 text-gray-800">Sign In</h1>
       <h1 className="text-3xl font-bold mb-8 text-gray-800">Choose Your Role</h1>
       <div className="flex flex-col md:flex-row justify-center gap-6 w-full max-w-3xl">
         <div

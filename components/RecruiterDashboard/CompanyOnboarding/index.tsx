@@ -31,8 +31,9 @@ export default function OnboardingPage() {
   const [industry, setIndustry] = useState<string>('');
   const [hasCompanyId, setHasCompanyId] = useState<boolean>(false);
   const [user, setUser] = useState<any>(null);
+  const [greenhouseKey, setGreenhouseKey] = useState<string>('');
 
-  const totalSteps = 4;
+  const totalSteps = 5;
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, totalSteps));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
@@ -66,6 +67,55 @@ export default function OnboardingPage() {
     fetchUserAndCompanyData();
   }, []);
 
+  const handleGreenhouseIntegration = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const supabase = createClient();
+    
+    try {
+      // Fetch the company ID for the current user
+      const { data: recruiterData, error: recruiterError } = await supabase
+        .from('recruiters')
+        .select('company_id')
+        .eq('id', user.id)
+        .single();
+
+      if (recruiterError) throw recruiterError;
+
+      const companyId = recruiterData?.company_id;
+
+      if (!companyId) {
+        throw new Error('Company ID not found');
+      }
+
+      // Update the company with the new Greenhouse API key
+      const { error: updateError } = await supabase
+        .from('companies')
+        .update({ greenhouse_api_key: greenhouseKey })
+        .eq('id', companyId);
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Success!",
+        description: "Greenhouse API key saved successfully",
+        duration: 5000,
+      });
+
+      nextStep(); // Move to the next step after successful update
+    } catch (error) {
+      console.error('Error:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to save Greenhouse API key. Please try again.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+    }
+
+
+  }
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     
@@ -77,6 +127,7 @@ export default function OnboardingPage() {
       email_extension: null,
       subscription_id: null,
       website_url: null,
+      greenhouse_api_key:null
     };
   
     try {
@@ -204,8 +255,30 @@ export default function OnboardingPage() {
               )}
             </>
           )}
-
           {step === 3 && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Greenhouse Integration</h3>
+              <p>
+                Enter your Greenhouse API key to integrate with your account.
+              </p>
+              <div className="grid w-full items-center gap-1.5">
+                <Label htmlFor="greenhouse-key">Greenhouse API Key</Label>
+                <Input
+                  type="password"
+                  id="greenhouse-key"
+                  placeholder="Enter your Greenhouse API key"
+                  value={greenhouseKey}
+                  onChange={(e) => setGreenhouseKey(e.target.value)}
+                  required
+                />
+              </div>
+              <Button onClick={handleGreenhouseIntegration}>
+                Connect Greenhouse
+              </Button>
+            </div>
+          )}
+
+          {step === 4 && (
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Invite Your Team</h3>
               <p>
@@ -223,7 +296,7 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {step === 4 && (
+          {step === 5 && (
             <div className="space-y-4 text-center p-4">
               <h3 className="text-lg font-medium">You&apos;re All Set!</h3>
               <p>Congratulations! Your account is now ready to use.</p>

@@ -335,3 +335,34 @@ export const getRecruiter = async (
   }
 };
 
+
+/**
+ * Fetches the Greenhouse API key for the current user's company.
+ * 
+ * @returns The Greenhouse API key or null if not found.
+ * @throws Error if there's an issue fetching the data.
+ */
+export const getGreenhouseApiKey = async (): Promise<string | null> => {
+  const supabase = createClient();
+  try {
+    const user = await getUser(supabase);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const recruiter = await getRecruiter(supabase, user.id);
+    if (!recruiter) {
+      throw new Error('Recruiter not found');
+    }
+
+    const company = await getCompany(supabase, recruiter.company_id ?? '');
+    if (!company) {
+      throw new Error('Company not found');
+    }
+
+    return company.greenhouse_api_key;
+  } catch (error) {
+    console.error('Error fetching Greenhouse API key:', error);
+    throw error;
+  }
+}

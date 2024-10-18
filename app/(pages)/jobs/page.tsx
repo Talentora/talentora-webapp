@@ -2,13 +2,13 @@
 import { useEffect, useState } from 'react';
 import Dashboard from '@/components/Jobs';
 import { Job } from '@/types/greenhouse';
-
 const Page = () => {
   // State to store jobs and loading/error states
   const [jobs, setJobs] = useState<Job[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
 
+ 
   // Fetch jobs using useEffect
   useEffect(() => {
     async function fetchJobs() {
@@ -27,6 +27,7 @@ const Page = () => {
         setLoading(false);
       }
     }
+
 
     fetchJobs();
   }, []); // Empty dependency array means this runs once after component mounts

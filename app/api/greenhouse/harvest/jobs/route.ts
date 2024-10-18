@@ -1,10 +1,11 @@
 import { Job } from '@/types/greenhouse';
 import { NextResponse } from 'next/server';
-
+import { getGreenhouseApiKey } from '@/utils/supabase/queries';
 const TIMEOUT_MS = 10000; // 10 seconds timeout
 
 export async function GET() {
-  const apiKey = process.env.NEXT_PUBLIC_GREENHOUSE_API_KEY;
+  const apiKey=await getGreenhouseApiKey();
+  console.log("API KEY", apiKey)
   const baseURL = 'https://harvest.greenhouse.io/v1/jobs';
 
   if (!apiKey) {
