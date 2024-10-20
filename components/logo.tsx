@@ -30,7 +30,7 @@ const Logo: React.FC<{ className: string }> = ({ className }) => {
       <g>
         <path
           d="M128 128C128 136.837 120.837 144 112 144C103.163 144 96 136.837 96 128C96 119.163 103.163 112 112 112C120.837 112 128 119.163 128 128Z"
-          stroke="black"
+          stroke="blue"
           strokeWidth="12"
         />
         <path

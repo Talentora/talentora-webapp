@@ -10,7 +10,10 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import { createClient } from '@/utils/supabase/client';
-import { Job } from '@/types/greenhouse';
+
+
+
+type Job = Tables<'jobs'>;
 
 interface DashboardProps {
   dashboardData: {

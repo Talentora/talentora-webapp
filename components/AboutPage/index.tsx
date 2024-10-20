@@ -5,29 +5,30 @@ import Image from "next/image"
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-primary/5 to-background">
-          <div className="container px-4 md:px-6">
+    <div className="flex flex-col min-h-screen bg-[#F5F6FA]"> {/* Background applied */}
+      <main className="flex-1 ">
+        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-primary/5 to-[#F5F6FA]"> {/* Gradient blends to page background */}
+          <div className="container px-4 md:px-6 " >
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-black">
                   About Talentora
                 </h1>
-                <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
-                 We&apos;re on a mission to revolutionize the hiring experience using AI.
+
+                <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl text-black">
+                  We're on a mission to revolutionize the hiring experience using AI.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="w-full py-12 md:py-24 lg:py-32">
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-[#F5F6FA]"> {/* Explicit background color applied */}
           <div className="container px-4 md:px-6">
             <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3">
               <Card>
-                <CardContent className="flex flex-col items-center space-y-4 p-6">
-                  <Award className="h-12 w-12 text-primary" />
+                <CardContent className="flex flex-col items-center space-y-4 p-6 text-black">
+                  <Award className="h-12 w-12 text-black" /> 
                   <h3 className="text-xl font-bold">Our Mission</h3>
                   <p className="text-center text-muted-foreground">
                     To deliver cutting-edge solutions that empower businesses to hire their best candidates.
@@ -35,8 +36,8 @@ export default function AboutPage() {
                 </CardContent>
               </Card>
               <Card>
-                <CardContent className="flex flex-col items-center space-y-4 p-6">
-                  <Users className="h-12 w-12 text-primary" />
+                <CardContent className="flex flex-col items-center space-y-4 p-6 text-black">
+                  <Users className="h-12 w-12 text-black" /> 
                   <h3 className="text-xl font-bold">Our Team</h3>
                   <p className="text-center text-muted-foreground">
                     A diverse group of students that hope to revolutionize hiring.
@@ -44,11 +45,11 @@ export default function AboutPage() {
                 </CardContent>
               </Card>
               <Card>
-                <CardContent className="flex flex-col items-center space-y-4 p-6">
-                  <Clock className="h-12 w-12 text-primary" />
+                <CardContent className="flex flex-col items-center space-y-4 p-6 text-black">
+                  <Clock className="h-12 w-12 text-black" /> 
                   <h3 className="text-xl font-bold">Our History</h3>
                   <p className="text-center text-muted-foreground">
-                    Founded in 2024, We&apos;re a agile group of builders hoping to make a lasting impact on the world.
+                    Founded in 2024, we're an agile group of builders hoping to make a lasting impact on the world.
                   </p>
                 </CardContent>
               </Card>
@@ -56,9 +57,12 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-[#F5F6FA]"> {/* Consistent background color */}
           <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12">
+            <div className="flex justify-center mb-8"> 
+              <hr className="w-full max-w-[calc(100% - 120px)] border-t border-gray-300" />
+            </div>
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12 text-black">
               Meet Our Leadership
             </h2>
             <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3">
@@ -81,7 +85,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="w-full py-12 md:py-24 lg:py-32">
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-[#F5F6FA]">
           <div className="container px-4 md:px-6">
             <div className="grid gap-10 lg:grid-cols-2">
               <div className="space-y-4">
@@ -94,7 +98,6 @@ export default function AboutPage() {
                 We&apos;ve faced challenges, celebrated victories, and learned valuable lessons along the way. 
                   Our journey is a testament to the power of perseverance, creativity, and teamwork.
                 </p>
-                {/* <Button className="mt-4">Learn More About Our Journey</Button> */}
               </div>
               <div className="aspect-video overflow-hidden rounded-xl">
                 <Image
@@ -108,8 +111,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-
-        
       </main>
     </div>
   )
