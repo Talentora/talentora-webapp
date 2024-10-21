@@ -1,8 +1,9 @@
 // app/api/jobs/[id]/route.ts
+import { getGreenhouseApiKey } from '@/utils/supabase/queries';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
-  const apiKey = process.env.NEXT_PUBLIC_GREENHOUSE_API_KEY;
+  const apiKey=await getGreenhouseApiKey();
   const jobId = params.id;
   const baseURL = `https://harvest.greenhouse.io/v1/jobs/${jobId}`;
 

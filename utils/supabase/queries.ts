@@ -3,10 +3,11 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { Tables } from '@/types/types_db';
 import { createClient } from '@/utils/supabase/server';
 
-type User = Tables<'users'>;
+// type User = Tables<'users'>;
+type Recruiter = Tables<'recruiters'>
 type Subscription = Tables<'subscriptions'>;
 type Product = Tables<'products'>;
-type UserDetails = Tables<'users'>;
+// type UserDetails = Tables<'users'>;
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
 
@@ -21,7 +22,7 @@ type Company = Tables<'companies'>;
  */
 export const getCompany = async (
   supabase: SupabaseClient,
-  companyId: number
+  companyId: string
 ): Promise<Company | null> => {
   try {
     const { data: company, error } = await supabase
@@ -50,20 +51,37 @@ export const getCompany = async (
  * @throws Error if the creation operation fails.
  */
 export const createCompany = async (
-  companyData: Omit<Company, 'id'>
+  companyData: Omit<Company, 'id'>,
+  userId: string
 ): Promise<Company> => {
   const supabase = createClient();
-  const { data, error } = await supabase
+  
+  // Insert the company
+  const { data: createdCompany, error: companyError } = await supabase
     .from('companies')
     .insert(companyData)
     .select()
     .single();
 
-  if (error) {
-    throw new Error(`Failed to create company: ${error.message}`);
+  if (companyError) {
+    throw new Error(`Failed to create company: ${companyError.message}`);
   }
 
-  return data;
+  if (!createdCompany) {
+    throw new Error('Failed to create company: No data returned');
+  }
+
+  // Update the recruiter's company
+  const { error: recruiterError } = await supabase
+    .from('recruiters')
+    .update({ company_id: createdCompany.id })
+    .eq('id', userId);
+
+  if (recruiterError) {
+    throw new Error(`Failed to update recruiter: ${recruiterError.message}`);
+  }
+
+  return createdCompany;
 };
 
 /**
@@ -266,13 +284,16 @@ export const getApplicants = async (
   return applicants || [];
 };
 
-export async function inviteUser(email: string) {
+export async function inviteUser(name:string,email: string) {
   const supabase = createClient();
 
   try {
-    const { data, error } = await supabase.auth.admin.inviteUserByEmail(
-      (email = email)
-    );
+    const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
+      data: {
+        role: 'recruiter', // You can change this to the appropriate role
+        full_name: name
+      }
+    });
     if (error) {
       console.error('Error inviting user:', error);
       return { success: false, error };
@@ -281,5 +302,67 @@ export async function inviteUser(email: string) {
   } catch (err) {
     console.error('Error inviting user:', err);
     return { success: false, error: err };
+  }
+}
+
+/**
+ * Fetches a recruiter by their ID.
+ *
+ * @param supabase - The Supabase client instance.
+ * @param recruiterId - The ID of the recruiter to fetch.
+ * @returns The recruiter data or null if not found.
+ */
+export const getRecruiter = async (
+  supabase: SupabaseClient,
+  id: string
+): Promise<Recruiter | null> => {
+  try {
+    const { data: recruiter, error } = await supabase
+      .from('recruiters')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      console.error('Error fetching recruiter:', error);
+      return null;
+    }
+
+    return recruiter;
+  } catch (err) {
+    console.error('Unexpected error fetching recruiter:', err);
+    return null;
+  }
+};
+
+
+/**
+ * Fetches the Greenhouse API key for the current user's company.
+ * 
+ * @returns The Greenhouse API key or null if not found.
+ * @throws Error if there's an issue fetching the data.
+ */
+export const getGreenhouseApiKey = async (): Promise<string | null> => {
+  const supabase = createClient();
+  try {
+    const user = await getUser(supabase);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const recruiter = await getRecruiter(supabase, user.id);
+    if (!recruiter) {
+      throw new Error('Recruiter not found');
+    }
+
+    const company = await getCompany(supabase, recruiter.company_id ?? '');
+    if (!company) {
+      throw new Error('Company not found');
+    }
+
+    return company.greenhouse_api_key;
+  } catch (error) {
+    console.error('Error fetching Greenhouse API key:', error);
+    throw error;
   }
 }

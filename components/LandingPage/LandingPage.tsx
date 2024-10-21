@@ -175,15 +175,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="container mx-auto px-4 py-16">
-          <div className="flex justify-between items-center">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="w-32 h-16 bg-gray-200 flex items-center justify-center text-gray-400 font-bold">
-                LOGO
-              </div>
-            ))}
-          </div>
-        </section>
+        
       </main>
     </div>
     

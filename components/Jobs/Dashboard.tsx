@@ -1,19 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import JobList from './JobList';
 import JobPostingsHeader from '@/components/Jobs/JobPostingsHeader';
-import { createJob, getJobs } from '@/utils/supabase/queries';
-import { CreateJobForm } from './CreateJobForm';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
-import { createClient } from '@/utils/supabase/client';
-
-
-
-type Job = Tables<'jobs'>;
+import { Job } from '@/types/greenhouse';
 
 interface DashboardProps {
   dashboardData: {
@@ -78,17 +66,7 @@ export default function Dashboard({ dashboardData }: DashboardProps) {
     });
   }, [jobs, searchTerm, filters]);
 
-  const handleCreateJob = async (jobData: Omit<Job, 'id'>) => {
-    try {
-      await createJob(jobData);
-      setIsCreateJobDialogOpen(false);
-      const supabase = createClient();
-      const updatedJobs = await getJobs(supabase);
-      setJobs(updatedJobs);
-    } catch (error) {
-      console.error('Error creating job:', error);
-    }
-  };
+  
 
   const jobPostingsHeaderData = {
     searchTerm,
@@ -117,22 +95,7 @@ export default function Dashboard({ dashboardData }: DashboardProps) {
           </div>
         )}
       </main>
-      <Dialog
-        open={isCreateJobDialogOpen}
-        onOpenChange={setIsCreateJobDialogOpen}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create New Job</DialogTitle>
-          </DialogHeader>
-          <CreateJobForm
-            formData={{
-              onSubmit: handleCreateJob,
-              onCancel: () => setIsCreateJobDialogOpen(false)
-            }}
-          />
-        </DialogContent>
-      </Dialog>
+      
     </div>
   );
 }

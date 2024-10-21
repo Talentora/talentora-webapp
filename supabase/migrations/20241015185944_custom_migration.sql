@@ -1,11 +1,11 @@
 DROP POLICY IF EXISTS "Enable insert for users based on user_id" ON public.recruiters;
-DROP POLICY IF EXISTS "Enable insert for authenticated users only" ON public.users;
+-- DROP POLICY IF EXISTS "Enable insert for authenticated users only" ON public.users;
 
-REVOKE DELETE ON TABLE public.users FROM anon;
-REVOKE INSERT ON TABLE public.users FROM anon;
--- ... (all other revoke statements)
+-- REVOKE DELETE ON TABLE public.users FROM anon;
+-- REVOKE INSERT ON TABLE public.users FROM anon;
+-- -- ... (all other revoke statements)
 
-DROP TABLE IF EXISTS public.users;
+-- DROP TABLE IF EXISTS public.users;
 
 ALTER TABLE public.applicants ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.recruiters ALTER COLUMN id DROP DEFAULT;

@@ -14,20 +14,7 @@ const Page = () => {
       {/* Sidebar */}
       <div className="bg-[#1E1768] p-4 w-64 min-h-screen">
         <nav className="space-y-2">
-          <Link
-            className="flex items-center space-x-2 text-gray-100 hover:bg-gray-200 hover:text-gray-900 px-4 py-2 rounded"
-            href="dashboard"
-          >
-            <HomeIcon className="h-5 w-5" />
-            <span>Dashboard</span>
-          </Link>
-          <Link
-            className="flex items-center space-x-2 text-gray-100 hover:bg-gray-200 hover:text-gray-900 px-4 py-2 rounded"
-            href="/interviews"
-          >
-            <UserIcon className="h-5 w-5" />
-            <span>Interviews (old)</span>
-          </Link>
+          
           <Link
             className="flex items-center space-x-2 text-gray-100 hover:bg-gray-200 hover:text-gray-900 px-4 py-2 rounded"
             href="/applicants"

@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { Application, Candidate } from '@/types/greenhouse';
+import { getGreenhouseApiKey } from '@/utils/supabase/queries';
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
-  const apiKey = process.env.NEXT_PUBLIC_GREENHOUSE_API_KEY;
+  const apiKey=await getGreenhouseApiKey();
   const applicationId = params.id;
   const baseURL = `https://harvest.greenhouse.io/v1`;
 

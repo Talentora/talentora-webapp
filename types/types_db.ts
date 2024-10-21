@@ -7,6 +7,31 @@ export type Json =
   | Json[]
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          operationName?: string
+          query?: string
+          variables?: Json
+          extensions?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       AI_config: {
@@ -104,6 +129,7 @@ export type Database = {
         Row: {
           description: string | null
           email_extension: string | null
+          greenhouse_api_key: string | null
           id: string
           industry: string | null
           location: string | null
@@ -114,6 +140,7 @@ export type Database = {
         Insert: {
           description?: string | null
           email_extension?: string | null
+          greenhouse_api_key?: string | null
           id?: string
           industry?: string | null
           location?: string | null
@@ -124,6 +151,7 @@ export type Database = {
         Update: {
           description?: string | null
           email_extension?: string | null
+          greenhouse_api_key?: string | null
           id?: string
           industry?: string | null
           location?: string | null

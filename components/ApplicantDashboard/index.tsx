@@ -1,11 +1,23 @@
+"use client"
+import { useState, useEffect } from 'react';
 import { CardView } from "../Jobs/CardView"; 
 import { Job } from "@/types/greenhouse";
 
-interface ApplicantDashboardProps {
-    jobListData: Job[];
-}
+const ApplicantDashboard: React.FC = () => {
+    const [jobListData, setJobListData] = useState<Job[]>([]);
 
-const ApplicantDashboard: React.FC<ApplicantDashboardProps> = ({ jobListData }) => {
+    useEffect(() => {
+        const fetchJobs = async () => {
+            const jobsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/jobs`);
+            if (jobsResponse.ok) {
+                const jobsData = await jobsResponse.json();
+                setJobListData(jobsData);
+            }
+        };
+
+        fetchJobs();
+    }, []);
+
     return (
         <div>
             <h1>Applicant Dashboard</h1>
