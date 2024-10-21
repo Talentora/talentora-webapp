@@ -39,7 +39,7 @@ export default function SignUp({ allowEmail, redirectMethod,role }: SignUpProps)
               type="text"
               name="fullName"
               autoCapitalize="words"
-              className="w-full p-3 rounded-md bg-zinc-800"
+              className="w-full p-3 text-foreground rounded-md bg-zinc-800"
             />
             <label htmlFor="email">Email</label>
             <input
@@ -50,7 +50,7 @@ export default function SignUp({ allowEmail, redirectMethod,role }: SignUpProps)
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
-              className="w-full p-3 rounded-md bg-zinc-800"
+              className="w-full p-3 text-foreground rounded-md bg-zinc-800"
             />
             <label htmlFor="password">Password</label>
             <input
@@ -59,7 +59,7 @@ export default function SignUp({ allowEmail, redirectMethod,role }: SignUpProps)
               type="password"
               name="password"
               autoComplete="current-password"
-              className="w-full p-3 rounded-md bg-zinc-800"
+              className="w-full p-3 rounded-md text-foreground bg-zinc-800"
             />
           </div>
           <Button

@@ -13,10 +13,8 @@ const DashboardPage: React.FC = async () => {
     <div>
       {role === 'recruiter' && (
       <div className="flex flex-row">
-        <div className="w-1/6 py-5">
-          <Sidebar />
-        </div>
-        <div className="w-5/6">
+       
+        <div >
           <RecruiterDashboard />
         </div>
       </div>

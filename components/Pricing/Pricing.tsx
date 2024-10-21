@@ -9,6 +9,13 @@ import { User } from '@supabase/supabase-js';
 import cn from 'classnames';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { Switch } from "@/components/ui/switch";
+
+
+
+
+
+
 
 type Subscription = Tables<'subscriptions'>;
 type Product = Tables<'products'>;

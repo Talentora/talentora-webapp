@@ -60,7 +60,9 @@ export async function middleware(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
+    
     if (error || !recruitData || !recruitData.company_id) {
+      console.error('Error fetching recruiter data:', error);
       // If there's an error, no data, or no company_id, and trying to access a protected route,
       // redirect to the onboarding page
       if (!allUnprotectedRoutes.some(route => route.test(pathname)) && pathname !== '/settings/onboarding') {

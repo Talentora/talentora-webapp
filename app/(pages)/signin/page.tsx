@@ -1,7 +1,8 @@
 "use client"
+import { redirect, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+
 
 export default function SignIn() {
   const [selectedType, setSelectedType] = useState<'recruiter' | 'applicant' | null>(null);
