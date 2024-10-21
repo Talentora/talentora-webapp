@@ -72,6 +72,7 @@ export default function OnboardingPage() {
 
     const supabase = createClient();
     
+    
     try {
       // Fetch the company ID for the current user
       const { data: recruiterData, error: recruiterError } = await supabase
@@ -83,7 +84,7 @@ export default function OnboardingPage() {
       if (recruiterError) throw recruiterError;
 
       const companyId = recruiterData?.company_id;
-
+      console.log("Company ID",companyId)
       if (!companyId) {
         throw new Error('Company ID not found');
       }

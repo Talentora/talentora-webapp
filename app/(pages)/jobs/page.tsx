@@ -14,9 +14,10 @@ const Page = () => {
     async function fetchJobs() {
       try {
         setLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/jobs`, { cache: 'no-store' });
+        setError(false); // Reset error state before fetching
+        const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`, { cache: 'no-store' });
         if (!response.ok) {
-          throw new Error('Error fetching jobs');
+          throw new Error(`Error fetching jobs: ${response.status} ${response.statusText}`);
         }
         const jobsData = await response.json();
         setJobs(jobsData);
@@ -28,10 +29,8 @@ const Page = () => {
       }
     }
 
-
     fetchJobs();
-  }, []); // Empty dependency array means this runs once after component mounts
-
+  }, []);
   // Render loading, error, or the Dashboard component
   return (
     <div>

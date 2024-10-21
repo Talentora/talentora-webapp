@@ -43,6 +43,15 @@ export async function middleware(request: NextRequest) {
   // Check user role
   const { role } = user.user_metadata;
 
+  // New: Check if the user is an applicant trying to access a recruiter route
+  if (role === 'applicant' && !applicantRoutes.some(route => route.test(pathname))) {
+    const dashboardUrl = new URL('/dashboard', request.url);
+    if (request.nextUrl.pathname !== dashboardUrl.pathname) {
+        return NextResponse.redirect(dashboardUrl);
+    }
+}
+
+
   if (role === 'recruiter') {
     // Check if the recruiter has a company ID in the recruiters table
     const { data: recruitData, error } = await supabase
@@ -50,7 +59,6 @@ export async function middleware(request: NextRequest) {
       .select('company_id')
       .eq('id', user.id)
       .single();
-
 
     if (error || !recruitData || !recruitData.company_id) {
       // If there's an error, no data, or no company_id, and trying to access a protected route,
@@ -63,6 +71,7 @@ export async function middleware(request: NextRequest) {
 
   return response;
 }
+
 
 
 export const config = {

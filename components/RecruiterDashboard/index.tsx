@@ -22,10 +22,10 @@ export default function RecruiterDashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log(`${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`)
+      const jobsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`);
+      const applicationsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/applications`);
       
-      const jobsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/jobs`);
-      const applicationsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/applications`);
-
       if (jobsResponse.ok) {
         const jobsData = await jobsResponse.json();
         setJobs(jobsData);
@@ -198,7 +198,7 @@ export default function RecruiterDashboard() {
               <p className="text-sm mb-4">
                 Manage your account and preferences
               </p>
-              <Link href="/dashboard/settings">
+              <Link href="/settings">
                 <Button className="w-full" variant="outline">
                   Open Settings
                 </Button>

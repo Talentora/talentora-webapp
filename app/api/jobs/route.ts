@@ -4,8 +4,8 @@ import { getGreenhouseApiKey } from '@/utils/supabase/queries';
 const TIMEOUT_MS = 10000; // 10 seconds timeout
 
 export async function GET() {
-  const apiKey=await getGreenhouseApiKey();
-  console.log("API KEY", apiKey)
+  const apiKey = await getGreenhouseApiKey();
+  console.log("API KEY", apiKey);
   const baseURL = 'https://harvest.greenhouse.io/v1/jobs';
 
   if (!apiKey) {
@@ -30,6 +30,7 @@ export async function GET() {
     }
 
     const jobs: Job[] = await response.json();
+    console.log('Successfully fetched jobs:', jobs.length);
     return NextResponse.json(jobs, { status: 200 });
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
