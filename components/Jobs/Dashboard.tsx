@@ -55,13 +55,13 @@ export default function Dashboard({ dashboardData }: DashboardProps) {
     return jobs.filter((job) => {
       const matchesSearch =
         job.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.notes?.toLowerCase().includes(searchTerm.toLowerCase());
+        ((job.notes?.toLowerCase().includes(searchTerm.toLowerCase())) ?? false);
       const matchesDepartment =
         filters.departments.length === 0 ||
-        job.departments.some((dept) => filters.departments.includes(dept));
+        ((job.departments?.some((dept) => dept && filters.departments.includes(dept))) ?? false);
       const matchesOffice =
         filters.offices.length === 0 ||
-        job.offices.some((office) => filters.offices.includes(office));
+        ((job.offices?.some((office) => office && filters.offices.includes(office))) ?? false);
       return matchesSearch && matchesDepartment && matchesOffice;
     });
   }, [jobs, searchTerm, filters]);

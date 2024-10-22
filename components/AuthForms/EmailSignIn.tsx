@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { signInWithEmail } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import {
   Card,
   CardHeader,
@@ -28,13 +28,28 @@ export default function EmailSignIn({
 }: EmailSignInProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [role, setRole] = useState('');
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      try {
+        const response = await fetch('/api/user-role');
+        const data = await response.json();
+        setRole(data.role);
+      } catch (error) {
+        console.error('Error fetching user role:', error);
+      }
+    };
+    fetchRole();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true); // Disable the button while the request is being handled
     await handleRequest(
       e,
       signInWithEmail,
-      redirectMethod === 'client' ? router : null
+      redirectMethod === 'client' ? router : null,
+      role
     );
     setIsSubmitting(false);
   };

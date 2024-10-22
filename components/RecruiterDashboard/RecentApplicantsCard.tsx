@@ -3,9 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Navigation } from 'lucide-react';
 import ApplicantTable from '../Applicants/ApplicantTable';
-import { Application } from '@/types/greenhouse';
+import { ApplicantCandidate } from '@/types/greenhouse';
 
-export default function RecentApplicantsCard({ applicants }: { applicants: Application[] }) {
+export default function RecentApplicantsCard({ applicants }: { applicants: ApplicantCandidate[] }) {
   return (
     <Card className="p-5 border border-gray-400 rounded-lg shadow-sm bg-primary-background col-span-2">
       <CardHeader className="pb-2">

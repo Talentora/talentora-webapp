@@ -127,6 +127,7 @@ export type Database = {
       }
       companies: {
         Row: {
+          billing_address: Json | null
           description: string | null
           email_extension: string | null
           greenhouse_api_key: string | null
@@ -134,10 +135,12 @@ export type Database = {
           industry: string | null
           location: string | null
           name: string
+          payment_method: Json | null
           subscription_id: string | null
           website_url: string | null
         }
         Insert: {
+          billing_address?: Json | null
           description?: string | null
           email_extension?: string | null
           greenhouse_api_key?: string | null
@@ -145,10 +148,12 @@ export type Database = {
           industry?: string | null
           location?: string | null
           name: string
+          payment_method?: Json | null
           subscription_id?: string | null
           website_url?: string | null
         }
         Update: {
+          billing_address?: Json | null
           description?: string | null
           email_extension?: string | null
           greenhouse_api_key?: string | null
@@ -156,6 +161,7 @@ export type Database = {
           industry?: string | null
           location?: string | null
           name?: string
+          payment_method?: Json | null
           subscription_id?: string | null
           website_url?: string | null
         }
@@ -332,6 +338,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "recruiters_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "users_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
@@ -345,6 +358,7 @@ export type Database = {
           cancel_at: string | null
           cancel_at_period_end: boolean | null
           canceled_at: string | null
+          company_id: string
           created: string
           current_period_end: string
           current_period_start: string
@@ -356,12 +370,12 @@ export type Database = {
           status: Database["public"]["Enums"]["subscription_status"] | null
           trial_end: string | null
           trial_start: string | null
-          user_id: string
         }
         Insert: {
           cancel_at?: string | null
           cancel_at_period_end?: boolean | null
           canceled_at?: string | null
+          company_id: string
           created?: string
           current_period_end?: string
           current_period_start?: string
@@ -373,12 +387,12 @@ export type Database = {
           status?: Database["public"]["Enums"]["subscription_status"] | null
           trial_end?: string | null
           trial_start?: string | null
-          user_id: string
         }
         Update: {
           cancel_at?: string | null
           cancel_at_period_end?: boolean | null
           canceled_at?: string | null
+          company_id?: string
           created?: string
           current_period_end?: string
           current_period_start?: string
@@ -390,9 +404,15 @@ export type Database = {
           status?: Database["public"]["Enums"]["subscription_status"] | null
           trial_end?: string | null
           trial_start?: string | null
-          user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "subscriptions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "subscriptions_price_id_fkey"
             columns: ["price_id"]
@@ -402,7 +422,7 @@ export type Database = {
           },
           {
             foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
+            columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]

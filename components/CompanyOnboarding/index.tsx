@@ -32,7 +32,6 @@ import { createCompany } from '@/utils/supabase/queries';
 import { Tables } from '@/types/types_db';
 
 type Company = Omit<Tables<'companies'>, 'id'>;
-
 export default function OnboardingPage() {
   const { toast } = useToast()
 
@@ -139,7 +138,9 @@ export default function OnboardingPage() {
       email_extension: null,
       subscription_id: null,
       website_url: null,
-      greenhouse_api_key:null
+      greenhouse_api_key:null,
+      billing_address:null,
+      payment_method:null
     };
   
     try {

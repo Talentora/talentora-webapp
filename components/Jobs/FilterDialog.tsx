@@ -15,13 +15,13 @@ import { FilterIcon } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
 
 interface FilterDialogProps {
-  filters: { departments: string[]; locations: string[] };
+  filters: { departments: string[]; offices: string[] }; // Changed from 'locations' to 'offices'
   setFilters: Dispatch<
-    SetStateAction<{ departments: string[]; locations: string[] }>
+    SetStateAction<{ departments: string[]; offices: string[] }> // Changed from 'locations' to 'offices'
   >;
   filterOptions: {
     departments: string[];
-    locations: string[];
+    offices: string[]; // Changed from 'locations' to 'offices'
   };
   activeFilterCount: number;
 }
@@ -63,17 +63,17 @@ export default function FilterDialog({
           <DialogTitle>Filter Jobs</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4 md:grid-cols-2">
-          {(['departments', 'locations'] as const).map((type) => (
-            <FilterSection
-              key={type}
-              title={type.charAt(0).toUpperCase() + type.slice(1)}
-              options={filterOptions[type]}
-              selectedOptions={filters[type]}
-              onCheckedChange={(checked: boolean, option: string) =>
-                handleCheckedChange(type, checked, option)
-              }
-            />
-          ))}
+        {(['departments', 'offices'] as const).map((type) => ( // Changed from 'locations' to 'offices'
+  <FilterSection
+    key={type}
+    title={type.charAt(0).toUpperCase() + type.slice(1)}
+    options={filterOptions[type]}
+    selectedOptions={filters[type]}
+    onCheckedChange={(checked: boolean, option: string) =>
+      handleCheckedChange(type, checked, option)
+    }
+  />
+))}
         </div>
       </DialogContent>
     </Dialog>
