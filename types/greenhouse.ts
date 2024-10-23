@@ -178,3 +178,4 @@ export type User = {
   offices: Office[];
   departments: Department[];
 };
+export type ApplicantCandidate = Application & { candidate: Candidate };

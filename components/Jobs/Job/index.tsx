@@ -5,10 +5,10 @@ import { RecentApplicants } from './RecentApplicants';
 import { BotConfig } from './BotConfig';
 import { Job } from '@/types/greenhouse';
 
-import { Application } from '@/types/greenhouse';
+import { ApplicantCandidate } from '@/types/greenhouse';
 interface JobProps {
   job: Job;
-  applicants: Application[];
+  applicants: ApplicantCandidate[];
 }
 
 export default function JobPage({ job, applicants }: JobProps) {

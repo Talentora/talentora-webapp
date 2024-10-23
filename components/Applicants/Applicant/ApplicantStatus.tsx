@@ -1,18 +1,18 @@
-import { Application } from "@/types/greenhouse"
+import { ApplicantCandidate } from "@/types/greenhouse"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 
-interface ApplicationStatusProps {
-  application: Application;
+interface ApplicantCandidateStatusProps {
+  ApplicantCandidate: ApplicantCandidate;
 }
 
-export default function ApplicationStatus({ application }: ApplicationStatusProps) {
-  const progress = 75 // This should be calculated based on the application status
+export default function ApplicantCandidateStatus({ ApplicantCandidate }: ApplicantCandidateStatusProps) {
+  const progress = 75 // This should be calculated based on the ApplicantCandidate status
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Application Status</CardTitle>
+        <CardTitle>ApplicantCandidate Status</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -25,7 +25,7 @@ export default function ApplicationStatus({ application }: ApplicationStatusProp
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Current Stage:</span>
-            <span className="text-sm">{application.status}</span>
+            <span className="text-sm">{ApplicantCandidate.status}</span>
           </div>
         </div>
       </CardContent>

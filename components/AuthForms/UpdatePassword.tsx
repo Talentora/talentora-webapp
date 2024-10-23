@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { updatePassword } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface UpdatePasswordProps {
   redirectMethod: string;
@@ -16,12 +16,26 @@ export default function UpdatePassword({
   const router = useRouter();
   // const router = redirectMethod === 'client' ? useRouter() : null;
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [role,setRole] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true); // Disable the button while the request is being handled
-    await handleRequest(e, updatePassword, router);
+    await handleRequest(e, updatePassword, router,role);
     setIsSubmitting(false);
   };
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      try {
+        const response = await fetch('/api/user-role');
+        const data = await response.json();
+        setRole(data.role);
+      } catch (error) {
+        console.error('Error fetching user role:', error);
+      }
+    };
+    fetchRole();
+  }, []);
 
   return (
     <div className="my-8">

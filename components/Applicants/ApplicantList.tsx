@@ -1,33 +1,33 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Application } from "@/types/greenhouse"
+import { ApplicantCandidate } from "@/types/greenhouse"
 import ApplicantTable from "@/components/Applicants/ApplicantTable"
 import SearchBar from "@/components/Applicants/Searchbar"
 
 export default function ApplicantList() {
-  const [applications, setApplications] = useState<Application[]>([])
+  const [ApplicantCandidates, setApplicantCandidates] = useState<ApplicantCandidate[]>([])
   const [searchTerm, setSearchTerm] = useState<string>("")
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const fetchApplications = async () => {
+    const fetchApplicantCandidates = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/applications`, { cache: 'no-store' });
-        const data: Application[] = await response.json();
-        setApplications(data);
+        const data: ApplicantCandidate[] = await response.json();
+        setApplicantCandidates(data);
       } catch (error) {
-        console.error("Error fetching applications:", error);
+        console.error("Error fetching ApplicantCandidates:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchApplications();
+    fetchApplicantCandidates();
   }, []);
 
-  const filteredApplicants = applications.filter((application) => {
-    const fullName = `${application.candidate.first_name} ${application.candidate.last_name}`.toLowerCase();
+  const filteredApplicants = ApplicantCandidates.filter((ApplicantCandidate) => {
+    const fullName = `${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`.toLowerCase();
     return fullName.includes(searchTerm.toLowerCase());
   });
 
@@ -40,7 +40,7 @@ export default function ApplicantList() {
         <div className="space-y-4">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           {isLoading ? (
-            <p>Loading applications...</p>
+            <p>Loading Applicants...</p>
           ) : (
             <ApplicantTable 
               applicants={filteredApplicants} 

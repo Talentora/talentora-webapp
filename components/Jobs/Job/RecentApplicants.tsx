@@ -4,9 +4,9 @@ import ApplicantTable from '@/components/Applicants/ApplicantTable';
 import { Button } from '@/components/ui/button';
 
 
-import { Application } from '@/types/greenhouse';
+import { ApplicantCandidate } from '@/types/greenhouse';
 interface RecentApplicantsProps {
-  applicants: Application[];
+  applicants: ApplicantCandidate[];
 }
 
 export function RecentApplicants({ applicants }: RecentApplicantsProps) {
@@ -30,7 +30,7 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
       </CardHeader>
       {visible && (
         <CardContent>
-          <ApplicantTable applicants={applicants} onSelectApplicant={null} rowLimit={5} />
+          <ApplicantTable applicants={applicants} disablePortal={true} />
         </CardContent>
       )}
     </Card>

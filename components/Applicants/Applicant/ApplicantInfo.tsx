@@ -1,18 +1,18 @@
-import { Application } from "@/types/greenhouse"
+import { ApplicantCandidate } from "@/types/greenhouse"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CalendarDays, Mail, Phone } from "lucide-react"
 
 interface ApplicantInfoProps {
-  application: Application;
+  ApplicantCandidate: ApplicantCandidate;
 }
 
-export default function ApplicantInfo({ application }: ApplicantInfoProps) {
-  const candidateName = `${application.candidate.first_name} ${application.candidate.last_name}`;
-  const avatarUrl = application.candidate.avatar_url || "/placeholder-avatar.jpg";
-  const email = application.candidate.email_addresses[0]?.value || 'No email address';
-  const phoneNumber = application.candidate.phone_numbers[0]?.value || 'No phone number';
-  const jobName = application.jobs[0]?.name || 'No job specified';
+export default function ApplicantInfo({ ApplicantCandidate }: ApplicantInfoProps) {
+  const candidateName = `${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`;
+  const avatarUrl = "/placeholder-avatar.jpg";
+  const email = ApplicantCandidate.candidate.email_addresses[0]?.value || 'No email address';
+  const phoneNumber = ApplicantCandidate.candidate.phone_numbers[0]?.value || 'No phone number';
+  const jobName = ApplicantCandidate.jobs[0]?.name || 'No job specified';
 
   return (
     <Card>
@@ -38,7 +38,7 @@ export default function ApplicantInfo({ application }: ApplicantInfoProps) {
           </div>
           <div className="flex items-center gap-2">
             <CalendarDays className="w-4 h-4" />
-            <span className="text-sm">Applied on {new Date(application.applied_at).toLocaleDateString()}</span>
+            <span className="text-sm">Applied on {new Date(ApplicantCandidate.applied_at).toLocaleDateString()}</span>
           </div>
         </div>
       </CardContent>

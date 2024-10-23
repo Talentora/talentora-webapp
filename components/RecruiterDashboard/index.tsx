@@ -4,21 +4,19 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  BriefcaseIcon,
   Ellipsis,
   Settings,
   Navigation,
-  HomeIcon,
   MessageSquareIcon,
   UserIcon,
   UsersIcon
 } from 'lucide-react';
 import ApplicantTable from '../Applicants/ApplicantTable';
-import { Job, Application } from '@/types/greenhouse';
+import { Job, ApplicantCandidate } from '@/types/greenhouse';
 
 export default function RecruiterDashboard() {
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [applicants, setApplicants] = useState<Application[]>([]);
+  const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -134,10 +132,13 @@ export default function RecruiterDashboard() {
                       <p className="font-medium">
                         {job.name} - {job.id}
                       </p>
-                      <div
-                        className={`w-1/4 px-2 py-1 rounded text-xs font-medium ${job.department === 'Engineering' ? 'bg-blue-100 text-blue-800' : job.department === 'Marketing' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}
-                      >
-                        {job.departments}
+                      <div className="w-1/4 px-2 py-1 rounded text-xs font-medium">
+                        {job.departments.slice(0, 3).map((dept, index) => (
+                          <span key={index}>
+                            {dept}
+                            {index < Math.min(job.departments.length, 3) - 1 && ', '}
+                          </span>
+                        ))}
                       </div>
                       <Link href={`/jobs/${job.id}`}>
                         <Navigation className="h-4 w-4 text-muted-foreground cursor-pointer absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -164,7 +165,7 @@ export default function RecruiterDashboard() {
               <CardTitle>Applicant Overview</CardTitle>
             </CardHeader>
             <CardContent>
-              <ApplicantTable applicants={applicants} disablePortal={true} rowLimit={5} />
+              <ApplicantTable applicants={applicants} disablePortal={true} />
             </CardContent>
           </Card>
 

@@ -1,41 +1,49 @@
-import { Job } from '@/types/greenhouse';
 import { NextResponse } from 'next/server';
+import { Application, Candidate, ApplicantCandidate } from '@/types/greenhouse';
 import { getGreenhouseApiKey } from '@/utils/supabase/queries';
-const TIMEOUT_MS = 10000; // 10 seconds timeout
 
 export async function GET() {
   const apiKey = await getGreenhouseApiKey();
-  console.log("API KEY", apiKey);
-  const baseURL = 'https://harvest.greenhouse.io/v1/jobs';
+  const baseURL = `https://harvest.greenhouse.io/v1`;
 
   if (!apiKey) {
     return NextResponse.json({ error: 'API key not found' }, { status: 500 });
   }
 
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-    const response = await fetch(baseURL, {
+    const applicationsResponse = await fetch(`${baseURL}/applications`, {
       headers: {
         Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
       },
-      signal: controller.signal,
     });
 
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      return NextResponse.json({ error: 'Failed to fetch jobs' }, { status: response.status });
+    if (!applicationsResponse.ok) {
+      return NextResponse.json({ error: 'Failed to fetch applications' }, { status: applicationsResponse.status });
     }
 
-    const jobs: Job[] = await response.json();
-    console.log('Successfully fetched jobs:', jobs.length);
-    return NextResponse.json(jobs, { status: 200 });
+    const applications: Application[] = await applicationsResponse.json();
+
+    // Fetch candidate data for each application
+    const applicationsWithCandidates: ApplicantCandidate[] = await Promise.all(
+      applications.map(async (application): Promise<ApplicantCandidate> => {
+        const candidateResponse = await fetch(`${baseURL}/candidates/${application.candidate_id}`, {
+          headers: {
+            Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
+          },
+        });
+
+        if (!candidateResponse.ok) {
+          console.error(`Failed to fetch candidate data for application ${application.id}`);
+          return { ...application, candidate: null as unknown as Candidate };
+        }
+
+        const candidate: Candidate = await candidateResponse.json();
+        return { ...application, candidate };
+      })
+    );
+
+    return NextResponse.json(applicationsWithCandidates, { status: 200 });
   } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') {
-      return NextResponse.json({ error: 'Request timed out' }, { status: 504 });
-    }
-    return NextResponse.json({ error: 'An error occurred while fetching jobs' }, { status: 500 });
+    return NextResponse.json({ error: 'An error occurred while fetching applications' }, { status: 500 });
   }
 }

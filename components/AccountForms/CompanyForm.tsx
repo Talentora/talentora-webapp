@@ -11,7 +11,6 @@ import {
   CardContent,
   CardFooter
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { useState } from "react";
 type Company = Tables<'companies'>
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
@@ -30,7 +29,11 @@ const CompanyForm = ({ company }: { company: Company }) => {
       <CardContent>
         <div className="flex flex-row items-center space-x-4 pb-4">
           <Avatar className="w-16 h-16">
-            <AvatarImage src={company.logo_url || undefined} alt={company.name} />
+            <AvatarImage 
+              // src={company.logo_url || undefined} 
+              src={undefined} 
+              alt={company.name} 
+            />
             <AvatarFallback>{company.name.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div>

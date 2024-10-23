@@ -287,14 +287,14 @@ export const getApplicants = async (
   return applicants || [];
 };
 
-export async function inviteUser(name:string,email: string) {
+export async function inviteUser(name: string | null, email: string) {
   const supabase = createClient();
 
   try {
     const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
       data: {
         role: 'recruiter', // You can change this to the appropriate role
-        full_name: name
+        full_name: name || undefined
       }
     });
     if (error) {
