@@ -26,7 +26,7 @@ export const useUser = () => {
         fetchUser();
     }, []);
 
-    return { user, loading, error };
+    return {user};
 };
 
 

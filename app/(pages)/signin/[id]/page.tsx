@@ -26,7 +26,7 @@ import ForgotPassword from '@/components/AuthForms/ForgotPassword';
 import UpdatePassword from '@/components/AuthForms/UpdatePassword';
 import SignUp from '@/components/AuthForms/Signup';
 import Logo from '@/components/ui/icons/Logo';
-
+import { useUser } from '@/hooks/useUser';
 
 export default async function SignInPage({ params, searchParams }: { params: { id: string }, searchParams: { role?: string, disable_button?: string } }) {
   const { allowOauth, allowEmail, allowPassword } = getAuthTypes();
@@ -45,11 +45,10 @@ export default async function SignInPage({ params, searchParams }: { params: { i
     return redirect(`/signin/${viewProp}${role ? `?role=${role}` : '?role=applicant'}`);
   }
 
-  const supabase = createClient();
-
-  const { data: { user } } = await supabase.auth.getUser();
+  const { user } = useUser();
 
   if (user && viewProp !== 'update_password') {
+    console.log('user', user);
     return redirect('/');
   } else if (!user && viewProp === 'update_password') {
     return redirect('/signin');

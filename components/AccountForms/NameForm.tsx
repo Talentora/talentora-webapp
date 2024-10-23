@@ -46,7 +46,7 @@ export default function NameForm({ userName }: { userName: string }) {
       setIsSubmitting(false);
       return;
     }
-    await handleRequest(e, updateName, router,role);
+    await handleRequest(e, updateName, router);
     setIsSubmitting(false);
   };
 

@@ -6,7 +6,8 @@ import { useCompany } from '@/hooks/useCompany';
 import { createClient } from '@/utils/supabase/client';
 import { ToastAction } from '@/components/Toasts/toast';
 import { useToast } from '@/components/Toasts/use-toast';
-
+import { useRecruiter } from '@/hooks/useRecruiter';
+import { useUser } from '@/hooks/useUser';
 export const GreenhouseIntegrationStep = () => {
   const { company } = useCompany();
   const { toast } = useToast();
@@ -44,11 +45,19 @@ export const GreenhouseIntegrationStep = () => {
     }
   };
 
+  const { recruiter } = useRecruiter();
+  const { user } = useUser();
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-medium">Greenhouse Integration</h3>
       <p>
-        Enter your Greenhouse API key to integrate with your account.
+        user id: {user?.id}
+      </p>
+      <p>
+        Company ID: {company?.id}
+      </p>
+      <p>
+        Recruiter ID: {recruiter?.id}
       </p>
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="greenhouse-key">Greenhouse API Key</Label>

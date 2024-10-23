@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { createStripePortal } from '@/utils/stripe/server';
+import { getSubscription } from '@/utils/supabase/queries';
 import Link from 'next/link';
 import {
   Card,

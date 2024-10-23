@@ -71,6 +71,7 @@ export default function Navlinks() {
               )}
             </nav>
           </div>
+          
           <div className="flex items-center">
             {user ? (
               <div className="relative" ref={userMenuRef}>

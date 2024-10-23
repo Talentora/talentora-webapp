@@ -23,9 +23,8 @@ export default async function Account() {
   if (!user) {
     return redirect('/signin');
   }
-
-  const { recruiter } = useRecruiter(user.id);
-  const { company } = useCompany(recruiter?.company_id || '');
+  const { recruiter } = useRecruiter();
+  const { company } = useCompany();
 
   return (
     <section className="mb-32 bg-background">
