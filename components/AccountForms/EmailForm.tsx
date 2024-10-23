@@ -13,13 +13,14 @@ import { updateEmail } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useUser } from '@/hooks/useUser';
 
-export default function EmailForm({
-  userEmail
-}: {
-  userEmail: string | undefined;
-}) {
+export default function EmailForm() {
+  
   const router = useRouter();
+  const { user } = useUser();
+  const role = user?.user_metadata.role;
+  const userEmail = user?.email;
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

@@ -204,7 +204,7 @@ const copyBillingDetailsToCustomer = async (
   //@ts-ignore
   await stripe.customers.update(customer, { name, phone, address });
   const { error: updateError } = await supabaseAdmin
-    .from('users')
+    .from('companies')
     .update({
       billing_address: { ...address },
       payment_method: { ...payment_method[payment_method.type] }
@@ -237,7 +237,7 @@ const manageSubscriptionStatusChange = async (
   // Upsert the latest status of the subscription object.
   const subscriptionData: TablesInsert<'subscriptions'> = {
     id: subscription.id,
-    user_id: uuid,
+    company_id: uuid,
     metadata: subscription.metadata,
     status: subscription.status,
     price_id: subscription.items.data[0].price.id,

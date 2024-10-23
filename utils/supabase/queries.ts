@@ -2,12 +2,9 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { Tables } from '@/types/types_db';
 import { createClient } from '@/utils/supabase/server';
-
-// type User = Tables<'users'>;
 type Recruiter = Tables<'recruiters'>
 type Subscription = Tables<'subscriptions'>;
 type Product = Tables<'products'>;
-// type UserDetails = Tables<'users'>;
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
 
@@ -51,15 +48,17 @@ export const getCompany = async (
  * @throws Error if the creation operation fails.
  */
 export const createCompany = async (
-  companyData: Omit<Company, 'id'>,
-  userId: string
+  companyData:any,
+  // userId: string
 ): Promise<Company> => {
   const supabase = createClient();
-  
+
+  const { user, ...restCompanyData } = companyData;
+   
   // Insert the company
   const { data: createdCompany, error: companyError } = await supabase
     .from('companies')
-    .insert(companyData)
+    .insert(restCompanyData)
     .select()
     .single();
 
@@ -71,11 +70,15 @@ export const createCompany = async (
     throw new Error('Failed to create company: No data returned');
   }
 
+  if (!user) {
+    throw new Error('No user found');
+  }
+
   // Update the recruiter's company
   const { error: recruiterError } = await supabase
     .from('recruiters')
     .update({ company_id: createdCompany.id })
-    .eq('id', userId);
+    .eq('id', user?.id);
 
   if (recruiterError) {
     throw new Error(`Failed to update recruiter: ${recruiterError.message}`);

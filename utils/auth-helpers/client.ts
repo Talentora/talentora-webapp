@@ -5,19 +5,27 @@ import { type Provider } from '@supabase/supabase-js';
 import { getURL } from '@/utils/helpers';
 import { redirectToPath } from './server';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-
+import { useUser } from '@/hooks/useUser';
 export async function handleRequest(
   e: React.FormEvent<HTMLFormElement>,
-  requestFunc: (formData: FormData, role: string) => Promise<string>,
+  requestFunc: (
+    formData: FormData,
+    // role: string
+  ) => Promise<string>,
   router: AppRouterInstance | null = null,
-  role: string
+  // role: string
 ): Promise<boolean | void> {
   e.preventDefault();
 
+  const { user } = useUser();
+  const role = user?.role;
   const formData = new FormData(e.currentTarget);
-  formData.append('role', role); // Add role to formData
+  // formData.append('role', role); // Add role to formData
 
-  const redirectUrl: string = await requestFunc(formData, role);
+  const redirectUrl: string = await requestFunc(
+    formData
+    // , role
+  );
 
   if (router) {
     return router.push(redirectUrl);

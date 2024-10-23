@@ -1,36 +1,31 @@
-import CustomerPortalForm from '@/components/AccountForms/CustomerPortalForm';
-import EmailForm from '@/components/AccountForms/EmailForm';
-import NameForm from '@/components/AccountForms/NameForm';
-import CompanyForm from '@/components/AccountForms/CompanyForm';
-import { redirect } from 'next/navigation';
-import { createClient } from '@/utils/supabase/server';
-import {
-  getUserDetails,
-  getSubscription,
-  getUser,
-  getCompany,
-  getRecruiter
-} from '@/utils/supabase/queries';
 import { Tables } from '@/types/types_db';
 type Recruiter = Tables<'recruiters'>
 type Company = Tables<'companies'>
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import CustomerPortalForm from '@/components/AccountForms/CustomerPortalForm';
+import EmailForm from '@/components/AccountForms/EmailForm';
+import NameForm from '@/components/AccountForms/NameForm';
+import CompanyForm from '@/components/AccountForms/CompanyForm';
+import { redirect } from 'next/navigation';
+import { useUser} from '@/hooks/useUser';
+import { useRecruiter } from '@/hooks/useRecruiter';
+import { useCompany } from '@/hooks/useCompany';
+
+
 export default async function Account() {
-  const supabase = createClient();
-  const [user, userDetails, subscription] = await Promise.all([
-    getUser(supabase),
-    getUserDetails(supabase),
-    getSubscription(supabase)
-  ]);
+  const { user, loading: userLoading } = useUser();
+
+  if (userLoading) {
+    return <div>Loading...</div>;
+  }
+
   if (!user) {
     return redirect('/signin');
   }
 
-  const recruiter: Recruiter | null = await getRecruiter(supabase, user.id);
-  const company: Company | null = recruiter?.company_id ? await getCompany(supabase, recruiter.company_id) : null;
-
-  
+  const { recruiter } = useRecruiter(user.id);
+  const { company } = useCompany(recruiter?.company_id || '');
 
   return (
     <section className="mb-32 bg-background">
@@ -47,7 +42,7 @@ export default async function Account() {
       <div className="p-4">
         <CustomerPortalForm subscription={subscription} />
         <NameForm userName={userDetails?.full_name ?? ''} />
-        <EmailForm userEmail={user.email} />
+        <EmailForm />
         
         {company && (
           <CompanyForm company={company} />

@@ -1,0 +1,123 @@
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useRecruiter } from '@/hooks/useRecruiter';
+import { createCompany } from '@/utils/supabase/queries';
+import { useToast } from '@/components/Toasts/use-toast';
+import { ToastAction } from '@/components/Toasts/toast';
+import { useUser } from '@/hooks/useUser';
+/**
+ * CompanyInfoStep Component
+ * 
+ * This component handles the collection and submission of company information
+ * during the onboarding process.
+ * 
+ * @component
+ * @returns {JSX.Element} The rendered CompanyInfoStep component
+ */
+export const CompanyInfoStep: React.FC = () => {
+  const { recruiter } = useRecruiter();
+  const hasCompany = recruiter?.company_id ? true : false;
+  const { user } = useUser();
+
+  const [headquarters, setHeadquarters] = useState('');
+  const [industry, setIndustry] = useState('');
+  const [companyName, setCompanyName] = useState('');
+
+  const { toast } = useToast();
+
+  /**
+   * Handles the form submission for company information
+   * 
+   * @param {React.FormEvent} event - The form submission event
+   */
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const companyData = {
+      name: companyName,
+      location: headquarters,
+      industry,
+      description: null,
+      email_extension: null,
+      subscription_id: null,
+      website_url: null,
+      greenhouse_api_key: null,
+      billing_address: null, // Added to match expected type
+      payment_method: null, // Added to match expected type
+      user:user
+    };
+  
+    try {
+      
+      const createdCompany = await createCompany(companyData);
+      if (!createdCompany) {
+        throw new Error('Failed to save company information');
+      }
+      toast({
+        title: "Success!",
+        description: "Company information saved successfully",
+        duration: 5000,
+      });
+      // Optionally reset form fields or redirect
+    } catch (error) {
+      console.error('Error:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save company information. Please try again.",
+        action: <ToastAction altText="Try again">Try again</ToastAction>,
+      });
+    }
+  };
+  
+  if (hasCompany) {
+    return (
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium">Company Information</h3>
+        <p>You are already associated with a company. If you need to update your company information, please contact support.</p>
+      </div>
+    );
+  }
+  else {
+    return (
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        <h3 className="text-lg font-medium">Company Information</h3>
+        <div className="grid w-full items-center gap-1.5">
+          <Label htmlFor="company">Company Name</Label>
+          <Input
+            type="text"
+            id="company"
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+            placeholder="Acme Inc."
+            required
+          />
+        </div>
+        <div className="grid w-full items-center gap-1.5">
+          <Label htmlFor="headquarters">Headquarters Location</Label>
+          <Input
+            type="text"
+            id="headquarters"
+            value={headquarters}
+            onChange={(e) => setHeadquarters(e.target.value)}
+            placeholder="Enter your company's headquarters location"
+            required
+          />
+        </div>
+        <div className="grid w-full items-center gap-1.5">
+          <Label htmlFor="industry">Industry</Label>
+          <Input
+            type="text"
+            id="industry"
+            value={industry}
+            onChange={(e) => setIndustry(e.target.value)}
+            placeholder="e.g., Technology, Healthcare, Finance"
+            required
+          />
+        </div>
+        <Button type="submit">Submit Company Info</Button>
+      </form>
+    );
+  }
+};

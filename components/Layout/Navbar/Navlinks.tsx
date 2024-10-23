@@ -9,15 +9,13 @@ import { usePathname, useRouter } from 'next/navigation';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import { Button } from '@/components/ui/button';
 import { User, LogOut } from 'lucide-react';
+import { useUser } from '@/hooks/useUser';
 
-interface NavlinksProps {
-  user?: any;
-}
-
-export default function Navlinks({ user }: NavlinksProps) {
+export default function Navlinks() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const { user } = useUser();
   
   const router = useRouter();
 
@@ -30,7 +28,7 @@ export default function Navlinks({ user }: NavlinksProps) {
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (getRedirectMethod() === 'client') {
-      await handleRequest(e, SignOut, router,'');
+      await handleRequest(e, SignOut, router);
     }
   };
 

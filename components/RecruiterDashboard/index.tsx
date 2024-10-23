@@ -137,7 +137,7 @@ export default function RecruiterDashboard() {
                       <div
                         className={`w-1/4 px-2 py-1 rounded text-xs font-medium ${job.department === 'Engineering' ? 'bg-blue-100 text-blue-800' : job.department === 'Marketing' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}
                       >
-                        {job.department}
+                        {job.departments}
                       </div>
                       <Link href={`/jobs/${job.id}`}>
                         <Navigation className="h-4 w-4 text-muted-foreground cursor-pointer absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity" />
