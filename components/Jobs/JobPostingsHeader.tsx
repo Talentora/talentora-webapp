@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PlusIcon, SearchIcon } from 'lucide-react';
 import FilterDialog from '@/components/Jobs/FilterDialog';
@@ -11,18 +10,19 @@ interface JobPostingsHeaderProps {
     setSearchTerm: (term: string) => void;
     filters: {
       departments: string[];
-      offices: string[];
+      offices: string[]; // Changed from 'locations' to 'offices'
     };
     setFilters: React.Dispatch<
       React.SetStateAction<{
         departments: string[];
-        offices: string[];
+        offices: string[]; // Changed from 'locations' to 'offices'
       }>
     >;
     filterOptions: {
       departments: string[];
-      offices: string[];
+      offices: string[]; // Changed from 'locations' to 'offices'
     };
+    onCreateJob: () => void; // Added this line
   };
 }
 
@@ -35,7 +35,7 @@ export default function JobPostingsHeader({
     filters,
     setFilters,
     filterOptions,
-    
+    onCreateJob
   } = headerData;
 
   const activeFilterCount = Object.values(filters).flat().length;
@@ -44,7 +44,6 @@ export default function JobPostingsHeader({
     <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4">
       <h1 className="text-2xl font-bold">Job Postings</h1>
       <div className="flex items-center space-x-4">
-        
         <form className="relative">
           <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input

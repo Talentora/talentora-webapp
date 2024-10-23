@@ -18,11 +18,9 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Alert } from '@/components/ui/alert';
 import { inviteUser } from '@/utils/supabase/queries';
-import { Tables } from '@/types/types_db';
-
-type Job = Tables<'jobs'>;
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Job } from '@/types/greenhouse';
 
 interface InvitePageProps {
   jobs: Job[];
@@ -65,7 +63,7 @@ export default function InvitePage({ jobs }: InvitePageProps) {
 
     try {
       for (const email of validEmails) {
-        const response = await inviteUser(email);
+        const response = await inviteUser(null,email);
 
         if (!response.success) {
           throw new Error(`Failed to send invitation to ${email}`);
@@ -102,7 +100,7 @@ export default function InvitePage({ jobs }: InvitePageProps) {
               <SelectContent>
                 {jobs.map((job) => (
                   <SelectItem key={job.id} value={String(job.id)}>
-                    {job.title}
+                    {job.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -127,14 +125,13 @@ export default function InvitePage({ jobs }: InvitePageProps) {
           </Button>
         </CardFooter>
       </form>
-
       {status === 'error' && (
-        <Alert variant="destructive">
+        <Alert intent="danger" title="Error">
           <AlertDescription className="text-black">{errorMessage}</AlertDescription>
         </Alert>
       )}
       {status === 'success' && (
-        <Alert variant="info">
+        <Alert intent="info" title="Success">
           <AlertDescription className="text-black">Invitations sent successfully!</AlertDescription>
         </Alert>
       )}

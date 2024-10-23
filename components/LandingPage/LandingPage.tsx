@@ -1,7 +1,5 @@
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
-import AIPowered from '@/components/icons/AIPowered';
-import Image1 from '@/components/icons/Wireframe.svg';
 
 
 import { Button } from "@/components/ui/button"

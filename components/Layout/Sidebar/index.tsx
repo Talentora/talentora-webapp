@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import {
   BriefcaseIcon,
-  HomeIcon,
+  Users,
   UserIcon,
   Bot,
   ClipboardListIcon,
@@ -35,6 +35,13 @@ const Page = () => {
           >
             <Bot className="h-5 w-5" />
             <span>Bot</span>
+          </Link>
+          <Link
+            className="flex items-center space-x-2 text-gray-100 hover:bg-gray-200 hover:text-gray-900 px-4 py-2 rounded"
+            href="/applicants"
+          >
+            <Users className="h-5 w-5" />
+            <span>Applicants</span>
           </Link>
           <Link
             className="flex items-center space-x-2 text-gray-100 hover:bg-gray-200 hover:text-gray-900 px-4 py-2 rounded"

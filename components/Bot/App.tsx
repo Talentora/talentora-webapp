@@ -80,19 +80,24 @@ export default function App({ job }: AppProps) {
    * Update app state based on voice client transport state
    */
   useEffect(() => {
+    console.log('Transport state changed:', transportState);
     switch (transportState) {
       case 'initialized':
+        console.log('Setting app state to ready');
         setAppState('ready');
         break;
       case 'authenticating':
       case 'connecting':
+        console.log('Setting app state to connecting');
         setAppState('connecting');
         break;
       case 'connected':
       case 'ready':
+        console.log('Setting app state to connected');
         setAppState('connected');
         break;
       default:
+        console.log('Setting app state to idle');
         setAppState('idle');
     }
   }, [transportState]);
@@ -104,38 +109,50 @@ export default function App({ job }: AppProps) {
     if (!voiceClient) return;
 
     const llmHelper = voiceClient.getHelper('llm') as LLMHelper;
-    llmHelper.setContext(
-      {
-        messages: [
-          {
-            role: 'system',
-            content: `You are an AI interviewer for a ${job.title} role. 
-          The job requirements are: ${job.requirements}
-          The qualifications needed are: ${job.qualifications}
-          Here's a brief description of the role: ${job.description}. Conduct a real interview.
-          When you greet the applicant, introduce yourself and mention the job title.
-          Conduct the interview based on this information.`
-          }
-        ]
-      },
-      true
-    );
+    // llmHelper.setContext(
+    //   {
+    //     messages: [
+    //       {
+    //         role: 'system',
+    //         content: `You are an AI interviewer for a ${job.title} role. 
+    //       The job requirements are: ${job.requirements}
+    //       The qualifications needed are: ${job.qualifications}
+    //       Here's a brief description of the role: ${job.description}. Conduct a real interview.
+    //       When you greet the applicant, introduce yourself and mention the job title.
+    //       Conduct the interview based on this information.`
+    //       }
+    //     ]
+    //   },
+    //   true
+    // );
   }
 
   /**
    * Start the interview session
    */
   async function start() {
-    if (!voiceClient) return;
+    if (!voiceClient) {
+      console.log('No voice client available, aborting start');
+      return;
+    }
 
+    console.log('Starting interview session');
     try {
+      console.log('Disabling microphone');
       voiceClient.enableMic(false);
+      console.log('Enabling camera');
       voiceClient.enableCam(true);
+      console.log('Starting recording');
       recording.startRecording();
+      console.log('Adding job context');
       addJobContext();
+      console.log('Initializing voice client');
       await voiceClient.start();
+      console.log('Interview session started successfully');
     } catch (e) {
+      console.error('Error starting interview session:', e);
       setError((e as VoiceError).message || 'Unknown error occurred');
+      console.log('Disconnecting voice client due to error');
       voiceClient.disconnect();
     }
   }
@@ -144,6 +161,17 @@ export default function App({ job }: AppProps) {
    * Leave the interview session
    */
   async function leave() {
+    if (voiceClient) {
+      console.log('Leaving interview session');
+      try {
+        recording.stopRecording();
+        console.log('Recording stopped');
+      } catch (error) {
+        console.error('Error stopping recording:', error);
+      }
+    } else {
+      console.log('No active voice client to disconnect');
+    }
     await voiceClient.disconnect();
   }
 

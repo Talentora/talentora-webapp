@@ -107,7 +107,7 @@ export function InviteUserComponent() {
                   required
                 />
                 {emailError && (
-                  <Alert variant="destructive">
+                  <Alert intent="danger">
                     <AlertCircle className="h-4 w-4" />
                     <AlertTitle>Error</AlertTitle>
                     <AlertDescription>{emailError}</AlertDescription>

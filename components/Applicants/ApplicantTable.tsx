@@ -1,25 +1,28 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Application } from "@/types/greenhouse"
+import { ApplicantCandidate } from "@/types/greenhouse"
+import ApplicantPortal from '@/components/Applicants/Applicant/ApplicantPortal';
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface ApplicantTableProps {
-  applicants: Application[];
+  applicants: ApplicantCandidate[];
   disablePortal?: boolean;
 }
 
 export default function ApplicantTable({ applicants, disablePortal = false }: ApplicantTableProps) {
-  const router = useRouter();
+  const [selectedApplicant, setSelectedApplicant] = useState<ApplicantCandidate | null>(null);
+  const [isPortalOpen, setIsPortalOpen] = useState(false);
 
-  const handleSelectApplicant = (applicant: Application) => {
-    if (disablePortal) {
-      router.push(`/applicants/${applicant.id}`);
-    } else {
-      // Implement your portal logic here if needed
+  const handleSelectApplicant = (applicant: ApplicantCandidate) => {
+    if (!disablePortal) {
+      setSelectedApplicant(applicant);
+      setIsPortalOpen(true);
     }
   };
+
+ 
 
   return (
     <div>
@@ -34,21 +37,32 @@ export default function ApplicantTable({ applicants, disablePortal = false }: Ap
           </TableRow>
         </TableHeader>
         <TableBody>
-          {applicants.map((application) => (
+          {applicants.map((ApplicantCandidate) => (
             <TableRow 
-              key={application.id} 
-              onClick={() => handleSelectApplicant(application)} 
+              key={ApplicantCandidate.id} 
+              onClick={() => handleSelectApplicant(ApplicantCandidate)} 
               className="cursor-pointer"
             >
-              <TableCell>{`${application.candidate.first_name} ${application.candidate.last_name}`}</TableCell>
-              <TableCell>{application.jobs[0]?.name || 'No job specified'}</TableCell>
-              <TableCell>{application.candidate.email_addresses[0]?.value || 'No email address'}</TableCell>
-              <TableCell>{application.candidate.phone_numbers[0]?.value || 'No phone number'}</TableCell>
-              <TableCell>{new Date(application.applied_at).toLocaleDateString()}</TableCell>
+              <TableCell>{`${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`}</TableCell>
+              <TableCell>{ApplicantCandidate.jobs[0]?.name || 'No job specified'}</TableCell>
+              <TableCell>{ApplicantCandidate.candidate.email_addresses[0]?.value || 'No email address'}</TableCell>
+              <TableCell>{ApplicantCandidate.candidate.phone_numbers[0]?.value || 'No phone number'}</TableCell>
+              <TableCell>{new Date(ApplicantCandidate.applied_at).toLocaleDateString()}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      {!disablePortal && (
+        <Dialog open={isPortalOpen} onOpenChange={setIsPortalOpen}>
+          <DialogContent className="max-w-6xl h-[80vh] overflow-y-auto">
+            {selectedApplicant && (
+              <ApplicantPortal
+                ApplicantCandidate={selectedApplicant}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

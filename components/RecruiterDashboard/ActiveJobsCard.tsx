@@ -38,11 +38,18 @@ function JobItem({ job }: { job: Job }) {
   return (
     <Link href={`/jobs/${job.id}`}>
       <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-        <h3 className="font-semibold text-sm mb-1 truncate">{job.title}</h3>
-        <p className="text-xs text-gray-500 mb-2 truncate">{job.department}</p>
+        <h3 className="font-semibold text-sm mb-1 truncate">{job.name}</h3>
+        <p className="text-xs text-gray-500 mb-2 truncate">
+          {job.departments.slice(0, 3).map((dept, index) => (
+            <span key={index}>
+              {dept}
+              {index < Math.min(job.departments.length, 3) - 1 && ', '}
+            </span>
+          ))}
+        </p>
         <div className="flex justify-between items-center">
-          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-            {job.applicants_count} applicants
+          <span className="text-xs bg-blue-100 text-red-500 px-2 py-1 rounded-full">
+            Update
           </span>
           <Button variant="ghost" size="sm">
             <MoreHorizontal className="h-4 w-4" />

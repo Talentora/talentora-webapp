@@ -3,13 +3,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Download, ThumbsDown, ThumbsUp } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Application } from "@/types/greenhouse"
+import { ApplicantCandidate } from "@/types/greenhouse"
 
 export default function ApplicantActions(
-    { application }: { application: Application }
+    { ApplicantCandidate }: { ApplicantCandidate: ApplicantCandidate }
 ) {
 
-    const resumeUrl = application.attachments.find(attachment => attachment.type === "resume")?.url || "No resume available";
+    const resumeUrl = ApplicantCandidate.attachments.find(attachment => attachment.type === "resume")?.url || "No resume available";
 
     return (
     <Card>
@@ -33,7 +33,7 @@ export default function ApplicantActions(
         </div>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="w-full" variant="outline">
+            <Button className="w-full max-w-md mx-auto" variant="outline">
               <Download className="w-4 h-4 mr-2" />
               View Resume
             </Button>

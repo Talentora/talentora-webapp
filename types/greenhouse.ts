@@ -137,3 +137,5 @@ export type Job = {
   custom_fields: CustomFields;
   keyed_custom_fields: CustomFields;
 };
+
+export type ApplicantCandidate = Application & { candidate: Candidate };

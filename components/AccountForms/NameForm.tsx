@@ -12,11 +12,31 @@ import {
 import { updateName } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createClient } from '@/utils/supabase/client';
+import { getUser,getRecruiter } from '@/utils/supabase/queries';
 
 export default function NameForm({ userName }: { userName: string }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [role, setRole] = useState<string>('');
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      const supabase = createClient();
+      const user = await getUser(supabase);
+      if (user) {
+        const recruiter = await getRecruiter(supabase, user.id);
+        if (recruiter) {
+          setRole('recruiter');
+        } else {
+          setRole('user');
+        }
+      }
+    };
+
+    fetchUserRole();
+  }, []); 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true);
@@ -26,7 +46,7 @@ export default function NameForm({ userName }: { userName: string }) {
       setIsSubmitting(false);
       return;
     }
-    await handleRequest(e, updateName, router);
+    await handleRequest(e, updateName, router,role);
     setIsSubmitting(false);
   };
 

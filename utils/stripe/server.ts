@@ -17,7 +17,6 @@ type CheckoutResponse = {
   errorRedirect?: string;
   sessionId?: string;
 };
-
 export async function checkoutWithStripe(
   price: Price,
   redirectPath: string = '/account'
@@ -82,7 +81,6 @@ export async function checkoutWithStripe(
         mode: 'payment'
       };
     }
-
     // Create a checkout session in Stripe
     let session;
     try {
@@ -118,7 +116,6 @@ export async function checkoutWithStripe(
     }
   }
 }
-
 export async function createStripePortal(currentPath: string) {
   try {
     const supabase = createClient();
