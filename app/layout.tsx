@@ -25,21 +25,22 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   return (
     <html lang="en">
-      <body className="w-full bg-background p-0">
+      <body className="w-full bg-gradient-to-br from-purple-500/[0.2] via-white to-pink-500/[0.2] p-0">
         <NextTopLoader />
-        <Navbar />
+       
         <div className="flex">
           {user && (
-            <aside className="w-64 bg-gray-100 p-0">
+            <aside className="w-1/5 bg-gray-100">
               <Sidebar />
             </aside>
           )}
           <main
             id="skip"
-            className={`flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)] p-6 ${
+            className={`flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]${
               user ? '' : 'w-full'
             }`}
           >
+             <Navbar />
             <Suspense fallback={<Loading />}>{children}</Suspense>
           </main>
         </div>

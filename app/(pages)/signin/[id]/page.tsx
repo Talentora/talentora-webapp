@@ -39,7 +39,7 @@ export default async function SignInPage({ params, searchParams }: { params: { i
     data: { user }
   } = await supabase.auth.getUser();    
 
-  
+
   // const { user } = useUser();
 
   let viewProp: string;
@@ -85,7 +85,7 @@ export default async function SignInPage({ params, searchParams }: { params: { i
                 <PasswordSignIn
                   allowEmail={allowEmail}
                   redirectMethod={redirectMethod}
-                  role={role}
+                  role={role || 'applicant'}
                 />
               )}
               {viewProp === 'email_signin' && (
@@ -109,7 +109,7 @@ export default async function SignInPage({ params, searchParams }: { params: { i
                 <SignUp
                   allowEmail={allowEmail}
                   redirectMethod={redirectMethod}
-                  role={role}
+                  role={role || 'applicant'}
                 />
               )}
               {viewProp !== 'update_password' && viewProp !== 'signup' && allowOauth && (

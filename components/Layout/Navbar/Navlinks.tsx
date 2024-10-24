@@ -115,12 +115,12 @@ export default function Navlinks() {
             ) : (
               <div className="flex items-center space-x-2">
                 <Link href="/signin">
-                <Button className="border border-white text-white bg-transparent rounded-full px-8 py-2">
+                <Button className="border border-white text-white bg-accent rounded-full px-8 py-2">
                     Login
                   </Button>
                 </Link>
                 <Link href="/signup">
-                  <Button className="bg-white text-primary-dark hover:bg-gray-200 rounded-full px-8 py-2" variant="ghost" size="sm">
+                  <Button className="bg-white border border-grey-200 text-primary-dark hover:bg-gray-200 rounded-full px-8 py-2" variant="ghost" size="sm">
                     Sign Up
                   </Button>
                 </Link>

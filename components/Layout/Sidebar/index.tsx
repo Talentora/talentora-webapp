@@ -11,10 +11,10 @@ import {
 
 const Page = () => {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen sticky top-0">
       {/* Sidebar */}
-      <div className="bg-primary-dark p-4 w-64 min-h-screen">
-        <nav className="space-y-2">
+      <div className="bg-gradient-to-b from-accent to-primary-dark p-4 w-full min-h-screen">
+        <nav className="space-y-2 mt-10">
           
           <Link
             className="flex items-center space-x-2 text-gray-100 hover:bg-gray-200 hover:text-gray-900 px-4 py-2 rounded"
@@ -68,10 +68,7 @@ const Page = () => {
         </nav>
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 p-4">
-        {/* Add your main content here */}
-      </div>
+      
     </div>
   );
 };
