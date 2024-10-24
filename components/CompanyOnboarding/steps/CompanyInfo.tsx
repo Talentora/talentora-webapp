@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,6 +7,8 @@ import { createCompany } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 import { ToastAction } from '@/components/Toasts/toast';
 import { useUser } from '@/hooks/useUser';
+import { Loader2 } from 'lucide-react';
+
 /**
  * CompanyInfoStep Component
  * 
@@ -16,10 +18,15 @@ import { useUser } from '@/hooks/useUser';
  * @component
  * @returns {JSX.Element} The rendered CompanyInfoStep component
  */
-export const CompanyInfoStep: React.FC = () => {
-  const { recruiter } = useRecruiter();
+export const CompanyInfoStep: React.FC<{ onCompletion: (isComplete: boolean) => void }> = ({ onCompletion }) => {
+  const { recruiter, loading } = useRecruiter();
   const hasCompany = recruiter?.company_id ? true : false;
   const { user } = useUser();
+
+  useEffect(() => {
+    onCompletion(hasCompany);
+  }, [hasCompany]);
+
 
   const [headquarters, setHeadquarters] = useState('');
   const [industry, setIndustry] = useState('');
@@ -45,11 +52,10 @@ export const CompanyInfoStep: React.FC = () => {
       greenhouse_api_key: null,
       billing_address: null, // Added to match expected type
       payment_method: null, // Added to match expected type
-      user:user
+      user: user
     };
   
     try {
-      
       const createdCompany = await createCompany(companyData);
       if (!createdCompany) {
         throw new Error('Failed to save company information');
@@ -59,6 +65,7 @@ export const CompanyInfoStep: React.FC = () => {
         description: "Company information saved successfully",
         duration: 5000,
       });
+      onCompletion(true); // Mark step as complete and navigate to next step
       // Optionally reset form fields or redirect
     } catch (error) {
       console.error('Error:', error);
@@ -70,19 +77,21 @@ export const CompanyInfoStep: React.FC = () => {
       });
     }
   };
-  
-  if (hasCompany) {
-    return (
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Company Information</h3>
-        <p>You are already associated with a company. If you need to update your company information, please contact support.</p>
-      </div>
-    );
+
+  if (loading) {
+    return <Loader2 />; // Loading icon
   }
-  else {
+
+  
     return (
       <form className="space-y-4" onSubmit={handleSubmit}>
         <h3 className="text-lg font-medium">Company Information</h3>
+        {
+          hasCompany &&         
+          <p className="text-sm text-gray-500">
+            <i>You are already associated with a company. If you need to update your company information, please contact support.</i>
+          </p>
+        }
         <div className="grid w-full items-center gap-1.5">
           <Label htmlFor="company">Company Name</Label>
           <Input
@@ -116,8 +125,7 @@ export const CompanyInfoStep: React.FC = () => {
             required
           />
         </div>
-        <Button type="submit">Submit Company Info</Button>
+        <Button type="submit">{hasCompany ? 'Update Company Info' : 'Submit Company Info'}</Button>
       </form>
     );
-  }
 };

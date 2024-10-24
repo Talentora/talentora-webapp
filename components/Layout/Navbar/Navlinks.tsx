@@ -49,9 +49,9 @@ export default function Navlinks() {
   }, []);
 
   return (
-    <div className="sticky top-0 z-40 w-full mx-0">
+    <div className="sticky top-0 z-40 w-full mx-0 ">
       <div className="container mx-0 px-1">
-        <div className="flex items-center justify-between w-full py-4 md:py-6">
+        <div className="flex items-center justify-between w-full py-4 ">
           <div className="flex items-center">
             <Link href="/" className="mr-6" aria-label="Logo">
               <Logo />
@@ -63,7 +63,7 @@ export default function Navlinks() {
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                      className="text-sm font-medium text-primary hover:text-primary transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -103,7 +103,7 @@ export default function Navlinks() {
                       <Button
                         type="submit"
                         variant="ghost"
-                        className="w-full justify-start text-sm"
+                        className="w-full justify-start text-sm text-primary"
                       >
                         <LogOut className="mr-2 h-4 w-4" />
                         Sign out
@@ -129,7 +129,6 @@ export default function Navlinks() {
           </div>
         </div>
       </div>
-      {/* Removed the duplicate nav element here */}
     </div>
   );
 }

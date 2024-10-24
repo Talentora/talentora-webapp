@@ -29,5 +29,5 @@ export const useCompany = () => {
         fetchCompany();
     }, [recruiter]);
 
-  return { company };
+  return { company, loading, error };
 };

@@ -5,7 +5,7 @@ import { Job } from '@/types/greenhouse'
 
 import { useEffect, useState } from 'react'
 
-export default async function JobsPage() {
+export default function JobsPage() {
 
   const [jobs, setJobs] = useState<Job[]>([])
 

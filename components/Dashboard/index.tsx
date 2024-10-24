@@ -6,13 +6,12 @@ import { useUser } from '@/hooks/useUser';
 
 const DashboardPage = () => {
   const {user} = useUser();
-  const role = user?.role;
+  const role = user?.user_metadata?.role;
 
 
   return (
     <div>
 
-      
       {role === 'recruiter' && (
         <div className="flex flex-row">
           <div>

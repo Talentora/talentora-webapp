@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { ApplicantCandidate } from "@/types/greenhouse"
 import ApplicantTable from "@/components/Applicants/ApplicantTable"
 import SearchBar from "@/components/Applicants/Searchbar"
+import { Loader2 } from "lucide-react"
 
 export default function ApplicantList() {
   const [ApplicantCandidates, setApplicantCandidates] = useState<ApplicantCandidate[]>([])
@@ -34,13 +35,15 @@ export default function ApplicantList() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 h-14 flex items-center border-b">
-        <h1 className="text-lg font-semibold">Applicant Management System</h1>
+        <h1 className="text-lg font-semibold">Applicant Dashboard</h1>
       </header>
       <main className="flex-1 p-4 lg:p-6">
         <div className="space-y-4">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           {isLoading ? (
-            <p>Loading Applicants...</p>
+            <div className="flex justify-center items-center h-full">
+              <Loader2 className="animate-spin" />
+            </div>
           ) : (
             <ApplicantTable 
               applicants={filteredApplicants} 

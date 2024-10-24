@@ -13,7 +13,7 @@ const Page = () => {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <div className="bg-[#1E1768] p-4 w-64 min-h-screen">
+      <div className="bg-primary-dark p-4 w-64 min-h-screen">
         <nav className="space-y-2">
           
           <Link

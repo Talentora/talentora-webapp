@@ -4,12 +4,18 @@ import Link from 'next/link';
 
 export const CompletionStep: React.FC = () => {
   return (
-    <div className="space-y-4 text-center p-4">
+    
+    <div className="flex justify-between">
+    <div className="text-center p-4">
       <h3 className="text-lg font-medium">You're All Set!</h3>
-      <p>Congratulations! Your account is now ready to use.</p>
+      <p><i>Congratulations! Your account is now ready to use.</i></p>
       <Link href="/dashboard" passHref>
-        <Button>Get Started</Button>
+        <Button className="mt-4">Get Started</Button>
       </Link>
+    </div>      
+    <div className="w-1/2 border border-gray-300">
+      <img src="" alt="Empty Image" />
     </div>
+  </div>
   );
 };

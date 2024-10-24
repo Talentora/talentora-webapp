@@ -41,7 +41,7 @@ export default function RecruiterDashboard() {
 
 
   return (
-    <div className="flex h-screen bg-primary-background">
+    <div className="flex h-screen w-full bg-primary-background">
       <main className="flex-1 p-8 overflow-auto">
         <h1 className="text-2xl font-bold mb-6">Recruiting Dashboard</h1>
         <div className="grid grid-cols-2 gap-6">

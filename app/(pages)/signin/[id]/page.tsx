@@ -1,3 +1,4 @@
+
 import { Metadata } from 'next';
 import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';
@@ -8,7 +9,7 @@ import { getURL } from '@/utils/helpers';
 import '@/styles/main.css';
 import Loading from '@/components/Layout/Loading';
 import NextTopLoader from 'nextjs-toploader'; // Import NextTopLoader
-import { createClient } from '@/utils/supabase/server';
+// import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import {
@@ -25,17 +26,25 @@ import OauthSignIn from '@/components/AuthForms/OauthSignIn';
 import ForgotPassword from '@/components/AuthForms/ForgotPassword';
 import UpdatePassword from '@/components/AuthForms/UpdatePassword';
 import SignUp from '@/components/AuthForms/Signup';
+import { createClient } from '@/utils/supabase/server';
 import Logo from '@/components/ui/icons/Logo';
-import { useUser } from '@/hooks/useUser';
+// import { useUser } from '@/hooks/useUser';
 
 export default async function SignInPage({ params, searchParams }: { params: { id: string }, searchParams: { role?: string, disable_button?: string } }) {
   const { allowOauth, allowEmail, allowPassword } = getAuthTypes();
   const viewTypes = getViewTypes();
   const redirectMethod = getRedirectMethod();
+  const supabase = createClient();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();    
+
+  
+  // const { user } = useUser();
 
   let viewProp: string;
 
-  const role = searchParams.role || 'applicant';
+  const role = searchParams.role;
 
   if (typeof params.id === 'string' && viewTypes.includes(params.id)) {
     viewProp = params.id;
@@ -45,10 +54,8 @@ export default async function SignInPage({ params, searchParams }: { params: { i
     return redirect(`/signin/${viewProp}${role ? `?role=${role}` : '?role=applicant'}`);
   }
 
-  const { user } = useUser();
 
   if (user && viewProp !== 'update_password') {
-    console.log('user', user);
     return redirect('/');
   } else if (!user && viewProp === 'update_password') {
     return redirect('/signin');

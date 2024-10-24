@@ -5,12 +5,13 @@ import { Check } from 'lucide-react';
 import { useToast } from '@/components/Toasts/use-toast';
 import { ToastAction } from '@/components/Toasts/toast';
 import { inviteUser } from '@/utils/supabase/queries';
-
-export const TeamMembersStep = () => {
+import { Loader2 } from 'lucide-react';
+export const TeamMembersStep = ({ onCompletion }: { onCompletion: (isComplete: boolean) => void }) => {
   const { toast } = useToast();
 
   const [selectedTeamMembers, setSelectedTeamMembers] = useState<{ name: string, email: string }[]>([]);
   const [recruiters, setRecruiters] = useState<any[]>([]);
+  const [loading,setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchRecruiters() {
@@ -21,6 +22,7 @@ export const TeamMembersStep = () => {
         }
         const data = await response.json();
         setRecruiters(data);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching recruiters:', error);
         toast({
@@ -77,8 +79,11 @@ export const TeamMembersStep = () => {
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="team-members">Team Members</Label>
         <div className="mt-2">
-          {recruiters.map((recruiter) => {
-            const email = recruiter.primary_email_address || `recruiter-${recruiter.id}`;
+          {loading ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            recruiters.map((recruiter) => {
+              const email = recruiter.primary_email_address || `recruiter-${recruiter.id}`;
             return (
               <div key={recruiter.id} className="flex items-center mb-2 ">
                 <input
@@ -90,21 +95,13 @@ export const TeamMembersStep = () => {
                 />
                 <label htmlFor={`checkbox-${recruiter.id}`}>{recruiter.name}</label>
               </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
 
-      {/* {selectedTeamMembers.length > 0 && (
-        <div className="mt-4">
-          <h4 className="text-sm font-medium mb-2">Selected Team Members:</h4>
-          <ul className="list-disc pl-5">
-            {selectedTeamMembers.map((recruiter) => (
-              <li key={recruiter.email}>{recruiter.name} - {recruiter.email}</li>
-            ))}
-          </ul>
-        </div>
-      )} */}
+    
 
       <Button onClick={handleInviteTeammates}>Invite Teammates</Button>
     </div>
