@@ -13,26 +13,19 @@ export const useCompany = () => {
 
     useEffect(() => {
         const fetchCompany = async () => {
-            console.log('Fetching company...');
             if (!recruiter || !recruiter.company_id) {
-                console.log('Recruiter or company_id not available');
                 return;
             }
             try {
-                console.log('Calling getCompany with company_id:', recruiter.company_id);
                 const data = await getCompany(recruiter.company_id);
-                console.log('Company data received:', data);
                 setCompany(data);
             } catch (err) {
-                console.error('Error fetching company:', err);
                 setError('Failed to fetch company');
             } finally {
-                console.log('Company fetch attempt completed');
                 setLoading(false);
             }
         };
 
-        console.log('useEffect triggered, calling fetchCompany');
         fetchCompany();
     }, [recruiter]);
 

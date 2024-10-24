@@ -22,7 +22,7 @@ export default function Navlinks() {
   const links = [
     { href: '/about', label: 'About' },
     { href: '/pricing', label: 'Pricing' },
-    { href: '/dashboard', label: 'Dashboard', requiresAuth: true }
+    // { href: '/dashboard', label: 'Dashboard', requiresAuth: true }
   ];
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -59,7 +59,7 @@ export default function Navlinks() {
             <nav className="hidden md:flex space-x-4 text-white">
               {links.map(
                 (link) =>
-                  (!link.requiresAuth || user) && (
+                  (!link || user) && (
                     <Link
                       key={link.href}
                       href={link.href}

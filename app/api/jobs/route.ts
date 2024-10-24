@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { Application, Candidate, ApplicantCandidate } from '@/types/greenhouse';
+import { Job } from '@/types/greenhouse';
 import { getGreenhouseApiKey } from '@/utils/supabase/queries';
 
 export async function GET() {
@@ -11,39 +11,20 @@ export async function GET() {
   }
 
   try {
-    const applicationsResponse = await fetch(`${baseURL}/applications`, {
+    const jobsResponse = await fetch(`${baseURL}/jobs`, {
       headers: {
         Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
       },
     });
 
-    if (!applicationsResponse.ok) {
-      return NextResponse.json({ error: 'Failed to fetch applications' }, { status: applicationsResponse.status });
+    if (!jobsResponse.ok) {
+      return NextResponse.json({ error: 'Failed to fetch jobs' }, { status: jobsResponse.status });
     }
 
-    const applications: Application[] = await applicationsResponse.json();
+    const jobs: Job[] = await jobsResponse.json();
 
-    // Fetch candidate data for each application
-    const applicationsWithCandidates: ApplicantCandidate[] = await Promise.all(
-      applications.map(async (application): Promise<ApplicantCandidate> => {
-        const candidateResponse = await fetch(`${baseURL}/candidates/${application.candidate_id}`, {
-          headers: {
-            Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
-          },
-        });
-
-        if (!candidateResponse.ok) {
-          console.error(`Failed to fetch candidate data for application ${application.id}`);
-          return { ...application, candidate: null as unknown as Candidate };
-        }
-
-        const candidate: Candidate = await candidateResponse.json();
-        return { ...application, candidate };
-      })
-    );
-
-    return NextResponse.json(applicationsWithCandidates, { status: 200 });
+    return NextResponse.json(jobs, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: 'An error occurred while fetching applications' }, { status: 500 });
+    return NextResponse.json({ error: 'An error occurred while fetching jobs' }, { status: 500 });
   }
 }

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Navigation } from 'lucide-react';
-import ApplicantTable from '../Applicants/ApplicantTable';
+import ApplicantTable from '../../Applicants/ApplicantTable';
 import { ApplicantCandidate } from '@/types/greenhouse';
 
 export default function RecentApplicantsCard({ applicants }: { applicants: ApplicantCandidate[] }) {

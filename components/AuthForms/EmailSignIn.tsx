@@ -49,7 +49,6 @@ export default function EmailSignIn({
       e,
       signInWithEmail,
       redirectMethod === 'client' ? router : null,
-      role
     );
     setIsSubmitting(false);
   };

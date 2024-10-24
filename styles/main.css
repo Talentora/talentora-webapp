@@ -7,12 +7,3 @@
     @apply text-primary bg-background;
   }
 }
-
-@layer components {
-  .text-primary {
-    @apply transition-colors duration-200 ease-in-out;
-  }
-  .text-primary:hover {
-    @apply text-primary-light;
-  }
-}

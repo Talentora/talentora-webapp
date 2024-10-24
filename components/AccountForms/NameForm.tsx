@@ -15,28 +15,15 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { getUser,getRecruiter } from '@/utils/supabase/queries';
+import { useUser } from '@/hooks/useUser';
 
-export default function NameForm({ userName }: { userName: string }) {
+
+
+export default function NameForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [role, setRole] = useState<string>('');
-
-  useEffect(() => {
-    const fetchUserRole = async () => {
-      const supabase = createClient();
-      const user = await getUser(supabase);
-      if (user) {
-        const recruiter = await getRecruiter(supabase, user.id);
-        if (recruiter) {
-          setRole('recruiter');
-        } else {
-          setRole('user');
-        }
-      }
-    };
-
-    fetchUserRole();
-  }, []); 
+  const { user } = useUser();
+  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true);
@@ -65,8 +52,8 @@ export default function NameForm({ userName }: { userName: string }) {
             type="text"
             name="fullName"
             className="w-full p-3 rounded-md bg-input text-input-foreground"
-            defaultValue={userName}
-            placeholder="Your name"
+            defaultValue={user?.user_metadata.full_name}
+            placeholder={user?.user_metadata.full_name}
             maxLength={64}
           />
         </form>

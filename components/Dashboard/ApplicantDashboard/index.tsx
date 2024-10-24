@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react';
-import { CardView } from "../Jobs/CardView"; 
+import { JobList } from "@/components/Jobs/JobList"; 
 import { Job } from "@/types/greenhouse";
 
 const ApplicantDashboard: React.FC = () => {
@@ -21,11 +21,9 @@ const ApplicantDashboard: React.FC = () => {
     return (
         <div>
             <h1>Applicant Dashboard</h1>
-            <CardView 
-                cardViewData={{
-                    filteredJobs: jobListData,
-                    onDeleteJob: () => {}
-                }}
+            <JobList 
+                jobs={jobListData}
+                onDeleteJob={() => {}}
             />
         </div>
     )

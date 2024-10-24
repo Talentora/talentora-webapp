@@ -11,7 +11,7 @@ import {
   UserIcon,
   UsersIcon
 } from 'lucide-react';
-import ApplicantTable from '../Applicants/ApplicantTable';
+import ApplicantTable from '@/components/Applicants/ApplicantTable'
 import { Job, ApplicantCandidate } from '@/types/greenhouse';
 
 export default function RecruiterDashboard() {

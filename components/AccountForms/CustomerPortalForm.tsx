@@ -15,7 +15,7 @@ import {
   CardFooter
 } from '@/components/ui/card';
 import { Tables } from '@/types/types_db';
-
+import { useSubscription } from '@/hooks/useSubscription';
 type Subscription = Tables<'subscriptions'>;
 type Price = Tables<'prices'>;
 type Product = Tables<'products'>;
@@ -28,14 +28,14 @@ type SubscriptionWithPriceAndProduct = Subscription & {
     | null;
 };
 
-interface Props {
-  subscription: SubscriptionWithPriceAndProduct | null;
-}
 
-export default function CustomerPortalForm({ subscription }: Props) {
+
+export default function CustomerPortalForm() {
   const router = useRouter();
   const currentPath = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { subscription } = useSubscription();
 
   const subscriptionPrice =
     subscription &&

@@ -50,15 +50,7 @@ export const GreenhouseIntegrationStep = () => {
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-medium">Greenhouse Integration</h3>
-      <p>
-        user id: {user?.id}
-      </p>
-      <p>
-        Company ID: {company?.id}
-      </p>
-      <p>
-        Recruiter ID: {recruiter?.id}
-      </p>
+      
       <div className="grid w-full items-center gap-1.5">
         <Label htmlFor="greenhouse-key">Greenhouse API Key</Label>
         <Input

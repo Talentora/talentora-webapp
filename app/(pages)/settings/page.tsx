@@ -8,23 +8,15 @@ import EmailForm from '@/components/AccountForms/EmailForm';
 import NameForm from '@/components/AccountForms/NameForm';
 import CompanyForm from '@/components/AccountForms/CompanyForm';
 import { redirect } from 'next/navigation';
-import { useUser} from '@/hooks/useUser';
 import { useRecruiter } from '@/hooks/useRecruiter';
 import { useCompany } from '@/hooks/useCompany';
 
 
 export default async function Account() {
-  const { user, loading: userLoading } = useUser();
 
-  if (userLoading) {
-    return <div>Loading...</div>;
-  }
 
-  if (!user) {
-    return redirect('/signin');
-  }
-  const { recruiter } = useRecruiter();
-  const { company } = useCompany();
+
+
 
   return (
     <section className="mb-32 bg-background">
@@ -39,13 +31,13 @@ export default async function Account() {
         </div>
       </div>
       <div className="p-4">
-        <CustomerPortalForm subscription={subscription} />
-        <NameForm userName={userDetails?.full_name ?? ''} />
+        <CustomerPortalForm />
+        <NameForm />
         <EmailForm />
         
-        {company && (
-          <CompanyForm company={company} />
-        )}
+        
+          <CompanyForm  />
+      
         
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4">Invite Teammates</h2>

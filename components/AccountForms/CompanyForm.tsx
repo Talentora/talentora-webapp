@@ -14,9 +14,13 @@ import {
 import { useState } from "react";
 type Company = Tables<'companies'>
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { useCompany } from '@/hooks/useCompany';
 
-const CompanyForm = ({ company }: { company: Company }) => {
+const CompanyForm = () => {
+  const { company } = useCompany();
   const [showApiKey, setShowApiKey] = useState(false);
+
+  if (!company) return null; // Ensure company is not null before rendering
 
   return (
     <Card className="my-8 bg-card text-card-foreground">
@@ -30,15 +34,14 @@ const CompanyForm = ({ company }: { company: Company }) => {
         <div className="flex flex-row items-center space-x-4 pb-4">
           <Avatar className="w-16 h-16">
             <AvatarImage 
-              // src={company.logo_url || undefined} 
-              src={undefined} 
+              src={company.logo_url || undefined} 
               alt={company.name} 
             />
             <AvatarFallback>{company.name.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="text-2xl font-bold">{company.name}</h2>
-            <Badge variant="outline" className="mt-1">{company.industry}</Badge>
+            <h2 className="text-2xl font-bold text-primary">{company.name}</h2>
+            <Badge variant="outline" className="mt-1 bg-primary text-white">{company.industry}</Badge>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
