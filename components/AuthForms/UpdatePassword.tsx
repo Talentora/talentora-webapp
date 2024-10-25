@@ -20,7 +20,7 @@ export default function UpdatePassword({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true); // Disable the button while the request is being handled
-    await handleRequest(e, updatePassword, router,role);
+    await handleRequest(e, updatePassword, router);
     setIsSubmitting(false);
   };
 

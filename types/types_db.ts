@@ -314,27 +314,21 @@ export type Database = {
       recruiters: {
         Row: {
           avatar_url: string | null
-          billing_address: Json | null
           company_id: string | null
           harvest_recruiters: number | null
           id: string
-          payment_method: Json | null
         }
         Insert: {
           avatar_url?: string | null
-          billing_address?: Json | null
           company_id?: string | null
           harvest_recruiters?: number | null
           id: string
-          payment_method?: Json | null
         }
         Update: {
           avatar_url?: string | null
-          billing_address?: Json | null
           company_id?: string | null
           harvest_recruiters?: number | null
           id?: string
-          payment_method?: Json | null
         }
         Relationships: [
           {

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { createStripePortal } from '@/utils/stripe/server';
+import { getSubscription } from '@/utils/supabase/queries';
 import Link from 'next/link';
 import {
   Card,
@@ -14,7 +15,7 @@ import {
   CardFooter
 } from '@/components/ui/card';
 import { Tables } from '@/types/types_db';
-
+import { useSubscription } from '@/hooks/useSubscription';
 type Subscription = Tables<'subscriptions'>;
 type Price = Tables<'prices'>;
 type Product = Tables<'products'>;
@@ -27,14 +28,14 @@ type SubscriptionWithPriceAndProduct = Subscription & {
     | null;
 };
 
-interface Props {
-  subscription: SubscriptionWithPriceAndProduct | null;
-}
 
-export default function CustomerPortalForm({ subscription }: Props) {
+
+export default function CustomerPortalForm() {
   const router = useRouter();
   const currentPath = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { subscription } = useSubscription();
 
   const subscriptionPrice =
     subscription &&

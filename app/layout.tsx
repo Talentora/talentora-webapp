@@ -23,25 +23,29 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  const isSidebarVisible = user !== null; // Determine if the sidebar should be visible
+
   return (
     <html lang="en">
-      <body className="w-full bg-background p-0">
+      <body className="w-full bg-gradient-to-br from-purple-500/[0.1] via-white to-pink-500/[0.1] p-0">
         <NextTopLoader />
-        <Navbar />
+       
         <div className="flex">
-          {user && (
-            <aside className="w-64 bg-gray-100 p-0">
+          {isSidebarVisible && (
+            <aside className="w-1/7 bg-gray-100">
               <Sidebar />
             </aside>
           )}
           <main
             id="skip"
-            className={`flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)] p-6 ${
-              user ? '' : 'w-full'
+            className={`flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]${
+              isSidebarVisible ? '' : ' w-full' // Apply full width if sidebar is hidden
             }`}
           >
-            <Suspense fallback={<Loading />}>{children}</Suspense>
+             <Navbar />
+             <Suspense fallback={<Loading />}>{children}</Suspense>
           </main>
+            
         </div>
         <Suspense>
           <Toaster />

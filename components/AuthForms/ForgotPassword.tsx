@@ -33,7 +33,7 @@ export default function ForgotPassword({
   const role: string = searchParams.get('role') ?? 'unknown';
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true); // Disable the button while the request is being handled
-    await handleRequest(e, requestPasswordUpdate, router, role);
+    await handleRequest(e, requestPasswordUpdate, router);
     setIsSubmitting(false);
   };
 

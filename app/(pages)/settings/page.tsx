@@ -1,36 +1,22 @@
-import CustomerPortalForm from '@/components/AccountForms/CustomerPortalForm';
-import EmailForm from '@/components/AccountForms/EmailForm';
-import NameForm from '@/components/AccountForms/NameForm';
-import CompanyForm from '@/components/AccountForms/CompanyForm';
-import { redirect } from 'next/navigation';
-import { createClient } from '@/utils/supabase/server';
-import {
-  getUserDetails,
-  getSubscription,
-  getUser,
-  getCompany,
-  getRecruiter
-} from '@/utils/supabase/queries';
 import { Tables } from '@/types/types_db';
 type Recruiter = Tables<'recruiters'>
 type Company = Tables<'companies'>
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import CustomerPortalForm from '@/components/AccountForms/CustomerPortalForm';
+import EmailForm from '@/components/AccountForms/EmailForm';
+import NameForm from '@/components/AccountForms/NameForm';
+import CompanyForm from '@/components/AccountForms/CompanyForm';
+import { redirect } from 'next/navigation';
+import { useRecruiter } from '@/hooks/useRecruiter';
+import { useCompany } from '@/hooks/useCompany';
+
+
 export default async function Account() {
-  const supabase = createClient();
-  const [user, userDetails, subscription] = await Promise.all([
-    getUser(supabase),
-    getUserDetails(supabase),
-    getSubscription(supabase)
-  ]);
-  if (!user) {
-    return redirect('/signin');
-  }
 
-  const recruiter: Recruiter | null = await getRecruiter(supabase, user.id);
-  const company: Company | null = recruiter?.company_id ? await getCompany(supabase, recruiter.company_id) : null;
 
-  
+
+
 
   return (
     <section className="mb-32 bg-background">
@@ -45,13 +31,13 @@ export default async function Account() {
         </div>
       </div>
       <div className="p-4">
-        <CustomerPortalForm subscription={subscription} />
-        <NameForm userName={userDetails?.full_name ?? ''} />
-        <EmailForm userEmail={user.email} />
+        <CustomerPortalForm />
+        <NameForm />
+        <EmailForm />
         
-        {company && (
-          <CompanyForm company={company} />
-        )}
+        
+          <CompanyForm  />
+      
         
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4">Invite Teammates</h2>

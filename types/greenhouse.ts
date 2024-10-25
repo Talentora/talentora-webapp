@@ -138,4 +138,44 @@ export type Job = {
   keyed_custom_fields: CustomFields;
 };
 
+export type Office = {
+  id: number;
+  name: string;
+  location: {
+    name: string;
+  };
+  primary_contact_user_id: number;
+  parent_id: number;
+  parent_office_external_id: string;
+  child_ids: number[];
+  child_office_external_ids: string[];
+  external_id: string;
+};
+
+export type Department = {
+  id: number;
+  name: string;
+  parent_id: number;
+  parent_department_external_id: string;
+  child_ids: number[];
+  child_department_external_ids: string[];
+  external_id: string;
+};
+
+export type User = {
+  id: number;
+  name: string;
+  first_name: string;
+  last_name: string;
+  primary_email_address: string;
+  updated_at: string;
+  created_at: string;
+  disabled: boolean;
+  site_admin: boolean;
+  emails: string[];
+  employee_id: string;
+  linked_candidate_ids: number[];
+  offices: Office[];
+  departments: Department[];
+};
 export type ApplicantCandidate = Application & { candidate: Candidate };

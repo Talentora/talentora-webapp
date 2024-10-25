@@ -12,35 +12,17 @@ import {
 import { updateEmail } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { getUser, getRecruiter } from '@/utils/supabase/queries';
-import { createClient } from '@/utils/supabase/client';
+import { useState } from 'react';
+import { useUser } from '@/hooks/useUser';
 
-export default function EmailForm({
-  userEmail
-}: {
-  userEmail: string | undefined;
-}) {
+export default function EmailForm() {
+  
   const router = useRouter();
+  const { user } = useUser();
+  const role = user?.user_metadata.role;
+  const userEmail = user?.email;
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [role, setRole] = useState<string>('');
-
-  useEffect(() => {
-    const fetchUserRole = async () => {
-      const supabase = createClient();
-      const user = await getUser(supabase);
-      if (user) {
-        const recruiter = await getRecruiter(supabase, user.id);
-        if (recruiter) {
-          setRole('recruiter');
-        } else {
-          setRole('user');
-        }
-      }
-    };
-
-    fetchUserRole();
-  }, []);
+  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true);
@@ -50,7 +32,7 @@ export default function EmailForm({
       setIsSubmitting(false);
       return;
     }
-    await handleRequest(e, updateEmail, router, role);
+    await handleRequest(e, updateEmail, router);
     setIsSubmitting(false);
   };
 

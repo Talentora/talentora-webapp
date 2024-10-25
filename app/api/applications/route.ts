@@ -2,20 +2,33 @@ import { NextResponse } from 'next/server';
 import { Application, Candidate } from '@/types/greenhouse';
 import { getGreenhouseApiKey } from '@/utils/supabase/queries';
 
-export async function GET() {
-  const apiKey=await getGreenhouseApiKey();
+export async function GET(req: Request) {
+  const apiKey = await getGreenhouseApiKey();
   const baseURL = `https://harvest.greenhouse.io/v1`;
 
   if (!apiKey) {
     return NextResponse.json({ error: 'API key not found' }, { status: 500 });
   }
 
+  const url = new URL(req.url);
+  const jobId = url.searchParams.get('jobId');
+
   try {
-    const applicationsResponse = await fetch(`${baseURL}/applications`, {
-      headers: {
-        Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
-      },
-    });
+    let applicationsResponse;
+
+    if (jobId) {
+      applicationsResponse = await fetch(`${baseURL}/applications?job_id=${jobId}`, {
+        headers: {
+          Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
+        },
+      });
+    } else {
+      applicationsResponse = await fetch(`${baseURL}/applications`, {
+        headers: {
+          Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
+        },
+      });
+    }
 
     if (!applicationsResponse.ok) {
       return NextResponse.json({ error: 'Failed to fetch applications' }, { status: applicationsResponse.status });

@@ -6,7 +6,7 @@ import { Job } from '@/types/greenhouse';
 
 export default function ActiveJobsCard({ jobs }: { jobs: Job[] }) {
   return (
-    <Card className="p-5 border border-gray-300 rounded-lg shadow-sm relative bg-primary-background">
+    <Card className="p-5 border border-gray-300 rounded-lg shadow-sm relative">
       <CardHeader>
         <CardTitle>Active Job Titles</CardTitle>
         <Link href="/jobs">

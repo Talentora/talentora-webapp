@@ -19,7 +19,19 @@ export default function SignUp({ allowEmail, redirectMethod,role }: SignUpProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true);
-    await handleRequest(e, signUp, router, role);
+    // Append role to form data
+    const formData = new FormData(e.currentTarget);
+    formData.append('role', role);
+    e.currentTarget = e.currentTarget.cloneNode(true) as HTMLFormElement;
+    e.currentTarget.appendChild(
+      Object.assign(document.createElement('input'), {
+        type: 'hidden',
+        name: 'role',
+        value: role
+      })
+    );
+
+    await handleRequest(e, signUp, router);
     setIsSubmitting(false);
   };
 

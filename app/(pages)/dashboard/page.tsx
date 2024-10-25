@@ -1,30 +1,5 @@
-import RecruiterDashboard from '@/components/RecruiterDashboard';
-import Sidebar from '@/components/Layout/Sidebar';
-import { createClient } from '@/utils/supabase/server';
-import ApplicantDashboard from '@/components/ApplicantDashboard';
+import DashboardPage from '@/components/Dashboard';
 
-const DashboardPage: React.FC = async () => {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  const role = user?.user_metadata.role;
-
-  return (
-    <div>
-      {role === 'recruiter' && (
-      <div className="flex flex-row">
-       
-        <div >
-          <RecruiterDashboard />
-        </div>
-      </div>
-      )}
-
-      {role === 'applicant' && (
-        <ApplicantDashboard />
-      )}
-    </div>
-  );
-};
-
-export default DashboardPage;
+export default function Page() {
+  return <DashboardPage />;
+}

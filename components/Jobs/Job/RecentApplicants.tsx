@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ApplicantTable from '@/components/Applicants/ApplicantTable';
 import { Button } from '@/components/ui/button';
 
-
 import { ApplicantCandidate } from '@/types/greenhouse';
 interface RecentApplicantsProps {
   applicants: ApplicantCandidate[];
@@ -15,6 +14,7 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
   const toggleVisibility = () => {
     setVisible(!visible);
   };
+
 
   return (
     <Card>

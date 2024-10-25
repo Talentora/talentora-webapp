@@ -6,6 +6,8 @@ import { redirect } from 'next/navigation';
 import { getURL, getErrorRedirect, getStatusRedirect } from '@/utils/helpers';
 import { getAuthTypes } from '@/utils/auth-helpers/settings';
 
+
+
 function isValidEmail(email: string) {
   var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
   return regex.test(email);
@@ -131,7 +133,7 @@ export async function requestPasswordUpdate(formData: FormData) {
   return redirectPath;
 }
 
-export async function signInWithPassword(formData: FormData,role:string) {
+export async function signInWithPassword(formData: FormData) {
   const cookieStore = cookies();
   const email = String(formData.get('email')).trim();
   const password = String(formData.get('password')).trim();
@@ -184,13 +186,14 @@ export async function signInWithPassword(formData: FormData,role:string) {
  *
  * The function returns a redirect path based on the outcome, which can be used to navigate the user to the appropriate page.
  */
-export async function signUp(formData: FormData,role:string) {
+export async function signUp(formData: FormData) {
   console.log('Starting sign-up process...');
   const callbackURL = getURL('/auth/callback');
 
   const email = String(formData.get('email')).trim();
   const password = String(formData.get('password')).trim();
   const fullName = String(formData.get('fullName')).trim();
+  const role = String(formData.get('role')).trim();
   let redirectPath: string;
 
   console.log(`Signing up as a ${role}`)

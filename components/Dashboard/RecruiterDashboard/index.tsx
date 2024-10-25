@@ -11,7 +11,7 @@ import {
   UserIcon,
   UsersIcon
 } from 'lucide-react';
-import ApplicantTable from '../Applicants/ApplicantTable';
+import ApplicantTable from '@/components/Applicants/ApplicantTable'
 import { Job, ApplicantCandidate } from '@/types/greenhouse';
 
 export default function RecruiterDashboard() {
@@ -41,12 +41,15 @@ export default function RecruiterDashboard() {
 
 
   return (
-    <div className="flex h-screen bg-primary-background">
-      <main className="flex-1 p-8 overflow-auto">
+    <div className="flex h-screen w-full">
+      <main className="flex-1 p-8">
         <h1 className="text-2xl font-bold mb-6">Recruiting Dashboard</h1>
-        <div className="grid grid-cols-2 gap-6">
+
+
+
+        <div className="grid grid-cols-2 gap-6 ">
           {/* fact 1  */}
-          <Card className="border p-5 border-gray-300 rounded-lg shadow-sm">
+          <Card className="border p-5 border-gray-300 rounded-lg shadow-sm bg-foreground">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Total Applicants This Month
@@ -89,7 +92,7 @@ export default function RecruiterDashboard() {
           </Card>
 
           {/* fact 2 */}
-          <Card className="border p-5 border-gray-300 rounded-lg shadow-sm">
+          <Card className="border bg-foreground p-5 border-gray-300 rounded-lg shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 AI Interviews Completed 
@@ -108,7 +111,7 @@ export default function RecruiterDashboard() {
           </Card>
 
           {/* active jobs */}
-          <Card className="col-span-2 p-5 border border-gray-300 rounded-lg shadow-sm">
+          <Card className="col-span-2 bg-foreground p-5 border border-gray-300 rounded-lg shadow-sm">
             <CardHeader>
               <CardTitle>Active Job Titles</CardTitle>
             </CardHeader>
@@ -160,7 +163,7 @@ export default function RecruiterDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="col-span-2 p-5 row-span-2 border border-gray-300 rounded-lg shadow-sm">
+          <Card className="col-span-2 bg-foreground p-5 row-span-2 border border-gray-300 rounded-lg shadow-sm">
             <CardHeader>
               <CardTitle>Applicant Overview</CardTitle>
             </CardHeader>
@@ -170,7 +173,7 @@ export default function RecruiterDashboard() {
           </Card>
 
           {/* bot */}
-          <Card className="p-5 border border-gray-300">
+          <Card className="p-5 border border-gray-300 bg-foreground">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Recruiting Bot
@@ -190,7 +193,7 @@ export default function RecruiterDashboard() {
           </Card>
 
           {/* settings */}
-          <Card className="p-5 border border-gray-300">
+          <Card className="p-5 bg-foreground border border-gray-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Settings</CardTitle>
               <Settings className="h-4 w-4 text-muted-foreground cursor-pointer" />
