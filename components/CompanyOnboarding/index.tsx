@@ -36,7 +36,7 @@ export default function OnboardingPage() {
   return (
     <div className="container mx-auto py-10">
       <div className="max-w-2xl mx-auto gap-3">
-        <Progress value={progressValue} className="mb-3"/> {/* Use the Progress component */}
+        {/* <Progress value={progressValue} className="mb-3"/>  */}
         <Card className="bg-foreground p-5 border border-gray-200 shadow-lg overflow-auto">
           <CardHeader>
             <CardTitle>Welcome to Talentora</CardTitle>

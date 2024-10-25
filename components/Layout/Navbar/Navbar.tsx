@@ -10,7 +10,7 @@ export default function Navbar() {
       const scrollPosition = window.scrollY;
       const maxOpacity = 1;
       const minOpacity = 0;
-      const scrollHeight = 200; // Height at which the navbar starts to fade out
+      const scrollHeight = 50; // Height at which the navbar starts to fade out
       const opacity = Math.max(minOpacity, Math.min(maxOpacity, 1 - (scrollPosition / scrollHeight)));
       setOpacity(opacity);
     };

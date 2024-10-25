@@ -22,7 +22,7 @@ export default function Navlinks() {
   const links = [
     { href: '/about', label: 'About' },
     { href: '/pricing', label: 'Pricing' },
-    // { href: '/dashboard', label: 'Dashboard', requiresAuth: true }
+    { href: '/dashboard', label: 'Dashboard', requiresAuth: true }
   ];
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -53,8 +53,9 @@ export default function Navlinks() {
       <div className="container mx-0 px-1">
         <div className="flex items-center justify-between w-full py-4 ">
           <div className="flex items-center">
-            <Link href="/" className="mr-6" aria-label="Logo">
+            <Link href="/" className="mr-6 flex flex-row items-center gap-2" aria-label="Logo">
               <Logo />
+              <h1 className="text-primary text-2xl font-bold">Talent<span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">ora</span></h1>
             </Link>
             <nav className="hidden md:flex space-x-4 text-white">
               {links.map(

@@ -28,7 +28,7 @@ export default function ApplicantTable({ applicants, disablePortal = false }: Ap
   return (
     <div className="border border-gray-200 rounded-lg">
       <Table className="border rounded-lg">
-        <TableHeader className="bg-accent rounded-lg">
+        <TableHeader className="bg-primary-dark text-background rounded-lg">
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Role</TableHead>
