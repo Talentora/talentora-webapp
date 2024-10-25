@@ -10,12 +10,12 @@ import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import { Button } from '@/components/ui/button';
 import { User, LogOut } from 'lucide-react';
 import { useUser } from '@/hooks/useUser';
-
+import { Loader2 } from 'lucide-react';
 export default function Navlinks() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const { user } = useUser();
+  const { user,loading } = useUser();
   
   const router = useRouter();
 
@@ -74,8 +74,13 @@ export default function Navlinks() {
           </div>
           
           <div className="flex items-center">
-            {user ? (
-              <div className="relative" ref={userMenuRef}>
+            {loading ? (
+              <div className="flex justify-center items-center h-full">
+                <Loader2 className="h-5 w-5 animate-spin" />
+              </div>
+            ) : (
+              user ? (
+                <div className="relative" ref={userMenuRef}>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -126,7 +131,9 @@ export default function Navlinks() {
                   </Button>
                 </Link>
               </div>
+            )
             )}
+
           </div>
         </div>
       </div>

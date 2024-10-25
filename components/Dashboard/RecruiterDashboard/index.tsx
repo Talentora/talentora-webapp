@@ -13,10 +13,11 @@ import {
 } from 'lucide-react';
 import ApplicantTable from '@/components/Applicants/ApplicantTable'
 import { Job, ApplicantCandidate } from '@/types/greenhouse';
-
+import { Loader2 } from 'lucide-react';
 export default function RecruiterDashboard() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,6 +34,7 @@ export default function RecruiterDashboard() {
         const applicantsData = await applicationsResponse.json();
         setApplicants(applicantsData);
       }
+      setIsLoading(false);
     };
 
     fetchData();
@@ -45,7 +47,11 @@ export default function RecruiterDashboard() {
       <main className="flex-1 p-8">
         <h1 className="text-2xl font-bold mb-6">Recruiting Dashboard</h1>
 
-
+        {isLoading && (
+          <div className="flex justify-center items-center h-full">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-6 ">
           {/* fact 1  */}
