@@ -1,0 +1,3 @@
+drop type "public"."role";
+
+
