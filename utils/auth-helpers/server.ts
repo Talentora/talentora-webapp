@@ -228,7 +228,7 @@ export async function signUp(formData: FormData) {
   } else if (data.session) {
     console.log('Sign-up successful with active session.');
     redirectPath = getStatusRedirect(
-      '/',
+      '/settings/onboarding',
       'Success!',
       `You are now signed in as a ${role}.`
     );

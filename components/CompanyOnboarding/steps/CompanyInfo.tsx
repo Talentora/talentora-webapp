@@ -60,12 +60,12 @@ export const CompanyInfoStep: React.FC<{
 
     try {
       let savedCompany;
-      if (hasCompany && company?.id) {
+      if (hasCompany && company?.id && user) {
         console.log('updating company', company?.id);
         console.log('companyData', companyData);
         savedCompany = await updateCompany(company?.id, companyData);
       } else {
-        savedCompany = await createCompany(companyData);
+        savedCompany = await createCompany(companyData, user?.id || '');
       }
 
       if (!savedCompany) {
@@ -99,6 +99,7 @@ export const CompanyInfoStep: React.FC<{
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
+
       <h3 className="text-lg font-medium">Company Information</h3>
       {hasCompany && (
         <p className="text-sm text-gray-500">

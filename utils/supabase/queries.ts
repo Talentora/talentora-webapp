@@ -48,17 +48,18 @@ export const getCompany = async (
  * @throws Error if the creation operation fails.
  */
 export const createCompany = async (
-  companyData: any
+  companyData: any,
+  userId: string
   // userId: string
 ): Promise<Company> => {
   const supabase = createClient();
 
-  const { user, ...restCompanyData } = companyData;
+  // const { user, ...restCompanyData } = companyData;
 
   // Insert the company
   const { data: createdCompany, error: companyError } = await supabase
     .from('companies')
-    .insert(restCompanyData)
+    .insert(companyData)
     .select()
     .single();
 
@@ -70,7 +71,7 @@ export const createCompany = async (
     throw new Error('Failed to create company: No data returned');
   }
 
-  if (!user) {
+  if (!userId) {
     throw new Error('No user found');
   }
 
@@ -78,7 +79,7 @@ export const createCompany = async (
   const { error: recruiterError } = await supabase
     .from('recruiters')
     .update({ company_id: createdCompany.id })
-    .eq('id', user?.id);
+    .eq('id', userId);
 
   if (recruiterError) {
     throw new Error(`Failed to update recruiter: ${recruiterError.message}`);
