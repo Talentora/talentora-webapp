@@ -9,7 +9,7 @@ export async function GET(
 ) {
   const accountToken = await getMergeApiKey();
   const jobId = params.id;
-  const baseURL = `https://api.merge.dev/api/ats/v1/jobs/${jobId}`;
+  const baseURL = `https://api.merge.dev/api/ats/v1`;
   const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
 
   if (!apiKey || !accountToken) {
@@ -17,7 +17,7 @@ export async function GET(
   }
 
   try {
-    const response = await fetch(baseURL, {
+    const jobResponse = await fetch(`${baseURL}/jobs/${jobId}`, {
       headers: {
         'Accept': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
@@ -25,15 +25,43 @@ export async function GET(
       }
     });
 
-    if (!response.ok) {
+    if (!jobResponse.ok) {
       return NextResponse.json(
         { error: `Failed to fetch job with id ${jobId}` },
-        { status: response.status }
+        { status: jobResponse.status }
       );
     }
 
-    const job: Job = await response.json();
-    return NextResponse.json(job, { status: 200 });
+    const jobData = await jobResponse.json();
+
+    // Fetch departments and offices
+    const [departmentsResponse, officesResponse] = await Promise.all([
+      fetch(`${baseURL}/departments`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'X-Account-Token': accountToken
+        }
+      }),
+      fetch(`${baseURL}/offices`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'X-Account-Token': accountToken
+        }
+      })
+    ]);
+
+    const departments = departmentsResponse.ok ? (await departmentsResponse.json()).results : [];
+    const offices = officesResponse.ok ? (await officesResponse.json()).results : [];
+
+    const enrichedJob = {
+      ...jobData,
+      departments,
+      offices
+    };
+
+    return NextResponse.json(enrichedJob, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: 'An error occurred while fetching the job' },

@@ -26,15 +26,12 @@ export function JobHeader({ job }: JobHeaderProps) {
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
             <span className="flex items-center">
               <BriefcaseIcon className="mr-1 h-4 w-4" />{' '}
-              {job.departments.join(', ')}
+              {job.departments.length > 0 ? job.departments.join(', ') : 'missing'}
             </span>
             <span className="flex items-center">
-              <MapPinIcon className="mr-1 h-4 w-4" /> {job.offices.join(', ')}
+              <MapPinIcon className="mr-1 h-4 w-4" /> {job.offices.length > 0 ? job.offices.join(', ') : 'missing'}
             </span>
-            <span className="flex items-center">
-              <CircleDollarSign className="mr-1 h-4 w-4" />{' '}
-              {job.custom_fields.employment_type}
-            </span>
+           
           </div>
         </div>
       </CardHeader>
@@ -43,7 +40,7 @@ export function JobHeader({ job }: JobHeaderProps) {
           <h3 className="text-lg font-semibold flex items-center mb-2">
             <ClipboardListIcon className="mr-2 h-5 w-5" /> Job Description
           </h3>
-          <CardDescription>{job.notes}</CardDescription>
+          <CardDescription>{job.description || 'missing'}</CardDescription>
         </section>
       </CardContent>
     </Card>
