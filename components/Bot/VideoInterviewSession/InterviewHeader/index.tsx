@@ -1,6 +1,6 @@
 import React from 'react';
 import { Progress } from '@/components/ui/progress';
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 
 interface interviewHeaderProps {
   job: Job;

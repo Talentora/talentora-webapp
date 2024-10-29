@@ -1,4 +1,5 @@
 // app/api/jobs/[id]/route.ts
+import { Job } from '@/types/merge';
 import { getMergeApiKey } from '@/utils/supabase/queries';
 import { NextResponse } from 'next/server';
 
@@ -31,7 +32,7 @@ export async function GET(
       );
     }
 
-    const job = await response.json();
+    const job: Job = await response.json();
     return NextResponse.json(job, { status: 200 });
   } catch (error) {
     return NextResponse.json(

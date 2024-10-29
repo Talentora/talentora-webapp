@@ -1,4 +1,4 @@
-import { ApplicantCandidate } from '@/types/greenhouse';
+import { ApplicantCandidate } from '@/types/merge';
 import { Button } from '@/components/ui/button';
 import ApplicantInfo from '@/components/Applicants/Applicant/ApplicantInfo';
 import ApplicantSummary from '@/components/Applicants/Applicant/ApplicantSummary';

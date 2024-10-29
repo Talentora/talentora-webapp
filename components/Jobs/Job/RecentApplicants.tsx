@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ApplicantTable from '@/components/Applicants/ApplicantTable';
 import { Button } from '@/components/ui/button';
 
-import { ApplicantCandidate } from '@/types/greenhouse';
+import { ApplicantCandidate } from '@/types/merge';
 interface RecentApplicantsProps {
   applicants: ApplicantCandidate[];
 }

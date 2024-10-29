@@ -1,5 +1,5 @@
 import Bot from '@/components/Bot';
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 
 interface PageProps {
   searchParams: { jobId?: string };

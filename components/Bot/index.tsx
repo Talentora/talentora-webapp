@@ -15,7 +15,7 @@ import {
   defaultServices
 } from '@/utils/rtvi.config';
 
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 // Define the Job type from the database schema
 
 // Define the props for the Bot component

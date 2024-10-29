@@ -12,7 +12,7 @@ import {
   UsersIcon
 } from 'lucide-react';
 import ApplicantTable from '@/components/Applicants/ApplicantTable';
-import { Job, ApplicantCandidate } from '@/types/greenhouse';
+import { Job, ApplicantCandidate } from '@/types/merge';
 import { Loader2 } from 'lucide-react';
 export default function RecruiterDashboard() {
   const [jobs, setJobs] = useState<Job[]>([]);

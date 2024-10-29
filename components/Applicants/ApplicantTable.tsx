@@ -9,10 +9,9 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
-import { ApplicantCandidate } from '@/types/greenhouse';
+import { ApplicantCandidate } from '@/types/merge';
 import ApplicantPortal from '@/components/Applicants/Applicant/ApplicantPortal';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { EllipsisIcon } from 'lucide-react';
 
 interface ApplicantTableProps {
   applicants: ApplicantCandidate[];
@@ -49,23 +48,18 @@ export default function ApplicantTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {applicants.map((ApplicantCandidate) => (
+          {applicants.map((ApplicantCandidate:ApplicantCandidate) => (
             <TableRow
               key={ApplicantCandidate.id}
               onClick={() => handleSelectApplicant(ApplicantCandidate)}
               className="cursor-pointer bg-foreground"
             >
               <TableCell>{`${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`}</TableCell>
-              <TableCell>
-                {ApplicantCandidate.jobs[0]?.name || 'No job specified'}
-              </TableCell>
-              <TableCell>
-                {ApplicantCandidate.candidate.email_addresses[0]?.value ||
-                  'No email address'}
-              </TableCell>
-              <TableCell>8</TableCell>
-              <TableCell>10</TableCell>
-              <TableCell>Pending</TableCell>
+              <TableCell>{ApplicantCandidate.job.name || 'No job specified'}</TableCell>
+              <TableCell>{ApplicantCandidate.candidate.email_addresses?.[0]?.value || 'No email address'}</TableCell>
+              <TableCell className="text-red-500">8</TableCell>
+              <TableCell className="text-red-500">10</TableCell>
+              <TableCell>{ApplicantCandidate.interviewStages.name || 'No interview stage specified'}</TableCell>
               <TableCell className="underline">View Report</TableCell>
             </TableRow>
           ))}

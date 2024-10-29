@@ -9,7 +9,7 @@ import AIInterviewer from './AIInterviewer';
 import CandidateVideo from './CandidateVideo';
 import TranscriptPanel from './TranscriptPanel';
 import ControlPanel from './ControlPanel';
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 
 interface VoiceInterviewSessionProps {
   state: TransportState;

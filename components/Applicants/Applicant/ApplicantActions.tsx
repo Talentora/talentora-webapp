@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
-import { ApplicantCandidate } from '@/types/greenhouse';
+import { ApplicantCandidate } from '@/types/merge';
 
 export default function ApplicantActions({
   ApplicantCandidate
@@ -17,14 +17,15 @@ export default function ApplicantActions({
   ApplicantCandidate: ApplicantCandidate;
 }) {
   const resumeUrl =
-    ApplicantCandidate.attachments.find(
-      (attachment) => attachment.type === 'resume'
-    )?.url || 'No resume available';
+    // ApplicantCandidate.candidate.attachments?.find(
+    //   (attachment) => attachment. === 'resume'
+    // )?.url ||
+     'No resume available';
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Actions</CardTitle>
+        <CardTitle className="text-red-500">Actions (update)</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <Button className="w-full">Schedule Interview</Button>

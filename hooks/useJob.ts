@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Job, ApplicantCandidate } from '@/types/greenhouse';
+import { Job, ApplicantCandidate } from '@/types/merge';
 
 export const useJob = (jobId: string) => {
   const [job, setJob] = useState<Job | null>(null);

@@ -3,11 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRecruiter } from '@/hooks/useRecruiter';
-import { createCompany } from '@/utils/supabase/queries';
+import { createCompany,updateCompany } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 import { ToastAction } from '@/components/Toasts/toast';
 import { useUser } from '@/hooks/useUser';
 import { Loader2 } from 'lucide-react';
+import { useCompany } from '@/hooks/useCompany';
 
 /**
  * CompanyInfoStep Component
@@ -24,6 +25,7 @@ export const CompanyInfoStep: React.FC<{
   const { recruiter, loading } = useRecruiter();
   const hasCompany = recruiter?.company_id ? true : false;
   const { user } = useUser();
+  const { company } = useCompany(); 
 
   useEffect(() => {
     onCompletion(hasCompany);
@@ -57,13 +59,20 @@ export const CompanyInfoStep: React.FC<{
     };
 
     try {
-      const createdCompany = await createCompany(companyData);
-      if (!createdCompany) {
+      let savedCompany;
+      if (hasCompany) {
+        savedCompany = await updateCompany(company?.id || '', companyData);
+      } else {
+        savedCompany = await createCompany(companyData);
+      }
+
+      if (!savedCompany) {
         throw new Error('Failed to save company information');
       }
+
       toast({
         title: 'Success!',
-        description: 'Company information saved successfully',
+        description: `Company information ${hasCompany ? 'updated' : 'saved'} successfully`,
         duration: 5000
       });
       onCompletion(true); // Mark step as complete and navigate to next step
@@ -104,7 +113,7 @@ export const CompanyInfoStep: React.FC<{
           id="company"
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
-          placeholder="Acme Inc."
+          placeholder={company?.name || 'Enter your company name'}
           required
         />
       </div>
@@ -115,7 +124,7 @@ export const CompanyInfoStep: React.FC<{
           id="headquarters"
           value={headquarters}
           onChange={(e) => setHeadquarters(e.target.value)}
-          placeholder="Enter your company's headquarters location"
+          placeholder={company?.location || 'Enter your company headquarters location'}
           required
         />
       </div>
@@ -126,7 +135,7 @@ export const CompanyInfoStep: React.FC<{
           id="industry"
           value={industry}
           onChange={(e) => setIndustry(e.target.value)}
-          placeholder="e.g., Technology, Healthcare, Finance"
+          placeholder={company?.industry || 'Enter your company industry'}
           required
         />
       </div>

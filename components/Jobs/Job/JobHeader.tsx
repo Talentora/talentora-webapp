@@ -11,7 +11,7 @@ import {
   CircleDollarSign,
   ClipboardListIcon
 } from 'lucide-react';
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 
 interface JobHeaderProps {
   job: Job;

@@ -95,7 +95,7 @@ export const createCompany = async (
  */
 export const updateCompany = async (
   id: string,
-  companyData: Company
+  companyData: any
 ): Promise<Company | null> => {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -214,7 +214,6 @@ export const getRecruiter = async (
       return null;
     }
 
-    console.log('Recruiter data:', recruiter); // Log the recruiter data
     return recruiter; // Ensure this is a plain object
   } catch (err) {
     console.error('Unexpected error fetching recruiter:', err);

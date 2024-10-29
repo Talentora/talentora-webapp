@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { JobList } from '@/components/Jobs/JobList';
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 
 const ApplicantDashboard: React.FC = () => {
   const [jobListData, setJobListData] = useState<Job[]>([]);
@@ -23,7 +22,7 @@ const ApplicantDashboard: React.FC = () => {
   return (
     <div>
       <h1>Applicant Dashboard</h1>
-      <JobList jobs={jobListData} onDeleteJob={() => {}} />
+      {/* <JobList jobs={jobListData} onDeleteJob={() => {}} /> */}
     </div>
   );
 };

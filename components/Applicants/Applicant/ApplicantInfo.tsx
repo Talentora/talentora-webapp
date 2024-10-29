@@ -1,4 +1,4 @@
-import { ApplicantCandidate } from '@/types/greenhouse';
+import { ApplicantCandidate } from '@/types/merge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Card,
@@ -18,12 +18,9 @@ export default function ApplicantInfo({
 }: ApplicantInfoProps) {
   const candidateName = `${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`;
   const avatarUrl = '/placeholder-avatar.jpg';
-  const email =
-    ApplicantCandidate.candidate.email_addresses[0]?.value ||
-    'No email address';
-  const phoneNumber =
-    ApplicantCandidate.candidate.phone_numbers[0]?.value || 'No phone number';
-  const jobName = ApplicantCandidate.jobs[0]?.name || 'No job specified';
+  const email = ApplicantCandidate.candidate.email_addresses?.[0]?.value || 'No email address';
+  const phoneNumber = ApplicantCandidate.candidate.phone_numbers?.[0]?.value || 'No phone number';
+  const jobName = ApplicantCandidate.job.name || 'No job specified';
 
   return (
     <Card>
@@ -56,7 +53,7 @@ export default function ApplicantInfo({
             <CalendarDays className="w-4 h-4" />
             <span className="text-sm">
               Applied on{' '}
-              {new Date(ApplicantCandidate.applied_at).toLocaleDateString()}
+              {ApplicantCandidate.applied_at ? new Date(ApplicantCandidate.applied_at).toLocaleDateString() : 'Unknown date'}
             </span>
           </div>
         </div>

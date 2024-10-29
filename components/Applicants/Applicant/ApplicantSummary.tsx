@@ -1,4 +1,4 @@
-import { ApplicantCandidate } from '@/types/greenhouse';
+import { ApplicantCandidate } from '@/types/merge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface ApplicantSummaryProps {

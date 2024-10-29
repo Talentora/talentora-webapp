@@ -1,4 +1,4 @@
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 import {
   Table,
   TableBody,
@@ -63,6 +63,7 @@ export function JobTable({
             </Button>
           </TableHead>
           <TableHead>Departments</TableHead>
+          <TableHead>Offices</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>

@@ -1,4 +1,4 @@
-import { ApplicantCandidate } from '@/types/greenhouse';
+import { ApplicantCandidate } from '@/types/merge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
@@ -14,20 +14,20 @@ export default function ApplicantCandidateStatus({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>ApplicantCandidate Status</CardTitle>
+        <CardTitle>Applicant Status</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>Progress</span>
               <span>{progress}%</span>
             </div>
             <Progress value={progress} />
-          </div>
+          </div> */}
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Current Stage:</span>
-            <span className="text-sm">{ApplicantCandidate.status}</span>
+            <span className="text-sm">{ApplicantCandidate.interviewStages.name}</span>
           </div>
         </div>
       </CardContent>

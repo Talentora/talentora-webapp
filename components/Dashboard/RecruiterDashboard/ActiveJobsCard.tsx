@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Navigation, MoreHorizontal } from 'lucide-react';
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 
 export default function ActiveJobsCard({ jobs }: { jobs: Job[] }) {
   return (
@@ -28,7 +28,7 @@ export default function ActiveJobsCard({ jobs }: { jobs: Job[] }) {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4">
-            {jobs.slice(0, 5).map((job, index) => (
+            {jobs?.slice(0, 5).map((job, index) => (
               <JobItem key={index} job={job} />
             ))}
             {jobs.length > 5 && <MoreJobsLink count={jobs.length - 5} />}

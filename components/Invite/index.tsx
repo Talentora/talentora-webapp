@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/select';
 import { inviteUser } from '@/utils/supabase/queries';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 
 interface InvitePageProps {
   jobs: Job[];

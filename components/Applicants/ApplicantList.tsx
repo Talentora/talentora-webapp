@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ApplicantCandidate } from '@/types/greenhouse';
+import { ApplicantCandidate } from '@/types/merge';
 import ApplicantTable from '@/components/Applicants/ApplicantTable';
 import SearchBar from '@/components/Applicants/Searchbar';
 import { Loader2 } from 'lucide-react';
@@ -33,7 +33,7 @@ export default function ApplicantList() {
   }, []);
 
   const filteredApplicants = ApplicantCandidates.filter(
-    (ApplicantCandidate) => {
+    (ApplicantCandidate:ApplicantCandidate) => {
       const fullName =
         `${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`.toLowerCase();
       return fullName.includes(searchTerm.toLowerCase());

@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import * as Card from '@/components/ui/card';
 import { Configure } from './Setup';
 
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 /**
  * Mapping of transport states to status text
  */

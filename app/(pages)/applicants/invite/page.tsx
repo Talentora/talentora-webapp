@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import InvitePage from '@/components/Invite';
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 
 const Page = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
