@@ -16,6 +16,8 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
   const { company, loading: companyLoading } = useCompany();
   const [linkToken, setLinkToken] = useState<string | null>(null);
 
+  const hasMergeApiKey = company?.merge_api_key ? true : false;
+
   const createMergeLinkToken = async () => {
     if (!user || !company) {
       toast({
@@ -53,6 +55,10 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
       console.error('Error creating link token:', err);
     }
   };
+  
+  useEffect(() => {
+    onCompletion(hasMergeApiKey);
+  }, [hasMergeApiKey]);
 
   const onSuccess = useCallback(async (public_token: string) => {
     try {

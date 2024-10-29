@@ -4,16 +4,21 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  Ellipsis,
-  Settings,
-  Navigation,
+
   MessageSquareIcon,
   UserIcon,
   UsersIcon
 } from 'lucide-react';
-import ApplicantTable from '@/components/Applicants/ApplicantTable';
 import { Job, ApplicantCandidate } from '@/types/merge';
 import { Loader2 } from 'lucide-react';
+
+import ActiveJobsCard from './ActiveJobsCard';
+import RecentApplicantsCard from './RecentApplicantsCard';
+import SettingsCard from './SettingsCard';
+ 
+
+
+
 export default function RecruiterDashboard() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
@@ -45,9 +50,9 @@ export default function RecruiterDashboard() {
   }, []);
 
   return (
-    <div className="flex h-screen w-full">
+    <div className="flex w-full">
       <main className="flex-1 p-8">
-        <h1 className="text-2xl font-bold mb-6">Recruiting Dashboard</h1>
+        <h1 className="text-2xl font-bold">Recruiting Dashboard</h1>
 
         {isLoading && (
           <div className="flex justify-center items-center h-full">
@@ -135,68 +140,11 @@ export default function RecruiterDashboard() {
             </CardContent>
           </Card>
 
-          {/* active jobs */}
-          <Card className="col-span-2 bg-foreground p-5 border border-gray-300 rounded-lg shadow-sm">
-            <CardHeader>
-              <CardTitle>Active Job Titles</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {jobs.length === 0 ? (
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground mb-4">
-                    No jobs available.
-                  </p>
-                  <Link href="/jobs">
-                    <Button variant="outline">Create a Job</Button>
-                  </Link>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-4">
-                  {jobs.slice(0, 5).map((job, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-200 p-4 rounded shadow-sm relative group"
-                    >
-                      <p className="font-medium">
-                        {job.name} - {job.id}
-                      </p>
-                      <div className="w-1/4 px-2 py-1 rounded text-xs font-medium">
-                        {job.departments.slice(0, 3).map((dept, index) => (
-                          <span key={index}>
-                            {dept}
-                            {index < Math.min(job.departments.length, 3) - 1 &&
-                              ', '}
-                          </span>
-                        ))}
-                      </div>
-                      <Link href={`/jobs/${job.id}`}>
-                        <Navigation className="h-4 w-4 text-muted-foreground cursor-pointer absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </Link>
-                    </div>
-                  ))}
-                  {jobs.length > 5 && (
-                    <Link href="/jobs">
-                      <div className="bg-gray-200 p-4 rounded shadow-sm flex relative group">
-                        <Ellipsis className="text-muted-foreground cursor-pointer" />
-                        <span className="absolute bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2">
-                          Click here for all jobs
-                        </span>
-                      </div>
-                    </Link>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
 
-          <Card className="col-span-2 bg-foreground p-5 row-span-2 border border-gray-300 rounded-lg shadow-sm">
-            <CardHeader>
-              <CardTitle>Applicant Overview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ApplicantTable applicants={applicants} disablePortal={true} />
-            </CardContent>
-          </Card>
+          <ActiveJobsCard/>
+
+          <RecentApplicantsCard />
+
 
           {/* bot */}
           <Card className="p-5 border border-gray-300 bg-foreground">
@@ -218,23 +166,7 @@ export default function RecruiterDashboard() {
             </CardContent>
           </Card>
 
-          {/* settings */}
-          <Card className="p-5 bg-foreground border border-gray-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Settings</CardTitle>
-              <Settings className="h-4 w-4 text-muted-foreground cursor-pointer" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm mb-4">
-                Manage your account and preferences
-              </p>
-              <Link href="/settings">
-                <Button className="w-full" variant="outline">
-                  Open Settings
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+          <SettingsCard />
         </div>
       </main>
     </div>

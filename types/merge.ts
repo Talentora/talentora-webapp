@@ -110,6 +110,29 @@ type Office = {
   }> | null;
 };
 
+type Recruiter = {
+  id: string;
+  remote_id: string | null;
+  created_at: string;
+  modified_at: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  disabled: boolean;
+  remote_created_at: string;
+  access_role: string;
+  remote_was_deleted: boolean;
+  field_mappings: {
+    organization_defined_targets: Record<string, any>;
+    linked_account_defined_targets: Record<string, any>;
+  };
+  remote_data: Array<{
+    path: string;
+    data: any[];
+  }> | null;
+};
+
+
 
 
 // ApplicantCandidate type
@@ -118,4 +141,4 @@ export type ApplicantCandidate = Application & { candidate: Candidate, job: Job,
 export type Job = SimpleJob & { departments: Department[], offices: Office[] };
 
 // export types
-export type { Application, Candidate, JobInterviewStage };
+export type { Application, Candidate, JobInterviewStage, Recruiter };

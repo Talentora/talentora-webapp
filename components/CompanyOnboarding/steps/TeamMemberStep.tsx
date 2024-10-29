@@ -6,6 +6,8 @@ import { useToast } from '@/components/Toasts/use-toast';
 import { ToastAction } from '@/components/Toasts/toast';
 import { inviteUser } from '@/utils/supabase/queries';
 import { Loader2 } from 'lucide-react';
+import { Recruiter } from '@/types/merge';
+
 export const TeamMembersStep = ({
   onCompletion
 }: {
@@ -16,7 +18,7 @@ export const TeamMembersStep = ({
   const [selectedTeamMembers, setSelectedTeamMembers] = useState<
     { name: string; email: string }[]
   >([]);
-  const [recruiters, setRecruiters] = useState<any[]>([]);
+  const [recruiters, setRecruiters] = useState<Recruiter[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -83,14 +85,12 @@ export const TeamMembersStep = ({
       <p>Select team members to invite them to your workspace.</p>
 
       <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor="team-members">Team Members</Label>
         <div className="mt-2">
           {loading ? (
             <Loader2 className="animate-spin" />
           ) : (
             recruiters.map((recruiter) => {
-              const email =
-                recruiter.primary_email_address || `recruiter-${recruiter.id}`;
+              const email = recruiter.email || `recruiter-${recruiter.id}`;
               return (
                 <div key={recruiter.id} className="flex items-center mb-2 ">
                   <input
@@ -100,12 +100,15 @@ export const TeamMembersStep = ({
                       (member) => member.email === email
                     )}
                     onChange={() =>
-                      handleCheckboxChange({ name: recruiter.name, email })
+                      handleCheckboxChange({
+                        name: `${recruiter.first_name} ${recruiter.last_name}`,
+                        email
+                      })
                     }
                     className="mr-2"
                   />
                   <label htmlFor={`checkbox-${recruiter.id}`}>
-                    {recruiter.name}
+                    {`${recruiter.first_name} ${recruiter.last_name}`}
                   </label>
                 </div>
               );

@@ -25,6 +25,8 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
       return <MergeLink onCompletion={onCompletion} />;
     case 4:
       return <TeamMembersStep onCompletion={onCompletion} />;
+    case 5:
+      return <CompletionStep  />;
     default:
       return null;
   }
