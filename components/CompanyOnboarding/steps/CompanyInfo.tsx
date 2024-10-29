@@ -55,13 +55,15 @@ export const CompanyInfoStep: React.FC<{
       merge_api_key: null,
       billing_address: null, // Added to match expected type
       payment_method: null, // Added to match expected type
-      user: user
+      // user: user
     };
 
     try {
       let savedCompany;
-      if (hasCompany) {
-        savedCompany = await updateCompany(company?.id || '', companyData);
+      if (hasCompany && company?.id) {
+        console.log('updating company', company?.id);
+        console.log('companyData', companyData);
+        savedCompany = await updateCompany(company?.id, companyData);
       } else {
         savedCompany = await createCompany(companyData);
       }

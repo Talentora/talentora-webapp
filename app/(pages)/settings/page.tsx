@@ -13,8 +13,8 @@ import { useCompany } from '@/hooks/useCompany';
 
 export default async function Account() {
   return (
-    <section className="mb-32 bg-background">
-      <div className="max-w-6xl px-4 py-8 mx-auto sm:px-6 sm:pt-24 lg:px-8">
+    <section className="p-10">
+      <div className="max-w-6xl px-4 mx-auto sm:px-6 sm:pt-24 lg:px-8">
         <div className="sm:align-center sm:flex sm:flex-col">
           <h1 className="text-4xl font-extrabold text-primary sm:text-center sm:text-6xl">
             Settings
@@ -26,11 +26,14 @@ export default async function Account() {
       </div>
       <div className="p-4">
         <CustomerPortalForm />
-        <NameForm />
-        <EmailForm />
+        <div className="mt-8 flex flex-row gap-4">
+          <NameForm />
+          <EmailForm />
+        </div>
 
         <CompanyForm />
 
+        <div className="mt-8 flex flex-row gap-4 justify-evenly">
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4">Invite Teammates</h2>
           <Link href="/settings/invite">
@@ -42,6 +45,7 @@ export default async function Account() {
           <Link href="/settings/onboarding">
             <Button>Get your company setup</Button>
           </Link>
+          </div>
         </div>
       </div>
     </section>

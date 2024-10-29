@@ -51,7 +51,7 @@ export default function CustomerPortalForm() {
   };
 
   return (
-    <Card className="my-8 bg-card text-card-foreground">
+    <Card className="my-8 text-card-foreground">
       <CardHeader>
         <CardTitle className="text-primary">Your Plan</CardTitle>
         <CardDescription className="text-muted-foreground">
@@ -65,7 +65,7 @@ export default function CustomerPortalForm() {
           {subscription ? (
             `${subscriptionPrice}/${subscription?.prices?.interval}`
           ) : (
-            <Link href="/" className="text-link">
+            <Link href="/" className="text-primary">
               Choose your plan
             </Link>
           )}

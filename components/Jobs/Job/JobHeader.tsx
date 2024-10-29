@@ -40,7 +40,9 @@ export function JobHeader({ job }: JobHeaderProps) {
           <h3 className="text-lg font-semibold flex items-center mb-2">
             <ClipboardListIcon className="mr-2 h-5 w-5" /> Job Description
           </h3>
-          <CardDescription>{job.description || 'missing'}</CardDescription>
+          <CardDescription>
+            <div className="prose" dangerouslySetInnerHTML={{ __html: job.description || 'missing' }} />
+          </CardDescription>
         </section>
       </CardContent>
     </Card>

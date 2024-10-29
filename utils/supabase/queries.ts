@@ -6,6 +6,8 @@ type Subscription = Tables<'subscriptions'>;
 type Product = Tables<'products'>;
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
+import { useUser } from '@/hooks/useUser';
+import { useCompany } from '@/hooks/useCompany';
 
 // CRUD operations for the company table
 
@@ -98,16 +100,20 @@ export const updateCompany = async (
   companyData: any
 ): Promise<Company | null> => {
   const supabase = createClient();
+  // Filter out undefined/null values from companyData
+  const filteredCompanyData = Object.fromEntries(
+    Object.entries(companyData).filter(([_, value]) => value !== null && value !== undefined)
+  );
+
   const { data, error } = await supabase
     .from('companies')
-    .update({ ...companyData, id: undefined })
+    .update(filteredCompanyData)
     .eq('id', id)
     .select();
 
   if (error) {
     throw new Error(`Failed to update company: ${error.message}`);
   }
-
   return data?.[0] || null;
 };
 
