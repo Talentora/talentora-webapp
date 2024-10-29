@@ -9,7 +9,7 @@ import ProgressDots from '@/components/ui/progress-dots';
 export default function OnboardingPage() {
   const totalSteps = 5;
   const [step, setStep] = useState(1);
-  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set([1,4])); // Initialize step 1 as completed
+  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set([1,4])); // Initialize step 1 and 4 as completed
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, totalSteps));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
@@ -31,7 +31,6 @@ export default function OnboardingPage() {
     // Optionally, you can add logic here to persist completedSteps to localStorage or a backend
   }, [completedSteps]);
 
-  const progressValue = (step / totalSteps) * 100;
 
   return (
     <div className="container mx-auto py-10">

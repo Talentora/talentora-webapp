@@ -4,6 +4,7 @@ import { GreenhouseIntegrationStep } from './steps/GreenhouseIntegrationStep';
 import { TeamMembersStep } from './steps/TeamMemberStep';
 import { CompletionStep } from './steps/CompletionStep';
 import { StartingStep } from './steps/StartingStep';
+import MergeLink from './steps/MergeLink';
 
 interface OnboardingStepsProps {
   step: number;
@@ -15,13 +16,14 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({ step, onComple
     case 1:
       return <StartingStep onCompletion={onCompletion} />;
     case 2:
-      return <CompanyInfoStep onCompletion={onCompletion} />;
+      // return <CompanyInfoStep onCompletion={onCompletion} />;
+      return <MergeLink onCompletion={onCompletion}/>;
     case 3:
       return <GreenhouseIntegrationStep onCompletion={onCompletion} />;
     case 4:
       return <TeamMembersStep onCompletion={onCompletion} />;
     case 5:
-      return <CompletionStep />;
+      return <MergeLink />;
     default:
       return null;
   }

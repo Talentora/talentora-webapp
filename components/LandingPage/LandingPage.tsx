@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
-
+import Image1 from './Icons/Image1';
+import Image2 from './Icons/Image2';
+import Image3 from './Icons/Image3';
 
 import { Button } from "@/components/ui/button"
 
@@ -12,10 +14,10 @@ export default function LandingPage() {
 
       <main>
         <section className="container mx-auto px-4 py-16 text-center">
-<h1 className="text-4xl md:text-6xl font-bold mb-4 leading-relaxed">
-  <span className="text-black">Build your dream team</span> <br />
-  <span className="text-black">with</span> <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FB7B54] to-[#FF45C7]">talent</span><span className="font-light text-black">ora</span><span className="text-black">.</span>
-</h1>
+        <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-relaxed">
+          <span className="text-black">Build your dream team</span> <br />
+          <span className="text-black">with</span> <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#FB7B54] to-[#FF45C7]">talent</span><span className="font-light text-black">ora</span><span className="text-black">.</span>
+        </h1>
 
 
 
@@ -98,7 +100,7 @@ export default function LandingPage() {
             Request Live Demo
           </Button>
         </section>
-        <hr className="my-8 border-gray-300" style={{ marginLeft: '60px', marginRight: '60px' }} />
+        <hr className="my-8 border-gray-300 ml-60 mr-60" />
 
 
         <section className="container mx-auto px-4 py-16">
@@ -119,41 +121,31 @@ export default function LandingPage() {
   </p>
 
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 justify-center px-4 md:px-16">
-    {[
-      {
-        title: "AAIIIIIIIIII-Powered Matching",
-        description: "Our advanced algorithms find the best candidates based on skills, experience, and cultural fit.",
-        image: "/public/icons/AIPowered.svg?height=100&width=100"
-      },
-      {
-        title: "Lightning Fast Results",
-        description: "Reduce time-to-hire by up to 50% with our efficient AI-driven screening process.",
-        image: "/Wireframe.svg?height=100&width=100"
-      },
-      {
-        title: "Diverse Talent Pool",
-        description: "Access to a wide range of talent from various backgrounds.",
-        image: "/placeholder.svg?height=100&width=100"
-      }
-    ].map((feature, index) => (
-      <div 
-        key={index} 
-        className="p-6 text-center flex flex-col justify-between max-w-xs mx-auto" 
-        style={{ border: "1px solid #32BBCDB2", borderRadius: "30px", minHeight: "400px" }} // Increased height
-      >
-        <h3 className="text-xl font-semibold mb-4 text-black">{feature.title}</h3>
-        
-        <Image
-          src={feature.image}
-          alt={feature.title}
-          width={100}
-          height={100}
-          className="mx-auto mb-6"
-        />
-        
-        <p className="text-black mt-auto">{feature.description}</p>
-      </div>
-    ))}
+    <div className="p-6 text-center flex flex-col justify-between max-w-xs mx-auto border border-[#32BBCDB2] rounded-3xl h-[400px]">
+      <h3 className="text-xl font-semibold mb-4 text-black">AI-Powered Matching</h3>
+      
+      <Image1
+   
+      />
+      
+      <p className="text-black mt-auto">Our advanced algorithms find the best candidates based on skills, experience, and cultural fit.</p>
+    </div>
+    <div className="p-6 text-center flex flex-col justify-between max-w-xs mx-auto border border-[#32BBCDB2] rounded-3xl h-[400px]">
+      <h3 className="text-xl font-semibold mb-4 text-black">Lightning Fast Results</h3>
+      
+      <Image2
+      />
+      
+      <p className="text-black mt-auto">Reduce time-to-hire by up to 50% with our efficient AI-driven screening process.</p>
+    </div>
+    <div className="p-6 text-center flex flex-col justify-between max-w-xs mx-auto border border-[#32BBCDB2] rounded-3xl h-[400px]">
+      <h3 className="text-xl font-semibold mb-4 text-black">Diverse Talent Pool</h3>
+      
+      <Image3
+      />
+      
+      <p className="text-black mt-auto">Access to a wide range of talent from various backgrounds.</p>
+    </div>
   </div>
 </div>
 

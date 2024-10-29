@@ -5,9 +5,9 @@ import Image from "next/image"
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-[#F5F6FA]"> {/* Background applied */}
+    <div className="flex flex-col min-h-screen"> {/* Background applied */}
       <main className="flex-1 ">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-primary/5 to-[#F5F6FA]"> {/* Gradient blends to page background */}
+        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48"> {/* Gradient blends to page background */}
           <div className="container px-4 md:px-6 " >
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
@@ -23,7 +23,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-[#F5F6FA]"> {/* Explicit background color applied */}
+        <section className="w-full py-12 md:py-24 lg:py-32"> {/* Explicit background color applied */}
           <div className="container px-4 md:px-6">
             <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3">
               <Card>
@@ -57,7 +57,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-[#F5F6FA]"> {/* Consistent background color */}
+        <section className="w-full py-12 md:py-24 lg:py-32 "> {/* Consistent background color */}
           <div className="container px-4 md:px-6">
             <div className="flex justify-center mb-8"> 
               <hr className="w-full max-w-[calc(100% - 120px)] border-t border-gray-300" />
@@ -85,7 +85,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-[#F5F6FA]">
+        <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
             <div className="grid gap-10 lg:grid-cols-2">
               <div className="space-y-4">
