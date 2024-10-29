@@ -11,9 +11,7 @@ export default function SettingsCard() {
         <Settings className="h-4 w-4 text-muted-foreground cursor-pointer" />
       </CardHeader>
       <CardContent>
-        <p className="text-sm mb-4">
-          Manage your account and preferences
-        </p>
+        <p className="text-sm mb-4">Manage your account and preferences</p>
         <Link href="/settings">
           <Button className="w-full" variant="outline">
             Open Settings

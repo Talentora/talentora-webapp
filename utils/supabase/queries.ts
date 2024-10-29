@@ -1,7 +1,7 @@
 'use server';
 import { Tables } from '@/types/types_db';
 import { createClient } from '@/utils/supabase/server';
-type Recruiter = Tables<'recruiters'>
+type Recruiter = Tables<'recruiters'>;
 type Subscription = Tables<'subscriptions'>;
 type Product = Tables<'products'>;
 type Job = Tables<'jobs'>;
@@ -46,13 +46,13 @@ export const getCompany = async (
  * @throws Error if the creation operation fails.
  */
 export const createCompany = async (
-  companyData:any,
+  companyData: any
   // userId: string
 ): Promise<Company> => {
   const supabase = createClient();
 
   const { user, ...restCompanyData } = companyData;
-   
+
   // Insert the company
   const { data: createdCompany, error: companyError } = await supabase
     .from('companies')
@@ -94,7 +94,7 @@ export const createCompany = async (
  * @throws Error if the update operation fails.
  */
 export const updateCompany = async (
-  id: number,
+  id: string,
   companyData: Company
 ): Promise<Company | null> => {
   const supabase = createClient();
@@ -164,7 +164,6 @@ export const getProducts = async () => {
   return products;
 };
 
-
 export async function inviteUser(name: string | null, email: string) {
   const supabase = createClient();
 
@@ -223,14 +222,13 @@ export const getRecruiter = async (
   }
 };
 
-
 /**
  * Fetches the Greenhouse API key for the current user's company.
- * 
+ *
  * @returns The Greenhouse API key or null if not found.
  * @throws Error if there's an issue fetching the data.
  */
-export const getGreenhouseApiKey = async (): Promise<string | null> => {
+export const getMergeApiKey = async (): Promise<string | null> => {
   try {
     const user = await getUser();
     if (!user) {
@@ -243,16 +241,15 @@ export const getGreenhouseApiKey = async (): Promise<string | null> => {
     }
     if (!recruiter.company_id) {
       throw new Error('Recruiter company ID not found');
-    }
-    else {
+    } else {
       const company = await getCompany(recruiter.company_id);
       if (!company) {
         throw new Error('Company not found');
       }
-      return company.greenhouse_api_key;
+      return company.merge_api_key;
     }
   } catch (error) {
     console.error('Error fetching Greenhouse API key:', error);
     throw error;
   }
-}
+};

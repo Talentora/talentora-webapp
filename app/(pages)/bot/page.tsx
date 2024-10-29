@@ -11,7 +11,9 @@ export default async function Page({ searchParams }: PageProps) {
   let job: Job | null = null;
 
   if (jobId) {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/jobs/${jobId}`);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/greenhouse/harvest/jobs/${jobId}`
+    );
     if (response.ok) {
       job = await response.json();
     }

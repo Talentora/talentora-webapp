@@ -1,10 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { ApplicantCandidate } from "@/types/greenhouse"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
+import { ApplicantCandidate } from '@/types/greenhouse';
 import ApplicantPortal from '@/components/Applicants/Applicant/ApplicantPortal';
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { EllipsisIcon } from 'lucide-react';
 
 interface ApplicantTableProps {
@@ -12,8 +19,12 @@ interface ApplicantTableProps {
   disablePortal?: boolean;
 }
 
-export default function ApplicantTable({ applicants, disablePortal = false }: ApplicantTableProps) {
-  const [selectedApplicant, setSelectedApplicant] = useState<ApplicantCandidate | null>(null);
+export default function ApplicantTable({
+  applicants,
+  disablePortal = false
+}: ApplicantTableProps) {
+  const [selectedApplicant, setSelectedApplicant] =
+    useState<ApplicantCandidate | null>(null);
   const [isPortalOpen, setIsPortalOpen] = useState(false);
 
   const handleSelectApplicant = (applicant: ApplicantCandidate) => {
@@ -22,8 +33,6 @@ export default function ApplicantTable({ applicants, disablePortal = false }: Ap
       setIsPortalOpen(true);
     }
   };
-
- 
 
   return (
     <div className="border border-gray-200 rounded-lg">
@@ -41,19 +50,23 @@ export default function ApplicantTable({ applicants, disablePortal = false }: Ap
         </TableHeader>
         <TableBody>
           {applicants.map((ApplicantCandidate) => (
-            <TableRow 
-              key={ApplicantCandidate.id} 
-              onClick={() => handleSelectApplicant(ApplicantCandidate)} 
+            <TableRow
+              key={ApplicantCandidate.id}
+              onClick={() => handleSelectApplicant(ApplicantCandidate)}
               className="cursor-pointer bg-foreground"
             >
               <TableCell>{`${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`}</TableCell>
-              <TableCell>{ApplicantCandidate.jobs[0]?.name || 'No job specified'}</TableCell>
-              <TableCell>{ApplicantCandidate.candidate.email_addresses[0]?.value || 'No email address'}</TableCell>
+              <TableCell>
+                {ApplicantCandidate.jobs[0]?.name || 'No job specified'}
+              </TableCell>
+              <TableCell>
+                {ApplicantCandidate.candidate.email_addresses[0]?.value ||
+                  'No email address'}
+              </TableCell>
               <TableCell>8</TableCell>
               <TableCell>10</TableCell>
               <TableCell>Pending</TableCell>
               <TableCell className="underline">View Report</TableCell>
-
             </TableRow>
           ))}
         </TableBody>
@@ -62,9 +75,7 @@ export default function ApplicantTable({ applicants, disablePortal = false }: Ap
         <Dialog open={isPortalOpen} onOpenChange={setIsPortalOpen}>
           <DialogContent className="max-w-6xl h-[80vh] overflow-y-auto">
             {selectedApplicant && (
-              <ApplicantPortal
-                ApplicantCandidate={selectedApplicant}
-              />
+              <ApplicantPortal ApplicantCandidate={selectedApplicant} />
             )}
           </DialogContent>
         </Dialog>

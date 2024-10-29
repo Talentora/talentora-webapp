@@ -1,17 +1,27 @@
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Download, ThumbsDown, ThumbsUp } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { ApplicantCandidate } from "@/types/greenhouse"
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Download, ThumbsDown, ThumbsUp } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog';
+import { ApplicantCandidate } from '@/types/greenhouse';
 
-export default function ApplicantActions(
-    { ApplicantCandidate }: { ApplicantCandidate: ApplicantCandidate }
-) {
+export default function ApplicantActions({
+  ApplicantCandidate
+}: {
+  ApplicantCandidate: ApplicantCandidate;
+}) {
+  const resumeUrl =
+    ApplicantCandidate.attachments.find(
+      (attachment) => attachment.type === 'resume'
+    )?.url || 'No resume available';
 
-    const resumeUrl = ApplicantCandidate.attachments.find(attachment => attachment.type === "resume")?.url || "No resume available";
-
-    return (
+  return (
     <Card>
       <CardHeader>
         <CardTitle>Actions</CardTitle>
@@ -43,13 +53,13 @@ export default function ApplicantActions(
               <DialogTitle>Resume</DialogTitle>
             </DialogHeader>
             {resumeUrl ? (
-                <iframe src={resumeUrl} title="Resume" className="w-full h-96" />
+              <iframe src={resumeUrl} title="Resume" className="w-full h-96" />
             ) : (
-                <div>No resume available</div>
+              <div>No resume available</div>
             )}
           </DialogContent>
         </Dialog>
       </CardContent>
     </Card>
-  )
+  );
 }

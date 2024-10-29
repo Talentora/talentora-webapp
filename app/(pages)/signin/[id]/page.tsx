@@ -1,4 +1,3 @@
-
 import { Metadata } from 'next';
 import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';
@@ -30,15 +29,20 @@ import { createClient } from '@/utils/supabase/server';
 import Logo from '@/components/ui/icons/Logo';
 // import { useUser } from '@/hooks/useUser';
 
-export default async function SignInPage({ params, searchParams }: { params: { id: string }, searchParams: { role?: string, disable_button?: string } }) {
+export default async function SignInPage({
+  params,
+  searchParams
+}: {
+  params: { id: string };
+  searchParams: { role?: string; disable_button?: string };
+}) {
   const { allowOauth, allowEmail, allowPassword } = getAuthTypes();
   const viewTypes = getViewTypes();
   const redirectMethod = getRedirectMethod();
   const supabase = createClient();
   const {
     data: { user }
-  } = await supabase.auth.getUser();    
-
+  } = await supabase.auth.getUser();
 
   // const { user } = useUser();
 
@@ -49,11 +53,13 @@ export default async function SignInPage({ params, searchParams }: { params: { i
   if (typeof params.id === 'string' && viewTypes.includes(params.id)) {
     viewProp = params.id;
   } else {
-    const preferredSignInView = cookies().get('preferredSignInView')?.value || null;
+    const preferredSignInView =
+      cookies().get('preferredSignInView')?.value || null;
     viewProp = getDefaultSignInView(preferredSignInView);
-    return redirect(`/signin/${viewProp}${role ? `?role=${role}` : '?role=applicant'}`);
+    return redirect(
+      `/signin/${viewProp}${role ? `?role=${role}` : '?role=applicant'}`
+    );
   }
-
 
   if (user && viewProp !== 'update_password') {
     return redirect('/');
@@ -74,10 +80,10 @@ export default async function SignInPage({ params, searchParams }: { params: { i
                 {viewProp === 'forgot_password'
                   ? 'Reset Password'
                   : viewProp === 'update_password'
-                  ? 'Update Password'
-                  : viewProp === 'signup'
-                  ? 'Sign Up'
-                  : 'Recruiter Portal'}
+                    ? 'Update Password'
+                    : viewProp === 'signup'
+                      ? 'Sign Up'
+                      : 'Recruiter Portal'}
               </CardTitle>
             </CardHeader>
             <CardContent className="text-black">
@@ -112,12 +118,14 @@ export default async function SignInPage({ params, searchParams }: { params: { i
                   role={role || 'applicant'}
                 />
               )}
-              {viewProp !== 'update_password' && viewProp !== 'signup' && allowOauth && (
-                <>
-                  <Separator text="Third-party sign-in" />
-                  <OauthSignIn />
-                </>
-              )}
+              {viewProp !== 'update_password' &&
+                viewProp !== 'signup' &&
+                allowOauth && (
+                  <>
+                    <Separator text="Third-party sign-in" />
+                    <OauthSignIn />
+                  </>
+                )}
             </CardContent>
           </Card>
         </div>

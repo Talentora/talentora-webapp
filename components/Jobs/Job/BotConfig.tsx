@@ -3,7 +3,6 @@ import { Settings } from 'lucide-react';
 import { Job } from '@/types/greenhouse';
 import Link from 'next/link';
 
-
 interface BotConfigProps {
   job: Job;
 }

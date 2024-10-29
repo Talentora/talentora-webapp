@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import { NextResponse } from 'next/server';
 import JobPage from '@/components/Jobs/Job';
 import { useJob } from '@/hooks/useJob'; // Import the custom hook
@@ -12,9 +12,11 @@ export default function Page({ params }: JobPageProps) {
   const { job, applicants, loading, error } = useJob(jobId); // Use the custom hook
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">
-      <Loader2 className="animate-spin" />
-    </div>
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
   }
 
   if (error) {
@@ -25,9 +27,5 @@ export default function Page({ params }: JobPageProps) {
     );
   }
 
-  return (
-    <div>
-      {job && <JobPage job={job} applicants={applicants} />}
-    </div>
-  );
+  return <div>{job && <JobPage job={job} applicants={applicants} />}</div>;
 }

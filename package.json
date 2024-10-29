@@ -113,5 +113,6 @@
     "ts-jest": "^29.2.5",
     "typescript": "^5.6.2",
     "webpack": "^5.95.0"
-  }
+  },
+  "proxy": "https://api.merge.dev"
 }

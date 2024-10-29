@@ -25,13 +25,15 @@ export function JobHeader({ job }: JobHeaderProps) {
         <div className="flex flex-row justify-between mb-4">
           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
             <span className="flex items-center">
-              <BriefcaseIcon className="mr-1 h-4 w-4" /> {job.departments.join(', ')}
+              <BriefcaseIcon className="mr-1 h-4 w-4" />{' '}
+              {job.departments.join(', ')}
             </span>
             <span className="flex items-center">
               <MapPinIcon className="mr-1 h-4 w-4" /> {job.offices.join(', ')}
             </span>
             <span className="flex items-center">
-              <CircleDollarSign className="mr-1 h-4 w-4" /> {job.custom_fields.employment_type}
+              <CircleDollarSign className="mr-1 h-4 w-4" />{' '}
+              {job.custom_fields.employment_type}
             </span>
           </div>
         </div>

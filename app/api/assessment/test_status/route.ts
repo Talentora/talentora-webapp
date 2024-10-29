@@ -4,6 +4,6 @@ export async function GET() {
   return NextResponse.json({
     test_id: 1,
     status: 'completed',
-    score: '85%',
+    score: '85%'
   });
 }

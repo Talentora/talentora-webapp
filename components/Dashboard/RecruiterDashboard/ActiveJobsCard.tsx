@@ -10,7 +10,10 @@ export default function ActiveJobsCard({ jobs }: { jobs: Job[] }) {
       <CardHeader>
         <CardTitle>Active Job Titles</CardTitle>
         <Link href="/jobs">
-          <Button className="bg-[#5650F0] text-white hover:bg-[#4a45d1] flex items-center absolute top-4 right-4" variant="outline">
+          <Button
+            className="bg-[#5650F0] text-white hover:bg-[#4a45d1] flex items-center absolute top-4 right-4"
+            variant="outline"
+          >
             <Plus className="mr-2 h-4 w-4" />
             Create a Job
           </Button>
@@ -19,7 +22,9 @@ export default function ActiveJobsCard({ jobs }: { jobs: Job[] }) {
       <CardContent>
         {jobs.length === 0 ? (
           <div className="text-center">
-            <p className="text-sm text-muted-foreground mb-4">No jobs available.</p>
+            <p className="text-sm text-muted-foreground mb-4">
+              No jobs available.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4">
@@ -65,7 +70,9 @@ function MoreJobsLink({ count }: { count: number }) {
     <Link href="/jobs" className="col-span-2">
       <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center">
         <Navigation className="h-4 w-4 mr-2" />
-        <span className="text-sm font-medium">View {count} more job{count !== 1 ? 's' : ''}</span>
+        <span className="text-sm font-medium">
+          View {count} more job{count !== 1 ? 's' : ''}
+        </span>
       </div>
     </Link>
   );

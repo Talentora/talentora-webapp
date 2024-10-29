@@ -11,19 +11,20 @@ interface OnboardingStepsProps {
   onCompletion: (isComplete: boolean) => void;
 }
 
-export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({ step, onCompletion }) => {
+export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
+  step,
+  onCompletion
+}) => {
   switch (step) {
     case 1:
       return <StartingStep onCompletion={onCompletion} />;
     case 2:
-      // return <CompanyInfoStep onCompletion={onCompletion} />;
-      return <MergeLink onCompletion={onCompletion}/>;
+      return <CompanyInfoStep onCompletion={onCompletion} />;
     case 3:
-      return <GreenhouseIntegrationStep onCompletion={onCompletion} />;
+      // return <GreenhouseIntegrationStep onCompletion={onCompletion} />;
+      return <MergeLink onCompletion={onCompletion} />;
     case 4:
       return <TeamMembersStep onCompletion={onCompletion} />;
-    case 5:
-      return <MergeLink />;
     default:
       return null;
   }

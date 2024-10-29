@@ -1,7 +1,7 @@
 'use client';
 import { JobHeader } from './JobHeader';
 import ApplicantStatistics from './ApplicantStatistics';
-import {RecentApplicants} from './RecentApplicants';
+import { RecentApplicants } from './RecentApplicants';
 import { BotConfig } from './BotConfig';
 import { Job } from '@/types/greenhouse';
 

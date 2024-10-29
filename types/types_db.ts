@@ -130,10 +130,10 @@ export type Database = {
           billing_address: Json | null
           description: string | null
           email_extension: string | null
-          greenhouse_api_key: string | null
           id: string
           industry: string | null
           location: string | null
+          merge_api_key: string | null
           name: string
           payment_method: Json | null
           subscription_id: string | null
@@ -143,10 +143,10 @@ export type Database = {
           billing_address?: Json | null
           description?: string | null
           email_extension?: string | null
-          greenhouse_api_key?: string | null
           id?: string
           industry?: string | null
           location?: string | null
+          merge_api_key?: string | null
           name: string
           payment_method?: Json | null
           subscription_id?: string | null
@@ -156,10 +156,10 @@ export type Database = {
           billing_address?: Json | null
           description?: string | null
           email_extension?: string | null
-          greenhouse_api_key?: string | null
           id?: string
           industry?: string | null
           location?: string | null
+          merge_api_key?: string | null
           name?: string
           payment_method?: Json | null
           subscription_id?: string | null

@@ -28,8 +28,6 @@ type SubscriptionWithPriceAndProduct = Subscription & {
     | null;
 };
 
-
-
 export default function CustomerPortalForm() {
   const router = useRouter();
   const currentPath = usePathname();

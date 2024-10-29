@@ -9,13 +9,7 @@ import { User } from '@supabase/supabase-js';
 import cn from 'classnames';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Switch } from "@/components/ui/switch";
-
-
-
-
-
-
+import { Switch } from '@/components/ui/switch';
 
 type Subscription = Tables<'subscriptions'>;
 type Product = Tables<'products'>;
@@ -89,14 +83,16 @@ export default function Pricing({ user, products, subscription }: Props) {
 
   if (!products.length) {
     return (
-      <section >
+      <section>
         <div className="max-w-6xl px-4 py-8 mx-auto sm:py-24 sm:px-6 lg:px-8">
           <div className="sm:flex sm:flex-col sm:align-center">
             <h2 className="text-4xl font-extrabold text-primary sm:text-center sm:text-6xl">
               Pricing Unavailable
             </h2>
             <p className="mt-6 text-xl text-secondary sm:text-center sm:text-2xl max-w-2xl mx-auto">
-            We&apos;re sorry, but our pricing information is not available at the moment. Please check back later for updates on our subscription plans.
+              We&apos;re sorry, but our pricing information is not available at
+              the moment. Please check back later for updates on our
+              subscription plans.
             </p>
           </div>
         </div>
@@ -110,7 +106,7 @@ export default function Pricing({ user, products, subscription }: Props) {
             <h1 className="text-4xl font-extrabold text-primary sm:text-center sm:text-6xl">
               Pricing Plans
             </h1>
-           
+
             <div className="relative self-center mt-6 rounded-lg p-0.5 flex sm:mt-8">
               {intervals.includes('month') && (
                 <button

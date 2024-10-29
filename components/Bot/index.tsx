@@ -39,7 +39,7 @@ export default function Bot({ job }: BotProps) {
     if (!showSplash || voiceClientRef.current) {
       return;
     }
-    console.log("Creating client")
+    console.log('Creating client');
 
     // Create a new DailyVoiceClient instance
     const voiceClient = new DailyVoiceClient({

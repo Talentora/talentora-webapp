@@ -15,7 +15,6 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
     setVisible(!visible);
   };
 
-
   return (
     <Card>
       <CardHeader>

@@ -1,17 +1,15 @@
-"use client";
+'use client';
 
 import RecruiterDashboard from '@/components/Dashboard/RecruiterDashboard';
 import ApplicantDashboard from '@/components/Dashboard/ApplicantDashboard';
 import { useUser } from '@/hooks/useUser';
 
 const DashboardPage = () => {
-  const {user} = useUser();
+  const { user } = useUser();
   const role = user?.user_metadata?.role;
-
 
   return (
     <div>
-
       {role === 'recruiter' && (
         <div className="flex flex-row">
           <div>
@@ -20,9 +18,7 @@ const DashboardPage = () => {
         </div>
       )}
 
-      {role === 'applicant' && (
-        <ApplicantDashboard />
-      )}
+      {role === 'applicant' && <ApplicantDashboard />}
     </div>
   );
 };

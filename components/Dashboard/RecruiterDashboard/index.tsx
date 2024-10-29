@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import {
   UserIcon,
   UsersIcon
 } from 'lucide-react';
-import ApplicantTable from '@/components/Applicants/ApplicantTable'
+import ApplicantTable from '@/components/Applicants/ApplicantTable';
 import { Job, ApplicantCandidate } from '@/types/greenhouse';
 import { Loader2 } from 'lucide-react';
 export default function RecruiterDashboard() {
@@ -21,10 +21,14 @@ export default function RecruiterDashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(`${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`)
-      const jobsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`);
-      const applicationsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/applications`);
-      
+      console.log(`${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`);
+      const jobsResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`
+      );
+      const applicationsResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_SITE_URL}/api/applications`
+      );
+
       if (jobsResponse.ok) {
         const jobsData = await jobsResponse.json();
         setJobs(jobsData);
@@ -39,8 +43,6 @@ export default function RecruiterDashboard() {
 
     fetchData();
   }, []);
-
-
 
   return (
     <div className="flex h-screen w-full">
@@ -69,27 +71,44 @@ export default function RecruiterDashboard() {
                 const currentMonth = new Date().getMonth();
                 const currentYear = new Date().getFullYear();
                 const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-                const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+                const lastMonthYear =
+                  currentMonth === 0 ? currentYear - 1 : currentYear;
 
-                const currentMonthApplicants = applicants.filter(applicant => {
+                const currentMonthApplicants = applicants.filter(
+                  (applicant) => {
+                    const appliedDate = new Date(applicant.applied_at);
+                    return (
+                      appliedDate.getMonth() === currentMonth &&
+                      appliedDate.getFullYear() === currentYear
+                    );
+                  }
+                ).length;
+
+                const lastMonthApplicants = applicants.filter((applicant) => {
                   const appliedDate = new Date(applicant.applied_at);
-                  return appliedDate.getMonth() === currentMonth && appliedDate.getFullYear() === currentYear;
+                  return (
+                    appliedDate.getMonth() === lastMonth &&
+                    appliedDate.getFullYear() === lastMonthYear
+                  );
                 }).length;
 
-                const lastMonthApplicants = applicants.filter(applicant => {
-                  const appliedDate = new Date(applicant.applied_at);
-                  return appliedDate.getMonth() === lastMonth && appliedDate.getFullYear() === lastMonthYear;
-                }).length;
-
-                const percentageChange = lastMonthApplicants === 0 
-                  ? (currentMonthApplicants > 0 ? 100 : 0) 
-                  : ((currentMonthApplicants - lastMonthApplicants) / lastMonthApplicants) * 100;
+                const percentageChange =
+                  lastMonthApplicants === 0
+                    ? currentMonthApplicants > 0
+                      ? 100
+                      : 0
+                    : ((currentMonthApplicants - lastMonthApplicants) /
+                        lastMonthApplicants) *
+                      100;
 
                 return (
                   <>
-                    <div className="text-2xl font-bold">{currentMonthApplicants}</div>
+                    <div className="text-2xl font-bold">
+                      {currentMonthApplicants}
+                    </div>
                     <p className="text-xs text-muted-foreground">
-                      {percentageChange >= 0 ? '+' : ''}{percentageChange.toFixed(2)}% from last month
+                      {percentageChange >= 0 ? '+' : ''}
+                      {percentageChange.toFixed(2)}% from last month
                     </p>
                   </>
                 );
@@ -101,7 +120,7 @@ export default function RecruiterDashboard() {
           <Card className="border bg-foreground p-5 border-gray-300 rounded-lg shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                AI Interviews Completed 
+                AI Interviews Completed
                 <span className="text-xs text-red-500 ml-2">(Update)</span>
               </CardTitle>
               <Link href="/interviews">
@@ -145,7 +164,8 @@ export default function RecruiterDashboard() {
                         {job.departments.slice(0, 3).map((dept, index) => (
                           <span key={index}>
                             {dept}
-                            {index < Math.min(job.departments.length, 3) - 1 && ', '}
+                            {index < Math.min(job.departments.length, 3) - 1 &&
+                              ', '}
                           </span>
                         ))}
                       </div>

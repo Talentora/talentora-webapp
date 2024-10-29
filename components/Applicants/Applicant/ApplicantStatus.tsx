@@ -1,13 +1,15 @@
-import { ApplicantCandidate } from "@/types/greenhouse"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
+import { ApplicantCandidate } from '@/types/greenhouse';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 
 interface ApplicantCandidateStatusProps {
   ApplicantCandidate: ApplicantCandidate;
 }
 
-export default function ApplicantCandidateStatus({ ApplicantCandidate }: ApplicantCandidateStatusProps) {
-  const progress = 75 // This should be calculated based on the ApplicantCandidate status
+export default function ApplicantCandidateStatus({
+  ApplicantCandidate
+}: ApplicantCandidateStatusProps) {
+  const progress = 75; // This should be calculated based on the ApplicantCandidate status
 
   return (
     <Card>
@@ -30,5 +32,5 @@ export default function ApplicantCandidateStatus({ ApplicantCandidate }: Applica
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

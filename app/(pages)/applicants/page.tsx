@@ -1,7 +1,7 @@
-import ApplicantList from "@/components/Applicants/ApplicantList";
+import ApplicantList from '@/components/Applicants/ApplicantList';
 
 const Page = () => {
-    return <ApplicantList />;
-}
+  return <ApplicantList />;
+};
 
 export default Page;

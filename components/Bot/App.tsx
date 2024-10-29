@@ -6,7 +6,7 @@ import { LLMHelper, VoiceError, VoiceEvent, VoiceMessage } from 'realtime-ai';
 import {
   useVoiceClient,
   useVoiceClientEvent,
-  useVoiceClientTransportState,
+  useVoiceClientTransportState
 } from 'realtime-ai-react';
 
 import { useRecording } from '@daily-co/daily-react';
@@ -114,7 +114,7 @@ export default function App({ job }: AppProps) {
     //     messages: [
     //       {
     //         role: 'system',
-    //         content: `You are an AI interviewer for a ${job.title} role. 
+    //         content: `You are an AI interviewer for a ${job.title} role.
     //       The job requirements are: ${job.requirements}
     //       The qualifications needed are: ${job.qualifications}
     //       Here's a brief description of the role: ${job.description}. Conduct a real interview.
@@ -186,19 +186,19 @@ export default function App({ job }: AppProps) {
 
   // Render session view if connected
   if (appState === 'connected') {
-  return (
-    // <Session
-    //   state={transportState}
-    //   onLeave={() => leave()}
-    //   startAudioOff={startAudioOff}
-    // />
-    <VoiceInterviewSession
-      state={transportState}
-      onLeave={() => leave()}
-      startAudioOff={startAudioOff}
-      job={job}
-    />
-  );
+    return (
+      // <Session
+      //   state={transportState}
+      //   onLeave={() => leave()}
+      //   startAudioOff={startAudioOff}
+      // />
+      <VoiceInterviewSession
+        state={transportState}
+        onLeave={() => leave()}
+        startAudioOff={startAudioOff}
+        job={job}
+      />
+    );
   }
 
   // Render setup view by default
@@ -222,14 +222,7 @@ export default function App({ job }: AppProps) {
           />
         </Card.CardContent>
         <Card.CardFooter>
-          <Button
-            key="start"
-            onClick={() => start()}
-            disabled={
-              !isReady 
-            
-            }
-          >
+          <Button key="start" onClick={() => start()} disabled={!isReady}>
             {!isReady && <Loader2 className="animate-spin" />}
             {status_text[transportState as keyof typeof status_text]}
           </Button>

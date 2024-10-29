@@ -24,11 +24,13 @@ export function InviteUserComponent() {
   const [isLoading, setIsLoading] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [currentUserDomain, setCurrentUserDomain] = useState('');
-  
+
   useEffect(() => {
     const fetchUserEmail = async () => {
       const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
       if (user && user.email) {
         const domain = user.email.split('@')[1];
         setCurrentUserDomain(domain);

@@ -14,16 +14,13 @@ import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { getUser,getRecruiter } from '@/utils/supabase/queries';
+import { getUser, getRecruiter } from '@/utils/supabase/queries';
 import { useUser } from '@/hooks/useUser';
-
-
 
 export default function NameForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useUser();
-  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true);

@@ -25,15 +25,14 @@ export const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
           </Button>
         )}
         {step < totalSteps && (
-          <Button 
-            onClick={nextStep} 
+          <Button
+            onClick={nextStep}
             className={step > 1 ? 'ml-4' : 'ml-auto'}
             disabled={!isCurrentStepComplete} // Disable if current step is not complete
           >
             {step === totalSteps - 1 ? 'Finish' : 'Next'}
           </Button>
         )}
-
       </div>
       <div className="flex justify-center">
         <ProgressDots step={step} totalSteps={totalSteps} />

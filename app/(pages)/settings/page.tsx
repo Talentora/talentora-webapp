@@ -1,6 +1,6 @@
 import { Tables } from '@/types/types_db';
-type Recruiter = Tables<'recruiters'>
-type Company = Tables<'companies'>
+type Recruiter = Tables<'recruiters'>;
+type Company = Tables<'companies'>;
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import CustomerPortalForm from '@/components/AccountForms/CustomerPortalForm';
@@ -11,13 +11,7 @@ import { redirect } from 'next/navigation';
 import { useRecruiter } from '@/hooks/useRecruiter';
 import { useCompany } from '@/hooks/useCompany';
 
-
 export default async function Account() {
-
-
-
-
-
   return (
     <section className="mb-32 bg-background">
       <div className="max-w-6xl px-4 py-8 mx-auto sm:px-6 sm:pt-24 lg:px-8">
@@ -34,11 +28,9 @@ export default async function Account() {
         <CustomerPortalForm />
         <NameForm />
         <EmailForm />
-        
-        
-          <CompanyForm  />
-      
-        
+
+        <CompanyForm />
+
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4">Invite Teammates</h2>
           <Link href="/settings/invite">

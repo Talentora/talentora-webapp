@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { Application, Candidate } from '@/types/greenhouse';
-import { getGreenhouseApiKey } from '@/utils/supabase/queries';
+import { getMergeApiKey } from '@/utils/supabase/queries';
 
 export async function GET(req: Request) {
-  const apiKey = await getGreenhouseApiKey();
+  const apiKey = await getMergeApiKey();
   const baseURL = `https://harvest.greenhouse.io/v1`;
 
   if (!apiKey) {
@@ -17,21 +17,27 @@ export async function GET(req: Request) {
     let applicationsResponse;
 
     if (jobId) {
-      applicationsResponse = await fetch(`${baseURL}/applications?job_id=${jobId}`, {
-        headers: {
-          Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
-        },
-      });
+      applicationsResponse = await fetch(
+        `${baseURL}/applications?job_id=${jobId}`,
+        {
+          headers: {
+            Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`
+          }
+        }
+      );
     } else {
       applicationsResponse = await fetch(`${baseURL}/applications`, {
         headers: {
-          Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
-        },
+          Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`
+        }
       });
     }
 
     if (!applicationsResponse.ok) {
-      return NextResponse.json({ error: 'Failed to fetch applications' }, { status: applicationsResponse.status });
+      return NextResponse.json(
+        { error: 'Failed to fetch applications' },
+        { status: applicationsResponse.status }
+      );
     }
 
     const applications: Application[] = await applicationsResponse.json();
@@ -39,14 +45,19 @@ export async function GET(req: Request) {
     // Fetch candidate data for each application
     const applicationsWithCandidates = await Promise.all(
       applications.map(async (application) => {
-        const candidateResponse = await fetch(`${baseURL}/candidates/${application.candidate_id}`, {
-          headers: {
-            Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
-          },
-        });
+        const candidateResponse = await fetch(
+          `${baseURL}/candidates/${application.candidate_id}`,
+          {
+            headers: {
+              Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`
+            }
+          }
+        );
 
         if (!candidateResponse.ok) {
-          console.error(`Failed to fetch candidate data for application ${application.id}`);
+          console.error(
+            `Failed to fetch candidate data for application ${application.id}`
+          );
           return application;
         }
 
@@ -57,6 +68,9 @@ export async function GET(req: Request) {
 
     return NextResponse.json(applicationsWithCandidates, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: 'An error occurred while fetching applications' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'An error occurred while fetching applications' },
+      { status: 500 }
+    );
   }
 }
