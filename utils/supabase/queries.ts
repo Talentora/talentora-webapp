@@ -103,7 +103,9 @@ export const updateCompany = async (
   const supabase = createClient();
   // Filter out undefined/null values from companyData
   const filteredCompanyData = Object.fromEntries(
-    Object.entries(companyData).filter(([_, value]) => value !== null && value !== undefined)
+    Object.entries(companyData).filter(
+      ([_, value]) => value !== null && value !== undefined
+    )
   );
 
   const { data, error } = await supabase

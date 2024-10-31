@@ -12,7 +12,10 @@ export async function GET(
   const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
 
   if (!apiKey || !accountToken) {
-    return NextResponse.json({ error: 'API credentials not found' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'API credentials not found' },
+      { status: 500 }
+    );
   }
 
   if (!applicationId) {
@@ -28,8 +31,8 @@ export async function GET(
       `${baseURL}/applications/${applicationId}`,
       {
         headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
+          Accept: 'application/json',
+          Authorization: `Bearer ${apiKey}`,
           'X-Account-Token': accountToken
         }
       }
@@ -42,18 +45,18 @@ export async function GET(
       );
     }
 
-    const application:Application = await applicationResponse.json();
+    const application: Application = await applicationResponse.json();
     const candidateId = application.candidate;
-    console.log("Application:",application);
-    console.log("Candidate ID:",candidateId);
+    console.log('Application:', application);
+    console.log('Candidate ID:', candidateId);
 
     // Fetch candidate details
     const candidateResponse = await fetch(
       `${baseURL}/candidates/${candidateId}`,
       {
         headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
+          Accept: 'application/json',
+          Authorization: `Bearer ${apiKey}`,
           'X-Account-Token': accountToken
         }
       }
@@ -67,8 +70,8 @@ export async function GET(
       return NextResponse.json(application, { status: 200 });
     }
 
-    const candidate:Candidate = await candidateResponse.json();
-    console.log("Candidate:",candidate);
+    const candidate: Candidate = await candidateResponse.json();
+    console.log('Candidate:', candidate);
     const applicationWithCandidate = { ...application, candidate };
 
     return NextResponse.json(applicationWithCandidate, { status: 200 });

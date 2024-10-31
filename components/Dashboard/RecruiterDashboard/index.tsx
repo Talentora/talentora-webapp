@@ -3,21 +3,13 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-
-  MessageSquareIcon,
-  UserIcon,
-  UsersIcon
-} from 'lucide-react';
+import { MessageSquareIcon, UserIcon, UsersIcon } from 'lucide-react';
 import { Job, ApplicantCandidate } from '@/types/merge';
 import { Loader2 } from 'lucide-react';
 
 import ActiveJobsCard from './ActiveJobsCard';
 import RecentApplicantsCard from './RecentApplicantsCard';
 import SettingsCard from './SettingsCard';
- 
-
-
 
 export default function RecruiterDashboard() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -140,11 +132,9 @@ export default function RecruiterDashboard() {
             </CardContent>
           </Card>
 
-
-          <ActiveJobsCard/>
+          <ActiveJobsCard />
 
           <RecentApplicantsCard />
-
 
           {/* bot */}
           <Card className="p-5 border border-gray-300 bg-foreground">

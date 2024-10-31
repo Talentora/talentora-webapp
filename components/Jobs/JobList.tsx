@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import { useState, useEffect } from 'react';
 import { Job } from '@/types/merge';
 import { SearchFilter } from './search-filer';
@@ -12,8 +12,6 @@ export default function JobListPage() {
   const [sortField, setSortField] = useState<SortField>('created_at');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [isLoading, setIsLoading] = useState(true);
-
-
 
   // Fetch jobs from API
   useEffect(() => {

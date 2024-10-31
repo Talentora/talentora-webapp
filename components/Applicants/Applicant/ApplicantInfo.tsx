@@ -18,8 +18,11 @@ export default function ApplicantInfo({
 }: ApplicantInfoProps) {
   const candidateName = `${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`;
   const avatarUrl = '/placeholder-avatar.jpg';
-  const email = ApplicantCandidate.candidate.email_addresses?.[0]?.value || 'No email address';
-  const phoneNumber = ApplicantCandidate.candidate.phone_numbers?.[0]?.value || 'No phone number';
+  const email =
+    ApplicantCandidate.candidate.email_addresses?.[0]?.value ||
+    'No email address';
+  const phoneNumber =
+    ApplicantCandidate.candidate.phone_numbers?.[0]?.value || 'No phone number';
   const jobName = ApplicantCandidate.job.name || 'No job specified';
 
   return (
@@ -53,7 +56,9 @@ export default function ApplicantInfo({
             <CalendarDays className="w-4 h-4" />
             <span className="text-sm">
               Applied on{' '}
-              {ApplicantCandidate.applied_at ? new Date(ApplicantCandidate.applied_at).toLocaleDateString() : 'Unknown date'}
+              {ApplicantCandidate.applied_at
+                ? new Date(ApplicantCandidate.applied_at).toLocaleDateString()
+                : 'Unknown date'}
             </span>
           </div>
         </div>

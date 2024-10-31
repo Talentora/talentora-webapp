@@ -1,24 +1,23 @@
 'use client';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import InterviewConfiguration from '@/components/InterviewConfiguration';
+
+import InterviewConfig from '@/components/InterviewConfig';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import JobSettings from '@/components/JobSettings';
+import { useState } from 'react';
 
 const Page = () => {
-  const searchParams = useSearchParams();
-  const [job, setJob] = useState(null);
+  const [showConfig, setShowConfig] = useState(false);
+  return (
+    <div>
+      <JobSettings onConfigureInterview={() => setShowConfig(true)} />
 
-  useEffect(() => {
-    const jobParam = searchParams.get('job');
-    if (jobParam) {
-      setJob(JSON.parse(jobParam));
-    }
-  }, [searchParams]);
-
-  if (!job) {
-    return <div>Loading...</div>;
-  }
-
-  return <InterviewConfiguration job={job} />;
+      <Dialog open={showConfig} onOpenChange={setShowConfig}>
+        <DialogContent className="w-[1200px] max-w-[90vw] max-h-[90vh] overflow-y-auto">
+          <InterviewConfig />
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
 };
 
 export default Page;

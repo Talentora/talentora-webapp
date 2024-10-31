@@ -33,7 +33,7 @@ export default function ApplicantList() {
   }, []);
 
   const filteredApplicants = ApplicantCandidates.filter(
-    (ApplicantCandidate:ApplicantCandidate) => {
+    (ApplicantCandidate: ApplicantCandidate) => {
       const fullName =
         `${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`.toLowerCase();
       return fullName.includes(searchTerm.toLowerCase());

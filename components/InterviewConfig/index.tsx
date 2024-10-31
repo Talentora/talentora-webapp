@@ -1,0 +1,85 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
+import { InterviewConfigSteps } from './InterviewConfigSteps';
+import { OnboardingNavigation } from '@/components/CompanyOnboarding/OnboardingNavigation';
+import { useJob } from '@/hooks/useJob';
+import { useSearchParams } from 'next/navigation';
+
+export default function InterviewConfig() {
+  const totalSteps = 5;
+  const [step, setStep] = useState(1);
+  const [completedSteps, setCompletedSteps] = useState<Set<number>>(
+    new Set([1, 5])
+  ); // Initialize step 1 and 4 as completed
+
+  const nextStep = () => setStep((prev) => Math.min(prev + 1, totalSteps));
+  const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
+  const searchParams = useSearchParams();
+  const pathname = window.location.pathname;
+  const jobId = pathname.split('/')[2]; // Extract ID from /jobs/{id}/settings
+
+  if (!jobId) {
+    return <div>No job ID provided</div>;
+  }
+
+  const { job, loading, error } = useJob(jobId);
+
+  const handleStepCompletion = (stepNumber: number, isComplete: boolean) => {
+    setCompletedSteps((prev) => {
+      const updated = new Set(prev);
+      if (isComplete) {
+        updated.add(stepNumber);
+      } else {
+        updated.delete(stepNumber);
+      }
+      return updated;
+    });
+  };
+
+  useEffect(() => {
+    // Optionally, you can add logic here to persist completedSteps to localStorage or a backend
+  }, [completedSteps]);
+
+  return (
+    <div className="container mx-auto py-10">
+      <div className="max-w-2xl mx-auto gap-3">
+        {/* <Progress value={progressValue} className="mb-3"/>  */}
+        <Card className="bg-foreground p-8 border border-gray-200 shadow-lg overflow-auto w-[1200px] min-h-[600px]">
+          <CardHeader className="mb-6">
+            <CardTitle className="text-2xl">Welcome to Talentora</CardTitle>
+            <CardDescription className="text-lg">
+              Let&apos;s get your <strong>{job?.name}</strong> position ready
+              for AI interviews
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="min-h-[400px]">
+            <InterviewConfigSteps
+              step={step}
+              onCompletion={(isComplete) =>
+                handleStepCompletion(step, isComplete)
+              }
+            />
+          </CardContent>
+          <CardFooter>
+            <OnboardingNavigation
+              step={step}
+              totalSteps={totalSteps}
+              prevStep={prevStep}
+              nextStep={nextStep}
+              isCurrentStepComplete={completedSteps.has(step)}
+            />
+          </CardFooter>
+        </Card>
+      </div>
+    </div>
+  );
+}

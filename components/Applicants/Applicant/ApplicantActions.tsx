@@ -20,7 +20,7 @@ export default function ApplicantActions({
     // ApplicantCandidate.candidate.attachments?.find(
     //   (attachment) => attachment. === 'resume'
     // )?.url ||
-     'No resume available';
+    'No resume available';
 
   return (
     <Card>

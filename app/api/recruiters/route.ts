@@ -7,14 +7,17 @@ export async function GET() {
   const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
 
   if (!apiKey || !accountToken) {
-    return NextResponse.json({ error: 'API credentials not found' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'API credentials not found' },
+      { status: 500 }
+    );
   }
 
   try {
     const response = await fetch(baseURL, {
       headers: {
-        'Accept': 'application/json', 
-        'Authorization': `Bearer ${apiKey}`,
+        Accept: 'application/json',
+        Authorization: `Bearer ${apiKey}`,
         'X-Account-Token': accountToken
       }
     });
@@ -28,7 +31,6 @@ export async function GET() {
 
     const data = await response.json();
     return NextResponse.json(data.results, { status: 200 });
-
   } catch (error) {
     return NextResponse.json(
       { error: 'An error occurred while fetching users' },

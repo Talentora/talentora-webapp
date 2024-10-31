@@ -21,9 +21,9 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
   const createMergeLinkToken = async () => {
     if (!user || !company) {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "User or company information is missing."
+        variant: 'destructive',
+        title: 'Error',
+        description: 'User or company information is missing.'
       });
       return;
     }
@@ -48,58 +48,60 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
       setLinkToken(data.link_token);
     } catch (err) {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Error creating link token. Please try again."
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Error creating link token. Please try again.'
       });
       console.error('Error creating link token:', err);
     }
   };
-  
+
   useEffect(() => {
     onCompletion(hasMergeApiKey);
   }, [hasMergeApiKey]);
 
-  const onSuccess = useCallback(async (public_token: string) => {
-    try {
-      const response = await fetch(`/api/merge/exchange/${public_token}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
+  const onSuccess = useCallback(
+    async (public_token: string) => {
+      try {
+        const response = await fetch(`/api/merge/exchange/${public_token}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to exchange token');
         }
-      });
 
-      if (!response.ok) {
-        throw new Error('Failed to exchange token');
+        const data = await response.json();
+        const accountToken = data.account_token;
+
+        if (!company) {
+          throw new Error('Company not found');
+        }
+
+        const updatedCompany = await updateCompany(company.id, {
+          ...company,
+          merge_api_key: accountToken
+        });
+
+        if (!updatedCompany) {
+          throw new Error('Failed to update company with Merge token');
+        }
+
+        onCompletion(true);
+      } catch (err) {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Error connecting to ATS. Please try again.'
+        });
+        console.error('Error in token exchange:', err);
       }
-
-      const data = await response.json();
-      const accountToken = data.account_token;
-
-      if (!company) {
-        throw new Error('Company not found');
-      }
-
-      const updatedCompany = await updateCompany(company.id, {
-        ...company,
-        merge_api_key: accountToken
-      });
-
-      if (!updatedCompany) {
-        throw new Error('Failed to update company with Merge token');
-      }
-
-      onCompletion(true);
-
-    } catch (err) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Error connecting to ATS. Please try again."
-      });
-      console.error('Error in token exchange:', err);
-    }
-  }, [company, onCompletion]);
+    },
+    [company, onCompletion]
+  );
 
   useEffect(() => {
     if (!userLoading && !companyLoading && !linkToken) {
@@ -123,7 +125,9 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
   return (
     <div className="text-center">
       <h2 className="text-xl font-semibold mb-4">Connect Your ATS</h2>
-      <p className="mb-6">Connect your Applicant Tracking System to get started</p>
+      <p className="mb-6">
+        Connect your Applicant Tracking System to get started
+      </p>
       <Button onClick={open} className="mx-auto">
         Connect ATS
       </Button>

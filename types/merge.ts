@@ -25,9 +25,9 @@ type Candidate = {
   is_private: boolean;
   can_email: boolean;
   locations: string[];
-  phone_numbers: Array<{value: string, phone_number_type: string}>;
-  email_addresses: Array<{value: string, email_address_type: string}>;
-  urls: Array<{value: string, url_type: string}>;
+  phone_numbers: Array<{ value: string; phone_number_type: string }>;
+  email_addresses: Array<{ value: string; email_address_type: string }>;
+  urls: Array<{ value: string; url_type: string }>;
   tags: string[];
   applications: string[];
   attachments: string[];
@@ -132,13 +132,14 @@ type Recruiter = {
   }> | null;
 };
 
-
-
-
 // ApplicantCandidate type
-export type ApplicantCandidate = Application & { candidate: Candidate, job: Job, interviewStages: JobInterviewStage[]};
+export type ApplicantCandidate = Application & {
+  candidate: Candidate;
+  job: Job;
+  interviewStages: JobInterviewStage[];
+};
 
-export type Job = SimpleJob & { departments: Department[], offices: Office[] };
+export type Job = SimpleJob & { departments: Department[]; offices: Office[] };
 
 // export types
 export type { Application, Candidate, JobInterviewStage, Recruiter };

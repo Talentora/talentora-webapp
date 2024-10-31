@@ -11,7 +11,9 @@ export default function ActiveJobsCard() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const jobsResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`);
+      const jobsResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`
+      );
       if (jobsResponse.ok) {
         const jobsData = await jobsResponse.json();
         setJobs(jobsData);
@@ -24,7 +26,7 @@ export default function ActiveJobsCard() {
   return (
     <Card className="p-5 border border-gray-300 bg-foreground rounded-lg shadow-sm relative col-span-2">
       <CardHeader>
-        <CardTitle>Active Job Titles</CardTitle>
+        w<CardTitle>Active Job Titles</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -39,9 +41,9 @@ export default function ActiveJobsCard() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4">
-            {jobs?.slice(0, 5).map((job, index) => (
-              <JobItem key={index} job={job} />
-            ))}
+            {jobs
+              ?.slice(0, 5)
+              .map((job, index) => <JobItem key={index} job={job} />)}
             {jobs.length > 5 && <MoreJobsLink count={jobs.length - 5} />}
           </div>
         )}
@@ -56,16 +58,15 @@ function JobItem({ job }: { job: Job }) {
       <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
         <h3 className="font-semibold text-sm mb-1 truncate">{job.name}</h3>
         <p className="text-xs text-gray-500 mb-2 truncate">
-          {Array.isArray(job.departments) ? 
-            job.departments.slice(0, 3).map((dept: any, index: number) => (
-              <span key={index}>
-                {typeof dept === 'object' ? dept.name : dept}
-                {index < Math.min(job.departments.length, 3) - 1 && ', '}
-              </span>
-            )) : 'No departments'
-          }
+          {Array.isArray(job.departments)
+            ? job.departments.slice(0, 3).map((dept: any, index: number) => (
+                <span key={index}>
+                  {typeof dept === 'object' ? dept.name : dept}
+                  {index < Math.min(job.departments.length, 3) - 1 && ', '}
+                </span>
+              ))
+            : 'No departments'}
         </p>
-      
       </div>
     </Link>
   );

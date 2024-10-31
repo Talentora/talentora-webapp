@@ -34,17 +34,17 @@ export default async function Account() {
         <CompanyForm />
 
         <div className="mt-8 flex flex-row gap-4 justify-evenly">
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-4">Invite Teammates</h2>
-          <Link href="/settings/invite">
-            <Button>Invite Your Teammates</Button>
-          </Link>
-        </div>
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-4">Company Onboarding</h2>
-          <Link href="/settings/onboarding">
-            <Button>Get your company setup</Button>
-          </Link>
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-4">Invite Teammates</h2>
+            <Link href="/settings/invite">
+              <Button>Invite Your Teammates</Button>
+            </Link>
+          </div>
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-4">Company Onboarding</h2>
+            <Link href="/settings/onboarding">
+              <Button>Get your company setup</Button>
+            </Link>
           </div>
         </div>
       </div>

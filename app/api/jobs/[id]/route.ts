@@ -13,14 +13,17 @@ export async function GET(
   const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
 
   if (!apiKey || !accountToken) {
-    return NextResponse.json({ error: 'API credentials not found' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'API credentials not found' },
+      { status: 500 }
+    );
   }
 
   try {
     const jobResponse = await fetch(`${baseURL}/jobs/${jobId}`, {
       headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
+        Accept: 'application/json',
+        Authorization: `Bearer ${apiKey}`,
         'X-Account-Token': accountToken
       }
     });
@@ -38,22 +41,26 @@ export async function GET(
     const [departmentsResponse, officesResponse] = await Promise.all([
       fetch(`${baseURL}/departments`, {
         headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
+          Accept: 'application/json',
+          Authorization: `Bearer ${apiKey}`,
           'X-Account-Token': accountToken
         }
       }),
       fetch(`${baseURL}/offices`, {
         headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
+          Accept: 'application/json',
+          Authorization: `Bearer ${apiKey}`,
           'X-Account-Token': accountToken
         }
       })
     ]);
 
-    const departments = departmentsResponse.ok ? (await departmentsResponse.json()).results : [];
-    const offices = officesResponse.ok ? (await officesResponse.json()).results : [];
+    const departments = departmentsResponse.ok
+      ? (await departmentsResponse.json()).results
+      : [];
+    const offices = officesResponse.ok
+      ? (await officesResponse.json()).results
+      : [];
 
     const enrichedJob = {
       ...jobData,

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRecruiter } from '@/hooks/useRecruiter';
-import { createCompany,updateCompany } from '@/utils/supabase/queries';
+import { createCompany, updateCompany } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 import { ToastAction } from '@/components/Toasts/toast';
 import { useUser } from '@/hooks/useUser';
@@ -25,7 +25,7 @@ export const CompanyInfoStep: React.FC<{
   const { recruiter, loading } = useRecruiter();
   const hasCompany = recruiter?.company_id ? true : false;
   const { user } = useUser();
-  const { company } = useCompany(); 
+  const { company } = useCompany();
 
   useEffect(() => {
     onCompletion(hasCompany);
@@ -54,7 +54,7 @@ export const CompanyInfoStep: React.FC<{
       website_url: null,
       merge_api_key: null,
       billing_address: null, // Added to match expected type
-      payment_method: null, // Added to match expected type
+      payment_method: null // Added to match expected type
       // user: user
     };
 
@@ -99,7 +99,6 @@ export const CompanyInfoStep: React.FC<{
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
-
       <h3 className="text-lg font-medium">Company Information</h3>
       {hasCompany && (
         <p className="text-sm text-gray-500">
@@ -127,7 +126,9 @@ export const CompanyInfoStep: React.FC<{
           id="headquarters"
           value={headquarters}
           onChange={(e) => setHeadquarters(e.target.value)}
-          placeholder={company?.location || 'Enter your company headquarters location'}
+          placeholder={
+            company?.location || 'Enter your company headquarters location'
+          }
           required
         />
       </div>

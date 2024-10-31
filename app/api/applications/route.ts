@@ -7,7 +7,10 @@ export async function GET(req: Request) {
   const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
 
   if (!apiKey || !accountToken) {
-    return NextResponse.json({ error: 'API credentials not found' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'API credentials not found' },
+      { status: 500 }
+    );
   }
 
   const url = new URL(req.url);
@@ -21,8 +24,8 @@ export async function GET(req: Request) {
         `${baseURL}/applications?job_post_id=${jobId}`,
         {
           headers: {
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
+            Accept: 'application/json',
+            Authorization: `Bearer ${apiKey}`,
             'X-Account-Token': accountToken
           }
         }
@@ -30,8 +33,8 @@ export async function GET(req: Request) {
     } else {
       applicationsResponse = await fetch(`${baseURL}/applications`, {
         headers: {
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
+          Accept: 'application/json',
+          Authorization: `Bearer ${apiKey}`,
           'X-Account-Token': accountToken
         }
       });
@@ -57,32 +60,29 @@ export async function GET(req: Request) {
           `${baseURL}/candidates/${candidateId}`,
           {
             headers: {
-              'Accept': 'application/json',
-              'Authorization': `Bearer ${apiKey}`,
+              Accept: 'application/json',
+              Authorization: `Bearer ${apiKey}`,
               'X-Account-Token': accountToken
             }
           }
         );
 
         // Fetch job data
-        const jobResponse = await fetch(
-          `${baseURL}/jobs/${jobId}`,
-          {
-            headers: {
-              'Accept': 'application/json',
-              'Authorization': `Bearer ${apiKey}`,
-              'X-Account-Token': accountToken
-            }
+        const jobResponse = await fetch(`${baseURL}/jobs/${jobId}`, {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+            'X-Account-Token': accountToken
           }
-        );
+        });
         // Fetch current stage data
-        console.log("Current Stage:", application.current_stage);
+        console.log('Current Stage:', application.current_stage);
         const stagesResponse = await fetch(
           `${baseURL}/job-interview-stages/${application.current_stage}`,
           {
             headers: {
-              'Accept': 'application/json',
-              'Authorization': `Bearer ${apiKey}`,
+              Accept: 'application/json',
+              Authorization: `Bearer ${apiKey}`,
               'X-Account-Token': accountToken
             }
           }
@@ -112,9 +112,9 @@ export async function GET(req: Request) {
           );
         } else {
           const stagesData = await stagesResponse.json();
-          console.log("Stages Data:", stagesData);
+          console.log('Stages Data:', stagesData);
           interviewStages = stagesData;
-          console.log("Interview Stages:", interviewStages);
+          console.log('Interview Stages:', interviewStages);
         }
 
         return {
