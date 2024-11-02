@@ -10,7 +10,7 @@ interface CompanyContextProps {
   onCompletion: (isComplete: boolean) => void;
 }
 
-export const CompanyContext: React.FC<CompanyContextProps> = ({
+export const CompanyContext3: React.FC<CompanyContextProps> = ({
   onCompletion
 }) => {
   const [companyDescription, setCompanyDescription] = useState('');
@@ -238,4 +238,3 @@ export const CompanyContext: React.FC<CompanyContextProps> = ({
   );
 };
 
-export default CompanyContext;

@@ -8,7 +8,7 @@ type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
 import { useUser } from '@/hooks/useUser';
 import { useCompany } from '@/hooks/useCompany';
-
+type Bot = Tables<'bots'>;
 // CRUD operations for the company table
 
 /**
@@ -261,3 +261,125 @@ export const getMergeApiKey = async (): Promise<string | null> => {
     throw error;
   }
 };
+
+
+/**
+ * Creates a new bot in the database.
+ *
+ * @param botData - The data for the new bot.
+ * @returns The created bot data.
+ * @throws Error if the creation operation fails.
+ */
+export const createBot = async (botData: any) => {
+  const supabase = createClient();
+
+
+  // Insert the bot
+  const { data: createdBot, error: botError } = await supabase
+    .from('bots')
+    .insert(botData)
+    
+
+  if (botError) {
+    throw new Error(`Failed to create bot: ${botError.message}`);
+  }
+};
+
+/**
+ * Deletes a bot from the database.
+ *
+ * @param id - The ID of the bot to delete.
+ * @throws Error if the deletion operation fails.
+ */
+export const deleteBot = async (id: number) => {
+  const supabase = createClient();
+
+  // Delete the bot
+  const { error: botError } = await supabase
+    .from('bots')
+    .delete()
+    .eq('id', id);
+
+  if (botError) {
+    throw new Error(`Failed to delete bot: ${botError.message}`);
+  }
+};
+
+
+
+
+/**
+ * Fetches all bots from the database.
+ *
+ * @returns An array of bot data.
+ * @throws Error if the fetch operation fails.
+ */
+export const getBots = async (): Promise<Bot[] | null> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('bots')
+    .select('*');
+
+  if (error) {
+    throw new Error(`Failed to fetch bots: ${error.message}`);
+  }
+
+  return data || null;
+};
+
+/**
+ * Fetches a bot by ID from the database.
+ *
+ * @param id - The ID of the bot to fetch.
+ * @returns The bot data or null if not found.
+ * @throws Error if the fetch operation fails.
+ */
+export const getBotById = async (id: string): Promise<Bot | null> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('bots')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to fetch bot: ${error.message}`);
+  }
+
+  return data || null;
+};
+
+/**
+ * Updates a bot in the database.
+ *
+ * @param id - The ID of the bot to update.
+ * @param botData - The new data for the bot.
+ * @returns The updated bot data.
+ * @throws Error if the update operation fails.
+ */
+export const updateBot = async (id: string, botData: any): Promise<Bot | null> => {
+  const supabase = createClient();
+
+  // Filter out undefined/null values from botData
+  const filteredBotData = Object.fromEntries(
+    Object.entries(botData).filter(
+      ([_, value]) => value !== null && value !== undefined
+    )
+  );
+
+  const { data, error } = await supabase
+    .from('bots')
+    .update(filteredBotData)
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    throw new Error(`Failed to update bot: ${error.message}`);
+  }
+
+  return data?.[0] || null;
+};
+
+

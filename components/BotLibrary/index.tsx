@@ -6,60 +6,54 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import BotSettings from './BotSettings';
 import CreateBot from './CreateBot';
+import { Tables } from '@/types/types_db';
+type Bot = Tables<'bots'>;
 
-interface Bot {
-  id: number;
-  name: string;
-  role: string;
-  description: string;
-  icon: React.ReactNode;
-}
-
-export default function BotLibrary() {
-  const [bots, setBots] = useState<Bot[]>([
-    {
-      id: 1,
-      name: 'Alex',
-      role: 'Technical Interviewer',
-      description: 'Specializes in technical interviews for software engineering positions.',
-      icon: <Code className="h-12 w-12" />
-    },
-    {
-      id: 2,
-      name: 'Sarah',
-      role: 'HR Specialist', 
-      description: 'Focuses on human resources and cultural fit interviews.',
-      icon: <Users className="h-12 w-12" />
-    },
-    {
-      id: 3,
-      name: 'Marcus',
-      role: 'Sales Recruiter',
-      description: 'Designed for interviewing sales and marketing candidates.',
-      icon: <BarChart className="h-12 w-12" />
-    },
-    {
-      id: 4,
-      name: 'Victoria',
-      role: 'Executive Headhunter',
-      description: 'Tailored for C-suite and executive-level interviews.',
-      icon: <Briefcase className="h-12 w-12" />
-    },
-    {
-      id: 5,
-      name: 'Daniel',
-      role: 'Academic Interviewer',
-      description: 'Specialized in academic and research position interviews.',
-      icon: <GraduationCap className="h-12 w-12" />
-    },
-    {
-      id: 6,
-      name: 'Emma',
-      role: 'Healthcare Recruiter',
-      description: 'Focused on interviews for healthcare professionals.',
-      icon: <Stethoscope className="h-12 w-12" />
-    }
-  ]);
+export default function BotLibrary({ bots }: { bots: Bot[] }) {
+  // const [bots, setBots] = useState<Bot[]>([
+  //   {
+  //     id: 1,
+  //     name: 'Alex',
+  //     role: 'Technical Interviewer',
+  //     description: 'Specializes in technical interviews for software engineering positions.',
+  //     icon: <Code className="h-12 w-12" />
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'Sarah',
+  //     role: 'HR Specialist', 
+  //     description: 'Focuses on human resources and cultural fit interviews.',
+  //     icon: <Users className="h-12 w-12" />
+  //   },
+  //   {
+  //     id: 3,
+  //     name: 'Marcus',
+  //     role: 'Sales Recruiter',
+  //     description: 'Designed for interviewing sales and marketing candidates.',
+  //     icon: <BarChart className="h-12 w-12" />
+  //   },
+  //   {
+  //     id: 4,
+  //     name: 'Victoria',
+  //     role: 'Executive Headhunter',
+  //     description: 'Tailored for C-suite and executive-level interviews.',
+  //     icon: <Briefcase className="h-12 w-12" />
+  //   },
+  //   {
+  //     id: 5,
+  //     name: 'Daniel',
+  //     role: 'Academic Interviewer',
+  //     description: 'Specialized in academic and research position interviews.',
+  //     icon: <GraduationCap className="h-12 w-12" />
+  //   },
+  //   {
+  //     id: 6,
+  //     name: 'Emma',
+  //     role: 'Healthcare Recruiter',
+  //     description: 'Focused on interviews for healthcare professionals.',
+  //     icon: <Stethoscope className="h-12 w-12" />
+  //   }
+  // ]);
 
   return (
     <div className="container mx-auto p-4">
@@ -87,11 +81,17 @@ export default function BotLibrary() {
               <Search className="h-5 w-5 text-gray-400" />
             </div>
           </div>
-          <CreateBot bots={bots} setBots={setBots} />
+          <CreateBot bots={bots} />
         </div>
         {bots.map((bot) => (
           <BotSettings key={bot.id} bot={bot} />
         ))}
+      {bots.length === 0 && (
+        <div className="col-span-full flex flex-col items-center justify-center">
+          <p className="text-lg font-semibold mb-4">No bots available.</p>
+          
+        </div>
+      )}
       </div>
     </div>
   );

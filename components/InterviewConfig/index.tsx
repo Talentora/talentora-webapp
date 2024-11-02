@@ -50,26 +50,26 @@ export default function InterviewConfig() {
   }, [completedSteps]);
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="mx-auto py-10">
       <div className="max-w-2xl mx-auto gap-3">
         {/* <Progress value={progressValue} className="mb-3"/>  */}
-        <Card className="bg-foreground p-8 border border-gray-200 shadow-lg overflow-auto w-[1200px] min-h-[600px]">
-          <CardHeader className="mb-6">
-            <CardTitle className="text-2xl">Welcome to Talentora</CardTitle>
-            <CardDescription className="text-lg">
+        <div className="">
+          <div className="mb-6">
+            <h2 className="text-2xl">Welcome to Talentora</h2>
+            <p className="text-lg text-gray-500">
               Let&apos;s get your <strong>{job?.name}</strong> position ready
               for AI interviews
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="min-h-[400px]">
+            </p>
+          </div>
+          <div className="min-h-[400px]">
             <InterviewConfigSteps
               step={step}
               onCompletion={(isComplete) =>
                 handleStepCompletion(step, isComplete)
               }
             />
-          </CardContent>
-          <CardFooter>
+          </div>
+          <div>
             <OnboardingNavigation
               step={step}
               totalSteps={totalSteps}
@@ -77,9 +77,10 @@ export default function InterviewConfig() {
               nextStep={nextStep}
               isCurrentStepComplete={completedSteps.has(step)}
             />
-          </CardFooter>
-        </Card>
+          </div>
+        </div>
       </div>
-    </div>
+      </div>
+    // </div>
   );
 }

@@ -125,6 +125,44 @@ export type Database = {
           },
         ]
       }
+      bots: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          description: string | null
+          id: number
+          name: string | null
+          prompt: string | null
+          role: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: number
+          name?: string | null
+          prompt?: string | null
+          role?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: number
+          name?: string | null
+          prompt?: string | null
+          role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bots_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           billing_address: Json | null
@@ -332,17 +370,17 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "recruiters_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "recruiters_id_fkey"
             columns: ["id"]
             isOneToOne: true
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "users_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
