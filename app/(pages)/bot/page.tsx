@@ -27,28 +27,13 @@
 // }
 "use client"
 import BotLibrary from '@/components/BotLibrary';
-import { createClient } from '@/utils/supabase/client';
-import { useState,useEffect } from 'react';
-import { Tables } from '@/types/types_db';
-type Bot = Tables<'bots'>;
-import { getBots } from '@/utils/supabase/queries';
 import { Loader2 } from 'lucide-react';
+import { useBots } from '@/hooks/useBots';
+
+
 
 export default function Page() {
-  const supabase = createClient();
-  const [bots,setBots] = useState<Bot[]>([]);
-  const [loading,setLoading] = useState<boolean>(true);
-
-  useEffect(()=> {
-    const fetchBots = async () => {
-      const bots = await getBots();
-      if (bots) {
-        setBots(bots);
-      }
-      setLoading(false);
-    };
-    fetchBots();
-  }, []);
+  const { bots, loading } = useBots();
 
   if (!bots) return null;
 

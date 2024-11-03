@@ -36,18 +36,56 @@ export type Database = {
     Tables: {
       AI_config: {
         Row: {
+          bot_id: number | null
           created_at: string
           id: string
+          interview_questions: number | null
+          job_id: string | null
         }
         Insert: {
+          bot_id?: number | null
           created_at?: string
           id?: string
+          interview_questions?: number | null
+          job_id?: string | null
         }
         Update: {
+          bot_id?: number | null
           created_at?: string
           id?: string
+          interview_questions?: number | null
+          job_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "AI_config_bot_id_fkey"
+            columns: ["bot_id"]
+            isOneToOne: false
+            referencedRelation: "bots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "AI_config_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "AI_config_interview_questions_fkey"
+            columns: ["interview_questions"]
+            isOneToOne: false
+            referencedRelation: "interview_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "AI_config_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       AI_summary: {
         Row: {
@@ -213,6 +251,50 @@ export type Database = {
           },
         ]
       }
+      company_context: {
+        Row: {
+          company_customers: string | null
+          company_description: string | null
+          company_history: string | null
+          company_id: string
+          company_products: string | null
+          company_values: string | null
+          company_vision: string | null
+          created_at: string
+          id: number
+        }
+        Insert: {
+          company_customers?: string | null
+          company_description?: string | null
+          company_history?: string | null
+          company_id: string
+          company_products?: string | null
+          company_values?: string | null
+          company_vision?: string | null
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          company_customers?: string | null
+          company_description?: string | null
+          company_history?: string | null
+          company_id?: string
+          company_products?: string | null
+          company_values?: string | null
+          company_vision?: string | null
+          created_at?: string
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_context_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           id: string
@@ -236,24 +318,66 @@ export type Database = {
           },
         ]
       }
+      interview_questions: {
+        Row: {
+          created_at: string
+          id: number
+          job_config: string | null
+          order: number
+          question: string
+          sample_response: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          job_config?: string | null
+          order: number
+          question: string
+          sample_response?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          job_config?: string | null
+          order?: number
+          question?: string
+          sample_response?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_questions_job_config_fkey"
+            columns: ["job_config"]
+            isOneToOne: false
+            referencedRelation: "AI_config"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_questions_job_id_fkey"
+            columns: ["job_config"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jobs: {
         Row: {
           AIconfig_id: string | null
           company_id: string | null
-          harvest_jobs: number | null
           id: string
+          merge_id: string
         }
         Insert: {
           AIconfig_id?: string | null
           company_id?: string | null
-          harvest_jobs?: number | null
           id?: string
+          merge_id: string
         }
         Update: {
           AIconfig_id?: string | null
           company_id?: string | null
-          harvest_jobs?: number | null
           id?: string
+          merge_id?: string
         }
         Relationships: [
           {

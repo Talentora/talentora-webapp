@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BarChart, Users, Briefcase, GraduationCap, Stethoscope, Code, Plus, ChevronDown, Volume2 } from 'lucide-react';
+import { BarChart, Users, Briefcase, GraduationCap, Stethoscope, Code, Plus, ChevronDown, Volume2, Bot, Brain, Cpu, Database, Globe, Laptop, MessageSquare, Monitor, Network, Server } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Textarea } from '../ui/textarea';
 import { createBot } from '@/utils/supabase/queries';
@@ -14,28 +14,44 @@ import { Tables } from '@/types/types_db';
 import { useCompany } from '@/hooks/useCompany';
 type Bot = Tables<'bots'>;
 
-
 interface CreateBotProps {
   bots: Bot[];
 }
 
 const iconOptions = {
+  Bot: <Bot className="h-12 w-12" />,
+  Brain: <Brain className="h-12 w-12" />,
   Code: <Code className="h-12 w-12" />,
-  Users: <Users className="h-12 w-12" />,
-  BarChart: <BarChart className="h-12 w-12" />,
-  Briefcase: <Briefcase className="h-12 w-12" />,
-  GraduationCap: <GraduationCap className="h-12 w-12" />,
-  Stethoscope: <Stethoscope className="h-12 w-12" />
+  Cpu: <Cpu className="h-12 w-12" />,
+  Database: <Database className="h-12 w-12" />,
+  Globe: <Globe className="h-12 w-12" />,
+  Laptop: <Laptop className="h-12 w-12" />,
+  MessageSquare: <MessageSquare className="h-12 w-12" />,
+  Monitor: <Monitor className="h-12 w-12" />,
+  Network: <Network className="h-12 w-12" />,
+  Server: <Server className="h-12 w-12" />
 };
 
-export default function CreateBot({ bots }: CreateBotProps) {
+const voiceOptions = [
+  { id: "21m00Tcm4TlvDq8ikWAM", name: "Rachel", gender: "female" },
+  { id: "AZnzlk1XvdvUeBnXmlld", name: "Domi", gender: "female" },
+  { id: "EXAVITQu4vr4xnSDxMaL", name: "Bella", gender: "female" },
+  { id: "ErXwobaYiN019PkySvjV", name: "Antoni", gender: "male" },
+  { id: "MF3mGyEYCl7XYWbV9V6O", name: "Elli", gender: "female" },
+  { id: "TxGEqnHWrfWFTfGW9XjX", name: "Josh", gender: "male" },
+  { id: "VR6AewLTigWG4xSOukaG", name: "Arnold", gender: "male" },
+  { id: "pNInz6obpgDQGcFmaJgB", name: "Adam", gender: "male" }
+];
+
+export default function CreateBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [newBot, setNewBot] = useState({
     name: '',
     description: '',
     role: '',
-    icon: 'Code',
-    prompt: ''
+    icon: 'Bot',
+    prompt: '',
+    voiceId: voiceOptions[0].id
   });
 
   const { company } = useCompany();
@@ -43,24 +59,22 @@ export default function CreateBot({ bots }: CreateBotProps) {
 
   const handleCreateBot = async (e: React.FormEvent) => {
     e.preventDefault();
-    // const id = Math.max(0, ...bots.map((bot) => bot.id)) + 1;
     try {
       await createBot({
-          // id,
           name: newBot.name,
           role: newBot.role,
           description: newBot.description,
-          // icon: iconOptions[newBot.icon as keyof typeof iconOptions],
           prompt: newBot.prompt,
-          company_id: companyId
+          company_id: companyId,
+          voice_id: newBot.voiceId,
+          icon: newBot.icon
       });
-      setNewBot({ name: '', description: '', role: '', icon: 'Code', prompt: '' });
+      setNewBot({ name: '', description: '', role: '', icon: 'Bot', prompt: '', voiceId: voiceOptions[0].id });
       setIsOpen(false);
       window.location.reload();
     } catch (error) {
       console.error('Failed to create bot:', error);
     }
-  
   };
 
   return (
@@ -109,7 +123,26 @@ export default function CreateBot({ bots }: CreateBotProps) {
               />
             </div>
 
-            {/* <div>
+            <div>
+              <Label htmlFor="voice">Voice</Label>
+              <Select
+                value={newBot.voiceId}
+                onValueChange={(value) => setNewBot({ ...newBot, voiceId: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a voice" />
+                </SelectTrigger>
+                <SelectContent>
+                  {voiceOptions.map((voice) => (
+                    <SelectItem key={voice.id} value={voice.id}>
+                      {voice.name} ({voice.gender})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
               <Label htmlFor="icon">Icon</Label>
               <Select
                 value={newBot.icon}
@@ -121,12 +154,16 @@ export default function CreateBot({ bots }: CreateBotProps) {
                 <SelectContent>
                   {Object.keys(iconOptions).map((icon) => (
                     <SelectItem key={icon} value={icon}>
-                      {icon}
+                      <div className="flex items-center gap-2">
+                        {iconOptions[icon as keyof typeof iconOptions]}
+                        <span>{icon}</span>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </div> */}
+            </div>
+
              <div className="space-y-2">
               <Label htmlFor="prompt">Enter Prompt</Label>
               <Textarea
@@ -150,23 +187,6 @@ export default function CreateBot({ bots }: CreateBotProps) {
                 </Button>
                 </div>
                 <div className="flex items-center gap-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline">
-                      Choose Voice
-                      <ChevronDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-background">
-                    <DropdownMenuItem>Male Voice 1</DropdownMenuItem>
-                    <DropdownMenuItem>Male Voice 2</DropdownMenuItem>
-                    <DropdownMenuItem>Female Voice 1</DropdownMenuItem>
-                    <DropdownMenuItem>Female Voice 2</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <Button variant="outline">Mix</Button>
-
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline">

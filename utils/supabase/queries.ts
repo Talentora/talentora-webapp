@@ -383,3 +383,145 @@ export const updateBot = async (id: string, botData: any): Promise<Bot | null> =
 };
 
 
+
+
+/**
+ * Creates a new interview question in the database.
+ * 
+ * @param question - The question text
+ * @param response - The example response text
+ * @param order - The display order of the question
+ * @returns The created question data
+ * @throws Error if creation fails
+ */
+export const createInterviewQuestion = async (
+  question: string,
+  response: string, 
+  order: number,
+  jobId?: string
+): Promise<any> => {
+  const supabase = createClient();
+
+    if (!question?.trim()) {
+      throw new Error('Question text is required');
+    }
+    if (!response?.trim()) {
+      throw new Error('Example response text is required'); 
+    }
+    if (typeof order !== 'number') {
+      throw new Error('Question order must be a number');
+    }
+
+  const { data, error } = await supabase
+    .from('interview_questions')
+    .insert([{
+      question: question.trim(),
+      sample_response: response.trim(), // Updated to match column name
+      order,
+      job_id: jobId // Added optional job_id field
+    }])
+    .select();
+
+  if (error) {
+    throw new Error(`Failed to create interview question: ${error.message}`);
+  }
+
+  return data?.[0] || null;
+};
+
+/**
+ * Gets all interview questions from the database.
+ * 
+ * @returns Array of interview questions
+ * @throws Error if fetch fails
+ */
+export const getInterviewQuestions = async (): Promise<any[]> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('interview_questions')
+    .select('*')
+    .order('order', { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to fetch interview questions: ${error.message}`);
+  }
+
+  return data || [];
+};
+
+/**
+ * Updates an interview question in the database.
+ *
+ * @param id - The ID of the question to update
+ * @param questionData - The updated question data
+ * @returns The updated question data
+ * @throws Error if update fails
+ */
+export const updateInterviewQuestion = async (
+  id: string,
+  questionData: {
+    question?: string;
+    response?: string;
+    order?: number;
+    job_id?: string;
+  }
+): Promise<any> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('interview_questions')
+    .update(questionData)
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    throw new Error(`Failed to update interview question: ${error.message}`);
+  }
+
+  return data?.[0] || null;
+};
+
+/**
+ * Deletes an interview question from the database.
+ *
+ * @param id - The ID of the question to delete
+ * @throws Error if deletion fails
+ */
+export const deleteInterviewQuestion = async (id: string): Promise<void> => {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from('interview_questions')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    throw new Error(`Failed to delete interview question: ${error.message}`);
+  }
+};
+
+/**
+ * Updates the order of multiple interview questions.
+ *
+ * @param questions - Array of questions with updated order values
+ * @throws Error if reordering fails
+ */
+export const reorderInterviewQuestions = async (
+  questions: { id: string; order: number }[]
+): Promise<void> => {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from('interview_questions')
+    .upsert(
+      questions.map(q => ({
+        id: q.id,
+        order: q.order
+      }))
+    );
+
+  if (error) {
+    throw new Error(`Failed to reorder interview questions: ${error.message}`);
+  }
+};

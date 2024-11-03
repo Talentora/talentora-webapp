@@ -72,7 +72,7 @@ export default function BotSettings({ bot }: { bot: Bot }) {
           </div>
           <CardHeader className="w-1/3">
             <div className="w-full flex items-center justify-center mb-4 min-h-[100px]">
-              <Code className="h-10 w-10" />
+              <Bot className="h-10 w-10" />
             </div>
           </CardHeader>
 

@@ -26,12 +26,12 @@ export default function InterviewConfig() {
   const searchParams = useSearchParams();
   const pathname = window.location.pathname;
   const jobId = pathname.split('/')[2]; // Extract ID from /jobs/{id}/settings
+  const { job, loading, error } = useJob(jobId);
 
   if (!jobId) {
     return <div>No job ID provided</div>;
   }
 
-  const { job, loading, error } = useJob(jobId);
 
   const handleStepCompletion = (stepNumber: number, isComplete: boolean) => {
     setCompletedSteps((prev) => {
@@ -44,10 +44,6 @@ export default function InterviewConfig() {
       return updated;
     });
   };
-
-  useEffect(() => {
-    // Optionally, you can add logic here to persist completedSteps to localStorage or a backend
-  }, [completedSteps]);
 
   return (
     <div className="mx-auto py-10">
