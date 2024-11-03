@@ -65,7 +65,7 @@ export default function ApplicantTable({
               <TableCell className="text-red-500">8</TableCell>
               <TableCell className="text-red-500">10</TableCell>
               <TableCell>
-                {ApplicantCandidate.interviewStages.name ||
+                {ApplicantCandidate.interviewStages[0].name ||
                   'No interview stage specified'}
               </TableCell>
               <TableCell className="underline">View Report</TableCell>

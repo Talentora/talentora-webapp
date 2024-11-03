@@ -462,7 +462,7 @@ export const updateInterviewQuestion = async (
   id: string,
   questionData: {
     question?: string;
-    response?: string;
+    sample_response?: string;
     order?: number;
     job_id?: string;
   }
@@ -501,27 +501,27 @@ export const deleteInterviewQuestion = async (id: string): Promise<void> => {
   }
 };
 
-/**
- * Updates the order of multiple interview questions.
- *
- * @param questions - Array of questions with updated order values
- * @throws Error if reordering fails
- */
-export const reorderInterviewQuestions = async (
-  questions: { id: string; order: number }[]
-): Promise<void> => {
-  const supabase = createClient();
+// /**
+//  * Updates the order of multiple interview questions.
+//  *
+//  * @param questions - Array of questions with updated order values
+//  * @throws Error if reordering fails
+//  */
+// export const reorderInterviewQuestions = async (
+//   questions: { id: string; order: number }[]
+// ): Promise<void> => {
+//   const supabase = createClient();
 
-  const { error } = await supabase
-    .from('interview_questions')
-    .upsert(
-      questions.map(q => ({
-        id: q.id,
-        order: q.order
-      }))
-    );
+//   const { error } = await supabase
+//     .from('interview_questions')
+//     .upsert(
+//       questions.map(q => ({
+//         id: q.id,
+//         order: q.order
+//       }))
+//     );
 
-  if (error) {
-    throw new Error(`Failed to reorder interview questions: ${error.message}`);
-  }
-};
+//   if (error) {
+//     throw new Error(`Failed to reorder interview questions: ${error.message}`);
+//   }
+// };

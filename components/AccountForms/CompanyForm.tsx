@@ -33,10 +33,10 @@ const CompanyForm = () => {
       <CardContent>
         <div className="flex flex-row items-center space-x-4 pb-4">
           <Avatar className="w-16 h-16">
-            <AvatarImage
+            {/* <AvatarImage
               src={company.logo_url || undefined}
               alt={company.name}
-            />
+            /> */}
             <AvatarFallback>
               {company.name.slice(0, 2).toUpperCase()}
             </AvatarFallback>

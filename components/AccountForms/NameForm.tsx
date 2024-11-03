@@ -21,6 +21,7 @@ export default function NameForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useUser();
+  const userName = user?.user_metadata.full_name;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true);

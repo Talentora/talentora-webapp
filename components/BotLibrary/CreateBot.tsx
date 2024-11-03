@@ -43,7 +43,9 @@ const voiceOptions = [
   { id: "pNInz6obpgDQGcFmaJgB", name: "Adam", gender: "male" }
 ];
 
-export default function CreateBot() {
+export default function CreateBot(
+  // { bots }: CreateBotProps
+) {
   const [isOpen, setIsOpen] = useState(false);
   const [newBot, setNewBot] = useState({
     name: '',

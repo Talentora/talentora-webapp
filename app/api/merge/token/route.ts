@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     categories
   } = await req.json();
 
-  try {
+  // try {
     const response = await fetch(
       'https://api.merge.dev/api/integrations/create-link-token',
       {
@@ -35,11 +35,11 @@ export async function POST(req: Request) {
 
     const data = await response.json();
     return NextResponse.json(data);
-  } catch (error) {
-    console.error('Error creating link token:', error);
-    return NextResponse.json(
-      { message: 'Failed to create link token', error: error.message },
-      { status: 500 }
-    );
-  }
+  // } catch (error) {
+  //   console.error('Error creating link token:', error);
+  //   return NextResponse.json(
+  //     { message: 'Failed to create link token', error: error.message },
+  //     { status: 500 }
+  //   );
+  
 }

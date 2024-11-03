@@ -65,6 +65,13 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA "extensions";
 
 
 
+CREATE EXTENSION IF NOT EXISTS "wrappers" WITH SCHEMA "extensions";
+
+
+
+
+
+
 CREATE TYPE "public"."pricing_plan_interval" AS ENUM (
     'day',
     'week',
@@ -85,15 +92,6 @@ CREATE TYPE "public"."pricing_type" AS ENUM (
 ALTER TYPE "public"."pricing_type" OWNER TO "postgres";
 
 
-CREATE TYPE "public"."role" AS ENUM (
-    'recruiter',
-    'candidate'
-);
-
-
-ALTER TYPE "public"."role" OWNER TO "postgres";
-
-
 CREATE TYPE "public"."subscription_status" AS ENUM (
     'trialing',
     'active',
@@ -110,13 +108,24 @@ ALTER TYPE "public"."subscription_status" OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
-    LANGUAGE "plpgsql" SECURITY DEFINER
+    LANGUAGE "plpgsql"
     AS $$
-begin
-  insert into public.users (id, full_name, avatar_url)
-  values (new.id, new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'avatar_url');
-  return new;
-end;
+BEGIN
+    IF NEW.raw_user_meta_data->>'role' IS NULL THEN
+        RAISE EXCEPTION 'No role found in raw_user_meta_data for user: %', NEW.id;
+    END IF;
+
+    IF NEW.raw_user_meta_data->>'role' = 'recruiter' THEN
+        RAISE NOTICE 'Creating recruiter for user: %', NEW.id;
+        INSERT INTO public.recruiters (id) VALUES (NEW.id);
+    ELSIF NEW.raw_user_meta_data->>'role' = 'applicant' THEN
+        RAISE NOTICE 'Creating applicant for user: %', NEW.id;
+        INSERT INTO public.applicants (id) VALUES (NEW.id);
+    ELSE
+        RAISE EXCEPTION 'Invalid role: %, for user: %', NEW.raw_user_meta_data->>'role', NEW.id;
+    END IF;
+    RETURN NEW;
+END;
 $$;
 
 
@@ -154,7 +163,7 @@ COMMENT ON TABLE "public"."AI_summary" IS 'Summarized information per applicant 
 
 
 CREATE TABLE IF NOT EXISTS "public"."applicants" (
-    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "id" "uuid" NOT NULL,
     "harvest_applicants" bigint
 );
 
@@ -302,7 +311,7 @@ ALTER TABLE "public"."products" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."recruiters" (
-    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "id" "uuid" NOT NULL,
     "avatar_url" "text",
     "billing_address" "jsonb",
     "payment_method" "jsonb",
@@ -342,24 +351,6 @@ CREATE TABLE IF NOT EXISTS "public"."subscriptions" (
 
 
 ALTER TABLE "public"."subscriptions" OWNER TO "postgres";
-
-
-CREATE TABLE IF NOT EXISTS "public"."users" (
-    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
-    "recruiter_id" "uuid",
-    "applicant_id" "uuid"
-);
-
-
-ALTER TABLE "public"."users" OWNER TO "postgres";
-
-
-COMMENT ON COLUMN "public"."users"."recruiter_id" IS 'recruiter id. Is NULL if this user is an applicant';
-
-
-
-COMMENT ON COLUMN "public"."users"."applicant_id" IS 'applicant id. Is NULL if this user is a recruiter';
-
 
 
 ALTER TABLE ONLY "public"."AI_config"
@@ -442,11 +433,6 @@ ALTER TABLE ONLY "public"."recruiters"
 
 
 
-ALTER TABLE ONLY "public"."users"
-    ADD CONSTRAINT "users_pkey1" PRIMARY KEY ("id");
-
-
-
 ALTER TABLE ONLY "public"."applications"
     ADD CONSTRAINT "applications_AI_summary_fkey" FOREIGN KEY ("AI_summary") REFERENCES "public"."AI_summary"("id");
 
@@ -487,11 +473,6 @@ ALTER TABLE ONLY "public"."prices"
 
 
 
-ALTER TABLE ONLY "public"."users"
-    ADD CONSTRAINT "recruiters_id_fkey" FOREIGN KEY ("id") REFERENCES "auth"."users"("id") ON UPDATE CASCADE ON DELETE CASCADE;
-
-
-
 ALTER TABLE ONLY "public"."subscriptions"
     ADD CONSTRAINT "subscriptions_price_id_fkey" FOREIGN KEY ("price_id") REFERENCES "public"."prices"("id");
 
@@ -502,18 +483,8 @@ ALTER TABLE ONLY "public"."subscriptions"
 
 
 
-ALTER TABLE ONLY "public"."users"
-    ADD CONSTRAINT "users_applicant_id_fkey" FOREIGN KEY ("applicant_id") REFERENCES "public"."applicants"("id") ON UPDATE CASCADE ON DELETE CASCADE;
-
-
-
 ALTER TABLE ONLY "public"."recruiters"
     ADD CONSTRAINT "users_company_id_fkey" FOREIGN KEY ("company_id") REFERENCES "public"."companies"("id") ON UPDATE CASCADE ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."users"
-    ADD CONSTRAINT "users_recruiter_id_fkey" FOREIGN KEY ("recruiter_id") REFERENCES "public"."recruiters"("id") ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
@@ -547,15 +518,15 @@ CREATE POLICY "Enable insert for authenticated users only" ON "public"."jobs" FO
 
 
 
-CREATE POLICY "Enable insert for authenticated users only" ON "public"."users" FOR INSERT TO "authenticated" WITH CHECK (true);
-
-
-
-CREATE POLICY "Enable insert for users based on user_id" ON "public"."recruiters" FOR INSERT WITH CHECK ((( SELECT "auth"."uid"() AS "uid") = "id"));
-
-
-
 CREATE POLICY "Select Jobs" ON "public"."jobs" FOR SELECT USING (true);
+
+
+
+CREATE POLICY "allow_supabase_service_role" ON "public"."applicants" TO "authenticated", "anon", "supabase_auth_admin" USING (true);
+
+
+
+CREATE POLICY "allow_supabase_service_role" ON "public"."recruiters" TO "authenticated", "anon", "supabase_auth_admin" USING (true);
 
 
 
@@ -586,9 +557,6 @@ ALTER TABLE "public"."recruiters" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."subscriptions" ENABLE ROW LEVEL SECURITY;
 
 
-ALTER TABLE "public"."users" ENABLE ROW LEVEL SECURITY;
-
-
 
 
 ALTER PUBLICATION "supabase_realtime" OWNER TO "postgres";
@@ -606,6 +574,123 @@ GRANT USAGE ON SCHEMA "public" TO "postgres";
 GRANT USAGE ON SCHEMA "public" TO "anon";
 GRANT USAGE ON SCHEMA "public" TO "authenticated";
 GRANT USAGE ON SCHEMA "public" TO "service_role";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -822,6 +907,9 @@ GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "service_role";
 
 
 
+
+
+
 GRANT ALL ON TABLE "public"."AI_config" TO "anon";
 GRANT ALL ON TABLE "public"."AI_config" TO "authenticated";
 GRANT ALL ON TABLE "public"."AI_config" TO "service_role";
@@ -837,6 +925,7 @@ GRANT ALL ON TABLE "public"."AI_summary" TO "service_role";
 GRANT ALL ON TABLE "public"."applicants" TO "anon";
 GRANT ALL ON TABLE "public"."applicants" TO "authenticated";
 GRANT ALL ON TABLE "public"."applicants" TO "service_role";
+GRANT INSERT ON TABLE "public"."applicants" TO "supabase_auth_admin";
 
 
 
@@ -879,18 +968,13 @@ GRANT ALL ON TABLE "public"."products" TO "service_role";
 GRANT ALL ON TABLE "public"."recruiters" TO "anon";
 GRANT ALL ON TABLE "public"."recruiters" TO "authenticated";
 GRANT ALL ON TABLE "public"."recruiters" TO "service_role";
+GRANT INSERT ON TABLE "public"."recruiters" TO "supabase_auth_admin";
 
 
 
 GRANT ALL ON TABLE "public"."subscriptions" TO "anon";
 GRANT ALL ON TABLE "public"."subscriptions" TO "authenticated";
 GRANT ALL ON TABLE "public"."subscriptions" TO "service_role";
-
-
-
-GRANT ALL ON TABLE "public"."users" TO "anon";
-GRANT ALL ON TABLE "public"."users" TO "authenticated";
-GRANT ALL ON TABLE "public"."users" TO "service_role";
 
 
 

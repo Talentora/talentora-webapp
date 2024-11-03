@@ -1,17 +1,15 @@
 import Pricing from '@/components/Pricing/Pricing';
-import { createClient } from '@/utils/supabase/server';
 import {
   getProducts,
-  getSubscription,
-  getUser
+  getSubscription
 } from '@/utils/supabase/queries';
+import { useUser } from '@/hooks/useUser';
 
 export default async function PricingPage() {
-  const supabase = createClient();
-  const [user, products, subscription] = await Promise.all([
-    getUser(supabase),
-    getProducts(supabase),
-    getSubscription(supabase)
+  const { user } = useUser();
+  const [products, subscription] = await Promise.all([
+    getProducts(),
+    getSubscription()
   ]);
 
   return (

@@ -11,7 +11,7 @@ import { createInterviewQuestion, getInterviewQuestions, updateInterviewQuestion
 import { useToast } from '@/components/Toasts/use-toast';
 
 export const QuestionSetup = () => {
-  const [questions, setQuestions] = useState<{ id: string; question: string; response: string; order: number }[]>([]);
+  const [questions, setQuestions] = useState<{ id: string; question: string; sample_response: string; order: number }[]>([]);
   const [newQuestion, setNewQuestion] = useState('');
   const [responseExample, setResponseExample] = useState('');
   const [loading, setLoading] = useState(false);

@@ -58,47 +58,7 @@ INSERT INTO "auth"."audit_log_entries" ("instance_id", "id", "payload", "created
 	('00000000-0000-0000-0000-000000000000', '76cd49e3-7972-4706-933a-192bce008848', '{"action":"token_refreshed","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"token"}', '2024-09-09 21:05:34.900475+00', ''),
 	('00000000-0000-0000-0000-000000000000', '48b9ab98-a6b4-4ba9-80c5-8aeb41c06ea5', '{"action":"token_refreshed","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"token"}', '2024-09-09 21:05:35.077369+00', ''),
 	('00000000-0000-0000-0000-000000000000', '50c68105-31f3-4f85-97de-76b229506a18', '{"action":"token_refreshed","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"token"}', '2024-09-09 21:05:35.252867+00', ''),
-	('00000000-0000-0000-0000-000000000000', '00a4b305-270e-4bbe-b18b-c49afe96da9d', '{"action":"token_refreshed","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"token"}', '2024-09-09 21:05:35.335394+00', ''),
-	('00000000-0000-0000-0000-000000000000', '8f571db8-4689-4b91-a5e9-bc2d7c3a111b', '{"action":"token_refreshed","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"token"}', '2024-09-10 00:49:40.567482+00', ''),
-	('00000000-0000-0000-0000-000000000000', '0bc2c0db-0a98-4db5-9022-5407871dfa79', '{"action":"token_refreshed","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"token"}', '2024-09-10 00:49:42.087459+00', ''),
-	('00000000-0000-0000-0000-000000000000', '53f7a05d-88d2-43f0-9307-f3d99bc357a9', '{"action":"token_refreshed","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"token"}', '2024-09-10 00:49:42.939966+00', ''),
-	('00000000-0000-0000-0000-000000000000', '760e8341-43af-4e18-b610-ced250ed9de5', '{"action":"token_refreshed","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"token"}', '2024-09-10 00:49:42.963516+00', ''),
-	('00000000-0000-0000-0000-000000000000', '05641710-55ae-4ccd-9e9b-f1fe1dc20c61', '{"action":"token_refreshed","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"token"}', '2024-09-10 00:49:43.951822+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'd146432e-3ad1-40bb-8b84-f8a517830e18', '{"action":"token_refreshed","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"token"}', '2024-09-10 00:49:44.106525+00', ''),
-	('00000000-0000-0000-0000-000000000000', '35ed30d4-73c8-410f-ab8e-3899d1981be3', '{"action":"logout","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"account"}', '2024-09-10 00:49:44.208355+00', ''),
-	('00000000-0000-0000-0000-000000000000', '59c4e292-e4d6-4072-8ebb-a7789a3c7d58', '{"action":"login","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"account","traits":{"provider":"github"}}', '2024-09-10 00:49:47.512003+00', ''),
-	('00000000-0000-0000-0000-000000000000', '15df9534-e353-46b6-a32b-8636b7f99549', '{"action":"login","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"account","traits":{"provider_type":"github"}}', '2024-09-10 00:49:48.676735+00', ''),
-	('00000000-0000-0000-0000-000000000000', '70ba8965-c855-4dc9-b035-378aed9ba100', '{"action":"logout","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"account"}', '2024-09-10 00:49:52.219572+00', ''),
-	('00000000-0000-0000-0000-000000000000', '8b6e4e77-96e3-4fd0-9216-ac41363ad7cd', '{"action":"user_signedup","actor_id":"0d3eda96-4065-4387-8315-6b552862f1f6","actor_username":"heather.davies253@gmail.com","actor_via_sso":false,"log_type":"team","traits":{"provider":"github"}}', '2024-09-21 00:35:54.992727+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'db21e862-fe67-4d20-bfbd-7ffa5aff8698', '{"action":"login","actor_id":"0d3eda96-4065-4387-8315-6b552862f1f6","actor_username":"heather.davies253@gmail.com","actor_via_sso":false,"log_type":"account","traits":{"provider_type":"github"}}', '2024-09-21 00:35:56.324644+00', ''),
-	('00000000-0000-0000-0000-000000000000', '6f446cde-e838-41c3-aa21-7223658ce2b7', '{"action":"user_repeated_signup","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"user","traits":{"provider":"email"}}', '2024-09-30 01:28:43.607719+00', ''),
-	('00000000-0000-0000-0000-000000000000', '103ec850-aad8-4db6-ac5c-784a51434fc6', '{"action":"user_deleted","actor_id":"00000000-0000-0000-0000-000000000000","actor_username":"service_role","actor_via_sso":false,"log_type":"team","traits":{"user_email":"bengardiner18@gmail.com","user_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","user_phone":""}}', '2024-09-30 18:42:10.329204+00', ''),
-	('00000000-0000-0000-0000-000000000000', '8c67e385-404d-40c2-9cbc-4ae1d3616010', '{"action":"user_signedup","actor_id":"00000000-0000-0000-0000-000000000000","actor_username":"service_role","actor_via_sso":false,"log_type":"team","traits":{"user_email":"asdf@gmail.com","user_id":"afcb16c2-89d8-45c1-a095-4f79c30f4c0f","user_phone":""}}', '2024-10-07 03:40:48.195679+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'a462df31-0869-451a-9692-fe516dba6ea7', '{"action":"user_signedup","actor_id":"1b71e29e-23a4-4794-afe1-1a50e6caa2a9","actor_username":"1234asdf@gmail.com","actor_via_sso":false,"log_type":"team","traits":{"provider":"email"}}', '2024-10-15 20:45:00.03866+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'd0900848-5faf-4e5d-8762-68dac4ab68dc', '{"action":"login","actor_id":"1b71e29e-23a4-4794-afe1-1a50e6caa2a9","actor_username":"1234asdf@gmail.com","actor_via_sso":false,"log_type":"account","traits":{"provider":"email"}}', '2024-10-15 20:45:00.048657+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'd028761d-2e6e-4392-8dd5-4b70f67d644c', '{"action":"logout","actor_id":"1b71e29e-23a4-4794-afe1-1a50e6caa2a9","actor_username":"1234asdf@gmail.com","actor_via_sso":false,"log_type":"account"}', '2024-10-15 21:17:54.39095+00', ''),
-	('00000000-0000-0000-0000-000000000000', '4516e947-dfef-49a0-931d-4c99ec9662ef', '{"action":"user_signedup","actor_id":"6d4772b5-301b-4a82-ac67-7472d811b359","actor_username":"jddoe@gmail.com","actor_via_sso":false,"log_type":"team","traits":{"provider":"email"}}', '2024-10-16 01:33:25.325642+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'efbe10b0-b681-4e13-846c-d506c2312047', '{"action":"login","actor_id":"6d4772b5-301b-4a82-ac67-7472d811b359","actor_username":"jddoe@gmail.com","actor_via_sso":false,"log_type":"account","traits":{"provider":"email"}}', '2024-10-16 01:33:25.336194+00', ''),
-	('00000000-0000-0000-0000-000000000000', '90eba7f4-c912-4c83-b15c-6f635f941ccd', '{"action":"user_repeated_signup","actor_id":"6d4772b5-301b-4a82-ac67-7472d811b359","actor_username":"jddoe@gmail.com","actor_via_sso":false,"log_type":"user","traits":{"provider":"email"}}', '2024-10-16 01:33:28.296868+00', ''),
-	('00000000-0000-0000-0000-000000000000', '6808daed-72b0-47d4-bce8-6c283ab00381', '{"action":"logout","actor_id":"6d4772b5-301b-4a82-ac67-7472d811b359","actor_username":"jddoe@gmail.com","actor_via_sso":false,"log_type":"account"}', '2024-10-16 01:33:33.067559+00', ''),
-	('00000000-0000-0000-0000-000000000000', '36369ea0-173f-4f31-8006-d061803a584d', '{"action":"user_signedup","actor_id":"891baa4e-c02d-467f-848d-4bb81e995ad2","actor_username":"hjm@gmail.com","actor_via_sso":false,"log_type":"team","traits":{"provider":"email"}}', '2024-10-16 02:16:49.454925+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'fc461067-c046-408c-9d60-fb317c152256', '{"action":"login","actor_id":"891baa4e-c02d-467f-848d-4bb81e995ad2","actor_username":"hjm@gmail.com","actor_via_sso":false,"log_type":"account","traits":{"provider":"email"}}', '2024-10-16 02:16:49.459469+00', ''),
-	('00000000-0000-0000-0000-000000000000', '45f2bfdf-863d-4d0b-89cf-a449f7cce56b', '{"action":"logout","actor_id":"bad97501-ff23-461a-85ec-d260bbe7fe71","actor_username":"newpwerson@gmail.com","actor_via_sso":false,"log_type":"account"}', '2024-10-16 02:18:08.403422+00', ''),
-	('00000000-0000-0000-0000-000000000000', '203a58cb-cc27-40f4-88c2-031859d5e9a5', '{"action":"user_signedup","actor_id":"50c6504d-09fd-43ed-9c4a-dfbbb9f3b6de","actor_username":"asdfadsf23@gmail.com","actor_via_sso":false,"log_type":"team","traits":{"provider":"email"}}', '2024-10-16 02:18:19.390997+00', ''),
-	('00000000-0000-0000-0000-000000000000', '1eab52ee-696a-4463-99bd-d5519278db47', '{"action":"login","actor_id":"50c6504d-09fd-43ed-9c4a-dfbbb9f3b6de","actor_username":"asdfadsf23@gmail.com","actor_via_sso":false,"log_type":"account","traits":{"provider":"email"}}', '2024-10-16 02:18:19.395749+00', ''),
-	('00000000-0000-0000-0000-000000000000', '01c9316b-4446-4983-bed1-ca3956548900', '{"action":"logout","actor_id":"50c6504d-09fd-43ed-9c4a-dfbbb9f3b6de","actor_username":"asdfadsf23@gmail.com","actor_via_sso":false,"log_type":"account"}', '2024-10-16 02:18:26.641126+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'cb3fc93d-a6b4-47e1-8076-f8afaf16aa59', '{"action":"user_signedup","actor_id":"86920455-25a4-4279-a9db-30dfa8001013","actor_username":"asdfwqfew2@gmail.com","actor_via_sso":false,"log_type":"team","traits":{"provider":"email"}}', '2024-10-16 02:30:55.189685+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'c1421062-6dcd-4245-997b-e3b6acef76ca', '{"action":"login","actor_id":"86920455-25a4-4279-a9db-30dfa8001013","actor_username":"asdfwqfew2@gmail.com","actor_via_sso":false,"log_type":"account","traits":{"provider":"email"}}', '2024-10-16 02:30:55.195986+00', ''),
-	('00000000-0000-0000-0000-000000000000', '58000cff-2204-4002-a38c-543276663a7e', '{"action":"logout","actor_id":"86920455-25a4-4279-a9db-30dfa8001013","actor_username":"asdfwqfew2@gmail.com","actor_via_sso":false,"log_type":"account"}', '2024-10-16 02:30:56.787576+00', ''),
-	('00000000-0000-0000-0000-000000000000', '1bf1209c-b8ab-479b-9350-971d7216a53c', '{"action":"user_signedup","actor_id":"d6759827-9fac-41cd-affd-1acb9b3aab6f","actor_username":"newnew@gmai.com","actor_via_sso":false,"log_type":"team","traits":{"provider":"email"}}', '2024-10-16 04:33:43.401282+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'bb0f5543-c6c3-44cb-8a6e-97b58db38347', '{"action":"login","actor_id":"d6759827-9fac-41cd-affd-1acb9b3aab6f","actor_username":"newnew@gmai.com","actor_via_sso":false,"log_type":"account","traits":{"provider":"email"}}', '2024-10-16 04:33:43.405857+00', ''),
-	('00000000-0000-0000-0000-000000000000', '5e270acb-3f16-47bc-ac7d-0875c9c03d7b', '{"action":"logout","actor_id":"891baa4e-c02d-467f-848d-4bb81e995ad2","actor_username":"hjm@gmail.com","actor_via_sso":false,"log_type":"account"}', '2024-10-16 02:17:24.34248+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'd50dfbc5-4fec-4719-b57d-7fd1f9a5cde6', '{"action":"user_signedup","actor_id":"bad97501-ff23-461a-85ec-d260bbe7fe71","actor_username":"newpwerson@gmail.com","actor_via_sso":false,"log_type":"team","traits":{"provider":"email"}}', '2024-10-16 02:17:41.244682+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'fea8425c-5541-47c0-ba8a-a85ae0800fe7', '{"action":"login","actor_id":"bad97501-ff23-461a-85ec-d260bbe7fe71","actor_username":"newpwerson@gmail.com","actor_via_sso":false,"log_type":"account","traits":{"provider":"email"}}', '2024-10-16 02:17:41.247591+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'c48ade91-8932-45c7-9d09-5483f6ea8eaf', '{"action":"logout","actor_id":"d6759827-9fac-41cd-affd-1acb9b3aab6f","actor_username":"newnew@gmai.com","actor_via_sso":false,"log_type":"account"}', '2024-10-16 04:35:17.094311+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'b185fcb3-bb9d-4fbb-bb6a-08063639af6a', '{"action":"user_signedup","actor_id":"bb3c166a-4ad1-4e11-ad5c-96be1682fb97","actor_username":"asdf@asdfasdf","actor_via_sso":false,"log_type":"team","traits":{"provider":"email"}}', '2024-10-16 04:35:31.465728+00', ''),
-	('00000000-0000-0000-0000-000000000000', '0b19728d-f994-49d8-96f0-feac6112d08f', '{"action":"login","actor_id":"bb3c166a-4ad1-4e11-ad5c-96be1682fb97","actor_username":"asdf@asdfasdf","actor_via_sso":false,"log_type":"account","traits":{"provider":"email"}}', '2024-10-16 04:35:31.472448+00', ''),
-	('00000000-0000-0000-0000-000000000000', 'e669ef8a-a5fd-4df3-a27b-a8853f84db9a', '{"action":"logout","actor_id":"bb3c166a-4ad1-4e11-ad5c-96be1682fb97","actor_username":"asdf@asdfasdf","actor_via_sso":false,"log_type":"account"}', '2024-10-16 04:35:34.521716+00', '');
+	('00000000-0000-0000-0000-000000000000', '00a4b305-270e-4bbe-b18b-c49afe96da9d', '{"action":"token_refreshed","actor_id":"74e45d04-5bd5-4849-b363-65cfad890fa2","actor_name":"Ben Gardiner","actor_username":"bengardiner18@gmail.com","actor_via_sso":false,"log_type":"token"}', '2024-09-09 21:05:35.335394+00', '');
 
 
 --
@@ -127,16 +87,7 @@ INSERT INTO "auth"."flow_state" ("id", "user_id", "auth_code", "code_challenge_m
 --
 
 INSERT INTO "auth"."users" ("instance_id", "id", "aud", "role", "email", "encrypted_password", "email_confirmed_at", "invited_at", "confirmation_token", "confirmation_sent_at", "recovery_token", "recovery_sent_at", "email_change_token_new", "email_change", "email_change_sent_at", "last_sign_in_at", "raw_app_meta_data", "raw_user_meta_data", "is_super_admin", "created_at", "updated_at", "phone", "phone_confirmed_at", "phone_change", "phone_change_token", "phone_change_sent_at", "email_change_token_current", "email_change_confirm_status", "banned_until", "reauthentication_token", "reauthentication_sent_at", "is_sso_user", "deleted_at", "is_anonymous") VALUES
-	('00000000-0000-0000-0000-000000000000', '0d3eda96-4065-4387-8315-6b552862f1f6', 'authenticated', 'authenticated', 'heather.davies253@gmail.com', NULL, '2024-09-21 00:35:54.999619+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-09-21 00:35:56.325912+00', '{"provider": "github", "providers": ["github"]}', '{"iss": "https://api.github.com", "sub": "26665300", "email": "heather.davies253@gmail.com", "user_name": "heather2535", "avatar_url": "https://avatars.githubusercontent.com/u/26665300?v=4", "provider_id": "26665300", "email_verified": true, "phone_verified": false, "preferred_username": "heather2535"}', NULL, '2024-09-21 00:35:54.97124+00', '2024-09-21 00:35:56.352732+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
-	('00000000-0000-0000-0000-000000000000', 'afcb16c2-89d8-45c1-a095-4f79c30f4c0f', 'authenticated', 'authenticated', 'asdf@gmail.com', '$2a$10$rwW3zI6CKtWWu8/a46Zfn./tkH51RL2kRPrQDS6oWTIYpemTCAc1O', '2024-10-07 03:40:48.205269+00', NULL, '', NULL, '', NULL, '', '', NULL, NULL, '{"provider": "email", "providers": ["email"]}', '{}', NULL, '2024-10-07 03:40:48.181277+00', '2024-10-07 03:40:48.205524+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
-	('00000000-0000-0000-0000-000000000000', '86920455-25a4-4279-a9db-30dfa8001013', 'authenticated', 'authenticated', 'asdfwqfew2@gmail.com', '$2a$10$skrQSNuuuOUXGYaspf3xvOb0nAgGdxqZNOkT3ANMRyjUbfthLT5H.', '2024-10-16 02:30:55.191969+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-10-16 02:30:55.19786+00', '{"provider": "email", "providers": ["email"]}', '{"id": "00", "sub": "86920455-25a4-4279-a9db-30dfa8001013", "role": "recruiter", "email": "asdfwqfew2@gmail.com", "email_verified": false, "phone_verified": false}', NULL, '2024-10-16 02:30:55.179946+00', '2024-10-16 02:30:55.204293+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
-	('00000000-0000-0000-0000-000000000000', '1b71e29e-23a4-4794-afe1-1a50e6caa2a9', 'authenticated', 'authenticated', '1234asdf@gmail.com', '$2a$10$LRPIsIe7684apRAB2uAaoOhEXma0BMkEEzO9rNS70UyDQ1noI1HVe', '2024-10-15 20:45:00.041305+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-10-15 20:45:00.050473+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "1b71e29e-23a4-4794-afe1-1a50e6caa2a9", "role": "recruiter", "email": "1234asdf@gmail.com", "email_verified": false, "phone_verified": false}', NULL, '2024-10-15 20:45:00.014777+00', '2024-10-15 20:45:00.056367+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
-	('00000000-0000-0000-0000-000000000000', '6d4772b5-301b-4a82-ac67-7472d811b359', 'authenticated', 'authenticated', 'jddoe@gmail.com', '$2a$10$zEsqPDKU.Xro3I254kMgXuCq8Mz1YrUHfVqeAP2L.kcmhbFeN6sUa', '2024-10-16 01:33:25.329477+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-10-16 01:33:25.340399+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "6d4772b5-301b-4a82-ac67-7472d811b359", "role": "recruiter", "email": "jddoe@gmail.com", "email_verified": false, "phone_verified": false}', NULL, '2024-10-16 01:33:25.30602+00', '2024-10-16 01:33:25.354275+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
-	('00000000-0000-0000-0000-000000000000', '891baa4e-c02d-467f-848d-4bb81e995ad2', 'authenticated', 'authenticated', 'hjm@gmail.com', '$2a$10$DVwSWHu4Js.iOfeFZWoeuu6NQXlqsIRMNeCvHuOPUcJBiI/HUCW2S', '2024-10-16 02:16:49.4557+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-10-16 02:16:49.460748+00', '{"provider": "email", "providers": ["email"]}', '{"id": "00", "sub": "891baa4e-c02d-467f-848d-4bb81e995ad2", "role": "recruiter", "email": "hjm@gmail.com", "email_verified": false, "phone_verified": false}', NULL, '2024-10-16 02:16:49.439861+00', '2024-10-16 02:16:49.465185+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
-	('00000000-0000-0000-0000-000000000000', 'bad97501-ff23-461a-85ec-d260bbe7fe71', 'authenticated', 'authenticated', 'newpwerson@gmail.com', '$2a$10$Oyy4H.LdsPFSw4CgwNCyke4h79UqreGtJ/SKhTopMhcf1iZAYuM7a', '2024-10-16 02:17:41.245376+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-10-16 02:17:41.249568+00', '{"provider": "email", "providers": ["email"]}', '{"id": "00", "sub": "bad97501-ff23-461a-85ec-d260bbe7fe71", "role": "recruiter", "email": "newpwerson@gmail.com", "email_verified": false, "phone_verified": false}', NULL, '2024-10-16 02:17:41.224333+00', '2024-10-16 02:17:41.253905+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
-	('00000000-0000-0000-0000-000000000000', '50c6504d-09fd-43ed-9c4a-dfbbb9f3b6de', 'authenticated', 'authenticated', 'asdfadsf23@gmail.com', '$2a$10$awerdncwGjFdcVPaDbFuiu68IUOZVb0JVCPBsbzhnbIQdmesfdRYK', '2024-10-16 02:18:19.392443+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-10-16 02:18:19.396617+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "50c6504d-09fd-43ed-9c4a-dfbbb9f3b6de", "role": "recruiter", "email": "asdfadsf23@gmail.com", "email_verified": false, "phone_verified": false}', NULL, '2024-10-16 02:18:19.3797+00', '2024-10-16 02:18:19.400045+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
-	('00000000-0000-0000-0000-000000000000', 'd6759827-9fac-41cd-affd-1acb9b3aab6f', 'authenticated', 'authenticated', 'newnew@gmai.com', '$2a$10$Fx/iEJsjEYLAbnGYnyYsYuhkZj9G2v7YmSTtiDYS668pKo9wvid22', '2024-10-16 04:33:43.402789+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-10-16 04:33:43.407207+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "d6759827-9fac-41cd-affd-1acb9b3aab6f", "role": "applicant", "email": "newnew@gmai.com", "email_verified": false, "phone_verified": false}', NULL, '2024-10-16 04:33:43.389501+00', '2024-10-16 04:33:43.410859+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
-	('00000000-0000-0000-0000-000000000000', 'bb3c166a-4ad1-4e11-ad5c-96be1682fb97', 'authenticated', 'authenticated', 'asdf@asdfasdf', '$2a$10$7d6v/dvJqXr9uUIk4a9mFu0hhrVhdPDLnYK7TkwMSibYMxwinEuSC', '2024-10-16 04:35:31.46764+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-10-16 04:35:31.47416+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "bb3c166a-4ad1-4e11-ad5c-96be1682fb97", "role": "applicant", "email": "asdf@asdfasdf", "email_verified": false, "phone_verified": false}', NULL, '2024-10-16 04:35:31.452315+00', '2024-10-16 04:35:31.478799+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false);
+	('00000000-0000-0000-0000-000000000000', '74e45d04-5bd5-4849-b363-65cfad890fa2', 'authenticated', 'authenticated', 'bengardiner18@gmail.com', NULL, '2024-08-09 21:20:31.077435+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-08-28 23:49:10.061945+00', '{"provider": "github", "providers": ["github"]}', '{"iss": "https://api.github.com", "sub": "38408476", "name": "Ben Gardiner", "email": "bengardiner18@gmail.com", "full_name": "Ben Gardiner", "user_name": "BenGardiner18", "avatar_url": "https://avatars.githubusercontent.com/u/38408476?v=4", "provider_id": "38408476", "email_verified": true, "phone_verified": false, "preferred_username": "BenGardiner18"}', NULL, '2024-08-09 21:20:31.064572+00', '2024-09-09 21:05:25.435895+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false);
 
 
 --
@@ -144,16 +95,7 @@ INSERT INTO "auth"."users" ("instance_id", "id", "aud", "role", "email", "encryp
 --
 
 INSERT INTO "auth"."identities" ("provider_id", "user_id", "identity_data", "provider", "last_sign_in_at", "created_at", "updated_at", "id") VALUES
-	('26665300', '0d3eda96-4065-4387-8315-6b552862f1f6', '{"iss": "https://api.github.com", "sub": "26665300", "email": "heather.davies253@gmail.com", "user_name": "heather2535", "avatar_url": "https://avatars.githubusercontent.com/u/26665300?v=4", "provider_id": "26665300", "email_verified": true, "phone_verified": false, "preferred_username": "heather2535"}', 'github', '2024-09-21 00:35:54.986191+00', '2024-09-21 00:35:54.98624+00', '2024-09-21 00:35:54.98624+00', '0c913ed6-f933-4457-a3e2-d01d54742746'),
-	('afcb16c2-89d8-45c1-a095-4f79c30f4c0f', 'afcb16c2-89d8-45c1-a095-4f79c30f4c0f', '{"sub": "afcb16c2-89d8-45c1-a095-4f79c30f4c0f", "email": "asdf@gmail.com", "email_verified": false, "phone_verified": false}', 'email', '2024-10-07 03:40:48.189137+00', '2024-10-07 03:40:48.189762+00', '2024-10-07 03:40:48.189762+00', 'ba45a73b-c016-4425-bca9-034fcfc31d46'),
-	('1b71e29e-23a4-4794-afe1-1a50e6caa2a9', '1b71e29e-23a4-4794-afe1-1a50e6caa2a9', '{"sub": "1b71e29e-23a4-4794-afe1-1a50e6caa2a9", "role": "recruiter", "email": "1234asdf@gmail.com", "email_verified": false, "phone_verified": false}', 'email', '2024-10-15 20:45:00.027+00', '2024-10-15 20:45:00.028482+00', '2024-10-15 20:45:00.028482+00', '165655c3-15b5-44a1-a9d8-cc1556fb7080'),
-	('6d4772b5-301b-4a82-ac67-7472d811b359', '6d4772b5-301b-4a82-ac67-7472d811b359', '{"sub": "6d4772b5-301b-4a82-ac67-7472d811b359", "role": "recruiter", "email": "jddoe@gmail.com", "email_verified": false, "phone_verified": false}', 'email', '2024-10-16 01:33:25.317445+00', '2024-10-16 01:33:25.317532+00', '2024-10-16 01:33:25.317532+00', '46635090-5ac9-4dc2-8dad-16e6a3219f60'),
-	('891baa4e-c02d-467f-848d-4bb81e995ad2', '891baa4e-c02d-467f-848d-4bb81e995ad2', '{"id": "00", "sub": "891baa4e-c02d-467f-848d-4bb81e995ad2", "role": "recruiter", "email": "hjm@gmail.com", "email_verified": false, "phone_verified": false}', 'email', '2024-10-16 02:16:49.449589+00', '2024-10-16 02:16:49.44964+00', '2024-10-16 02:16:49.44964+00', '63e58498-a2da-4d8c-8314-247b3729dc45'),
-	('bad97501-ff23-461a-85ec-d260bbe7fe71', 'bad97501-ff23-461a-85ec-d260bbe7fe71', '{"id": "00", "sub": "bad97501-ff23-461a-85ec-d260bbe7fe71", "role": "recruiter", "email": "newpwerson@gmail.com", "email_verified": false, "phone_verified": false}', 'email', '2024-10-16 02:17:41.240566+00', '2024-10-16 02:17:41.240644+00', '2024-10-16 02:17:41.240644+00', 'ecfbde52-efd1-46c9-8b7f-079a716993df'),
-	('50c6504d-09fd-43ed-9c4a-dfbbb9f3b6de', '50c6504d-09fd-43ed-9c4a-dfbbb9f3b6de', '{"sub": "50c6504d-09fd-43ed-9c4a-dfbbb9f3b6de", "role": "recruiter", "email": "asdfadsf23@gmail.com", "email_verified": false, "phone_verified": false}', 'email', '2024-10-16 02:18:19.385224+00', '2024-10-16 02:18:19.385279+00', '2024-10-16 02:18:19.385279+00', '4cd0e4c8-b10d-4977-9a1b-aa9be6de3e16'),
-	('86920455-25a4-4279-a9db-30dfa8001013', '86920455-25a4-4279-a9db-30dfa8001013', '{"id": "00", "sub": "86920455-25a4-4279-a9db-30dfa8001013", "role": "recruiter", "email": "asdfwqfew2@gmail.com", "email_verified": false, "phone_verified": false}', 'email', '2024-10-16 02:30:55.185421+00', '2024-10-16 02:30:55.1855+00', '2024-10-16 02:30:55.1855+00', '2573494f-fdb0-4b1c-9a80-1078b49fd475'),
-	('d6759827-9fac-41cd-affd-1acb9b3aab6f', 'd6759827-9fac-41cd-affd-1acb9b3aab6f', '{"sub": "d6759827-9fac-41cd-affd-1acb9b3aab6f", "role": "applicant", "email": "newnew@gmai.com", "email_verified": false, "phone_verified": false}', 'email', '2024-10-16 04:33:43.396235+00', '2024-10-16 04:33:43.396284+00', '2024-10-16 04:33:43.396284+00', 'dfa483b7-ddc0-40a4-bc43-6e2e060850e5'),
-	('bb3c166a-4ad1-4e11-ad5c-96be1682fb97', 'bb3c166a-4ad1-4e11-ad5c-96be1682fb97', '{"sub": "bb3c166a-4ad1-4e11-ad5c-96be1682fb97", "role": "applicant", "email": "asdf@asdfasdf", "email_verified": false, "phone_verified": false}', 'email', '2024-10-16 04:35:31.459768+00', '2024-10-16 04:35:31.459819+00', '2024-10-16 04:35:31.459819+00', 'a17a4627-52c3-4e4b-8ef4-8b50735c9f99');
+	('38408476', '74e45d04-5bd5-4849-b363-65cfad890fa2', '{"iss": "https://api.github.com", "sub": "38408476", "name": "Ben Gardiner", "email": "bengardiner18@gmail.com", "full_name": "Ben Gardiner", "user_name": "BenGardiner18", "avatar_url": "https://avatars.githubusercontent.com/u/38408476?v=4", "provider_id": "38408476", "email_verified": true, "phone_verified": false, "preferred_username": "BenGardiner18"}', 'github', '2024-08-09 21:20:31.07181+00', '2024-08-09 21:20:31.071863+00', '2024-08-28 23:49:08.94724+00', '5f847fa9-a1be-468a-9837-544111266077');
 
 
 --
@@ -167,7 +109,9 @@ INSERT INTO "auth"."identities" ("provider_id", "user_id", "identity_data", "pro
 --
 
 INSERT INTO "auth"."sessions" ("id", "user_id", "created_at", "updated_at", "factor_id", "aal", "not_after", "refreshed_at", "user_agent", "ip", "tag") VALUES
-	('9e163b40-db97-4dd2-accc-c22a990547cc', '0d3eda96-4065-4387-8315-6b552862f1f6', '2024-09-21 00:35:56.32679+00', '2024-09-21 00:35:56.32679+00', NULL, 'aal1', NULL, NULL, 'node', '3.236.126.187', NULL);
+	('dc526997-0577-49ae-bdc7-5e2d74ab1a4d', '74e45d04-5bd5-4849-b363-65cfad890fa2', '2024-08-09 21:50:25.216866+00', '2024-08-09 21:50:25.216866+00', NULL, 'aal1', NULL, NULL, 'node', '44.202.111.47', NULL),
+	('41105f64-6a51-493e-9704-2c0f7ccd5f0a', '74e45d04-5bd5-4849-b363-65cfad890fa2', '2024-08-09 21:50:26.63594+00', '2024-08-09 21:50:26.63594+00', NULL, 'aal1', NULL, NULL, 'node', '44.202.111.47', NULL),
+	('f26a1a9f-2688-42b2-84b3-b931c6890b05', '74e45d04-5bd5-4849-b363-65cfad890fa2', '2024-08-28 23:49:10.063613+00', '2024-09-09 21:05:35.336546+00', NULL, 'aal1', NULL, '2024-09-09 21:05:35.336472', 'node', '3.95.39.3', NULL);
 
 
 --
@@ -175,7 +119,9 @@ INSERT INTO "auth"."sessions" ("id", "user_id", "created_at", "updated_at", "fac
 --
 
 INSERT INTO "auth"."mfa_amr_claims" ("session_id", "created_at", "updated_at", "authentication_method", "id") VALUES
-	('9e163b40-db97-4dd2-accc-c22a990547cc', '2024-09-21 00:35:56.353275+00', '2024-09-21 00:35:56.353275+00', 'oauth', '8ecfa334-74fb-4f22-a818-2504473dab2b');
+	('dc526997-0577-49ae-bdc7-5e2d74ab1a4d', '2024-08-09 21:50:25.220706+00', '2024-08-09 21:50:25.220706+00', 'oauth', 'ffe68d8f-20fb-4e93-8799-e1915c7d180b'),
+	('41105f64-6a51-493e-9704-2c0f7ccd5f0a', '2024-08-09 21:50:26.637958+00', '2024-08-09 21:50:26.637958+00', 'oauth', '18beef97-8d73-45f5-b603-ae6a12f0f921'),
+	('f26a1a9f-2688-42b2-84b3-b931c6890b05', '2024-08-28 23:49:10.079916+00', '2024-08-28 23:49:10.079916+00', 'oauth', '1f2a3828-8ebc-455d-b7a7-a45207919f0f');
 
 
 --
@@ -201,7 +147,10 @@ INSERT INTO "auth"."mfa_amr_claims" ("session_id", "created_at", "updated_at", "
 --
 
 INSERT INTO "auth"."refresh_tokens" ("instance_id", "id", "token", "user_id", "revoked", "created_at", "updated_at", "parent", "session_id") VALUES
-	('00000000-0000-0000-0000-000000000000', 7, '_dVt3drwWvWCG1yce3yMTw', '0d3eda96-4065-4387-8315-6b552862f1f6', false, '2024-09-21 00:35:56.332729+00', '2024-09-21 00:35:56.332729+00', NULL, '9e163b40-db97-4dd2-accc-c22a990547cc');
+	('00000000-0000-0000-0000-000000000000', 2, '49vh4Hw9i-xTjrF4p00U9Q', '74e45d04-5bd5-4849-b363-65cfad890fa2', false, '2024-08-09 21:50:25.218716+00', '2024-08-09 21:50:25.218716+00', NULL, 'dc526997-0577-49ae-bdc7-5e2d74ab1a4d'),
+	('00000000-0000-0000-0000-000000000000', 3, 'JASDMABMML-hfwIW2nArbw', '74e45d04-5bd5-4849-b363-65cfad890fa2', false, '2024-08-09 21:50:26.636691+00', '2024-08-09 21:50:26.636691+00', NULL, '41105f64-6a51-493e-9704-2c0f7ccd5f0a'),
+	('00000000-0000-0000-0000-000000000000', 4, 'nYcwZTT6OC5kXAnY37yYRg', '74e45d04-5bd5-4849-b363-65cfad890fa2', true, '2024-08-28 23:49:10.07085+00', '2024-09-09 21:05:25.429312+00', NULL, 'f26a1a9f-2688-42b2-84b3-b931c6890b05'),
+	('00000000-0000-0000-0000-000000000000', 5, 'ZsIVJEbD5F7quTybMQbS5Q', '74e45d04-5bd5-4849-b363-65cfad890fa2', false, '2024-09-09 21:05:25.433774+00', '2024-09-09 21:05:25.433774+00', 'nYcwZTT6OC5kXAnY37yYRg', 'f26a1a9f-2688-42b2-84b3-b931c6890b05');
 
 
 --
@@ -235,24 +184,50 @@ INSERT INTO "auth"."refresh_tokens" ("instance_id", "id", "token", "user_id", "r
 
 
 --
--- Data for Name: AI_config; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: companies; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO "public"."companies" ("id", "name", "location", "industry") OVERRIDING SYSTEM VALUE VALUES
+	(1, 'Tech Innovators Inc.', 'San Francisco, CA', 'Technology'),
+	(2, 'Health Solutions LLC', 'New York, NY', 'Healthcare'),
+	(3, 'FinTech Partners', 'Chicago, IL', 'Finance'),
+	(4, 'Green Energy Corp.', 'Austin, TX', 'Energy'),
+	(5, 'Retail World Ltd.', 'Boston, MA', 'Retail');
 
 
 --
--- Data for Name: AI_summary; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: jobs; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO "public"."jobs" ("id", "title", "description", "salary_range", "company_id", "applicant_count", "location", "department") OVERRIDING SYSTEM VALUE VALUES
+	(1, 'Senior Software Engineer', 'Develop and maintain web applications', '$120k - $150k', 1, 2, 'Boston, MA', 'Marketing'),
+	(2, 'Data Analyst', 'Analyze and interpret complex data sets', '$80k - $110k', 3, 1, 'Boston, MA', 'Marketing'),
+	(3, 'Product Manager', 'Oversee product development and strategy', '$100k - $130k', 1, 1, 'Boston, MA', 'Marketing'),
+	(4, 'Nurse Practitioner', 'Provide healthcare services in a clinical setting', '$90k - $120k', 2, 1, 'Boston, MA', 'Marketing'),
+	(5, 'Marketing Specialist', 'Plan and execute marketing campaigns', '$70k - $90k', 5, 1, 'Boston, MA', 'Marketing'),
+	(6, 'Renewable Energy Engineer', 'Design and develop renewable energy systems', '$95k - $125k', 4, 1, 'Boston, MA', 'Marketing'),
+	(7, 'Sales Associate', 'Assist customers with product selection and purchases', '$40k - $60k', 5, 1, 'Boston, MA', 'Marketing');
 
 
 --
 -- Data for Name: applicants; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO "public"."applicants" ("id", "harvest_applicants") VALUES
-	('d6759827-9fac-41cd-affd-1acb9b3aab6f', NULL),
-	('bb3c166a-4ad1-4e11-ad5c-96be1682fb97', NULL);
+INSERT INTO "public"."applicants" ("id", "first_name", "last_name", "email", "phone_number", "resume", "job_id") OVERRIDING SYSTEM VALUE VALUES
+	(1, 'John', 'Doe', 'john.doe@example.com', '555-1234', 'Resume content here...', 1),
+	(2, 'Jane', 'Smith', 'jane.smith@example.com', '555-5678', 'Resume content here...', 2),
+	(3, 'Emily', 'Johnson', 'emily.johnson@example.com', '555-8765', 'Resume content here...', 3),
+	(4, 'Michael', 'Brown', 'michael.brown@example.com', '555-4321', 'Resume content here...', 4),
+	(5, 'Sarah', 'Davis', 'sarah.davis@example.com', '555-1111', 'Resume content here...', 5),
+	(6, 'David', 'Wilson', 'david.wilson@example.com', '555-2222', 'Resume content here...', 6),
+	(7, 'Emma', 'Thomas', 'emma.thomas@example.com', '555-3333', 'Resume content here...', 1),
+	(8, 'Daniel', 'Taylor', 'daniel.taylor@example.com', '555-4444', 'Resume content here...', 7);
+
+
+--
+-- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
 
 
 --
@@ -282,40 +257,11 @@ INSERT INTO "public"."prices" ("id", "product_id", "active", "description", "uni
 
 
 --
--- Data for Name: companies; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-
-
---
--- Data for Name: jobs; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-INSERT INTO "public"."jobs" ("id", "company_id", "harvest_jobs", "AIconfig_id") VALUES
-	('214a3876-8e8a-4ed6-9d6b-cde132719f26', NULL, NULL, NULL);
-
-
---
--- Data for Name: applications; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-
-
---
--- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-
-
---
--- Data for Name: recruiters; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-INSERT INTO "public"."recruiters" ("id", "avatar_url", "billing_address", "payment_method", "company_id", "harvest_recruiters") VALUES
-	('891baa4e-c02d-467f-848d-4bb81e995ad2', NULL, NULL, NULL, NULL, NULL),
-	('bad97501-ff23-461a-85ec-d260bbe7fe71', NULL, NULL, NULL, NULL, NULL),
-	('50c6504d-09fd-43ed-9c4a-dfbbb9f3b6de', NULL, NULL, NULL, NULL, NULL),
-	('86920455-25a4-4279-a9db-30dfa8001013', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "public"."users" ("id", "full_name", "avatar_url", "billing_address", "payment_method") VALUES
+	('74e45d04-5bd5-4849-b363-65cfad890fa2', 'Ben Gardiner', 'https://avatars.githubusercontent.com/u/38408476?v=4', NULL, NULL);
 
 
 --
@@ -323,8 +269,7 @@ INSERT INTO "public"."recruiters" ("id", "avatar_url", "billing_address", "payme
 --
 
 INSERT INTO "storage"."buckets" ("id", "name", "owner", "created_at", "updated_at", "public", "avif_autodetection", "file_size_limit", "allowed_mime_types", "owner_id") VALUES
-	('Interviews', 'Interviews', NULL, '2024-08-14 21:31:13.400571+00', '2024-08-14 21:31:13.400571+00', false, false, NULL, NULL, NULL),
-	('Resumes', 'Resumes', NULL, '2024-10-10 05:14:10.554591+00', '2024-10-10 05:14:10.554591+00', false, false, NULL, NULL, NULL);
+	('Interviews', 'Interviews', NULL, '2024-08-14 21:31:13.400571+00', '2024-08-14 21:31:13.400571+00', false, false, NULL, NULL, NULL);
 
 
 --
@@ -332,8 +277,7 @@ INSERT INTO "storage"."buckets" ("id", "name", "owner", "created_at", "updated_a
 --
 
 INSERT INTO "storage"."objects" ("id", "bucket_id", "name", "owner", "created_at", "updated_at", "last_accessed_at", "metadata", "version", "owner_id", "user_metadata") VALUES
-	('4d52434a-9cd4-45de-aa72-0b6a81914813', 'Interviews', 'Untitled folder/.emptyFolderPlaceholder', NULL, '2024-08-14 21:31:26.907506+00', '2024-08-14 21:31:26.907506+00', '2024-08-14 21:31:26.907506+00', '{"eTag": "\"d41d8cd98f00b204e9800998ecf8427e\"", "size": 0, "mimetype": "application/octet-stream", "cacheControl": "max-age=3600", "lastModified": "2024-08-14T21:31:27.000Z", "contentLength": 0, "httpStatusCode": 200}', '0b10d928-4988-4619-b000-d5a4220fdd6c', NULL, '{}'),
-	('e502db4c-3636-4c27-9400-8ada09769a14', 'Resumes', 'alex_resume', NULL, '2024-10-10 05:18:17.813273+00', '2024-10-10 05:18:17.813273+00', '2024-10-10 05:18:17.813273+00', '{"eTag": "\"54231afee72d9c5513cbfc588a5a6e03-1\"", "size": 40565, "mimetype": "binary/octet-stream", "cacheControl": "max-age=3600", "lastModified": "2024-10-10T05:18:18.000Z", "contentLength": 40565, "httpStatusCode": 200}', '33ad92ce-301b-43bd-9b41-9106e2ef5978', NULL, NULL);
+	('4d52434a-9cd4-45de-aa72-0b6a81914813', 'Interviews', 'Untitled folder/.emptyFolderPlaceholder', NULL, '2024-08-14 21:31:26.907506+00', '2024-08-14 21:31:26.907506+00', '2024-08-14 21:31:26.907506+00', '{"eTag": "\"d41d8cd98f00b204e9800998ecf8427e\"", "size": 0, "mimetype": "application/octet-stream", "cacheControl": "max-age=3600", "lastModified": "2024-08-14T21:31:27.000Z", "contentLength": 0, "httpStatusCode": 200}', '0b10d928-4988-4619-b000-d5a4220fdd6c', NULL, '{}');
 
 
 --
@@ -349,12 +293,6 @@ INSERT INTO "storage"."objects" ("id", "bucket_id", "name", "owner", "created_at
 
 
 --
--- Data for Name: hooks; Type: TABLE DATA; Schema: supabase_functions; Owner: supabase_functions_admin
---
-
-
-
---
 -- Data for Name: secrets; Type: TABLE DATA; Schema: vault; Owner: supabase_admin
 --
 
@@ -364,7 +302,7 @@ INSERT INTO "storage"."objects" ("id", "bucket_id", "name", "owner", "created_at
 -- Name: refresh_tokens_id_seq; Type: SEQUENCE SET; Schema: auth; Owner: supabase_auth_admin
 --
 
-SELECT pg_catalog.setval('"auth"."refresh_tokens_id_seq"', 15, true);
+SELECT pg_catalog.setval('"auth"."refresh_tokens_id_seq"', 5, true);
 
 
 --
@@ -375,10 +313,24 @@ SELECT pg_catalog.setval('"pgsodium"."key_key_id_seq"', 1, false);
 
 
 --
--- Name: hooks_id_seq; Type: SEQUENCE SET; Schema: supabase_functions; Owner: supabase_functions_admin
+-- Name: applicants_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"supabase_functions"."hooks_id_seq"', 1, false);
+SELECT pg_catalog.setval('"public"."applicants_id_seq"', 8, true);
+
+
+--
+-- Name: companies_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"public"."companies_id_seq"', 5, true);
+
+
+--
+-- Name: jobs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"public"."jobs_id_seq"', 7, true);
 
 
 --
