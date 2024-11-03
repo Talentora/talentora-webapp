@@ -7,31 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string
-          query?: string
-          variables?: Json
-          extensions?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       AI_config: {
@@ -203,7 +178,6 @@ export type Database = {
       }
       companies: {
         Row: {
-          billing_address: Json | null
           description: string | null
           email_extension: string | null
           id: string
@@ -211,12 +185,10 @@ export type Database = {
           location: string | null
           merge_api_key: string | null
           name: string
-          payment_method: Json | null
           subscription_id: string | null
           website_url: string | null
         }
         Insert: {
-          billing_address?: Json | null
           description?: string | null
           email_extension?: string | null
           id?: string
@@ -224,12 +196,10 @@ export type Database = {
           location?: string | null
           merge_api_key?: string | null
           name: string
-          payment_method?: Json | null
           subscription_id?: string | null
           website_url?: string | null
         }
         Update: {
-          billing_address?: Json | null
           description?: string | null
           email_extension?: string | null
           id?: string
@@ -237,7 +207,6 @@ export type Database = {
           location?: string | null
           merge_api_key?: string | null
           name?: string
-          payment_method?: Json | null
           subscription_id?: string | null
           website_url?: string | null
         }
@@ -308,15 +277,7 @@ export type Database = {
           id?: string
           stripe_customer_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "customers_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       interview_questions: {
         Row: {
@@ -476,30 +437,41 @@ export type Database = {
       recruiters: {
         Row: {
           avatar_url: string | null
+          billing_address: Json | null
           company_id: string | null
           harvest_recruiters: number | null
           id: string
+          payment_method: Json | null
         }
         Insert: {
           avatar_url?: string | null
+          billing_address?: Json | null
           company_id?: string | null
           harvest_recruiters?: number | null
           id: string
+          payment_method?: Json | null
         }
         Update: {
           avatar_url?: string | null
+          billing_address?: Json | null
           company_id?: string | null
           harvest_recruiters?: number | null
           id?: string
+          payment_method?: Json | null
         }
         Relationships: [
           {
+<<<<<<< HEAD
             foreignKeyName: "recruiters_company_id_fkey"
+=======
+            foreignKeyName: "users_company_id_fkey"
+>>>>>>> origin/dev
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
+<<<<<<< HEAD
           {
             foreignKeyName: "recruiters_id_fkey"
             columns: ["id"]
@@ -507,6 +479,8 @@ export type Database = {
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
+=======
+>>>>>>> origin/dev
         ]
       }
       subscriptions: {
@@ -514,7 +488,6 @@ export type Database = {
           cancel_at: string | null
           cancel_at_period_end: boolean | null
           canceled_at: string | null
-          company_id: string
           created: string
           current_period_end: string
           current_period_start: string
@@ -526,12 +499,12 @@ export type Database = {
           status: Database["public"]["Enums"]["subscription_status"] | null
           trial_end: string | null
           trial_start: string | null
+          user_id: string
         }
         Insert: {
           cancel_at?: string | null
           cancel_at_period_end?: boolean | null
           canceled_at?: string | null
-          company_id: string
           created?: string
           current_period_end?: string
           current_period_start?: string
@@ -543,12 +516,12 @@ export type Database = {
           status?: Database["public"]["Enums"]["subscription_status"] | null
           trial_end?: string | null
           trial_start?: string | null
+          user_id: string
         }
         Update: {
           cancel_at?: string | null
           cancel_at_period_end?: boolean | null
           canceled_at?: string | null
-          company_id?: string
           created?: string
           current_period_end?: string
           current_period_start?: string
@@ -560,27 +533,14 @@ export type Database = {
           status?: Database["public"]["Enums"]["subscription_status"] | null
           trial_end?: string | null
           trial_start?: string | null
+          user_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "subscriptions_company_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "companies"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "subscriptions_price_id_fkey"
             columns: ["price_id"]
             isOneToOne: false
             referencedRelation: "prices"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["company_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -691,5 +651,20 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
