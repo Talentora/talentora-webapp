@@ -1,9 +1,15 @@
+// import {
+//   UserAppMetadata,
+//   UserMetadata,
+//   UserIdentity,
+//   Factor
+// } from '@supabase/auth-js/src/lib/types';
 import {
   UserAppMetadata,
   UserMetadata,
   UserIdentity,
   Factor
-} from '@supabase/auth-js/src/lib/types';
+} from '@supabase/auth-js';
 
 export interface AuthUser {
   id: string;
