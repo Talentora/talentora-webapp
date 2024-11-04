@@ -16,7 +16,7 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
   const { company, loading: companyLoading } = useCompany();
   const [linkToken, setLinkToken] = useState<string | null>(null);
 
-  const hasMergeApiKey = company?.merge_api_key ? true : false;
+  const hasMergeApiKey = company?.merge_account_token ? true : false;
 
   const createMergeLinkToken = async () => {
     if (!user || !company) {
@@ -83,7 +83,7 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
 
         const updatedCompany = await updateCompany(company.id, {
           ...company,
-          merge_api_key: accountToken
+          merge_account_token: accountToken
         });
 
         if (!updatedCompany) {
@@ -124,12 +124,16 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
 
   return (
     <div className="text-center">
-      <h2 className="text-xl font-semibold mb-4">Connect Your ATS</h2>
+      <h2 className="text-xl font-semibold mb-4">
+        {hasMergeApiKey ? 'Modify ATS Integration' : 'Connect Your ATS'}
+      </h2>
       <p className="mb-6">
-        Connect your Applicant Tracking System to get started
+        {hasMergeApiKey
+          ? 'Update your Applicant Tracking System integration'
+          : 'Connect your Applicant Tracking System to get started'}
       </p>
       <Button onClick={open} className="mx-auto">
-        Connect ATS
+        {hasMergeApiKey ? 'Update ATS Connection' : 'Connect ATS'}
       </Button>
     </div>
   );

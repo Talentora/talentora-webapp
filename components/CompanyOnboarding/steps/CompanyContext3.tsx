@@ -1,10 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { createCompanyContext, getCompanyContext, updateCompanyContext } from '@/utils/supabase/queries';
+import { useToast } from '@/components/Toasts/use-toast';
+import { useCompany } from '@/hooks/useCompany';
 
 interface CompanyContextProps {
   onCompletion: (isComplete: boolean) => void;
@@ -13,12 +16,38 @@ interface CompanyContextProps {
 export const CompanyContext3: React.FC<CompanyContextProps> = ({
   onCompletion
 }) => {
+  const { toast } = useToast();
   const [companyDescription, setCompanyDescription] = useState('');
   const [companyCulture, setCompanyCulture] = useState('');
   const [companyGoals, setCompanyGoals] = useState('');
   const [companyHistory, setCompanyHistory] = useState('');
   const [companyProducts, setCompanyProducts] = useState('');
   const [companyCustomers, setCompanyCustomers] = useState('');
+  const [companyContextExists, setCompanyContextExists] = useState(false);
+  const { company } = useCompany();
+
+  // if (!company) {
+  //   return null;
+  // }
+
+  useEffect(() => {
+    const checkCompanyContext = async () => {
+      if (company?.id) {
+        const context = await getCompanyContext(company.id);
+        if (context) {
+          setCompanyDescription(context.description);
+          setCompanyCulture(context.culture);
+          setCompanyGoals(context.goals);
+          setCompanyHistory(context.history);
+          setCompanyProducts(context.products);
+          setCompanyCustomers(context.customers);
+          setCompanyContextExists(true);
+        }
+      }
+    };
+
+    checkCompanyContext();
+  }, [company?.id]);
 
   const handleChange = () => {
     // Mark as complete if all fields meet minimum length requirement
@@ -30,6 +59,50 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({
       companyProducts.length >= 100 &&
       companyCustomers.length >= 100;
     onCompletion(isComplete);
+  };
+
+  const handleSave = async () => {
+    // Check if company context exists and decide whether to create or update
+    const companyContext = {
+      goals: companyGoals,
+      products: companyProducts,
+      customers: companyCustomers,
+      description: companyDescription,
+      culture: companyCulture,
+      history: companyHistory,
+      id: company?.id
+    };
+
+    try {
+      if (companyContextExists) {
+        if (!company?.id) {
+          throw new Error('Company ID is required');
+        }
+        const updatedCompanyContext = await updateCompanyContext(company.id, companyContext);
+        console.log('Updating company context:', updatedCompanyContext);
+        toast({
+          title: 'Company Context',
+          description: 'Company context updated successfully!',
+          variant: 'default' // Changed from 'success' to 'default' to match the expected type
+        });
+      } else {
+        const createdCompanyContext = await createCompanyContext(companyContext);
+        console.log('Saving company context:', createdCompanyContext);
+        toast({
+          title: 'Company Context',
+          description: 'Company context saved successfully!',
+          variant: 'default' // Changed from 'success' to 'default' to match the expected type
+        });
+      }
+      onCompletion(true);
+    } catch (error) {
+      console.error('Error saving company context:', error);
+      toast({
+        title: 'Company Context',
+        description: 'Failed to save company context. Please try again.',
+        variant: 'destructive'
+      });
+    }
   };
 
   return (
@@ -206,18 +279,7 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({
       <div className="flex justify-end mt-6">
         <Button
           onClick={() => {
-            const companyContext = {
-              companyGoals,
-              companyProducts,
-              companyCustomers,
-              companyDescription,
-              companyCulture,
-              companyHistory
-            };
-            // TODO: Add API call to save company context
-            console.log('Saving company context:', companyContext);
-
-            onCompletion(true);
+            handleSave();
           }}
           className="bg-primary text-white hover:bg-primary/90"
           disabled={
@@ -231,10 +293,9 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({
             )
           }
         >
-          Save Company Context
+          {companyContextExists ? 'Update Company Context' : 'Save Company Context'}
         </Button>
       </div>
     </div>
   );
 };
-

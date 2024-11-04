@@ -26,7 +26,7 @@ export default function ActiveJobsCard() {
   return (
     <Card className="p-5 border border-gray-300 bg-foreground rounded-lg shadow-sm relative col-span-2">
       <CardHeader>
-        w<CardTitle>Active Job Titles</CardTitle>
+        <CardTitle>Active Job Titles</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (

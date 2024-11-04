@@ -254,7 +254,7 @@ export const getMergeApiKey = async (): Promise<string | null> => {
       if (!company) {
         throw new Error('Company not found');
       }
-      return company.merge_api_key;
+      return company.merge_account_token;
     }
   } catch (error) {
     console.error('Error fetching Greenhouse API key:', error);
@@ -525,3 +525,119 @@ export const deleteInterviewQuestion = async (id: string): Promise<void> => {
 //     throw new Error(`Failed to reorder interview questions: ${error.message}`);
 //   }
 // };
+
+
+/**
+ * Creates a new company context in the database.
+ *
+ * @param companyContextData - The data for the new company context.
+ * @returns The created company context data.
+ * @throws Error if the creation operation fails.
+ */
+export const createCompanyContext = async (
+  companyContextData: any
+): Promise<any> => {
+  console.log('Attempting to create company context with data:', companyContextData);
+  const supabase = createClient();
+
+  const { data: createdCompanyContext, error: companyContextError } = await supabase
+    .from('company_context')
+    .insert(companyContextData)
+    .select()
+    .single();
+
+  if (companyContextError) {
+    console.error('Failed to create company context:', companyContextError.message);
+    throw new Error(`Failed to create company context: ${companyContextError.message}`);
+  }
+
+  if (!createdCompanyContext) {
+    console.error('Failed to create company context: No data returned');
+    throw new Error('Failed to create company context: No data returned');
+  }
+
+  console.log('Company context created successfully:', createdCompanyContext);
+  return createdCompanyContext;
+};
+
+/**
+ * Fetches a company context by its ID.
+ *
+ * @param id - The ID of the company context to fetch.
+ * @returns The company context data or null if not found.
+ */
+export const getCompanyContext = async (
+  id: string
+): Promise<any | null> => {
+  try {
+    const supabase = createClient();
+    const { data: companyContext, error } = await supabase
+      .from('company_context')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      console.error('Error fetching company context:', error);
+      return null;
+    }
+
+    return companyContext;
+  } catch (err) {
+    console.error('Unexpected error fetching company context:', err);
+    return null;
+  }
+};
+
+/**
+ * Updates a company context in the database.
+ *
+ * @param id - The ID of the company context to update.
+ * @param companyContextData - The new data for the company context.
+ * @returns The updated company context data.
+ * @throws Error if the update operation fails.
+ */
+export const updateCompanyContext = async (
+  id: string,
+  companyContextData: any
+): Promise<any | null> => {
+  const supabase = createClient();
+  // Filter out undefined/null values from companyContextData
+  const filteredCompanyContextData = Object.fromEntries(
+    Object.entries(companyContextData).filter(
+      ([_, value]) => value !== null && value !== undefined
+    )
+  );
+
+  const { data, error } = await supabase
+    .from('company_context')
+    .update(filteredCompanyContextData)
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to update company context: ${error.message}`);
+  }
+
+  return data;
+};
+
+/**
+ * Deletes a company context from the database.
+ *
+ * @param id - The ID of the company context to delete
+ * @throws Error if deletion fails
+ */
+export const deleteCompanyContext = async (id: string): Promise<void> => {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from('company_context')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    throw new Error(`Failed to delete company context: ${error.message}`);
+  }
+};
+

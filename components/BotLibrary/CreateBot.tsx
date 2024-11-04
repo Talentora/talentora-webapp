@@ -12,6 +12,7 @@ import { Textarea } from '../ui/textarea';
 import { createBot } from '@/utils/supabase/queries';
 import { Tables } from '@/types/types_db';
 import { useCompany } from '@/hooks/useCompany';
+import { useToast } from '@/components/Toasts/use-toast';
 type Bot = Tables<'bots'>;
 
 interface CreateBotProps {
@@ -58,6 +59,7 @@ export default function CreateBot(
 
   const { company } = useCompany();
   const companyId = company?.id;
+  const { toast } = useToast();
 
   const handleCreateBot = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,13 +71,22 @@ export default function CreateBot(
           prompt: newBot.prompt,
           company_id: companyId,
           voice_id: newBot.voiceId,
-          icon: newBot.icon
+          icon: newBot.icon,
       });
       setNewBot({ name: '', description: '', role: '', icon: 'Bot', prompt: '', voiceId: voiceOptions[0].id });
       setIsOpen(false);
+      toast({
+        title: "Success",
+        description: "Bot created successfully",
+      });
       window.location.reload();
     } catch (error) {
       console.error('Failed to create bot:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create bot",
+        variant: "destructive"
+      });
     }
   };
 

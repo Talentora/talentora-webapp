@@ -136,7 +136,7 @@ type Recruiter = {
 export type ApplicantCandidate = Application & {
   candidate: Candidate;
   job: Job;
-  interviewStages: JobInterviewStage[];
+  interviewStages: JobInterviewStage;
 };
 
 export type Job = SimpleJob & { departments: Department[]; offices: Office[] };

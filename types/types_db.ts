@@ -7,60 +7,47 @@ export type Json =
   | Json[]
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          operationName?: string
+          query?: string
+          variables?: Json
+          extensions?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       AI_config: {
         Row: {
-          bot_id: number | null
           created_at: string
           id: string
-          interview_questions: number | null
-          job_id: string | null
         }
         Insert: {
-          bot_id?: number | null
           created_at?: string
           id?: string
-          interview_questions?: number | null
-          job_id?: string | null
         }
         Update: {
-          bot_id?: number | null
           created_at?: string
           id?: string
-          interview_questions?: number | null
-          job_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "AI_config_bot_id_fkey"
-            columns: ["bot_id"]
-            isOneToOne: false
-            referencedRelation: "bots"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "AI_config_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "jobs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "AI_config_interview_questions_fkey"
-            columns: ["interview_questions"]
-            isOneToOne: false
-            referencedRelation: "interview_questions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "AI_config_job_id_fkey"
-            columns: ["job_id"]
-            isOneToOne: false
-            referencedRelation: "jobs"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       AI_summary: {
         Row: {
@@ -143,28 +130,31 @@ export type Database = {
           company_id: string | null
           created_at: string
           description: string | null
+          icon: string | null
           id: number
           name: string | null
           prompt: string | null
-          role: string | null
+          voice_id: string | null
         }
         Insert: {
           company_id?: string | null
           created_at?: string
           description?: string | null
+          icon?: string | null
           id?: number
           name?: string | null
           prompt?: string | null
-          role?: string | null
+          voice_id?: string | null
         }
         Update: {
           company_id?: string | null
           created_at?: string
           description?: string | null
+          icon?: string | null
           id?: number
           name?: string | null
           prompt?: string | null
-          role?: string | null
+          voice_id?: string | null
         }
         Relationships: [
           {
@@ -178,35 +168,41 @@ export type Database = {
       }
       companies: {
         Row: {
+          billing_address: string | null
           description: string | null
           email_extension: string | null
           id: string
           industry: string | null
           location: string | null
-          merge_api_key: string | null
+          merge_account_token: string | null
           name: string
+          payment_method: string | null
           subscription_id: string | null
           website_url: string | null
         }
         Insert: {
+          billing_address?: string | null
           description?: string | null
           email_extension?: string | null
           id?: string
           industry?: string | null
           location?: string | null
-          merge_api_key?: string | null
+          merge_account_token?: string | null
           name: string
+          payment_method?: string | null
           subscription_id?: string | null
           website_url?: string | null
         }
         Update: {
+          billing_address?: string | null
           description?: string | null
           email_extension?: string | null
           id?: string
           industry?: string | null
           location?: string | null
-          merge_api_key?: string | null
+          merge_account_token?: string | null
           name?: string
+          payment_method?: string | null
           subscription_id?: string | null
           website_url?: string | null
         }
@@ -222,42 +218,39 @@ export type Database = {
       }
       company_context: {
         Row: {
-          company_customers: string | null
-          company_description: string | null
-          company_history: string | null
-          company_id: string
-          company_products: string | null
-          company_values: string | null
-          company_vision: string | null
           created_at: string
-          id: number
+          culture: string | null
+          customers: string | null
+          description: string | null
+          goals: string | null
+          history: string | null
+          id: string
+          products: string | null
         }
         Insert: {
-          company_customers?: string | null
-          company_description?: string | null
-          company_history?: string | null
-          company_id: string
-          company_products?: string | null
-          company_values?: string | null
-          company_vision?: string | null
           created_at?: string
-          id?: number
+          culture?: string | null
+          customers?: string | null
+          description?: string | null
+          goals?: string | null
+          history?: string | null
+          id?: string
+          products?: string | null
         }
         Update: {
-          company_customers?: string | null
-          company_description?: string | null
-          company_history?: string | null
-          company_id?: string
-          company_products?: string | null
-          company_values?: string | null
-          company_vision?: string | null
           created_at?: string
-          id?: number
+          culture?: string | null
+          customers?: string | null
+          description?: string | null
+          goals?: string | null
+          history?: string | null
+          id?: string
+          products?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "company_context_company_id_fkey"
-            columns: ["company_id"]
+            foreignKeyName: "company_context_id_fkey"
+            columns: ["id"]
             isOneToOne: true
             referencedRelation: "companies"
             referencedColumns: ["id"]
@@ -277,46 +270,12 @@ export type Database = {
           id?: string
           stripe_customer_id?: string | null
         }
-        Relationships: []
-      }
-      interview_questions: {
-        Row: {
-          created_at: string
-          id: number
-          job_config: string | null
-          order: number
-          question: string
-          sample_response: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          job_config?: string | null
-          order: number
-          question: string
-          sample_response?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          job_config?: string | null
-          order?: number
-          question?: string
-          sample_response?: string | null
-        }
         Relationships: [
           {
-            foreignKeyName: "interview_questions_job_config_fkey"
-            columns: ["job_config"]
-            isOneToOne: false
-            referencedRelation: "AI_config"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "interview_questions_job_id_fkey"
-            columns: ["job_config"]
-            isOneToOne: false
-            referencedRelation: "jobs"
+            foreignKeyName: "customers_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -325,20 +284,20 @@ export type Database = {
         Row: {
           AIconfig_id: string | null
           company_id: string | null
+          harvest_jobs: number | null
           id: string
-          merge_id: string
         }
         Insert: {
           AIconfig_id?: string | null
           company_id?: string | null
+          harvest_jobs?: number | null
           id?: string
-          merge_id: string
         }
         Update: {
           AIconfig_id?: string | null
           company_id?: string | null
+          harvest_jobs?: number | null
           id?: string
-          merge_id?: string
         }
         Relationships: [
           {
@@ -461,26 +420,12 @@ export type Database = {
         }
         Relationships: [
           {
-<<<<<<< HEAD
-            foreignKeyName: "recruiters_company_id_fkey"
-=======
             foreignKeyName: "users_company_id_fkey"
->>>>>>> origin/dev
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
-<<<<<<< HEAD
-          {
-            foreignKeyName: "recruiters_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-=======
->>>>>>> origin/dev
         ]
       }
       subscriptions: {
@@ -543,6 +488,13 @@ export type Database = {
             referencedRelation: "prices"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
@@ -564,6 +516,321 @@ export type Database = {
         | "past_due"
         | "unpaid"
         | "paused"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+  storage: {
+    Tables: {
+      buckets: {
+        Row: {
+          allowed_mime_types: string[] | null
+          avif_autodetection: boolean | null
+          created_at: string | null
+          file_size_limit: number | null
+          id: string
+          name: string
+          owner: string | null
+          owner_id: string | null
+          public: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          allowed_mime_types?: string[] | null
+          avif_autodetection?: boolean | null
+          created_at?: string | null
+          file_size_limit?: number | null
+          id: string
+          name: string
+          owner?: string | null
+          owner_id?: string | null
+          public?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          allowed_mime_types?: string[] | null
+          avif_autodetection?: boolean | null
+          created_at?: string | null
+          file_size_limit?: number | null
+          id?: string
+          name?: string
+          owner?: string | null
+          owner_id?: string | null
+          public?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      migrations: {
+        Row: {
+          executed_at: string | null
+          hash: string
+          id: number
+          name: string
+        }
+        Insert: {
+          executed_at?: string | null
+          hash: string
+          id: number
+          name: string
+        }
+        Update: {
+          executed_at?: string | null
+          hash?: string
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
+      objects: {
+        Row: {
+          bucket_id: string | null
+          created_at: string | null
+          id: string
+          last_accessed_at: string | null
+          metadata: Json | null
+          name: string | null
+          owner: string | null
+          owner_id: string | null
+          path_tokens: string[] | null
+          updated_at: string | null
+          user_metadata: Json | null
+          version: string | null
+        }
+        Insert: {
+          bucket_id?: string | null
+          created_at?: string | null
+          id?: string
+          last_accessed_at?: string | null
+          metadata?: Json | null
+          name?: string | null
+          owner?: string | null
+          owner_id?: string | null
+          path_tokens?: string[] | null
+          updated_at?: string | null
+          user_metadata?: Json | null
+          version?: string | null
+        }
+        Update: {
+          bucket_id?: string | null
+          created_at?: string | null
+          id?: string
+          last_accessed_at?: string | null
+          metadata?: Json | null
+          name?: string | null
+          owner?: string | null
+          owner_id?: string | null
+          path_tokens?: string[] | null
+          updated_at?: string | null
+          user_metadata?: Json | null
+          version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "objects_bucketId_fkey"
+            columns: ["bucket_id"]
+            isOneToOne: false
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      s3_multipart_uploads: {
+        Row: {
+          bucket_id: string
+          created_at: string
+          id: string
+          in_progress_size: number
+          key: string
+          owner_id: string | null
+          upload_signature: string
+          user_metadata: Json | null
+          version: string
+        }
+        Insert: {
+          bucket_id: string
+          created_at?: string
+          id: string
+          in_progress_size?: number
+          key: string
+          owner_id?: string | null
+          upload_signature: string
+          user_metadata?: Json | null
+          version: string
+        }
+        Update: {
+          bucket_id?: string
+          created_at?: string
+          id?: string
+          in_progress_size?: number
+          key?: string
+          owner_id?: string | null
+          upload_signature?: string
+          user_metadata?: Json | null
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "s3_multipart_uploads_bucket_id_fkey"
+            columns: ["bucket_id"]
+            isOneToOne: false
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      s3_multipart_uploads_parts: {
+        Row: {
+          bucket_id: string
+          created_at: string
+          etag: string
+          id: string
+          key: string
+          owner_id: string | null
+          part_number: number
+          size: number
+          upload_id: string
+          version: string
+        }
+        Insert: {
+          bucket_id: string
+          created_at?: string
+          etag: string
+          id?: string
+          key: string
+          owner_id?: string | null
+          part_number: number
+          size?: number
+          upload_id: string
+          version: string
+        }
+        Update: {
+          bucket_id?: string
+          created_at?: string
+          etag?: string
+          id?: string
+          key?: string
+          owner_id?: string | null
+          part_number?: number
+          size?: number
+          upload_id?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "s3_multipart_uploads_parts_bucket_id_fkey"
+            columns: ["bucket_id"]
+            isOneToOne: false
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "s3_multipart_uploads_parts_upload_id_fkey"
+            columns: ["upload_id"]
+            isOneToOne: false
+            referencedRelation: "s3_multipart_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      can_insert_object: {
+        Args: {
+          bucketid: string
+          name: string
+          owner: string
+          metadata: Json
+        }
+        Returns: undefined
+      }
+      extension: {
+        Args: {
+          name: string
+        }
+        Returns: string
+      }
+      filename: {
+        Args: {
+          name: string
+        }
+        Returns: string
+      }
+      foldername: {
+        Args: {
+          name: string
+        }
+        Returns: string[]
+      }
+      get_size_by_bucket: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          size: number
+          bucket_id: string
+        }[]
+      }
+      list_multipart_uploads_with_delimiter: {
+        Args: {
+          bucket_id: string
+          prefix_param: string
+          delimiter_param: string
+          max_keys?: number
+          next_key_token?: string
+          next_upload_token?: string
+        }
+        Returns: {
+          key: string
+          id: string
+          created_at: string
+        }[]
+      }
+      list_objects_with_delimiter: {
+        Args: {
+          bucket_id: string
+          prefix_param: string
+          delimiter_param: string
+          max_keys?: number
+          start_after?: string
+          next_token?: string
+        }
+        Returns: {
+          name: string
+          id: string
+          metadata: Json
+          updated_at: string
+        }[]
+      }
+      operation: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      search: {
+        Args: {
+          prefix: string
+          bucketname: string
+          limits?: number
+          levels?: number
+          offsets?: number
+          search?: string
+          sortcolumn?: string
+          sortorder?: string
+        }
+        Returns: {
+          name: string
+          id: string
+          updated_at: string
+          created_at: string
+          last_accessed_at: string
+          metadata: Json
+        }[]
+      }
+    }
+    Enums: {
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -651,20 +918,5 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
-    : never
-
-export type CompositeTypes<
-  PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema["CompositeTypes"]
-    | { schema: keyof Database },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
-  }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 

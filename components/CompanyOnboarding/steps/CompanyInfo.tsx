@@ -52,7 +52,7 @@ export const CompanyInfoStep: React.FC<{
       email_extension: null,
       subscription_id: null,
       website_url: null,
-      merge_api_key: null,
+      merge_account_token: null,
       billing_address: null, // Added to match expected type
       payment_method: null // Added to match expected type
       // user: user
