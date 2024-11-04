@@ -373,18 +373,18 @@ CREATE TRIGGER on_job_created AFTER INSERT ON public.jobs FOR EACH ROW EXECUTE F
 
 
 
-Found drop statements in schema diff. Please double check if these are expected:
-alter table "public"."jobs" drop constraint "jobs_AIconfig_id_fkey"           
-alter table "public"."jobs" drop constraint "jobs_harvest_jobs_key"           
-alter table "public"."applications" drop constraint "applications_job_id_fkey"
-alter table "public"."AI_config" drop constraint "AI_config_pkey"             
-alter table "public"."applications" drop constraint "applications_pkey"       
-alter table "public"."jobs" drop constraint "jobs_pkey"                       
-drop index if exists "public"."AI_config_pkey"                                
-drop index if exists "public"."jobs_harvest_jobs_key"                         
-drop index if exists "public"."applications_pkey"                             
-drop index if exists "public"."jobs_pkey"                                     
-drop table "public"."AI_config"                                               
-alter table "public"."jobs" drop column "AIconfig_id"                         
-alter table "public"."jobs" drop column "harvest_jobs"                        
-alter table "public"."jobs" drop column "id"
+-- Found drop statements in schema diff. Please double check if these are expected:
+-- alter table "public"."jobs" drop constraint "jobs_AIconfig_id_fkey"           
+-- alter table "public"."jobs" drop constraint "jobs_harvest_jobs_key"           
+-- alter table "public"."applications" drop constraint "applications_job_id_fkey"
+-- alter table "public"."AI_config" drop constraint "AI_config_pkey"             
+-- alter table "public"."applications" drop constraint "applications_pkey"       
+-- alter table "public"."jobs" drop constraint "jobs_pkey"                       
+-- drop index if exists "public"."AI_config_pkey"                                
+-- drop index if exists "public"."jobs_harvest_jobs_key"                         
+-- drop index if exists "public"."applications_pkey"                             
+-- drop index if exists "public"."jobs_pkey"                                     
+-- drop table "public"."AI_config"                                               
+-- alter table "public"."jobs" drop column "AIconfig_id"                         
+-- alter table "public"."jobs" drop column "harvest_jobs"                        
+-- alter table "public"."jobs" drop column "id"
