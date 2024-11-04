@@ -79,8 +79,8 @@ export const InterviewSettings = ({ jobId, onCompletion }: InterviewSettingsProp
             <label className="text-sm font-medium">Duration (minutes)</label>
             <div className="flex items-center space-x-4">
               <Slider
-                value={[parseInt(duration)]}
-                onValueChange={(value) => setDuration(value.toString())}
+                value={[duration]}
+                onValueChange={(value) => setDuration(value[0])}
                 min={10}
                 max={40}
                 step={5}

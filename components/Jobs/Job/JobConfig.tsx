@@ -3,6 +3,8 @@ import { getBotById, getJobInterviewConfig } from '@/utils/supabase/queries';
 import { Tables } from '@/types/types_db';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 type InterviewConfig = Tables<'job_interview_config'>;
+type Bot = Tables<'bots'>;
+
 export default function JobConfig({ jobId }: { jobId: string }) {
   const [interviewConfig, setInterviewConfig] = useState<InterviewConfig | null>(null);
   const [botId, setBotId] = useState<string | null>(null);

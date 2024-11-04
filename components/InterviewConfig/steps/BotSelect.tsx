@@ -37,8 +37,8 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
     await updateJobInterviewConfig(mergedId, {
       bot_id: Number(botId),
       interview_name: null,
-      interview_type: null,
-      interview_duration: null
+      type: null,
+      duration: null
     });
 
     if (error) {
