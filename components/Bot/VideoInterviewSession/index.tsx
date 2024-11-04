@@ -9,7 +9,7 @@ import AIInterviewer from './AIInterviewer';
 import CandidateVideo from './CandidateVideo';
 import TranscriptPanel from './TranscriptPanel';
 import ControlPanel from './ControlPanel';
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 
 interface VoiceInterviewSessionProps {
   state: TransportState;
@@ -29,7 +29,9 @@ export default function VoiceInterviewSession({
   const [muted, setMuted] = useState(startAudioOff);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(!startAudioOff);
-  const [transcript, setTranscript] = useState<{ speaker: string; text: string }[]>([]);
+  const [transcript, setTranscript] = useState<
+    { speaker: string; text: string }[]
+  >([]);
 
   const handleBotStoppedSpeaking = useCallback(() => {
     if (!hasStarted) {
@@ -75,40 +77,42 @@ export default function VoiceInterviewSession({
   }, []);
 
   const handleUserTranscript = useCallback((data: Transcript) => {
-    setTranscript((prev) => [...prev, { speaker: 'You', text: data.text.trim() }]);
+    setTranscript((prev) => [
+      ...prev,
+      { speaker: 'You', text: data.text.trim() }
+    ]);
   }, []);
 
   useVoiceClientEvent(VoiceEvent.BotTranscript, handleBotTranscript);
   useVoiceClientEvent(VoiceEvent.UserTranscript, handleUserTranscript);
 
+  return (
+    <div className="flex flex-col h-screen">
+      <InterviewHeader job={job} />
 
-    return (
-      <div className="flex flex-col h-screen">
-        <InterviewHeader job={job} />
-    
-        <main className="flex-grow grid grid-cols-3 gap-4 p-4">
-          <div className=" h-screen col-span-1 flex justify-between flex-col gap-1">
-            <div className="h-1/2">
-              <AIInterviewer isReady={state === 'ready'} />
-            </div>
-            <div className="h-1/2">
-              <TranscriptPanel transcript={transcript} />
-            </div>
+      <main className="flex-grow grid grid-cols-3 gap-4 p-4">
+        <div className=" h-screen col-span-1 flex justify-between flex-col gap-1">
+          <div className="h-1/2">
+            <AIInterviewer isReady={state === 'ready'} />
           </div>
-          <div className="col-span-2 h-full">
-            <CandidateVideo isCameraOn={isCameraOn} />
+          <div className="h-1/2">
+            <TranscriptPanel transcript={transcript} />
           </div>
-        </main>
-  
-        <ControlPanel
-          isMuted={muted}
-          isCameraOn={isCameraOn}
-          isAudioEnabled={isAudioEnabled}
-          onMicToggle={handleMicToggle}
-          onCameraToggle={handleCameraToggle}
-          onAudioToggle={handleAudioToggle}
-          onLeave={onLeave}
-        />
-      </div>
-    );
-  }
+        </div>
+        <div className="col-span-2 h-full">
+          <CandidateVideo isCameraOn={isCameraOn} />
+        </div>
+      </main>
+
+      <ControlPanel
+        isMuted={muted}
+        isCameraOn={isCameraOn}
+        isAudioEnabled={isAudioEnabled}
+        onMicToggle={handleMicToggle}
+        onCameraToggle={handleCameraToggle}
+        onAudioToggle={handleAudioToggle}
+        onLeave={onLeave}
+      />
+    </div>
+  );
+}

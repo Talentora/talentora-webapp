@@ -28,7 +28,17 @@ export default function StatisticsCard() {
   );
 }
 
-function StatItem({ icon, title, value, subtext }: { icon: React.ReactNode; title: string; value: string; subtext: string }) {
+function StatItem({
+  icon,
+  title,
+  value,
+  subtext
+}: {
+  icon: React.ReactNode;
+  title: string;
+  value: string;
+  subtext: string;
+}) {
   return (
     <div className="flex-1">
       <CardHeader className="flex flex-row items-center space-y-0 pb-2">

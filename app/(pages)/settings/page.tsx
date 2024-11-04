@@ -1,6 +1,6 @@
 import { Tables } from '@/types/types_db';
-type Recruiter = Tables<'recruiters'>
-type Company = Tables<'companies'>
+type Recruiter = Tables<'recruiters'>;
+type Company = Tables<'companies'>;
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import CustomerPortalForm from '@/components/AccountForms/CustomerPortalForm';
@@ -11,16 +11,10 @@ import { redirect } from 'next/navigation';
 import { useRecruiter } from '@/hooks/useRecruiter';
 import { useCompany } from '@/hooks/useCompany';
 
-
 export default async function Account() {
-
-
-
-
-
   return (
-    <section className="mb-32 bg-background">
-      <div className="max-w-6xl px-4 py-8 mx-auto sm:px-6 sm:pt-24 lg:px-8">
+    <section className="p-10">
+      <div className="max-w-6xl px-4 mx-auto sm:px-6 sm:pt-24 lg:px-8">
         <div className="sm:align-center sm:flex sm:flex-col">
           <h1 className="text-4xl font-extrabold text-primary sm:text-center sm:text-6xl">
             Settings
@@ -32,24 +26,26 @@ export default async function Account() {
       </div>
       <div className="p-4">
         <CustomerPortalForm />
-        <NameForm />
-        <EmailForm />
-        
-        
-          <CompanyForm  />
-      
-        
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-4">Invite Teammates</h2>
-          <Link href="/settings/invite">
-            <Button>Invite Your Teammates</Button>
-          </Link>
+        <div className="mt-8 flex flex-row gap-4">
+          <NameForm />
+          <EmailForm />
         </div>
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold mb-4">Company Onboarding</h2>
-          <Link href="/settings/onboarding">
-            <Button>Get your company setup</Button>
-          </Link>
+
+        <CompanyForm />
+
+        <div className="mt-8 flex flex-row gap-4 justify-evenly">
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-4">Invite Teammates</h2>
+            <Link href="/settings/invite">
+              <Button>Invite Your Teammates</Button>
+            </Link>
+          </div>
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-4">Company Onboarding</h2>
+            <Link href="/settings/onboarding">
+              <Button>Get your company setup</Button>
+            </Link>
+          </div>
         </div>
       </div>
     </section>

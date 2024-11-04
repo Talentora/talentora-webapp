@@ -16,7 +16,7 @@ export default function UpdatePassword({
   const router = useRouter();
   // const router = redirectMethod === 'client' ? useRouter() : null;
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [role,setRole] = useState('');
+  const [role, setRole] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true); // Disable the button while the request is being handled

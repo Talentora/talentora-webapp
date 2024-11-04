@@ -9,6 +9,7 @@ import '@/styles/main.css';
 import Loading from '@/components/Layout/Loading';
 import NextTopLoader from 'nextjs-toploader';
 import { createClient } from '@/utils/supabase/server';
+import Script from 'next/script';
 
 const title = 'Talentora';
 const description = 'Brought to you by Vercel, Stripe, and Supabase.';
@@ -16,20 +17,25 @@ const description = 'Brought to you by Vercel, Stripe, and Supabase.';
 export const metadata: Metadata = {
   metadataBase: new URL(getURL()),
   title: title,
-  description: description,
+  description: description
 };
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
 
   const isSidebarVisible = user !== null; // Determine if the sidebar should be visible
 
   return (
     <html lang="en">
+      <head>
+        <Script src="*" crossOrigin="anonymous" />
+      </head>
       <body className="w-full bg-gradient-to-br from-purple-500/[0.1] via-white to-pink-500/[0.1] p-0">
         <NextTopLoader />
-       
+
         <div className="flex">
           {isSidebarVisible && (
             <aside className="w-1/7 bg-gray-100">
@@ -42,10 +48,9 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               isSidebarVisible ? '' : ' w-full' // Apply full width if sidebar is hidden
             }`}
           >
-             <Navbar />
-             <Suspense fallback={<Loading />}>{children}</Suspense>
+            <Navbar />
+            <Suspense fallback={<Loading />}>{children}</Suspense>
           </main>
-            
         </div>
         <Suspense>
           <Toaster />

@@ -3,7 +3,6 @@ import { updateSession } from '@/utils/supabase/middleware';
 import { NextResponse } from 'next/server';
 import { createClient } from './utils/supabase/server';
 
-
 // List of unprotected routes as regular expressions
 export const unprotectedRoutes = [
   /^\/$/, // Matches '/'
@@ -15,25 +14,26 @@ export const unprotectedRoutes = [
 
 // Add the applicant route to the unprotected routes
 const applicantRoutes = [
-  /^\/bot(\/.*)?$/, // Matches '/bot' and any subpath like '/bot/*'
+  /^\/bot(\/.*)?$/ // Matches '/bot' and any subpath like '/bot/*'
 ];
 
 // Combine unprotected and applicant routes
 const allUnprotectedRoutes = [...unprotectedRoutes, ...applicantRoutes];
-
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const supabase = createClient();
 
   // Check if the current path matches any of the unprotected or applicant routes
-  if (allUnprotectedRoutes.some(route => route.test(pathname))) {
+  if (allUnprotectedRoutes.some((route) => route.test(pathname))) {
     return await updateSession(request);
   }
 
   // For all other routes, check authentication
   const response = await updateSession(request);
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
 
   if (!user) {
     // Redirect to signin page if user is not authenticated
@@ -44,13 +44,15 @@ export async function middleware(request: NextRequest) {
   const { role } = user.user_metadata;
 
   // New: Check if the user is an applicant trying to access a recruiter route
-  if (role === 'applicant' && !applicantRoutes.some(route => route.test(pathname))) {
+  if (
+    role === 'applicant' &&
+    !applicantRoutes.some((route) => route.test(pathname))
+  ) {
     const dashboardUrl = new URL('/dashboard', request.url);
     if (request.nextUrl.pathname !== dashboardUrl.pathname) {
-        return NextResponse.redirect(dashboardUrl);
+      return NextResponse.redirect(dashboardUrl);
     }
-}
-
+  }
 
   if (role === 'recruiter') {
     // Check if the recruiter has a company ID in the recruiters table
@@ -60,21 +62,23 @@ export async function middleware(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    
     if (error || !recruitData || !recruitData.company_id) {
       console.error('Error fetching recruiter data:', error);
       // If there's an error, no data, or no company_id, and trying to access a protected route,
       // redirect to the onboarding page
-      if (!allUnprotectedRoutes.some(route => route.test(pathname)) && pathname !== '/settings/onboarding') {
-        return NextResponse.redirect(new URL('/settings/onboarding', request.url));
+      if (
+        !allUnprotectedRoutes.some((route) => route.test(pathname)) &&
+        pathname !== '/settings/onboarding'
+      ) {
+        return NextResponse.redirect(
+          new URL('/settings/onboarding', request.url)
+        );
       }
     }
   }
 
   return response;
 }
-
-
 
 export const config = {
   matcher: [

@@ -16,7 +16,7 @@ interface PasswordSignInProps {
 export default function PasswordSignIn({
   allowEmail,
   redirectMethod,
-  role,
+  role
   // userType
 }: PasswordSignInProps) {
   const router = useRouter();
@@ -67,19 +67,28 @@ export default function PasswordSignIn({
         </Button>
       </form>
       <p>
-        <Link href={`/signin/forgot_password?role=${role}`} className="font-light text-sm">
+        <Link
+          href={`/signin/forgot_password?role=${role}`}
+          className="font-light text-sm"
+        >
           Forgot your password?
         </Link>
       </p>
       {allowEmail && (
         <p>
-          <Link href={`/signin/email_signin?role=${role}`} className="font-light text-sm">
+          <Link
+            href={`/signin/email_signin?role=${role}`}
+            className="font-light text-sm"
+          >
             Sign in via magic link
           </Link>
         </p>
       )}
       <p>
-        <Link href={`/signin/signup?role=${role}`} className="font-light text-sm">
+        <Link
+          href={`/signin/signup?role=${role}`}
+          className="font-light text-sm"
+        >
           Don&apos;t have an account? Sign up
         </Link>
       </p>

@@ -10,10 +10,14 @@ import { useRouter } from 'next/navigation';
 interface SignUpProps {
   allowEmail: boolean;
   redirectMethod: string;
-  role:string
+  role: string;
 }
 
-export default function SignUp({ allowEmail, redirectMethod,role }: SignUpProps) {
+export default function SignUp({
+  allowEmail,
+  redirectMethod,
+  role
+}: SignUpProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -86,13 +90,19 @@ export default function SignUp({ allowEmail, redirectMethod,role }: SignUpProps)
       </form>
       <p>Already have an account?</p>
       <p>
-        <Link href={`/signin/password_signin?role=${role}`} className="font-light text-sm">
+        <Link
+          href={`/signin/password_signin?role=${role}`}
+          className="font-light text-sm"
+        >
           Sign in with email and password
         </Link>
       </p>
       {allowEmail && (
         <p>
-          <Link href={`/signin/email_signin?role=${role}`} className="font-light text-sm">
+          <Link
+            href={`/signin/email_signin?role=${role}`}
+            className="font-light text-sm"
+          >
             Sign in via magic link
           </Link>
         </p>

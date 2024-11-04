@@ -11,7 +11,10 @@ export default function UpcomingInterviewsCard() {
         <div className="text-sm text-muted-foreground">
           You have 12 upcoming AI interviews scheduled this week.
         </div>
-        <Button className="mt-4 w-full border border-gray-400 text-black hover:bg-white hover:border-gray-500 hover:text-black" variant="outline">
+        <Button
+          className="mt-4 w-full border border-gray-400 text-black hover:bg-white hover:border-gray-500 hover:text-black"
+          variant="outline"
+        >
           View Details
         </Button>
       </CardContent>

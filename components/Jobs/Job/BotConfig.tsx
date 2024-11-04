@@ -1,8 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Settings } from 'lucide-react';
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 import Link from 'next/link';
-
 
 interface BotConfigProps {
   job: Job;

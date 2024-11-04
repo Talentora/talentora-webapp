@@ -15,8 +15,8 @@ export default function Navlinks() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const { user,loading } = useUser();
-  
+  const { user, loading } = useUser();
+
   const router = useRouter();
 
   const links = [
@@ -53,9 +53,18 @@ export default function Navlinks() {
       <div className="container mx-0 px-1">
         <div className="flex items-center justify-between w-full py-4 ">
           <div className="flex items-center">
-            <Link href="/" className="mr-6 flex flex-row items-center gap-2" aria-label="Logo">
+            <Link
+              href="/"
+              className="mr-6 flex flex-row items-center gap-2"
+              aria-label="Logo"
+            >
               <Logo />
-              <h1 className="text-primary text-2xl font-bold">Talent<span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">ora</span></h1>
+              <h1 className="text-primary text-2xl font-bold">
+                Talent
+                <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">
+                  ora
+                </span>
+              </h1>
             </Link>
             <nav className="hidden md:flex space-x-4 text-white">
               {links.map(
@@ -72,15 +81,14 @@ export default function Navlinks() {
               )}
             </nav>
           </div>
-          
+
           <div className="flex items-center">
             {loading ? (
               <div className="flex justify-center items-center h-full">
                 <Loader2 className="h-5 w-5 animate-spin" />
               </div>
-            ) : (
-              user ? (
-                <div className="relative" ref={userMenuRef}>
+            ) : user ? (
+              <div className="relative" ref={userMenuRef}>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -121,19 +129,21 @@ export default function Navlinks() {
             ) : (
               <div className="flex items-center space-x-2">
                 <Link href="/signin">
-                <Button className="border border-white text-white bg-accent rounded-full px-8 py-2">
+                  <Button className="border border-white text-white bg-accent rounded-full px-8 py-2">
                     Login
                   </Button>
                 </Link>
                 <Link href="/signup">
-                  <Button className="bg-white border border-grey-200 text-primary-dark hover:bg-gray-200 rounded-full px-8 py-2" variant="ghost" size="sm">
+                  <Button
+                    className="bg-white border border-grey-200 text-primary-dark hover:bg-gray-200 rounded-full px-8 py-2"
+                    variant="ghost"
+                    size="sm"
+                  >
                     Sign Up
                   </Button>
                 </Link>
               </div>
-            )
             )}
-
           </div>
         </div>
       </div>

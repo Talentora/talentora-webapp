@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Job,ApplicantCandidate } from '@/types/greenhouse';
+import { Job, ApplicantCandidate } from '@/types/merge';
 
 export const useJob = (jobId: string) => {
   const [job, setJob] = useState<Job | null>(null);
@@ -15,10 +15,12 @@ export const useJob = (jobId: string) => {
         const jobData: Job = await response.json();
         setJob(jobData);
 
-        const applicantsResponse = await fetch(`/api/applications?jobId=${jobId}`);
-        console.log('applicantsResponse', applicantsResponse);
+        const applicantsResponse = await fetch(
+          `/api/applications?jobId=${jobId}`
+        );
+        // console.log('applicantsResponse', applicantsResponse);
         const applicantsData = await applicantsResponse.json();
-        console.log('applicantsData', applicantsData);
+        // console.log('applicantsData', applicantsData);
         setApplicants(applicantsData);
       } catch (err) {
         setError((err as Error).message);

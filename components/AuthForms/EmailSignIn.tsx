@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { signInWithEmail } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardHeader,
@@ -48,7 +48,7 @@ export default function EmailSignIn({
     await handleRequest(
       e,
       signInWithEmail,
-      redirectMethod === 'client' ? router : null,
+      redirectMethod === 'client' ? router : null
     );
     setIsSubmitting(false);
   };

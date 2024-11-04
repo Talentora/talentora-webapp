@@ -1,5 +1,6 @@
-
-export const StartingStep: React.FC<{ onCompletion: (isComplete: boolean) => void }> = ({ onCompletion }) => {
+export const StartingStep: React.FC<{
+  onCompletion: (isComplete: boolean) => void;
+}> = ({ onCompletion }) => {
   return (
     <div className="flex justify-between">
       <div className="p-3">

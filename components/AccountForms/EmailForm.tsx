@@ -16,13 +16,11 @@ import { useState } from 'react';
 import { useUser } from '@/hooks/useUser';
 
 export default function EmailForm() {
-  
   const router = useRouter();
   const { user } = useUser();
   const role = user?.user_metadata.role;
   const userEmail = user?.email;
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true);

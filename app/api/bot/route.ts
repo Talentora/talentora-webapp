@@ -2,9 +2,8 @@
 import { defaultBotProfile, defaultMaxDuration } from '@/utils/rtvi.config';
 
 export async function POST(request: Request) {
-
-  const OPENAI_API_KEY= process.env.OPENAI_API_KEY;
-  const DAILY_API_KEY=process.env.NEXT_PUBLIC_DAILY_API_KEY
+  const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+  const DAILY_API_KEY = process.env.NEXT_PUBLIC_DAILY_API_KEY;
 
   console.log('Received request:', request);
 
@@ -31,8 +30,8 @@ export async function POST(request: Request) {
   };
   console.log('Payload to be sent:', payload);
 
-  console.log('Sending request to external API...',DAILY_API_KEY);
-  const req = await fetch("https://api.daily.co/v1/bots/start", {
+  console.log('Sending request to external API...', DAILY_API_KEY);
+  const req = await fetch('https://api.daily.co/v1/bots/start', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

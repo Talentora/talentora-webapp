@@ -206,8 +206,8 @@ const copyBillingDetailsToCustomer = async (
   const { error: updateError } = await supabaseAdmin
     .from('companies')
     .update({
-      billing_address: { ...address },
-      payment_method: { ...payment_method[payment_method.type] }
+      billing_address: JSON.stringify(address),
+      payment_method: JSON.stringify(payment_method[payment_method.type])
     })
     .eq('id', uuid);
   if (updateError)
@@ -237,7 +237,7 @@ const manageSubscriptionStatusChange = async (
   // Upsert the latest status of the subscription object.
   const subscriptionData: TablesInsert<'subscriptions'> = {
     id: subscription.id,
-    company_id: uuid,
+    user_id: uuid,
     metadata: subscription.metadata,
     status: subscription.status,
     price_id: subscription.items.data[0].price.id,

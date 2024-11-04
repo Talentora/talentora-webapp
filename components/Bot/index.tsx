@@ -15,7 +15,7 @@ import {
   defaultServices
 } from '@/utils/rtvi.config';
 
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 // Define the Job type from the database schema
 
 // Define the props for the Bot component
@@ -39,7 +39,7 @@ export default function Bot({ job }: BotProps) {
     if (!showSplash || voiceClientRef.current) {
       return;
     }
-    console.log("Creating client")
+    console.log('Creating client');
 
     // Create a new DailyVoiceClient instance
     const voiceClient = new DailyVoiceClient({

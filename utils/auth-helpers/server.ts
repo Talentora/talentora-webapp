@@ -6,8 +6,6 @@ import { redirect } from 'next/navigation';
 import { getURL, getErrorRedirect, getStatusRedirect } from '@/utils/helpers';
 import { getAuthTypes } from '@/utils/auth-helpers/settings';
 
-
-
 function isValidEmail(email: string) {
   var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
   return regex.test(email);
@@ -143,7 +141,6 @@ export async function signInWithPassword(formData: FormData) {
   const { error, data } = await supabase.auth.signInWithPassword({
     email,
     password
-
   });
 
   if (error) {
@@ -196,10 +193,10 @@ export async function signUp(formData: FormData) {
   const role = String(formData.get('role')).trim();
   let redirectPath: string;
 
-  console.log(`Signing up as a ${role}`)
+  console.log(`Signing up as a ${role}`);
   console.log(`Email: ${email}`);
   console.log(`Password: ${'*'.repeat(password.length)}`); // Masking the password for security
-  
+
   if (!isValidEmail(email)) {
     console.log('Invalid email format detected.');
     redirectPath = getErrorRedirect(
@@ -221,7 +218,6 @@ export async function signUp(formData: FormData) {
     }
   });
 
-  
   if (error) {
     console.log('Sign-up failed with error:', error.message);
     redirectPath = getErrorRedirect(
@@ -231,7 +227,11 @@ export async function signUp(formData: FormData) {
     );
   } else if (data.session) {
     console.log('Sign-up successful with active session.');
-    redirectPath = getStatusRedirect('/', 'Success!', `You are now signed in as a ${role}.`);
+    redirectPath = getStatusRedirect(
+      '/settings/onboarding',
+      'Success!',
+      `You are now signed in as a ${role}.`
+    );
   } else if (
     data.user &&
     data.user.identities &&
@@ -262,7 +262,7 @@ export async function signUp(formData: FormData) {
   return redirectPath;
 }
 
-  export async function updatePassword(formData: FormData) {
+export async function updatePassword(formData: FormData) {
   const password = String(formData.get('password')).trim();
   const passwordConfirm = String(formData.get('passwordConfirm')).trim();
   let redirectPath: string;
@@ -350,7 +350,7 @@ export async function updateName(formData: FormData) {
   const fullName = String(formData.get('fullName')).trim();
 
   const supabase = createClient();
-  console.log("access name")
+  console.log('access name');
   const { error, data } = await supabase.auth.updateUser({
     data: { full_name: fullName }
   });

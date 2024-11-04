@@ -1,7 +1,7 @@
-"use client"
-import {useEffect,useState} from "react"
+'use client';
+import { useEffect, useState } from 'react';
 import InvitePage from '@/components/Invite';
-import { Job } from "@/types/greenhouse";
+import { Job } from '@/types/merge';
 
 const Page = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -9,7 +9,9 @@ const Page = () => {
   useEffect(() => {
     async function fetchJobs() {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`
+        );
         if (!response.ok) {
           throw new Error('Failed to fetch jobs');
         }

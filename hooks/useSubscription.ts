@@ -31,5 +31,3 @@ export const useSubscription = () => {
 
   return { subscription, loading, error };
 };
-
-

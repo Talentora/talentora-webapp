@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/select';
 import { inviteUser } from '@/utils/supabase/queries';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Job } from '@/types/greenhouse';
+import { Job } from '@/types/merge';
 
 interface InvitePageProps {
   jobs: Job[];
@@ -63,7 +63,7 @@ export default function InvitePage({ jobs }: InvitePageProps) {
 
     try {
       for (const email of validEmails) {
-        const response = await inviteUser(null,email);
+        const response = await inviteUser(null, email);
 
         if (!response.success) {
           throw new Error(`Failed to send invitation to ${email}`);
@@ -90,7 +90,10 @@ export default function InvitePage({ jobs }: InvitePageProps) {
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="job-select" className="text-sm font-medium text-black">
+            <label
+              htmlFor="job-select"
+              className="text-sm font-medium text-black"
+            >
               Select Job
             </label>
             <Select onValueChange={setSelectedJob} value={selectedJob}>
@@ -107,7 +110,10 @@ export default function InvitePage({ jobs }: InvitePageProps) {
             </Select>
           </div>
           <div className="space-y-2">
-            <label htmlFor="email-textarea" className="text-sm font-medium text-black">
+            <label
+              htmlFor="email-textarea"
+              className="text-sm font-medium text-black"
+            >
               Candidate Emails
             </label>
             <Textarea
@@ -127,15 +133,18 @@ export default function InvitePage({ jobs }: InvitePageProps) {
       </form>
       {status === 'error' && (
         <Alert intent="danger" title="Error">
-          <AlertDescription className="text-black">{errorMessage}</AlertDescription>
+          <AlertDescription className="text-black">
+            {errorMessage}
+          </AlertDescription>
         </Alert>
       )}
       {status === 'success' && (
         <Alert intent="info" title="Success">
-          <AlertDescription className="text-black">Invitations sent successfully!</AlertDescription>
+          <AlertDescription className="text-black">
+            Invitations sent successfully!
+          </AlertDescription>
         </Alert>
       )}
     </Card>
   );
 }
-

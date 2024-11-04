@@ -1,13 +1,16 @@
 import { NextResponse } from 'next/server';
-import { Application, Candidate } from '@/types/greenhouse';
-import { getGreenhouseApiKey } from '@/utils/supabase/queries';
-
+import { getMergeApiKey } from '@/utils/supabase/queries';
+import { Application } from '@/types/merge';
 export async function GET(req: Request) {
-  const apiKey = await getGreenhouseApiKey();
-  const baseURL = `https://harvest.greenhouse.io/v1`;
+  const accountToken = await getMergeApiKey();
+  const baseURL = `https://api.merge.dev/api/ats/v1`;
+  const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
 
-  if (!apiKey) {
-    return NextResponse.json({ error: 'API key not found' }, { status: 500 });
+  if (!apiKey || !accountToken) {
+    return NextResponse.json(
+      { error: 'API credentials not found' },
+      { status: 500 }
+    );
   }
 
   const url = new URL(req.url);
@@ -17,46 +20,121 @@ export async function GET(req: Request) {
     let applicationsResponse;
 
     if (jobId) {
-      applicationsResponse = await fetch(`${baseURL}/applications?job_id=${jobId}`, {
-        headers: {
-          Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
-        },
-      });
+      applicationsResponse = await fetch(
+        `${baseURL}/applications?job_post_id=${jobId}`,
+        {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+            'X-Account-Token': accountToken
+          }
+        }
+      );
     } else {
       applicationsResponse = await fetch(`${baseURL}/applications`, {
         headers: {
-          Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
-        },
+          Accept: 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+          'X-Account-Token': accountToken
+        }
       });
     }
 
     if (!applicationsResponse.ok) {
-      return NextResponse.json({ error: 'Failed to fetch applications' }, { status: applicationsResponse.status });
+      return NextResponse.json(
+        { error: 'Failed to fetch applications' },
+        { status: applicationsResponse.status }
+      );
     }
 
-    const applications: Application[] = await applicationsResponse.json();
+    const applications = await applicationsResponse.json();
 
-    // Fetch candidate data for each application
-    const applicationsWithCandidates = await Promise.all(
-      applications.map(async (application) => {
-        const candidateResponse = await fetch(`${baseURL}/candidates/${application.candidate_id}`, {
+    // Fetch candidate, job and current stage data for each application
+    const applicationsWithDetails = await Promise.all(
+      applications.results.map(async (application: Application) => {
+        const candidateId = application.candidate;
+        const jobId = application.job;
+
+        // Fetch candidate data
+        const candidateResponse = await fetch(
+          `${baseURL}/candidates/${candidateId}`,
+          {
+            headers: {
+              Accept: 'application/json',
+              Authorization: `Bearer ${apiKey}`,
+              'X-Account-Token': accountToken
+            }
+          }
+        );
+
+        // Fetch job data
+        const jobResponse = await fetch(`${baseURL}/jobs/${jobId}`, {
           headers: {
-            Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
-          },
+            Accept: 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+            'X-Account-Token': accountToken
+          }
         });
+        // Fetch current stage data
+        console.log('Current Stage:', application.current_stage);
+        const stagesResponse = await fetch(
+          `${baseURL}/job-interview-stages/${application.current_stage}`,
+          {
+            headers: {
+              Accept: 'application/json',
+              Authorization: `Bearer ${apiKey}`,
+              'X-Account-Token': accountToken
+            }
+          }
+        );
+
+        let candidate, job, interviewStages;
 
         if (!candidateResponse.ok) {
-          console.error(`Failed to fetch candidate data for application ${application.id}`);
-          return application;
+          console.error(
+            `Failed to fetch candidate data for application ${application.id}`
+          );
+        } else {
+          candidate = await candidateResponse.json();
         }
 
-        const candidate: Candidate = await candidateResponse.json();
-        return { ...application, candidate };
+        if (!jobResponse.ok) {
+          console.error(
+            `Failed to fetch job data for application ${application.id}`
+          );
+        } else {
+          job = await jobResponse.json();
+        }
+
+        if (!stagesResponse.ok) {
+          console.error(
+            `Failed to fetch interview stages for application ${application.id}`
+          );
+        } else {
+          const stagesData = await stagesResponse.json();
+          console.log('Stages Data:', stagesData);
+          interviewStages = stagesData;
+          console.log('Interview Stages:', interviewStages);
+        }
+
+        return {
+          ...application,
+          candidate: candidate || null,
+          job: job || null,
+          interviewStages: interviewStages || []
+        };
       })
     );
 
-    return NextResponse.json(applicationsWithCandidates, { status: 200 });
+    return NextResponse.json(applicationsWithDetails, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: 'An error occurred while fetching applications' }, { status: 500 });
+    console.error(
+      `An error occurred while fetching applications, candidates, jobs or stages:`,
+      error
+    );
+    return NextResponse.json(
+      { error: 'An error occurred while fetching applications' },
+      { status: 500 }
+    );
   }
 }

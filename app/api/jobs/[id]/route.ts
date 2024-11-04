@@ -1,34 +1,78 @@
 // app/api/jobs/[id]/route.ts
-import { getGreenhouseApiKey } from '@/utils/supabase/queries';
+import { Job } from '@/types/merge';
+import { getMergeApiKey } from '@/utils/supabase/queries';
 import { NextResponse } from 'next/server';
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
-  const apiKey=await getGreenhouseApiKey();
+export async function GET(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  const accountToken = await getMergeApiKey();
   const jobId = params.id;
-  const baseURL = `https://harvest.greenhouse.io/v1/jobs/${jobId}`;
+  const baseURL = `https://api.merge.dev/api/ats/v1`;
+  const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
 
-  // Check if the API key is available
-  if (!apiKey) {
-    return NextResponse.json({ error: 'API key not found' }, { status: 500 });
+  if (!apiKey || !accountToken) {
+    return NextResponse.json(
+      { error: 'API credentials not found' },
+      { status: 500 }
+    );
   }
 
   try {
-    // Fetch the job details from Greenhouse API
-    const response = await fetch(baseURL, {
+    const jobResponse = await fetch(`${baseURL}/jobs/${jobId}`, {
       headers: {
-        Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
-      },
+        Accept: 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+        'X-Account-Token': accountToken
+      }
     });
 
-    // Check if the request was successful
-    if (!response.ok) {
-      return NextResponse.json({ error: `Failed to fetch job with id ${jobId}` }, { status: response.status });
+    if (!jobResponse.ok) {
+      return NextResponse.json(
+        { error: `Failed to fetch job with id ${jobId}` },
+        { status: jobResponse.status }
+      );
     }
 
-    const job = await response.json();
-    return NextResponse.json(job, { status: 200 });
+    const jobData = await jobResponse.json();
+
+    // Fetch departments and offices
+    const [departmentsResponse, officesResponse] = await Promise.all([
+      fetch(`${baseURL}/departments`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+          'X-Account-Token': accountToken
+        }
+      }),
+      fetch(`${baseURL}/offices`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+          'X-Account-Token': accountToken
+        }
+      })
+    ]);
+
+    const departments = departmentsResponse.ok
+      ? (await departmentsResponse.json()).results
+      : [];
+    const offices = officesResponse.ok
+      ? (await officesResponse.json()).results
+      : [];
+
+    const enrichedJob = {
+      ...jobData,
+      departments,
+      offices
+    };
+
+    return NextResponse.json(enrichedJob, { status: 200 });
   } catch (error) {
-    // Handle any other errors
-    return NextResponse.json({ error: 'An error occurred while fetching the job' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'An error occurred while fetching the job' },
+      { status: 500 }
+    );
   }
 }

@@ -16,34 +16,31 @@ import {
 } from '@/components/ui/card';
 import { Tables } from '@/types/types_db';
 import { useSubscription } from '@/hooks/useSubscription';
+
 type Subscription = Tables<'subscriptions'>;
 type Price = Tables<'prices'>;
 type Product = Tables<'products'>;
 
 type SubscriptionWithPriceAndProduct = Subscription & {
-  prices:
-    | (Price & {
-        products: Product | null;
-      })
-    | null;
+  price: Price & {
+    product: Product | null;
+  };
 };
-
-
 
 export default function CustomerPortalForm() {
   const router = useRouter();
   const currentPath = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { subscription } = useSubscription();
+  const { subscription } = useSubscription() as { subscription: SubscriptionWithPriceAndProduct | null };
 
   const subscriptionPrice =
     subscription &&
     new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: subscription?.prices?.currency!,
+      currency: subscription.price.currency || 'USD',
       minimumFractionDigits: 0
-    }).format((subscription?.prices?.unit_amount || 0) / 100);
+    }).format((subscription.price.unit_amount || 0) / 100);
 
   const handleStripePortalRequest = async () => {
     setIsSubmitting(true);
@@ -53,21 +50,21 @@ export default function CustomerPortalForm() {
   };
 
   return (
-    <Card className="my-8 bg-card text-card-foreground">
+    <Card className="my-8 text-card-foreground">
       <CardHeader>
         <CardTitle className="text-primary">Your Plan</CardTitle>
         <CardDescription className="text-muted-foreground">
           {subscription
-            ? `You are currently on the ${subscription?.prices?.products?.name} plan.`
+            ? `You are currently on the ${subscription.price.product?.name} plan.`
             : 'You are not currently subscribed to any plan.'}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="mt-8 mb-4 text-xl font-semibold text-primary">
           {subscription ? (
-            `${subscriptionPrice}/${subscription?.prices?.interval}`
+            `${subscriptionPrice}/${subscription.price.interval}`
           ) : (
-            <Link href="/" className="text-link">
+            <Link href="/" className="text-primary">
               Choose your plan
             </Link>
           )}

@@ -28,6 +28,8 @@
     "@daily-co/daily-react": "^0.21.0",
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.0",
+    "@mergeapi/merge-node-client": "^1.0.11",
+    "@mergeapi/react-merge-link": "^2.1.2",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-checkbox": "^1.1.1",
@@ -68,6 +70,7 @@
     "pdfjs-dist": "^2.16.105",
     "react": "^18.3.1",
     "react-beautiful-dnd": "^13.1.1",
+    "react-confetti": "^6.1.0",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",
     "react-hot-toast": "^2.4.1",
@@ -111,5 +114,6 @@
     "ts-jest": "^29.2.5",
     "typescript": "^5.6.2",
     "webpack": "^5.95.0"
-  }
+  },
+  "proxy": "https://api.merge.dev"
 }

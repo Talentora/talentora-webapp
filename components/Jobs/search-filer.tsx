@@ -1,6 +1,12 @@
-import { Input } from "@/components/ui/input"
+import { Input } from '@/components/ui/input';
 
-export function SearchFilter({ onSearch, searchTerm }: { onSearch: (term: string) => void, searchTerm: string }) {
+export function SearchFilter({
+  onSearch,
+  searchTerm
+}: {
+  onSearch: (term: string) => void;
+  searchTerm: string;
+}) {
   return (
     <div className="mb-4">
       <Input
@@ -11,5 +17,5 @@ export function SearchFilter({ onSearch, searchTerm }: { onSearch: (term: string
         className="max-w-sm"
       />
     </div>
-  )
+  );
 }

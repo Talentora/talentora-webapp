@@ -7,16 +7,13 @@ import { redirectToPath } from './server';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 export async function handleRequest(
   e: React.FormEvent<HTMLFormElement>,
-  requestFunc: (
-    formData: FormData,
-  ) => Promise<string>,
-  router: AppRouterInstance | null = null,
+  requestFunc: (formData: FormData) => Promise<string>,
+  router: AppRouterInstance | null = null
 ): Promise<boolean | void> {
   e.preventDefault();
 
   const formData = new FormData(e.currentTarget);
   const role = formData.get('role');
-  
 
   const redirectUrl: string = await requestFunc(
     formData
@@ -26,7 +23,9 @@ export async function handleRequest(
   if (router) {
     return router.push(redirectUrl);
   } else {
-    return await redirectToPath(`${redirectUrl}${redirectUrl.includes('?') ? '&' : '?'}role=${role}`);
+    return await redirectToPath(
+      `${redirectUrl}${redirectUrl.includes('?') ? '&' : '?'}role=${role}`
+    );
   }
 }
 

@@ -74,7 +74,10 @@ export default function ForgotPassword({
       </CardContent>
       <CardFooter className="flex flex-col items-start space-y-2">
         <p>
-          <Link href={`/signin/password_signin?role=${role}`} className="font-light text-sm">
+          <Link
+            href={`/signin/password_signin?role=${role}`}
+            className="font-light text-sm"
+          >
             Sign in with email and password
           </Link>
         </p>
@@ -86,7 +89,10 @@ export default function ForgotPassword({
           </p>
         )}
         <p>
-          <Link href={`/signin/signup?role=${role}`} className="font-light text-sm">
+          <Link
+            href={`/signin/signup?role=${role}`}
+            className="font-light text-sm"
+          >
             Don&apos;t have an account? Sign up
           </Link>
         </p>
