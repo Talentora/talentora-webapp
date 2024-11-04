@@ -21,7 +21,6 @@ export const QuestionSetup = () => {
   const jobId = 'e92e6687-aeb5-45e4-8439-c8b598ee41d6';
   const { toast } = useToast();
 
-
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -34,41 +33,46 @@ export const QuestionSetup = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const loadQuestions = async () => {
-      try {
-        const fetchedQuestions = await getInterviewQuestions();
-        setQuestions(fetchedQuestions);
-        toast({
-          title: "Questions loaded successfully",
-          description: "All interview questions have been retrieved",
-        });
-      } catch (error) {
-        console.error('Error loading questions:', error);
-        toast({
-          title: "Error loading questions",
-          description: error instanceof Error ? error.message : "An unknown error occurred",
-          variant: "destructive"
-        });
-      } finally {
-        setLoadingQuestions(false);
-      }
-    };
-    loadQuestions();
-  }, [toast]);
+  // useEffect(() => {
+  //   const loadQuestions = async () => {
+  //     try {
+  //       const fetchedQuestions = await getInterviewQuestions(jobId);
+  //       // Parse the JSON interview_questions field
+  //       const parsedQuestions = fetchedQuestions;
+  //       setQuestions(parsedQuestions);
+  //       toast({
+  //         title: "Questions loaded successfully",
+  //         description: "All interview questions have been retrieved",
+  //       });
+  //     } catch (error) {
+  //       console.error('Error loading questions:', error);
+  //       toast({
+  //         title: "Error loading questions",
+  //         description: error instanceof Error ? error.message : "An unknown error occurred",
+  //         variant: "destructive"
+  //       });
+  //     } finally {
+  //       setLoadingQuestions(false);
+  //     }
+  //   };
+  //   loadQuestions();
+  // }, [toast]);
 
   const handleAddQuestion = async () => {
     if (newQuestion && responseExample) {
       setSavingQuestion(true);
       try {
-        const createdQuestion = await createInterviewQuestion(
-          newQuestion,
-          responseExample,
-          questions.length + 1,
-          jobId
-        );
+        const newQuestionObj = {
+          id: crypto.randomUUID(),
+          question: newQuestion,
+          sample_response: responseExample,
+          order: questions.length + 1
+        };
         
-        setQuestions([...questions, createdQuestion]);
+        const updatedQuestions = [...questions, newQuestionObj];
+        await createInterviewQuestion(newQuestionObj.question, newQuestionObj.sample_response, newQuestionObj.order, jobId);
+        
+        setQuestions(updatedQuestions);
         setNewQuestion('');
         setResponseExample('');
         setShowQuestionCard(false);
@@ -138,17 +142,15 @@ export const QuestionSetup = () => {
                 key={q.id}
                 id={q.id}
                 question={q.question} 
-                response={q.sample_response} // Updated to match DB column name
+                response={q.sample_response}
                 order={q.order}
                 onUpdate={async (id, updatedData) => {
                   try {
-                    const updated = await updateInterviewQuestion(id, {
-                      question: updatedData.question,
-                      sample_response: updatedData.response,
-                      order: q.order,
-                      job_id: jobId
-                    });
-                    setQuestions(questions.map(q => q.id === id ? updated : q));
+                    const updatedQuestions = questions.map(q => 
+                      q.id === id ? {...q, ...updatedData} : q
+                    );
+                    await updateInterviewQuestion(id, jobId, updatedData);
+                    setQuestions(updatedQuestions);
                     toast({
                       title: "Question updated successfully",
                       description: "Your changes have been saved",
@@ -164,8 +166,9 @@ export const QuestionSetup = () => {
                 }}
                 onDelete={async (id) => {
                   try {
-                    await deleteInterviewQuestion(id);
-                    setQuestions(questions.filter(q => q.id !== id));
+                    const updatedQuestions = questions.filter(q => q.id !== id);
+                    await deleteInterviewQuestion(jobId, JSON.stringify(updatedQuestions));
+                    setQuestions(updatedQuestions);
                     toast({
                       title: "Question deleted successfully",
                       description: "The question has been removed",

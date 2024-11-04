@@ -11,6 +11,7 @@ import { Tables } from '@/types/types_db';
 type Bot = Tables<'bots'>;
 import { useBots } from '@/hooks/useBots';
 import CreateBot from '@/components/BotLibrary/CreateBot';
+import { updateJobInterviewConfig } from '@/utils/supabase/queries';
 
 
 
@@ -19,8 +20,8 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
 
   const { bots, loading, error } = useBots();
-  console.log(bots);
-  console.log(`Bots loaded: ${bots.length}, Loading: ${loading}`);
+  const pathname = window.location.pathname;
+  const jobId = pathname.split('/')[2]; // Extract ID from /jobs/{id}/settings
 
   useEffect(() => {
     onCompletion(!!selectedBot);
@@ -32,9 +33,14 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
 
   if (error) return <div>Error loading bots: {error}</div>;
 
-  function updateJobConfig(botId: string) {
-    // this should update the job config with the selected botId
-    console.log(`Updating job config with botId: ${botId}`);
+  async function updateJobConfig(botId: string) {
+    try {
+      await updateJobInterviewConfig(jobId, {
+        bot_id: botId
+      });
+    } catch (error) {
+      console.error('Failed to update job interview config:', error);
+    }
   }
 
   return (

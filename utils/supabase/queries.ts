@@ -384,117 +384,188 @@ export const updateBot = async (id: string, botData: any): Promise<Bot | null> =
 
 
 
-
 /**
- * Creates a new interview question in the database.
+ * Creates a new interview question by updating the job_interview_config table.
  * 
  * @param question - The question text
  * @param response - The example response text
  * @param order - The display order of the question
- * @returns The created question data
+ * @param jobId - The ID of the job this question belongs to (required)
+ * @returns The updated job_interview_config data
  * @throws Error if creation fails
  */
 export const createInterviewQuestion = async (
   question: string,
-  response: string, 
-  order: number,
-  jobId?: string
+  response: string,
+  order: number, 
+  jobId: string
 ): Promise<any> => {
   const supabase = createClient();
 
-    if (!question?.trim()) {
-      throw new Error('Question text is required');
-    }
-    if (!response?.trim()) {
-      throw new Error('Example response text is required'); 
-    }
-    if (typeof order !== 'number') {
-      throw new Error('Question order must be a number');
-    }
+  if (!question?.trim()) {
+    throw new Error('Question text is required');
+  }
+  if (!response?.trim()) {
+    throw new Error('Example response text is required');
+  }
+  if (typeof order !== 'number') {
+    throw new Error('Question order must be a number');
+  }
+  if (!jobId) {
+    throw new Error('Job ID is required');
+  }
 
+  // First get existing interview questions
+  const { data: existingConfig, error: fetchError } = await supabase
+    .from('job_interview_config')
+    .select('interview_questions')
+    .eq('job_id', jobId)
+    .single();
+
+  if (fetchError && fetchError.code !== 'PGRST116') { // Ignore not found error
+    throw new Error(`Failed to fetch existing questions: ${fetchError.message}`);
+  }
+
+  const existingQuestions = existingConfig?.interview_questions || [];
+  
+  // Add new question
+  const newQuestion = {
+    id: crypto.randomUUID(), // Generate unique ID for the question
+    question: question.trim(),
+    sample_response: response.trim(),
+    order
+  };
+
+  const updatedQuestions = [...existingQuestions, newQuestion];
+
+  // Update job_interview_config
   const { data, error } = await supabase
-    .from('interview_questions')
-    .insert([{
-      question: question.trim(),
-      sample_response: response.trim(), // Updated to match column name
-      order,
-      job_id: jobId // Added optional job_id field
-    }])
-    .select();
+    .from('job_interview_config')
+    .upsert({
+      job_id: jobId,
+      interview_questions: updatedQuestions
+    })
+    .select()
+    .single();
 
   if (error) {
     throw new Error(`Failed to create interview question: ${error.message}`);
   }
 
-  return data?.[0] || null;
+  return newQuestion;
 };
 
 /**
- * Gets all interview questions from the database.
+ * Gets all interview questions for a specific job from the database.
  * 
+ * @param jobId - The ID of the job
  * @returns Array of interview questions
  * @throws Error if fetch fails
  */
-export const getInterviewQuestions = async (): Promise<any[]> => {
+export const getInterviewQuestions = async (jobId: string): Promise<any[]> => {
   const supabase = createClient();
 
   const { data, error } = await supabase
-    .from('interview_questions')
-    .select('*')
-    .order('order', { ascending: true });
+    .from('job_interview_config')
+    .select('interview_questions')
+    .eq('job_id', jobId)
+    .single();
 
   if (error) {
     throw new Error(`Failed to fetch interview questions: ${error.message}`);
   }
 
-  return data || [];
+  const questions = data?.interview_questions || [];
+  return questions.sort((a: any, b: any) => a.order - b.order);
 };
 
 /**
- * Updates an interview question in the database.
+ * Updates an interview question in the job_interview_config table.
  *
- * @param id - The ID of the question to update
+ * @param questionId - The ID of the question to update
+ * @param jobId - The ID of the job this question belongs to
  * @param questionData - The updated question data
  * @returns The updated question data
  * @throws Error if update fails
  */
 export const updateInterviewQuestion = async (
-  id: string,
+  questionId: string,
+  jobId: string,
   questionData: {
     question?: string;
     sample_response?: string;
     order?: number;
-    job_id?: string;
   }
 ): Promise<any> => {
   const supabase = createClient();
 
+  // Get existing questions
+  const { data: existingConfig, error: fetchError } = await supabase
+    .from('job_interview_config')
+    .select('interview_questions')
+    .eq('job_id', jobId)
+    .single();
+
+  if (fetchError) {
+    throw new Error(`Failed to fetch existing questions: ${fetchError.message}`);
+  }
+
+  const questions = existingConfig?.interview_questions || [];
+  
+  // Update the specific question
+  const updatedQuestions = questions.map((q: any) => 
+    q.id === questionId ? { ...q, ...questionData } : q
+  );
+
+  // Update job_interview_config
   const { data, error } = await supabase
-    .from('interview_questions')
-    .update(questionData)
-    .eq('id', id)
-    .select();
+    .from('job_interview_config')
+    .update({ interview_questions: updatedQuestions })
+    .eq('job_id', jobId)
+    .select()
+    .single();
 
   if (error) {
     throw new Error(`Failed to update interview question: ${error.message}`);
   }
 
-  return data?.[0] || null;
+  return updatedQuestions.find((q: any) => q.id === questionId);
 };
 
 /**
- * Deletes an interview question from the database.
+ * Deletes an interview question from the job_interview_config table.
  *
- * @param id - The ID of the question to delete
+ * @param questionId - The ID of the question to delete
+ * @param jobId - The ID of the job this question belongs to
  * @throws Error if deletion fails
  */
-export const deleteInterviewQuestion = async (id: string): Promise<void> => {
+export const deleteInterviewQuestion = async (
+  questionId: string,
+  jobId: string
+): Promise<void> => {
   const supabase = createClient();
 
+  // Get existing questions
+  const { data: existingConfig, error: fetchError } = await supabase
+    .from('job_interview_config')
+    .select('interview_questions')
+    .eq('job_id', jobId)
+    .single();
+
+  if (fetchError) {
+    throw new Error(`Failed to fetch existing questions: ${fetchError.message}`);
+  }
+
+  const questions = existingConfig?.interview_questions || [];
+  
+  // Filter out the question to delete
+  const updatedQuestions = questions.filter((q: any) => q.id !== questionId);
+
+  // Update job_interview_config
   const { error } = await supabase
-    .from('interview_questions')
-    .delete()
-    .eq('id', id);
+    .from('job_interview_config')
+    .update({ interview_questions: updatedQuestions })
+    .eq('job_id', jobId);
 
   if (error) {
     throw new Error(`Failed to delete interview question: ${error.message}`);
@@ -641,3 +712,102 @@ export const deleteCompanyContext = async (id: string): Promise<void> => {
   }
 };
 
+
+
+/**
+ * Creates a new job interview configuration in the database.
+ * 
+ * @param configData - The data for the new job interview configuration
+ * @returns The created configuration data
+ * @throws Error if creation fails
+ */
+export const createJobInterviewConfig = async (configData: any): Promise<any> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('job_interview_config')
+    .insert(configData)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to create job interview config: ${error.message}`);
+  }
+
+  return data;
+};
+
+/**
+ * Retrieves a job interview configuration by ID.
+ *
+ * @param id - The ID of the job interview configuration to fetch
+ * @returns The job interview configuration data or null if not found
+ * @throws Error if fetch fails
+ */
+export const getJobInterviewConfig = async (id: string): Promise<any | null> => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('job_interview_config')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to fetch job interview config: ${error.message}`);
+  }
+
+  return data;
+};
+
+/**
+ * Updates an existing job interview configuration.
+ *
+ * @param id - The ID of the configuration to update
+ * @param configData - The new configuration data
+ * @returns The updated configuration data
+ * @throws Error if update fails
+ */
+export const updateJobInterviewConfig = async (
+  id: string,
+  configData: any
+): Promise<any> => {
+  const supabase = createClient();
+
+  // Filter out undefined/null values
+  const filteredConfigData = Object.fromEntries(
+    Object.entries(configData).filter(
+      ([_, value]) => value !== null && value !== undefined
+    )
+  );
+
+  const { data, error } = await supabase
+    .from('job_interview_config')
+    .update(filteredConfigData)
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to update job interview config: ${error.message}`);
+  }
+
+  return data;
+};
+
+/**
+ * Deletes a job interview configuration.
+ *
+ * @param id - The ID of the configuration to delete
+ * @throws Error if deletion fails
+ */
+export const deleteJobInterviewConfig = async (id: string): Promise<void> => {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from('job_interview_config')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    throw new Error(`Failed to delete job interview config: ${error.message}`);
+  }
+};

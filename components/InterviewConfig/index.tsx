@@ -14,7 +14,7 @@ import { OnboardingNavigation } from '@/components/CompanyOnboarding/OnboardingN
 import { useJob } from '@/hooks/useJob';
 import { useSearchParams } from 'next/navigation';
 
-export default function InterviewConfig() {
+export default function InterviewConfig({ jobId }: { jobId: string }) {
   const totalSteps = 5;
   const [step, setStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(
@@ -23,14 +23,11 @@ export default function InterviewConfig() {
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, totalSteps));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
-  const searchParams = useSearchParams();
-  const pathname = window.location.pathname;
-  const jobId = pathname.split('/')[2]; // Extract ID from /jobs/{id}/settings
   const { job, loading, error } = useJob(jobId);
 
-  if (!jobId) {
-    return <div>No job ID provided</div>;
-  }
+  // if (!job) {
+  //   return <div>No job provided</div>;
+  // }
 
 
   const handleStepCompletion = (stepNumber: number, isComplete: boolean) => {
@@ -63,6 +60,7 @@ export default function InterviewConfig() {
               onCompletion={(isComplete) =>
                 handleStepCompletion(step, isComplete)
               }
+              job={job!}
             />
           </div>
           <div>
