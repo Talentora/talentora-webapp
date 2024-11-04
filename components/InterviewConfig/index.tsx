@@ -15,10 +15,10 @@ import { useJob } from '@/hooks/useJob';
 import { useSearchParams } from 'next/navigation';
 
 export default function InterviewConfig({ jobId }: { jobId: string }) {
-  const totalSteps = 5;
+  const totalSteps = 6;
   const [step, setStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(
-    new Set([1, 5])
+    new Set([1, 6])
   ); // Initialize step 1 and 4 as completed
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, totalSteps));

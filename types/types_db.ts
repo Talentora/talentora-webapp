@@ -106,7 +106,7 @@ export type Database = {
             columns: ["job_id"]
             isOneToOne: false
             referencedRelation: "jobs"
-            referencedColumns: ["id"]
+            referencedColumns: ["merge_id"]
           },
         ]
       }
@@ -270,33 +270,30 @@ export type Database = {
       }
       job_interview_config: {
         Row: {
-          bot_config: number | null
+          bot_id: number | null
           company_context: string | null
           created_at: string
-          id: string
           interview_questions: Json | null
-          job_id: string | null
+          job_id: string
         }
         Insert: {
-          bot_config?: number | null
+          bot_id?: number | null
           company_context?: string | null
           created_at?: string
-          id?: string
           interview_questions?: Json | null
-          job_id?: string | null
+          job_id?: string
         }
         Update: {
-          bot_config?: number | null
+          bot_id?: number | null
           company_context?: string | null
           created_at?: string
-          id?: string
           interview_questions?: Json | null
-          job_id?: string | null
+          job_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "job_interview_config_bot_config_fkey"
-            columns: ["bot_config"]
+            foreignKeyName: "job_interview_config_bot_id_fkey"
+            columns: ["bot_id"]
             isOneToOne: false
             referencedRelation: "bots"
             referencedColumns: ["id"]
@@ -311,39 +308,33 @@ export type Database = {
           {
             foreignKeyName: "job_interview_config_job_id_fkey"
             columns: ["job_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "jobs"
-            referencedColumns: ["id"]
+            referencedColumns: ["merge_id"]
+          },
+          {
+            foreignKeyName: "job_interview_config_job_id_fkey1"
+            columns: ["job_id"]
+            isOneToOne: true
+            referencedRelation: "jobs"
+            referencedColumns: ["merge_id"]
           },
         ]
       }
       jobs: {
         Row: {
-          AIconfig_id: string | null
           company_id: string | null
-          id: string
-          merge_id: number | null
+          merge_id: string
         }
         Insert: {
-          AIconfig_id?: string | null
           company_id?: string | null
-          id?: string
-          merge_id?: number | null
+          merge_id?: string
         }
         Update: {
-          AIconfig_id?: string | null
           company_id?: string | null
-          id?: string
-          merge_id?: number | null
+          merge_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "jobs_AIconfig_id_fkey"
-            columns: ["AIconfig_id"]
-            isOneToOne: false
-            referencedRelation: "job_interview_config"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "jobs_company_id_fkey"
             columns: ["company_id"]

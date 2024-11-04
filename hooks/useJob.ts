@@ -18,9 +18,9 @@ export const useJob = (jobId: string) => {
         const applicantsResponse = await fetch(
           `/api/applications?jobId=${jobId}`
         );
-        console.log('applicantsResponse', applicantsResponse);
+        // console.log('applicantsResponse', applicantsResponse);
         const applicantsData = await applicantsResponse.json();
-        console.log('applicantsData', applicantsData);
+        // console.log('applicantsData', applicantsData);
         setApplicants(applicantsData);
       } catch (err) {
         setError((err as Error).message);

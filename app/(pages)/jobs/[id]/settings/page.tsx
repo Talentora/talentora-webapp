@@ -9,7 +9,6 @@ import { useParams } from 'next/navigation';
 const Page = () => {
   const params = useParams();
   const jobId = params?.id as string;
-  console.log('jobId from params:', jobId);
   
   const [showConfig, setShowConfig] = useState(false);
 

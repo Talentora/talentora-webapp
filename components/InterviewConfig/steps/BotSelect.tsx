@@ -12,16 +12,16 @@ type Bot = Tables<'bots'>;
 import { useBots } from '@/hooks/useBots';
 import CreateBot from '@/components/BotLibrary/CreateBot';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
-
+import { useToast } from '@/components/Toasts/use-toast';
 
 
 
 const BotSelect = ({ onCompletion }: BotSelectProps) => {
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
-
+  const { toast } = useToast();
   const { bots, loading, error } = useBots();
   const pathname = window.location.pathname;
-  const jobId = pathname.split('/')[2]; // Extract ID from /jobs/{id}/settings
+  const mergedId = pathname.split('/')[2]; // Extract ID from /jobs/{id}/settings
 
   useEffect(() => {
     onCompletion(!!selectedBot);
@@ -34,12 +34,23 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
   if (error) return <div>Error loading bots: {error}</div>;
 
   async function updateJobConfig(botId: string) {
-    try {
-      await updateJobInterviewConfig(jobId, {
-        bot_id: botId
+    await updateJobInterviewConfig(mergedId, {
+      bot_id: botId
+    });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update interview bot. Please try again.",
+        variant: "destructive"
       });
-    } catch (error) {
-      console.error('Failed to update job interview config:', error);
+    } else {
+      toast({
+        title: "Success",
+        description: "Interview bot updated successfully.",
+        variant: "default"
+      });
+      onCompletion(true);
     }
   }
 
@@ -61,7 +72,10 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
               </SelectTrigger>
               <SelectContent >
                 {bots.map((bot) => (
-                  <SelectItem key={bot.id} value={bot.id.toString()} >
+                  <SelectItem 
+                    key={bot.id} 
+                    value={bot.id.toString()}
+                  >
                     <div className="flex items-center gap-2 ">
                       {/* {bot.icon} */}
                       <Bot />
@@ -101,6 +115,16 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
           </div>
         </div>
       )}
+
+      <div className="flex justify-end">
+        <Button 
+          className="w-40"
+          onClick={() => updateJobConfig(selectedBot?.id?.toString() || '')}
+          disabled={!selectedBot}
+        >
+          Save Bot Selection
+        </Button>
+      </div>
     </div>
   );
 };

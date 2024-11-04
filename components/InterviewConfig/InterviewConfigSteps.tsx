@@ -4,6 +4,8 @@ import { StartingStep } from './steps/StartingStep';
 import { QuestionSetup } from './steps/QuestionSetup';
 import BotSelect from './steps/BotSelect';
 import { Job } from '@/types/merge';
+import InterviewSettings from './steps/InterviewSettings';
+import { HiringManagerInput } from './steps/HiringManagerInput';
 interface OnboardingStepsProps {
   step: number;
   onCompletion: (isComplete: boolean) => void;
@@ -21,8 +23,12 @@ export const InterviewConfigSteps: React.FC<OnboardingStepsProps> = ({
     case 2:
       return <BotSelect onCompletion={onCompletion} />;
     case 3:
-      return <QuestionSetup />;
+      return <QuestionSetup jobId={job.id} onCompletion={onCompletion} />;
     case 4:
+      return <InterviewSettings jobId={job.id} onCompletion={onCompletion} />;
+    case 5:
+      return <HiringManagerInput onCompletion={onCompletion} />;
+    case 6:
       return <CompletionStep />;
     default:
       return null;
