@@ -1,9 +1,4 @@
-// import {
-//   UserAppMetadata,
-//   UserMetadata,
-//   UserIdentity,
-//   Factor
-// } from '@supabase/auth-js/src/lib/types';
+
 import {
   UserAppMetadata,
   UserMetadata,
