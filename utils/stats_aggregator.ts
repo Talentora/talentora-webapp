@@ -18,7 +18,7 @@ class StatsAggregator implements IStatsAggregator {
 
     const timeseries = [
       ...(this.statsMap[service][metric]?.timeseries || []),
-      value,
+      value
     ];
 
     const median =
@@ -31,7 +31,7 @@ class StatsAggregator implements IStatsAggregator {
       timeseries,
       median,
       high,
-      low,
+      low
     };
 
     this.hasNewStats = true;

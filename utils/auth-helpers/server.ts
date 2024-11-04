@@ -3,8 +3,8 @@
 import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { getURL, getErrorRedirect, getStatusRedirect } from 'utils/helpers';
-import { getAuthTypes } from 'utils/auth-helpers/settings';
+import { getURL, getErrorRedirect, getStatusRedirect } from '@/utils/helpers';
+import { getAuthTypes } from '@/utils/auth-helpers/settings';
 
 function isValidEmail(email: string) {
   var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -163,14 +163,42 @@ export async function signInWithPassword(formData: FormData) {
   return redirectPath;
 }
 
+/**
+ * Signs up a new user using the provided form data.
+ *
+ * @param {FormData} formData - The form data containing the user's email and password.
+ * @returns {Promise<string>} - A promise that resolves to a redirect path based on the outcome of the sign-up process.
+ *
+ * The function performs the following steps:
+ * 1. Extracts and trims the email and password from the form data.
+ * 2. Validates the email format.
+ * 3. Creates a Supabase client and attempts to sign up the user.
+ * 4. Handles various outcomes of the sign-up process:
+ *    - Invalid email address.
+ *    - Sign-up failure with an error message.
+ *    - Successful sign-up with an active session.
+ *    - Existing account with no identities.
+ *    - Successful sign-up requiring email confirmation.
+ *    - General failure.
+ *
+ * The function returns a redirect path based on the outcome, which can be used to navigate the user to the appropriate page.
+ */
 export async function signUp(formData: FormData) {
+  console.log('Starting sign-up process...');
   const callbackURL = getURL('/auth/callback');
 
   const email = String(formData.get('email')).trim();
   const password = String(formData.get('password')).trim();
+  const fullName = String(formData.get('fullName')).trim();
+  const role = String(formData.get('role')).trim();
   let redirectPath: string;
 
+  console.log(`Signing up as a ${role}`);
+  console.log(`Email: ${email}`);
+  console.log(`Password: ${'*'.repeat(password.length)}`); // Masking the password for security
+
   if (!isValidEmail(email)) {
+    console.log('Invalid email format detected.');
     redirectPath = getErrorRedirect(
       '/signin/signup',
       'Invalid email address.',
@@ -179,39 +207,51 @@ export async function signUp(formData: FormData) {
   }
 
   const supabase = createClient();
+  console.log('Supabase client created. Attempting to sign up user...');
   const { error, data } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: callbackURL
+      emailRedirectTo: callbackURL,
+
+      data: { role: role, full_name: fullName }
     }
   });
 
   if (error) {
+    console.log('Sign-up failed with error:', error.message);
     redirectPath = getErrorRedirect(
       '/signin/signup',
       'Sign up failed.',
       error.message
     );
   } else if (data.session) {
-    redirectPath = getStatusRedirect('/', 'Success!', 'You are now signed in.');
+    console.log('Sign-up successful with active session.');
+    redirectPath = getStatusRedirect(
+      '/settings/onboarding',
+      'Success!',
+      `You are now signed in as a ${role}.`
+    );
   } else if (
     data.user &&
     data.user.identities &&
     data.user.identities.length == 0
   ) {
+    console.log('Sign-up failed: Account already exists with no identities.');
     redirectPath = getErrorRedirect(
       '/signin/signup',
       'Sign up failed.',
       'There is already an account associated with this email address. Try resetting your password.'
     );
   } else if (data.user) {
+    console.log('Sign-up successful: Email confirmation required.');
     redirectPath = getStatusRedirect(
       '/',
       'Success!',
       'Please check your email for a confirmation link. You may now close this tab.'
     );
   } else {
+    console.log('Sign-up failed: Unknown error.');
     redirectPath = getErrorRedirect(
       '/signin/signup',
       'Hmm... Something went wrong.',
@@ -310,6 +350,7 @@ export async function updateName(formData: FormData) {
   const fullName = String(formData.get('fullName')).trim();
 
   const supabase = createClient();
+  console.log('access name');
   const { error, data } = await supabase.auth.updateUser({
     data: { full_name: fullName }
   });

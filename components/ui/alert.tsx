@@ -1,19 +1,19 @@
-import React from "react";
-import { cva, VariantProps } from "class-variance-authority";
-import { CircleAlert } from "lucide-react";
+import React from 'react';
+import { cva, VariantProps } from 'class-variance-authority';
+import { CircleAlert } from 'lucide-react';
 
-import { cn } from "@/utils/cn";
+import { cn } from '@/utils/cn';
 
-const alertVariants = cva("text-left border border-black rounded-lg p-4", {
+const alertVariants = cva('text-left border border-black rounded-lg p-4', {
   variants: {
     intent: {
-      info: "alert-info",
-      danger: "border-red-200 text-red-600 bg-red-50",
-    },
+      info: 'alert-info',
+      danger: 'border-red-200 text-red-600 bg-red-50'
+    }
   },
   defaultVariants: {
-    intent: "info",
-  },
+    intent: 'info'
+  }
 });
 
 export interface AlertProps
@@ -24,7 +24,7 @@ export const Alert: React.FC<AlertProps> = ({ children, intent, title }) => {
   return (
     <div className={alertVariants({ intent })}>
       <AlertTitle>
-        {intent === "danger" && <CircleAlert size={18} />}
+        {intent === 'danger' && <CircleAlert size={18} />}
         {title}
       </AlertTitle>
       {children}
@@ -39,10 +39,18 @@ export const AlertTitle = React.forwardRef<
   <p
     ref={ref}
     className={cn(
-      "text-base font-bold flex items-center gap-2 mb-2",
+      'text-base font-bold flex items-center gap-2 mb-2',
       className
     )}
     {...props}
   />
 ));
-AlertTitle.displayName = "AlertTitle";
+AlertTitle.displayName = 'AlertTitle';
+
+export const AlertDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => (
+  <p ref={ref} className={cn('text-sm', className)} {...props} />
+));
+AlertDescription.displayName = 'AlertDescription';
