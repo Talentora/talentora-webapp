@@ -27,9 +27,9 @@ export const InterviewConfigSteps: React.FC<OnboardingStepsProps> = ({
     case 4:
       return <InterviewSettings jobId={job.id} onCompletion={onCompletion} />;
     case 5:
-      return <HiringManagerInput onCompletion={onCompletion} />;
+      return <HiringManagerInput jobId={job.id} onCompletion={onCompletion} />;
     case 6:
-      return <CompletionStep />;
+      return <CompletionStep jobId={job.id} />;
     default:
       return null;
   }

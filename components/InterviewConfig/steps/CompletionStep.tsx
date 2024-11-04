@@ -1,16 +1,18 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import Confetti from 'react-confetti';
 
-export const CompletionStep: React.FC = () => {
+export const CompletionStep: React.FC<{ jobId: string }> = ({ jobId }) => {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between relative">
+      <Confetti />
       <div className="text-center p-4">
         <h3 className="text-lg font-medium">You're All Set!</h3>
         <p>
-          <i>Congratulations! Your account is now ready to use.</i>
+          <i>Congratulations! You may now begin interviewing candidates!</i>
         </p>
-        <Link href="/dashboard" passHref>
+        <Link href={`/jobs/${jobId}`} passHref>
           <Button className="mt-4">Get Started</Button>
         </Link>
       </div>

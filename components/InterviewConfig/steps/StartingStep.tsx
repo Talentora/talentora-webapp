@@ -56,7 +56,7 @@ export const StartingStep: React.FC<{
       .insert({
         merge_id: jobId,      // Keep as string since it's a UUID
         company_id: companyId, // Already a UUID string
-        config_id: null
+        // config_id: null,
       })
       .select()
       .single();
@@ -64,6 +64,8 @@ export const StartingStep: React.FC<{
     if (jobError) {
       throw new Error('Error creating job: ' + jobError.message);
     }
+
+    onCompletion(true);
   
     return newJob;
   }

@@ -273,22 +273,34 @@ export type Database = {
           bot_id: number | null
           company_context: string | null
           created_at: string
+          duration: number | null
+          hiring_manager_notes: string | null
+          interview_name: string | null
           interview_questions: Json | null
           job_id: string
+          type: string | null
         }
         Insert: {
           bot_id?: number | null
           company_context?: string | null
           created_at?: string
+          duration?: number | null
+          hiring_manager_notes?: string | null
+          interview_name?: string | null
           interview_questions?: Json | null
           job_id?: string
+          type?: string | null
         }
         Update: {
           bot_id?: number | null
           company_context?: string | null
           created_at?: string
+          duration?: number | null
+          hiring_manager_notes?: string | null
+          interview_name?: string | null
           interview_questions?: Json | null
           job_id?: string
+          type?: string | null
         }
         Relationships: [
           {

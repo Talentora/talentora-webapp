@@ -2,20 +2,44 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-
+import { updateJobInterviewConfig } from '@/utils/supabase/queries';
+import { useToast } from '@/components/Toasts/use-toast'; // Import useToast hook
 interface HiringManagerInputProps {
   onCompletion: (isComplete: boolean) => void;
+  jobId: string;
 }
 
-export const HiringManagerInput: React.FC<HiringManagerInputProps> = ({ onCompletion }) => {
+export const HiringManagerInput: React.FC<HiringManagerInputProps> = ({ onCompletion, jobId }) => {
   const [requirements, setRequirements] = useState('');
   const [idealCandidate, setIdealCandidate] = useState('');
   const [additionalNotes, setAdditionalNotes] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Added state for loading
+  const { toast } = useToast(); // Initialize toast hook
 
-  const handleSave = () => {
-    // Validate that at least requirements or ideal candidate is filled
-    const isComplete = requirements.trim() !== '' || idealCandidate.trim() !== '';
-    onCompletion(isComplete);
+  const handleSave = async () => {
+    setIsLoading(true); // Set loading to true when save is clicked
+    try {
+      await updateJobInterviewConfig(jobId, {
+        hiring_manager_notes: additionalNotes
+      });
+      toast({
+        title: "Success",
+        description: "Additional notes saved successfully.",
+        variant: "default",
+      });
+      // Validate that at least requirements or ideal candidate is filled
+      const isComplete = requirements.trim() !== '' || idealCandidate.trim() !== '';
+      onCompletion(isComplete);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save additional notes.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false); // Set loading to false after the operation
+      onCompletion(true);
+    }
   };
 
   return (
@@ -23,36 +47,13 @@ export const HiringManagerInput: React.FC<HiringManagerInputProps> = ({ onComple
       <Card>
         <CardContent className="pt-6">
           <div className="space-y-6">
+        
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                Key Requirements & Qualifications
+                Additional Notes
               </label>
               <Textarea
-                placeholder="Enter the key requirements and qualifications the hiring manager is looking for..."
-                value={requirements}
-                onChange={(e) => setRequirements(e.target.value)}
-                className="min-h-[120px]"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Ideal Candidate Profile
-              </label>
-              <Textarea
-                placeholder="Describe the ideal candidate in terms of experience, skills, and qualities..."
-                value={idealCandidate}
-                onChange={(e) => setIdealCandidate(e.target.value)}
-                className="min-h-[120px]"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Additional Notes (Optional)
-              </label>
-              <Textarea
-                placeholder="Any additional context or specific preferences..."
+                placeholder="Enter any additional context or specific preferences to tell the AI.  This will help it tailor the interview to the hiring manager's needs..."
                 value={additionalNotes}
                 onChange={(e) => setAdditionalNotes(e.target.value)}
                 className="min-h-[120px]"
@@ -60,11 +61,11 @@ export const HiringManagerInput: React.FC<HiringManagerInputProps> = ({ onComple
             </div>
 
             <Button 
-              className="w-full mt-4"
+              className="w-32 mt-4 float-right"
               onClick={handleSave}
-              disabled={requirements.trim() === '' && idealCandidate.trim() === ''}
+              disabled={isLoading} // Added isLoading to disable button
             >
-              Save Requirements
+              {isLoading ? 'Saving...' : 'Save Requirements'}
             </Button>
           </div>
         </CardContent>

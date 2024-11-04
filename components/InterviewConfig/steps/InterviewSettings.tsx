@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/Toasts/use-toast';
 import { Slider } from '@/components/ui/slider';
+import { updateJobInterviewConfig } from '@/utils/supabase/queries';
 
 interface InterviewSettingsProps {
   jobId: string;
@@ -14,8 +15,9 @@ interface InterviewSettingsProps {
 
 export const InterviewSettings = ({ jobId, onCompletion }: InterviewSettingsProps) => {
   const [interviewName, setInterviewName] = useState('');
-  const [duration, setDuration] = useState('30');
+  const [duration, setDuration] = useState(30);
   const [interviewType, setInterviewType] = useState('standard');
+  const [isLoading, setIsLoading] = useState(false); // Added state for loading
   const { toast } = useToast();
 
 //   // Check if required fields are filled to enable completion
@@ -28,19 +30,30 @@ export const InterviewSettings = ({ jobId, onCompletion }: InterviewSettingsProp
 //   }, [interviewName, duration, interviewType, onCompletion]);
 
   const handleSave = async () => {
+    setIsLoading(true); // Set loading to true when save is clicked
     try {
+
+        if (interviewName && interviewType && duration) {
       // TODO: Implement save to database
+      await updateJobInterviewConfig(jobId, {
+        interview_name: interviewName,
+        type: interviewType,
+        duration: duration
+      });
       toast({
         title: "Settings saved successfully",
         description: "Your interview settings have been updated",
       });
-      onCompletion(true);
+        onCompletion(true);
+      }
     } catch (error) {
       toast({
         title: "Error saving settings",
         description: "Please try again later",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false); // Set loading to false after the operation
     }
   };
 
@@ -92,11 +105,11 @@ export const InterviewSettings = ({ jobId, onCompletion }: InterviewSettingsProp
           </div>
 
           <Button 
-            className="w-full mt-4"
+            className="w-32 mt-4 float-right"
             onClick={handleSave}
-            disabled={!interviewName || !duration || !interviewType}
+            disabled={!interviewName || !duration || !interviewType || isLoading} // Added isLoading to disable button
           >
-            Save Settings
+            {isLoading ? 'Saving...' : 'Save Settings'}
           </Button>
         </CardContent>
       </Card>

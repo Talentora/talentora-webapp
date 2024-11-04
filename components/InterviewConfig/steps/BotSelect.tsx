@@ -35,7 +35,10 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
 
   async function updateJobConfig(botId: string) {
     await updateJobInterviewConfig(mergedId, {
-      bot_id: botId
+      bot_id: Number(botId),
+      interview_name: null,
+      interview_type: null,
+      interview_duration: null
     });
 
     if (error) {

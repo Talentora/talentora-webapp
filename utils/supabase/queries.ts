@@ -672,40 +672,52 @@ export const deleteCompanyContext = async (id: string): Promise<void> => {
 
 
 
+
 /**
- * Updates the bot selection for a job's interview configuration.
+ * Updates the job interview configuration with specified columns.
  * 
- * @param jobId - The ID of the job to update
- * @param configData - Object containing the bot_id to update
- * @returns The updated job interview config data
- * @throws Error if the update operation fails
+ * @param jobId - The ID of the job to update.
+ * @param configData - An object containing the columns to update.
+ * @returns The updated job interview config data.
+ * @throws Error if the update operation fails.
  */
 export const updateJobInterviewConfig = async (
   jobId: string,
-  configData: {
-    bot_id: string;
-  }
+  configData: Partial<{
+    bot_id: number | null;
+    interview_name: string | null;
+    type: string | null;
+    duration: number | null;
+    hiring_manager_notes: string | null;
+  }>
 ): Promise<any> => {
   const supabase = createClient();
 
-  // console.log('jobId', jobId);
-  
-  // // First check if config exists for this job
-  // const { data: existingConfig } = await supabase
-  //   .from('job_interview_config')
-  //   .select('*')
-  //   .eq('job_id', jobId)
-  //   .single();
+  // Filter out undefined values to ensure only provided fields are updated
+  const filteredConfigData = Object.fromEntries(
+    Object.entries(configData).filter(
+      ([_, value]) => value !== undefined
+    )
+  );
 
-  // if (existingConfig) {
-  //   console.log('exisitng config found');
-    // Update existing config
-    const botId = Number(configData.bot_id);
-    console.log('botId', botId);
-    console.log('jobId', jobId);
+  if (Object.keys(filteredConfigData).length === 0) {
+    throw new Error('No valid fields provided for update.');
+  }
+
+  // If bot_id is provided, ensure it's a number or null
+  if ('bot_id' in filteredConfigData) {
+    const botId = filteredConfigData.bot_id;
+    if (botId !== null && typeof botId !== 'number') {
+      throw new Error('bot_id must be a number or null.');
+    }
+    // Optionally, you can validate that the bot_id exists in the referenced table
+    // This depends on your application's requirements
+  }
+
+  try {
     const { data, error } = await supabase
       .from('job_interview_config')
-      .update({ bot_id: botId })
+      .update(filteredConfigData)
       .eq('job_id', jobId)
       .single();
 
@@ -713,16 +725,11 @@ export const updateJobInterviewConfig = async (
       throw new Error(`Failed to update job interview config: ${error.message}`);
     }
 
-    return {data,error};
-
-  // } 
-
-  //   if (error) {
-  //     throw new Error(`Failed to create job interview config: ${error.message}`);
-  //   }
-
-  //   return data;
-  // }
+    return { data, error };
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
 };
 
 export const deleteInterviewQuestion = async (
@@ -758,4 +765,34 @@ export const deleteInterviewQuestion = async (
   }
 };
 
+
+
+/**
+ * Fetches the interview config for a job by its ID.
+ *
+ * @param jobId - The ID of the job to fetch the interview config for.
+ * @returns The interview config data or null if not found.
+ */
+export const getJobInterviewConfig = async (
+  jobId: string
+): Promise<any | null> => {
+  try {
+    const supabase = createClient();
+    const { data: interviewConfig, error } = await supabase
+      .from('job_interview_config')
+      .select('*')
+      .eq('job_id', jobId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching interview config:', error);
+      return null;
+    }
+
+    return interviewConfig;
+  } catch (err) {
+    console.error('Unexpected error fetching interview config:', err);
+    return null;
+  }
+};
 
