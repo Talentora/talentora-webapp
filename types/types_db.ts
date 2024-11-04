@@ -9,21 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      AI_config: {
-        Row: {
-          created_at: string
-          id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-        }
-        Relationships: []
-      }
       AI_summary: {
         Row: {
           created_at: string
@@ -96,38 +81,91 @@ export type Database = {
             columns: ["job_id"]
             isOneToOne: false
             referencedRelation: "jobs"
+            referencedColumns: ["merge_id"]
+          },
+        ]
+      }
+      bots: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: number
+          name: string | null
+          prompt: string | null
+          role: string | null
+          voice_id: string | null
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: number
+          name?: string | null
+          prompt?: string | null
+          role?: string | null
+          voice_id?: string | null
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: number
+          name?: string | null
+          prompt?: string | null
+          role?: string | null
+          voice_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bots_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
       }
       companies: {
         Row: {
+          billing_address: string | null
           description: string | null
           email_extension: string | null
           id: string
           industry: string | null
           location: string | null
+          merge_account_token: string | null
           name: string
+          payment_method: string | null
           subscription_id: string | null
           website_url: string | null
         }
         Insert: {
+          billing_address?: string | null
           description?: string | null
           email_extension?: string | null
           id?: string
           industry?: string | null
           location?: string | null
+          merge_account_token?: string | null
           name: string
+          payment_method?: string | null
           subscription_id?: string | null
           website_url?: string | null
         }
         Update: {
+          billing_address?: string | null
           description?: string | null
           email_extension?: string | null
           id?: string
           industry?: string | null
           location?: string | null
+          merge_account_token?: string | null
           name?: string
+          payment_method?: string | null
           subscription_id?: string | null
           website_url?: string | null
         }
@@ -137,6 +175,47 @@ export type Database = {
             columns: ["subscription_id"]
             isOneToOne: true
             referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_context: {
+        Row: {
+          created_at: string
+          culture: string | null
+          customers: string | null
+          description: string | null
+          goals: string | null
+          history: string | null
+          id: string
+          products: string | null
+        }
+        Insert: {
+          created_at?: string
+          culture?: string | null
+          customers?: string | null
+          description?: string | null
+          goals?: string | null
+          history?: string | null
+          id?: string
+          products?: string | null
+        }
+        Update: {
+          created_at?: string
+          culture?: string | null
+          customers?: string | null
+          description?: string | null
+          goals?: string | null
+          history?: string | null
+          id?: string
+          products?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_context_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
@@ -156,33 +235,85 @@ export type Database = {
         }
         Relationships: []
       }
-      jobs: {
+      job_interview_config: {
         Row: {
-          AIconfig_id: string | null
-          company_id: string | null
-          harvest_jobs: number | null
-          id: string
+          bot_id: number | null
+          company_context: string | null
+          created_at: string
+          duration: number | null
+          hiring_manager_notes: string | null
+          interview_name: string | null
+          interview_questions: Json | null
+          job_id: string
+          type: string | null
         }
         Insert: {
-          AIconfig_id?: string | null
-          company_id?: string | null
-          harvest_jobs?: number | null
-          id?: string
+          bot_id?: number | null
+          company_context?: string | null
+          created_at?: string
+          duration?: number | null
+          hiring_manager_notes?: string | null
+          interview_name?: string | null
+          interview_questions?: Json | null
+          job_id?: string
+          type?: string | null
         }
         Update: {
-          AIconfig_id?: string | null
-          company_id?: string | null
-          harvest_jobs?: number | null
-          id?: string
+          bot_id?: number | null
+          company_context?: string | null
+          created_at?: string
+          duration?: number | null
+          hiring_manager_notes?: string | null
+          interview_name?: string | null
+          interview_questions?: Json | null
+          job_id?: string
+          type?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "jobs_AIconfig_id_fkey"
-            columns: ["AIconfig_id"]
+            foreignKeyName: "job_interview_config_bot_id_fkey"
+            columns: ["bot_id"]
             isOneToOne: false
-            referencedRelation: "AI_config"
+            referencedRelation: "bots"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "job_interview_config_company_context_fkey"
+            columns: ["company_context"]
+            isOneToOne: false
+            referencedRelation: "company_context"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_interview_config_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: true
+            referencedRelation: "jobs"
+            referencedColumns: ["merge_id"]
+          },
+          {
+            foreignKeyName: "job_interview_config_job_id_fkey1"
+            columns: ["job_id"]
+            isOneToOne: true
+            referencedRelation: "jobs"
+            referencedColumns: ["merge_id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          company_id: string | null
+          merge_id: string
+        }
+        Insert: {
+          company_id?: string | null
+          merge_id?: string
+        }
+        Update: {
+          company_id?: string | null
+          merge_id?: string
+        }
+        Relationships: [
           {
             foreignKeyName: "jobs_company_id_fkey"
             columns: ["company_id"]
