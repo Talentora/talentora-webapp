@@ -51,6 +51,7 @@
     "@stripe/stripe-js": "2.4.0",
     "@supabase/ssr": "^0.1.0",
     "@supabase/supabase-js": "^2.45.4",
+    "@supabase/auth-js": "^2.0.0",
     "@svgr/webpack": "^8.1.0",
     "@types/react-beautiful-dnd": "^13.1.8",
     "ai": "^3.4.0",
