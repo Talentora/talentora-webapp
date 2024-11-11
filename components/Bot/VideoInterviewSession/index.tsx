@@ -15,14 +15,12 @@ interface VoiceInterviewSessionProps {
   state: TransportState;
   onLeave: () => void;
   startAudioOff?: boolean;
-  job: Job;
 }
 
 export default function VoiceInterviewSession({
   state,
   onLeave,
   startAudioOff = false,
-  job
 }: VoiceInterviewSessionProps) {
   const voiceClient = useVoiceClient()!;
   const [hasStarted, setHasStarted] = useState<boolean>(false);
@@ -88,7 +86,7 @@ export default function VoiceInterviewSession({
 
   return (
     <div className="flex flex-col h-screen">
-      <InterviewHeader job={job} />
+      {/* <InterviewHeader job={job} /> */}
 
       <main className="flex-grow grid grid-cols-3 gap-4 p-4">
         <div className=" h-screen col-span-1 flex justify-between flex-col gap-1">
