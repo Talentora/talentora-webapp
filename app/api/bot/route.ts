@@ -1,32 +1,51 @@
 // [POST] /api
-import { defaultBotProfile, defaultMaxDuration } from '@/utils/rtvi.config';
+import { defaultBotProfile, defaultMaxDuration, defaultServices, defaultConfig } from '@/utils/rtvi.config';
 
 export async function POST(request: Request) {
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-  const DAILY_API_KEY = process.env.NEXT_PUBLIC_DAILY_API_KEY;
+  const DAILY_API_KEY = process.env.NEXT_PUBLIC_DAILY_BOT_API_KEY;
+  console.log('DAILY_API_KEY:', DAILY_API_KEY);
 
   console.log('Received request:', request);
 
-  const { services, config } = await request.json();
-  console.log('Parsed request body:', { services, config });
+  // const { services, config } = await request.json();
+  // console.log('Parsed request body:', { services, config });
 
-  if (!services || !config) {
-    console.error(
-      'Services or config not found on request body or environment variable missing'
-    );
-    return new Response(`Services or config not found on request body`, {
-      status: 400
-    });
-  }
+  // if (!services || !config) {
+  //   console.error(
+  //     'Services or config not found on request body or environment variable missing'
+  //   );
+  //   return new Response(`Services or config not found on request body`, {
+  //     status: 400
+  //   });
+  // }
 
   const payload = {
     bot_profile: defaultBotProfile,
     max_duration: defaultMaxDuration,
-    services,
+    services: defaultServices,
     api_keys: {
       openai: OPENAI_API_KEY
     },
-    config: [...config]
+    config: defaultConfig,
+    recording_settings: {
+      type: "cloud"
+    },
+    service_options: {
+      vad: {
+        stop_secs: 0.5
+      }
+    }
+
+    // service: "vad",
+    // options: [
+    //   {
+    //     name: "params",
+    //     value: {
+    //       stop_secs: 0.5
+    //     }
+    //   }
+    // ]
   };
   console.log('Payload to be sent:', payload);
 

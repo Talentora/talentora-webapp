@@ -17,12 +17,13 @@ export default function ApplicantPortal({
     <div className="space-y-4">
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="flex-1 space-y-6">
-          <ApplicantInfo ApplicantCandidate={ApplicantCandidate} />
-          <ApplicantSummary ApplicantCandidate={ApplicantCandidate} />
-          <InterviewResponses />
+          <div>
+            <ApplicantInfo ApplicantCandidate={ApplicantCandidate} />
+            <ApplicantSummary ApplicantCandidate={ApplicantCandidate} />
+            <InterviewResponses />
+          </div>
         </div>
         <div className="w-full lg:w-64 space-y-6">
-          <ApplicantCandidateStatus ApplicantCandidate={ApplicantCandidate} />
           <ApplicantActions ApplicantCandidate={ApplicantCandidate} />
         </div>
       </div>
