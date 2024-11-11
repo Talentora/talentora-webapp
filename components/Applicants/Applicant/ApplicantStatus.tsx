@@ -25,12 +25,7 @@ export default function ApplicantCandidateStatus({
             </div>
             <Progress value={progress} />
           </div> */}
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">Current Stage:</span>
-            <span className="text-sm">
-              {ApplicantCandidate.interviewStages.name}
-            </span>
-          </div>
+         
         </div>
       </CardContent>
     </Card>
