@@ -8,6 +8,7 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { CalendarDays, Mail, Phone } from 'lucide-react';
+import ApplicantCandidateStatus from '@/components/Applicants/Applicant/ApplicantStatus';
 
 interface ApplicantInfoProps {
   ApplicantCandidate: ApplicantCandidate;
@@ -59,6 +60,12 @@ export default function ApplicantInfo({
               {ApplicantCandidate.applied_at
                 ? new Date(ApplicantCandidate.applied_at).toLocaleDateString()
                 : 'Unknown date'}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <span className="text-sm font-medium">Current Stage: </span>
+            <span className="text-sm font-bold">
+              {ApplicantCandidate.interviewStages.name}
             </span>
           </div>
         </div>

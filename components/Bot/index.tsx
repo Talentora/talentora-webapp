@@ -1,94 +1,89 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { TooltipProvider } from '@radix-ui/react-tooltip';
-import { LLMHelper } from 'realtime-ai';
+import React, { useEffect, useRef, useState } from 'react';
+import { VoiceClientAudio, VoiceClientProvider } from "realtime-ai-react";
 import { DailyVoiceClient } from 'realtime-ai-daily';
-import { VoiceClientAudio, VoiceClientProvider } from 'realtime-ai-react';
-
+import { LLMHelper, VoiceClient } from 'realtime-ai';
+import { Button } from '@/components/ui/button';
+import { DailyTransport } from "@daily-co/realtime-ai-daily";
 import App from '@/components/Bot/App';
-import { CharacterProvider } from '@/components/Bot/context';
-import Splash from '@/components/Bot/Splash';
 import {
   BOT_READY_TIMEOUT,
   defaultConfig,
   defaultServices
 } from '@/utils/rtvi.config';
 
-import { Job } from '@/types/merge';
-// Define the Job type from the database schema
-
-// Define the props for the Bot component
-interface BotProps {
-  job: Job | null;
-}
-
-/**
- * Bot component that handles the main functionality of the AI interviewer
- * @param {BotProps} props - The props for the Bot component
- * @returns {JSX.Element} The rendered Bot component
- */
-export default function Bot({ job }: BotProps) {
-  // State to control the visibility of the splash screen
+export default function Bot() {
   const [showSplash, setShowSplash] = useState(true);
-  // Ref to store the DailyVoiceClient instance
   const voiceClientRef = useRef<DailyVoiceClient | null>(null);
 
   useEffect(() => {
-    // Only initialize the voice client if the splash screen is shown and the client hasn't been created yet
     if (!showSplash || voiceClientRef.current) {
       return;
     }
-    console.log('Creating client');
+    
+    // const voiceClient = new DailyVoiceClient({
+    //   baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
+    //   services: defaultServices,
+    //   config: defaultConfig,
+    //   timeout: BOT_READY_TIMEOUT,
+    //   enableCam: true
+    // });
 
-    // Create a new DailyVoiceClient instance
+    const dailyTransport = new DailyTransport();
+
+    const config1 = {
+      "interview_config": {
+        "interviewer_name": "Sally",
+        "company": "Google",
+        "role": "Software Engineer III, AI/Machine Learning",
+        "job_description": "This role requires expertise in: Python and machine learning frameworks, Building and deploying ML models, Experience with cloud platforms (GCP preferred), Strong system design and architecture skills, Collaboration with cross-functional teams"
+      }
+    };
+
     const voiceClient = new DailyVoiceClient({
-      baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
+      // baseUrl: "/api/connectBot",
+      baseUrl: "/api/bot",
       services: defaultServices,
       config: defaultConfig,
       timeout: BOT_READY_TIMEOUT,
       enableCam: true
     });
 
-    // Create an LLMHelper instance for handling language model interactions
-    const llmHelper = new LLMHelper({
-      callbacks: {
-        onLLMFunctionCall: () => {
-          // Play a shutter sound when an LLM function is called
-          const audio = new Audio('shutter.mp3');
-          audio.play();
-        }
-      }
-    });
+    const llmHelper = new LLMHelper({});
 
-    // Register the LLMHelper with the voice client
     voiceClient.registerHelper('llm', llmHelper);
-
-    // Store the voice client in the ref
     voiceClientRef.current = voiceClient;
-  }, [showSplash, job]);
 
-  // Render the splash screen if it's still visible
+
+    
+  }, [showSplash]);
+
+
+
+
+
   if (showSplash) {
-    return <Splash handleReady={() => setShowSplash(false)} />;
+    return (
+      <main className="w-full flex items-center justify-center bg-primary-200 p-4 bg-[length:auto_50%] lg:bg-auto bg-colorWash bg-no-repeat bg-right-top">
+        <div className="flex flex-col gap-8 lg:gap-12 items-center max-w-full lg:max-w-3xl">
+          <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-balance text-left">
+            Talentora
+          </h1>
+
+          <p className="text-primary-500 text-xl font-semibold leading-relaxed">
+            Enter your interview now
+          </p>
+
+          <Button onClick={() => setShowSplash(false)}>Try Demo</Button>
+        </div>
+      </main>
+    );
   }
 
-  // Render the main application
   return (
     <VoiceClientProvider voiceClient={voiceClientRef.current!}>
-      <CharacterProvider>
-        <TooltipProvider>
-          <main>
-            <p></p>
-            <div id="app">
-              {/* Render the App component if a job is provided, otherwise show "Job not found" */}
-              {job ? <App job={job} /> : <div>Job not found</div>}
-            </div>
-          </main>
-          <aside id="tray" />
-        </TooltipProvider>
-      </CharacterProvider>
-      {/* Render the VoiceClientAudio component for handling audio */}
+      <App />
       <VoiceClientAudio />
     </VoiceClientProvider>
   );

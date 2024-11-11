@@ -4,7 +4,6 @@ import { Switch } from '@/components/ui/switch';
 import { useVoiceClient } from 'realtime-ai-react';
 import { LLMHelper } from 'realtime-ai';
 import DeviceSelect from './DeviceSelect';
-
 /**
  * Props for the Configure component
  */
