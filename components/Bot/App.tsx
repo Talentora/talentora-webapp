@@ -33,19 +33,14 @@ const status_text = {
  * Type definition for Job from database schema
  */
 
-/**
- * Props interface for App component
- */
-interface AppProps {
-  job: Job;
-}
+
 
 /**
  * Main App component for the AI interviewer
  * @param {AppProps} props - The props for the App component
  * @returns {JSX.Element} The rendered App component
  */
-export default function App({ job }: AppProps) {
+export default function App() {
   const voiceClient = useVoiceClient()!;
   const transportState = useVoiceClientTransportState();
   const recording = useRecording();
@@ -187,16 +182,12 @@ export default function App({ job }: AppProps) {
   // Render session view if connected
   if (appState === 'connected') {
     return (
-      // <Session
-      //   state={transportState}
-      //   onLeave={() => leave()}
-      //   startAudioOff={startAudioOff}
-      // />
+
       <VoiceInterviewSession
         state={transportState}
         onLeave={() => leave()}
         startAudioOff={startAudioOff}
-        job={job}
+        // job={job}
       />
     );
   }

@@ -3,7 +3,7 @@ import { Progress } from '@/components/ui/progress';
 import { Job } from '@/types/merge';
 
 interface interviewHeaderProps {
-  job: Job;
+  job: Job | null;
 }
 
 export default function InterviewHeader(props: interviewHeaderProps) {
