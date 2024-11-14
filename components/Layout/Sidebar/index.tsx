@@ -8,7 +8,7 @@ import {
   ClipboardListIcon,
   SettingsIcon,
   FastForwardIcon,
-  HomeIcon
+
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
@@ -41,13 +41,7 @@ const Page = () => {
             <HomeIcon className="h-5 w-5" />
             <span>Dashboard</span>
           </Link> */}
-            <Link
-              className="flex items-center space-x-2 text-gray-100 hover:bg-gray-200 hover:text-gray-900 px-4 py-2 rounded"
-              href="/applicants"
-            >
-              <UserIcon className="h-5 w-5" />
-              <span>Applicants</span>
-            </Link>
+           
             <Link
               className="flex items-center space-x-2 text-gray-100 hover:bg-gray-200 hover:text-gray-900 px-4 py-2 rounded"
               href="/jobs"
