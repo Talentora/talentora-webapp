@@ -2,12 +2,7 @@
 import { Tables } from '@/types/types_db';
 import { createClient } from '@/utils/supabase/server';
 type Recruiter = Tables<'recruiters'>;
-type Subscription = Tables<'subscriptions'>;
-type Product = Tables<'products'>;
-type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
-import { useUser } from '@/hooks/useUser';
-import { useCompany } from '@/hooks/useCompany';
 type Bot = Tables<'bots'>;
 // CRUD operations for the company table
 
@@ -173,7 +168,7 @@ export const getProducts = async () => {
   return products;
 };
 
-export async function inviteUser(name: string | null, email: string) {
+export async function inviteRecruiter(name: string | null, email: string) {
   const supabase = createClient();
 
   try {
@@ -193,6 +188,37 @@ export async function inviteUser(name: string | null, email: string) {
     return { success: false, error: err };
   }
 }
+
+export async function inviteCandidate(
+  name: string,
+  emailAddress: string,
+  candidate_id:string
+): Promise<{ data?: any; error?: any }> {
+  try {
+    const supabase = createClient();
+    
+    const { data, error } = await supabase.auth.admin.inviteUserByEmail(emailAddress
+      , {
+      data: {
+        role: 'candidate', // You can change this to the appropriate role
+        full_name: name,
+        candidate_id: candidate_id
+      }
+    }
+  );    
+    // Return a plain object
+    return {
+      data,
+      error
+    };
+  } catch (err) {
+    console.error('Error inviting candidate:', err);
+    return {
+      data: null,
+      error: err instanceof Error ? err.message : 'Unknown error occurred'
+    };
+  }
+};
 
 /**
  * Fetches a recruiter by their ID.
