@@ -1,8 +1,14 @@
-"use client"
+'use client';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/Toasts/use-toast';
 import { Slider } from '@/components/ui/slider';
@@ -13,44 +19,46 @@ interface InterviewSettingsProps {
   onCompletion: (isComplete: boolean) => void;
 }
 
-export const InterviewSettings = ({ jobId, onCompletion }: InterviewSettingsProps) => {
+export const InterviewSettings = ({
+  jobId,
+  onCompletion
+}: InterviewSettingsProps) => {
   const [interviewName, setInterviewName] = useState('');
   const [duration, setDuration] = useState(30);
   const [interviewType, setInterviewType] = useState('standard');
   const [isLoading, setIsLoading] = useState(false); // Added state for loading
   const { toast } = useToast();
 
-//   // Check if required fields are filled to enable completion
-//   useEffect(() => {
-//     if (interviewName && duration && interviewType) {
-//     //   onCompletion(true);
-//     } else {
-//       onCompletion(false);
-//     }
-//   }, [interviewName, duration, interviewType, onCompletion]);
+  //   // Check if required fields are filled to enable completion
+  //   useEffect(() => {
+  //     if (interviewName && duration && interviewType) {
+  //     //   onCompletion(true);
+  //     } else {
+  //       onCompletion(false);
+  //     }
+  //   }, [interviewName, duration, interviewType, onCompletion]);
 
   const handleSave = async () => {
     setIsLoading(true); // Set loading to true when save is clicked
     try {
-
-        if (interviewName && interviewType && duration) {
-      // TODO: Implement save to database
-      await updateJobInterviewConfig(jobId, {
-        interview_name: interviewName,
-        type: interviewType,
-        duration: duration
-      });
-      toast({
-        title: "Settings saved successfully",
-        description: "Your interview settings have been updated",
-      });
+      if (interviewName && interviewType && duration) {
+        // TODO: Implement save to database
+        await updateJobInterviewConfig(jobId, {
+          interview_name: interviewName,
+          type: interviewType,
+          duration: duration
+        });
+        toast({
+          title: 'Settings saved successfully',
+          description: 'Your interview settings have been updated'
+        });
         onCompletion(true);
       }
     } catch (error) {
       toast({
-        title: "Error saving settings",
-        description: "Please try again later",
-        variant: "destructive",
+        title: 'Error saving settings',
+        description: 'Please try again later',
+        variant: 'destructive'
       });
     } finally {
       setIsLoading(false); // Set loading to false after the operation
@@ -60,7 +68,7 @@ export const InterviewSettings = ({ jobId, onCompletion }: InterviewSettingsProp
   return (
     <div className="space-y-4 m-10">
       <h2 className="text-2xl font-bold">Interview Settings</h2>
-      
+
       <Card className="p-4">
         <CardHeader>
           <CardTitle>Basic Configuration</CardTitle>
@@ -104,10 +112,12 @@ export const InterviewSettings = ({ jobId, onCompletion }: InterviewSettingsProp
             </Select>
           </div>
 
-          <Button 
+          <Button
             className="w-32 mt-4 float-right"
             onClick={handleSave}
-            disabled={!interviewName || !duration || !interviewType || isLoading} // Added isLoading to disable button
+            disabled={
+              !interviewName || !duration || !interviewType || isLoading
+            } // Added isLoading to disable button
           >
             {isLoading ? 'Saving...' : 'Save Settings'}
           </Button>

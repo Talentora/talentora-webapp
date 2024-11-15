@@ -23,7 +23,7 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
     case 2:
       return <CompanyInfoStep onCompletion={onCompletion} />;
     case 3:
-      return <CompanyContext onCompletion={onCompletion} />;  
+      return <CompanyContext onCompletion={onCompletion} />;
     case 4:
       return <CompanyContext2 onCompletion={onCompletion} />;
     case 5:

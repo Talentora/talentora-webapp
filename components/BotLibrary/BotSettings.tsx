@@ -12,7 +12,12 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BotInfo } from './BotInfo';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import {
   Card,
   CardContent,
@@ -42,17 +47,13 @@ const iconOptions = {
 };
 
 export default function BotSettings({ bot }: { bot: Bot }) {
-
   const handleDeleteBot = async () => {
     await deleteBot(bot.id);
   };
 
-
   return (
-
-    
     <Dialog>
-        {/* Dialog Trigger */}
+      {/* Dialog Trigger */}
       <DialogTrigger asChild>
         <Card className="flex flex-row cursor-pointer hover:shadow-lg transition-shadow bg-foreground border border-gray-200 rounded-lg p-5 relative">
           <div className="absolute top-2 right-2">
@@ -63,10 +64,14 @@ export default function BotSettings({ bot }: { bot: Bot }) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-background">
-                <DropdownMenuItem onClick={async () => {
-                  await handleDeleteBot();
-                  window.location.reload();
-                }}>Delete</DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={async () => {
+                    await handleDeleteBot();
+                    window.location.reload();
+                  }}
+                >
+                  Delete
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

@@ -82,7 +82,9 @@ const CompanyForm = () => {
             >
               {showApiKey ? (
                 <>
-                  <span>{company.merge_account_token || 'No API key available'}</span>
+                  <span>
+                    {company.merge_account_token || 'No API key available'}
+                  </span>
                   <EyeOffIcon className="w-4 h-4 inline-block ml-2" />
                 </>
               ) : (

@@ -47,8 +47,6 @@ export async function GET(
 
     const application: Application = await applicationResponse.json();
     const candidateId = application.candidate;
-    console.log('Application:', application);
-    console.log('Candidate ID:', candidateId);
 
     // Fetch candidate details
     const candidateResponse = await fetch(
@@ -71,7 +69,6 @@ export async function GET(
     }
 
     const candidate: Candidate = await candidateResponse.json();
-    console.log('Candidate:', candidate);
     const applicationWithCandidate = { ...application, candidate };
 
     return NextResponse.json(applicationWithCandidate, { status: 200 });

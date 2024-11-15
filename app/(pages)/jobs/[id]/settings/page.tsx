@@ -9,7 +9,7 @@ import { useParams } from 'next/navigation';
 const Page = () => {
   const params = useParams();
   const jobId = params?.id as string;
-  
+
   const [showConfig, setShowConfig] = useState(false);
 
   // if (!jobId) {
