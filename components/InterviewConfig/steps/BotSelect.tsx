@@ -1,7 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BarChart,Bot, Code, Settings, Users,ArrowUpRight, Plus, Loader2 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import {
+  BarChart,
+  Bot,
+  Code,
+  Settings,
+  Users,
+  ArrowUpRight,
+  Plus,
+  Loader2
+} from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 interface BotSelectProps {
@@ -14,8 +29,6 @@ import CreateBot from '@/components/BotLibrary/CreateBot';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 
-
-
 const BotSelect = ({ onCompletion }: BotSelectProps) => {
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
   const { toast } = useToast();
@@ -27,9 +40,12 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
     onCompletion(!!selectedBot);
   }, [selectedBot]);
 
-  if (loading) return <div className="flex justify-center">
-    <Loader2 className="animate-spin" />
-    </div>;
+  if (loading)
+    return (
+      <div className="flex justify-center">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
 
   if (error) return <div>Error loading bots: {error}</div>;
 
@@ -43,15 +59,15 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
 
     if (error) {
       toast({
-        title: "Error",
-        description: "Failed to update interview bot. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to update interview bot. Please try again.',
+        variant: 'destructive'
       });
     } else {
       toast({
-        title: "Success",
-        description: "Interview bot updated successfully.",
-        variant: "default"
+        title: 'Success',
+        description: 'Interview bot updated successfully.',
+        variant: 'default'
       });
       onCompletion(true);
     }
@@ -64,7 +80,7 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
         <Select
           value={selectedBot?.id?.toString() || ''}
           onValueChange={(value) => {
-            const bot = bots.find(b => b.id.toString() === value);
+            const bot = bots.find((b) => b.id.toString() === value);
             setSelectedBot(bot || null);
           }}
         >
@@ -73,12 +89,9 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
               <SelectTrigger>
                 <SelectValue placeholder="Choose an interviewer bot" />
               </SelectTrigger>
-              <SelectContent >
+              <SelectContent>
                 {bots.map((bot) => (
-                  <SelectItem 
-                    key={bot.id} 
-                    value={bot.id.toString()}
-                  >
+                  <SelectItem key={bot.id} value={bot.id.toString()}>
                     <div className="flex items-center gap-2 ">
                       {/* {bot.icon} */}
                       <Bot />
@@ -110,7 +123,7 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
           <p className="text-sm text-gray-600">{selectedBot.description}</p>
           <div className="absolute top-2 right-2">
             <Link href={`/bots/${selectedBot.id}`}>
-              <ArrowUpRight 
+              <ArrowUpRight
                 className="text-primary hover:text-primary-dark"
                 data-tooltip="Click here to modify your bot"
               />
@@ -120,7 +133,7 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
       )}
 
       <div className="flex justify-end">
-        <Button 
+        <Button
           className="w-40"
           onClick={() => updateJobConfig(selectedBot?.id?.toString() || '')}
           disabled={!selectedBot}
@@ -132,4 +145,4 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
   );
 };
 
-export default BotSelect
+export default BotSelect;

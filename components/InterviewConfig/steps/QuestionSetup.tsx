@@ -1,11 +1,22 @@
-"use client"
+'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 import { Pencil, Loader2, Sparkles } from 'lucide-react';
-import { createInterviewQuestion, getInterviewQuestions, updateInterviewQuestion, deleteInterviewQuestion } from '@/utils/supabase/queries';
+import {
+  createInterviewQuestion,
+  getInterviewQuestions,
+  updateInterviewQuestion,
+  deleteInterviewQuestion
+} from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 
 interface QuestionSetupProps {
@@ -21,8 +32,6 @@ type Question = {
 };
 
 export const QuestionSetup = ({ jobId, onCompletion }: QuestionSetupProps) => {
-
-  
   const [questions, setQuestions] = useState<Question[]>([]);
   const [newQuestion, setNewQuestion] = useState('');
   const [responseExample, setResponseExample] = useState('');
@@ -39,7 +48,7 @@ export const QuestionSetup = ({ jobId, onCompletion }: QuestionSetupProps) => {
         const fetchedQuestions = await getInterviewQuestions(jobId);
         setQuestions(fetchedQuestions || []);
       } catch (error) {
-        showErrorToast("Error loading questions");
+        showErrorToast('Error loading questions');
       }
     };
     fetchQuestions();
@@ -55,8 +64,8 @@ export const QuestionSetup = ({ jobId, onCompletion }: QuestionSetupProps) => {
   const showErrorToast = (message: string) => {
     toast({
       title: message,
-      description: "Please try again later.",
-      variant: "destructive",
+      description: 'Please try again later.',
+      variant: 'destructive'
     });
   };
 
@@ -64,14 +73,18 @@ export const QuestionSetup = ({ jobId, onCompletion }: QuestionSetupProps) => {
     if (!newQuestion || !responseExample) return;
     setIsAddingQuestion(true);
     try {
-      const newEntry = await createInterviewQuestion(newQuestion, responseExample, questions.length + 1, jobId);
+      const newEntry = await createInterviewQuestion(
+        newQuestion,
+        responseExample,
+        questions.length + 1,
+        jobId
+      );
       setQuestions((prev) => [...prev, newEntry]);
       setNewQuestion('');
       setResponseExample('');
-      toast({ title: "Question added successfully" });
-      
+      toast({ title: 'Question added successfully' });
     } catch (error) {
-      showErrorToast("Error adding question");
+      showErrorToast('Error adding question');
     } finally {
       setIsAddingQuestion(false);
       setShowQuestionCard(false);
@@ -83,16 +96,21 @@ export const QuestionSetup = ({ jobId, onCompletion }: QuestionSetupProps) => {
     try {
       const generatedQuestion = await generateQuestionFromAI();
       setNewQuestion(generatedQuestion);
-      toast({ title: "AI-generated question", description: "New question added" });
+      toast({
+        title: 'AI-generated question',
+        description: 'New question added'
+      });
     } catch (error) {
-      showErrorToast("Error generating question");
+      showErrorToast('Error generating question');
     } finally {
       setIsGeneratingQuestion(false);
     }
   }, []);
 
   const generateQuestionFromAI = async (): Promise<string> => {
-    return new Promise((resolve) => setTimeout(() => resolve('Describe your teamwork experience.'), 1000));
+    return new Promise((resolve) =>
+      setTimeout(() => resolve('Describe your teamwork experience.'), 1000)
+    );
   };
 
   return (
@@ -108,28 +126,28 @@ export const QuestionSetup = ({ jobId, onCompletion }: QuestionSetupProps) => {
         ) : (
           <ul className="space-y-2">
             {questions.map((q) => (
-              <InterviewCard 
+              <InterviewCard
                 key={q.id}
                 questionData={q}
                 onUpdate={async (id, updatedData) => {
                   try {
-                    const updatedQuestions = questions.map((item) => 
+                    const updatedQuestions = questions.map((item) =>
                       item.id === id ? { ...item, ...updatedData } : item
                     );
                     await updateInterviewQuestion(id, jobId, updatedData);
                     setQuestions(updatedQuestions);
-                    toast({ title: "Question updated" });
+                    toast({ title: 'Question updated' });
                   } catch (error) {
-                    showErrorToast("Error updating question");
+                    showErrorToast('Error updating question');
                   }
                 }}
                 onDelete={async (id) => {
                   try {
                     await deleteInterviewQuestion(id, jobId);
-                    setQuestions(questions.filter(q => q.id !== id));
-                    toast({ title: "Question deleted" });
+                    setQuestions(questions.filter((q) => q.id !== id));
+                    toast({ title: 'Question deleted' });
                   } catch (error) {
-                    showErrorToast("Error deleting question");
+                    showErrorToast('Error deleting question');
                   }
                 }}
               />
@@ -140,22 +158,54 @@ export const QuestionSetup = ({ jobId, onCompletion }: QuestionSetupProps) => {
 
       <div className="flex flex-col space-y-2">
         {!showQuestionCard ? (
-          <Button className="bg-primary-dark text-white" onClick={() => setShowQuestionCard(true)}>New Question +</Button>
+          <Button
+            className="bg-primary-dark text-white"
+            onClick={() => setShowQuestionCard(true)}
+          >
+            New Question +
+          </Button>
         ) : (
           <Card className="p-4 bg-purple-50 shadow-lg border border-black">
             <CardHeader>
-              <Textarea placeholder="Enter question" value={newQuestion} onChange={(e) => setNewQuestion(e.target.value)} />
+              <Textarea
+                placeholder="Enter question"
+                value={newQuestion}
+                onChange={(e) => setNewQuestion(e.target.value)}
+              />
             </CardHeader>
             <CardContent>
-              <Textarea placeholder="Sample response" value={responseExample} onChange={(e) => setResponseExample(e.target.value)} />
+              <Textarea
+                placeholder="Sample response"
+                value={responseExample}
+                onChange={(e) => setResponseExample(e.target.value)}
+              />
               <div className="flex justify-between mt-4 space-x-2">
-                <Button variant="outline" onClick={() => setShowQuestionCard(false)}>Cancel</Button>
-                <div className="flex space-x-2">
-                  <Button onClick={handleAddQuestion} disabled={isAddingQuestion}>
-                    {isAddingQuestion ? <Loader2 className="animate-spin w-4 h-4" /> : 'Add Question'}
+                <Button
+                  variant="outline"
+                  onClick={() => setShowQuestionCard(false)}
+                >
+                  Cancel
                 </Button>
-                <Button onClick={handleGenerateQuestion} disabled={isGeneratingQuestion}>
-                  {isGeneratingQuestion ? <Loader2 className="animate-spin" /> : <Sparkles />}
+                <div className="flex space-x-2">
+                  <Button
+                    onClick={handleAddQuestion}
+                    disabled={isAddingQuestion}
+                  >
+                    {isAddingQuestion ? (
+                      <Loader2 className="animate-spin w-4 h-4" />
+                    ) : (
+                      'Add Question'
+                    )}
+                  </Button>
+                  <Button
+                    onClick={handleGenerateQuestion}
+                    disabled={isGeneratingQuestion}
+                  >
+                    {isGeneratingQuestion ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <Sparkles />
+                    )}
                   </Button>
                 </div>
               </div>
@@ -167,13 +217,16 @@ export const QuestionSetup = ({ jobId, onCompletion }: QuestionSetupProps) => {
   );
 };
 
-const InterviewCard = ({ 
+const InterviewCard = ({
   questionData: { id, question, sample_response, order },
   onUpdate,
-  onDelete 
-}: { 
+  onDelete
+}: {
   questionData: Question;
-  onUpdate: (id: string, data: { question?: string; sample_response?: string }) => Promise<void>;
+  onUpdate: (
+    id: string,
+    data: { question?: string; sample_response?: string }
+  ) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -186,7 +239,10 @@ const InterviewCard = ({
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await onUpdate(id, { question: editedQuestion, sample_response: editedResponse });
+      await onUpdate(id, {
+        question: editedQuestion,
+        sample_response: editedResponse
+      });
       setIsEditing(false);
     } finally {
       setIsSaving(false);
@@ -206,18 +262,37 @@ const InterviewCard = ({
     <Card className="p-4 bg-white shadow-lg border border-black">
       {isEditing ? (
         <>
-          <Input value={editedQuestion} onChange={(e) => setEditedQuestion(e.target.value)} />
-          <Textarea value={editedResponse} onChange={(e) => setEditedResponse(e.target.value)} />
+          <Input
+            value={editedQuestion}
+            onChange={(e) => setEditedQuestion(e.target.value)}
+          />
+          <Textarea
+            value={editedResponse}
+            onChange={(e) => setEditedResponse(e.target.value)}
+          />
           <div className="flex justify-end mt-4 space-x-2">
-            
             <div className="flex justify-between w-full">
-              <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setIsEditing(false)}>
+                Cancel
+              </Button>
               <div className="flex space-x-2">
                 <Button onClick={handleSave} disabled={isSaving}>
-                  {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save'}
+                  {isSaving ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    'Save'
+                  )}
                 </Button>
-                <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
-                  {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete'}
+                <Button
+                  variant="destructive"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    'Delete'
+                  )}
                 </Button>
               </div>
             </div>
@@ -225,9 +300,20 @@ const InterviewCard = ({
         </>
       ) : (
         <>
-          <CardHeader onClick={() => setIsClicked(!isClicked)} className="cursor-pointer flex flex-row justify-between">
-            <CardTitle className="hover:opacity-75 transition-opacity">{order}. {question}</CardTitle>
-            <Pencil onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} className="opacity-10 hover:opacity-100 transition-opacity"/>
+          <CardHeader
+            onClick={() => setIsClicked(!isClicked)}
+            className="cursor-pointer flex flex-row justify-between"
+          >
+            <CardTitle className="hover:opacity-75 transition-opacity">
+              {order}. {question}
+            </CardTitle>
+            <Pencil
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditing(true);
+              }}
+              className="opacity-10 hover:opacity-100 transition-opacity"
+            />
           </CardHeader>
           {isClicked && (
             <CardContent>

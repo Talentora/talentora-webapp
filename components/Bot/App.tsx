@@ -17,7 +17,6 @@ import { Button } from '@/components/ui/button';
 import * as Card from '@/components/ui/card';
 import { Configure } from './Setup';
 
-import { Job } from '@/types/merge';
 /**
  * Mapping of transport states to status text
  */
@@ -29,18 +28,37 @@ const status_text = {
   connecting: 'Connecting...'
 };
 
+import { Tables } from '@/types/types_db';
+type BotConfig = Tables<'bots'>;
+type JobInterviewConfig = Tables<'job_interview_config'>;
+type CompanyContext = Tables<'company_context'>;
+type Job = Tables<'jobs'>;
+type Company = Tables<'companies'>;
+type Application = Tables<'applications'>;
+import { Job as MergeJob } from '@/types/merge';
+import { Candidate as MergeCandidate } from '@/types/merge';
+import InterviewConfig from '../InterviewConfig';
+
+interface BotProps {
+  bot: BotConfig;
+  jobInterviewConfig: JobInterviewConfig;
+  companyContext: CompanyContext;
+  job: Job;
+  company: Company;
+  mergeJob: MergeJob;
+  applicationData: MergeCandidate;
+}
+
 /**
  * Type definition for Job from database schema
  */
-
-
 
 /**
  * Main App component for the AI interviewer
  * @param {AppProps} props - The props for the App component
  * @returns {JSX.Element} The rendered App component
  */
-export default function App() {
+export default function App({ bot, jobInterviewConfig, companyContext, job, company, mergeJob, applicationData }: BotProps) {
   const voiceClient = useVoiceClient()!;
   const transportState = useVoiceClientTransportState();
   const recording = useRecording();
@@ -104,22 +122,75 @@ export default function App() {
     if (!voiceClient) return;
 
     const llmHelper = voiceClient.getHelper('llm') as LLMHelper;
-    // llmHelper.setContext(
-    //   {
-    //     messages: [
-    //       {
-    //         role: 'system',
-    //         content: `You are an AI interviewer for a ${job.title} role.
-    //       The job requirements are: ${job.requirements}
-    //       The qualifications needed are: ${job.qualifications}
-    //       Here's a brief description of the role: ${job.description}. Conduct a real interview.
-    //       When you greet the applicant, introduce yourself and mention the job title.
-    //       Conduct the interview based on this information.`
-    //       }
-    //     ]
-    //   },
-    //   true
-    // );
+    llmHelper.setContext(
+      {
+        messages: [
+          {
+            role: 'system',
+            content: `
+              Your name is ${bot.name}. You're an AI interviewer for a ${mergeJob.name} role at ${company.name}.
+            
+              When you greet the applicant:
+              1. Introduce yourself as ${bot.name}
+              2. Mention you're interviewing for the ${mergeJob.name} position at ${company.name}
+              3. Briefly explain the interview process
+              
+              Conduct a professional interview based on this information.
+            `
+          },
+          {
+            role: 'system',
+            content: `
+              Here's information about you the recruiter:
+              Recruiter Name: ${bot.name}
+              Recruiter Role: ${bot.role}
+              Here's your prompt which may include instructions for the interview: ${bot.prompt}
+            `
+          },
+          // {
+          //   role: 'system',
+          //   content: `
+          //     Here's the candidate's information:
+          //     ${applicationData.name}
+          //     ${applicationData.experience}
+          //   `
+          // },
+          {
+            role: 'system',
+            content: `
+              Here's information about this interview:
+              Interview Name: ${jobInterviewConfig.interview_name}
+              Interview Questions: ${jobInterviewConfig.interview_questions}
+              Interview Type: ${jobInterviewConfig.type}
+              Interview Duration: ${jobInterviewConfig.duration}
+            `
+          },
+          {
+            role: 'system',
+            content: `
+              Here's the company context:
+
+              Company Name: ${company.name}
+              Company Industry: ${company.industry}
+              Company Description: ${companyContext.description}
+              Company Goals: ${companyContext.goals}
+              Company History: ${companyContext.history}
+              Company Products: ${companyContext.products}
+              Company Customers: ${companyContext.customers}
+            `
+          },
+          {
+            role: 'system',
+            content: `
+              Here's the job information:
+              Job Name: ${mergeJob.name}
+              Job Description: ${mergeJob.description}
+            `
+          }
+        ]
+      },
+      true
+    );
   }
 
   /**
@@ -182,12 +253,12 @@ export default function App() {
   // Render session view if connected
   if (appState === 'connected') {
     return (
-
       <VoiceInterviewSession
         state={transportState}
         onLeave={() => leave()}
         startAudioOff={startAudioOff}
-        // job={job}
+        job={mergeJob}
+        company={company}
       />
     );
   }

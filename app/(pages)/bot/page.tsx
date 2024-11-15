@@ -25,19 +25,22 @@
 //     </div>
 //   );
 // }
-"use client"
+'use client';
 import BotLibrary from '@/components/BotLibrary';
 import { Loader2 } from 'lucide-react';
 import { useBots } from '@/hooks/useBots';
-
-
 
 export default function Page() {
   const { bots, loading } = useBots();
 
   if (!bots) return null;
 
-  if (loading) return <div className="flex justify-center"><Loader2 className="animate-spin" /></div>;
+  if (loading)
+    return (
+      <div className="flex justify-center">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
 
   return <BotLibrary bots={bots} />;
 }
