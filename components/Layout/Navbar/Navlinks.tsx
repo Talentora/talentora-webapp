@@ -21,7 +21,7 @@ export default function Navlinks() {
 
   const links = [
     { href: '/about', label: 'About' },
-    { href: '/pricing', label: 'Pricing' },
+    // { href: '/pricing', label: 'Pricing' },
     { href: '/dashboard', label: 'Dashboard', requiresAuth: true }
   ];
 
