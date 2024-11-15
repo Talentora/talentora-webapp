@@ -5,9 +5,6 @@ import { useRecruiter } from '@/hooks/useRecruiter';
 import { Loader2 } from 'lucide-react';
 import { Job } from '@/types/merge';
 
-
-
-
 export const StartingStep: React.FC<{
   onCompletion: (isComplete: boolean) => void;
   job: Job;
@@ -17,10 +14,10 @@ export const StartingStep: React.FC<{
 
   useEffect(() => {
     if (!job) return;
-    
+
     const checkAndCreateJob = async () => {
       const jobExists = await doesJobExist(mergeJobId || '');
-      
+
       if (!jobExists && recruiter?.company_id && mergeJobId) {
         console.log('creating job');
         const newJob = await createJob(mergeJobId, recruiter.company_id);
@@ -45,7 +42,7 @@ export const StartingStep: React.FC<{
       .select('*')
       .eq('merge_id', Number(jobId))
       .single();
-    
+
     return !!existingJob;
   }
 
@@ -54,19 +51,19 @@ export const StartingStep: React.FC<{
     const { data: newJob, error: jobError } = await supabase
       .from('jobs')
       .insert({
-        merge_id: jobId,      // Keep as string since it's a UUID
-        company_id: companyId, // Already a UUID string
+        merge_id: jobId, // Keep as string since it's a UUID
+        company_id: companyId // Already a UUID string
         // config_id: null,
       })
       .select()
       .single();
-  
+
     if (jobError) {
       throw new Error('Error creating job: ' + jobError.message);
     }
 
     onCompletion(true);
-  
+
     return newJob;
   }
 

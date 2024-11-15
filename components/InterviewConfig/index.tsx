@@ -29,7 +29,6 @@ export default function InterviewConfig({ jobId }: { jobId: string }) {
   //   return <div>No job provided</div>;
   // }
 
-
   const handleStepCompletion = (stepNumber: number, isComplete: boolean) => {
     setCompletedSteps((prev) => {
       const updated = new Set(prev);
@@ -74,7 +73,7 @@ export default function InterviewConfig({ jobId }: { jobId: string }) {
           </div>
         </div>
       </div>
-      </div>
+    </div>
     // </div>
   );
 }

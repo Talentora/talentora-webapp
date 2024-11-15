@@ -1,8 +1,5 @@
 import Pricing from '@/components/Pricing/Pricing';
-import {
-  getProducts,
-  getSubscription
-} from '@/utils/supabase/queries';
+import { getProducts, getSubscription } from '@/utils/supabase/queries';
 import { useUser } from '@/hooks/useUser';
 
 export default async function PricingPage() {

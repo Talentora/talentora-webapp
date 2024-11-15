@@ -32,7 +32,9 @@ export default function CustomerPortalForm() {
   const currentPath = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { subscription } = useSubscription() as { subscription: SubscriptionWithPriceAndProduct | null };
+  const { subscription } = useSubscription() as {
+    subscription: SubscriptionWithPriceAndProduct | null;
+  };
 
   const subscriptionPrice =
     subscription &&

@@ -25,7 +25,6 @@ export default function ApplicantCandidateStatus({
             </div>
             <Progress value={progress} />
           </div> */}
-         
         </div>
       </CardContent>
     </Card>

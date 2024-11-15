@@ -26,11 +26,10 @@ export default function ApplicantActions({
   const firstName = ApplicantCandidate?.candidate?.first_name || '';
   const lastName = ApplicantCandidate?.candidate?.last_name || '';
   const candidateId = ApplicantCandidate?.candidate?.id || '';
-  const emailAddress = ApplicantCandidate?.candidate?.email_addresses?.[0]?.value || '';
+  const emailAddress =
+    ApplicantCandidate?.candidate?.email_addresses?.[0]?.value || '';
 
-  
   async function onScheduleAIInterview() {
-    
     // const name = `${firstName} ${lastName}`.trim();
     const name = 'Ben Gardiner';
     const emailAddress = 'ben@gardiner.com';
@@ -47,7 +46,11 @@ export default function ApplicantActions({
     try {
       console.log(`Inviting candidate ${name}: ${emailAddress}`);
 
-      const { data, error } = await inviteCandidate(name, emailAddress, candidateId);
+      const { data, error } = await inviteCandidate(
+        name,
+        emailAddress,
+        candidateId
+      );
       console.log('Response:', { data, error });
 
       if (error) {
@@ -72,8 +75,7 @@ export default function ApplicantActions({
         variant: 'destructive'
       });
     }
-  };
-
+  }
 
   return (
     <Card>
@@ -81,7 +83,9 @@ export default function ApplicantActions({
         <CardTitle className="text-red-500">Actions (update)</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Button className="w-full" onClick={onScheduleAIInterview}>Schedule AI Interview</Button>
+        <Button className="w-full" onClick={onScheduleAIInterview}>
+          Schedule AI Interview
+        </Button>
         <Button className="w-full" variant="outline">
           Send Message
         </Button>

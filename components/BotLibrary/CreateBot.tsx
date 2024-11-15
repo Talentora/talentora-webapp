@@ -2,12 +2,50 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BarChart, Users, Briefcase, GraduationCap, Stethoscope, Code, Plus, ChevronDown, Volume2, Bot, Brain, Cpu, Database, Globe, Laptop, MessageSquare, Monitor, Network, Server } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import {
+  BarChart,
+  Users,
+  Briefcase,
+  GraduationCap,
+  Stethoscope,
+  Code,
+  Plus,
+  ChevronDown,
+  Volume2,
+  Bot,
+  Brain,
+  Cpu,
+  Database,
+  Globe,
+  Laptop,
+  MessageSquare,
+  Monitor,
+  Network,
+  Server
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
 import { Textarea } from '../ui/textarea';
 import { createBot } from '@/utils/supabase/queries';
 import { Tables } from '@/types/types_db';
@@ -34,19 +72,18 @@ const iconOptions = {
 };
 
 const voiceOptions = [
-  { id: "21m00Tcm4TlvDq8ikWAM", name: "Rachel", gender: "female" },
-  { id: "AZnzlk1XvdvUeBnXmlld", name: "Domi", gender: "female" },
-  { id: "EXAVITQu4vr4xnSDxMaL", name: "Bella", gender: "female" },
-  { id: "ErXwobaYiN019PkySvjV", name: "Antoni", gender: "male" },
-  { id: "MF3mGyEYCl7XYWbV9V6O", name: "Elli", gender: "female" },
-  { id: "TxGEqnHWrfWFTfGW9XjX", name: "Josh", gender: "male" },
-  { id: "VR6AewLTigWG4xSOukaG", name: "Arnold", gender: "male" },
-  { id: "pNInz6obpgDQGcFmaJgB", name: "Adam", gender: "male" }
+  { id: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel', gender: 'female' },
+  { id: 'AZnzlk1XvdvUeBnXmlld', name: 'Domi', gender: 'female' },
+  { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Bella', gender: 'female' },
+  { id: 'ErXwobaYiN019PkySvjV', name: 'Antoni', gender: 'male' },
+  { id: 'MF3mGyEYCl7XYWbV9V6O', name: 'Elli', gender: 'female' },
+  { id: 'TxGEqnHWrfWFTfGW9XjX', name: 'Josh', gender: 'male' },
+  { id: 'VR6AewLTigWG4xSOukaG', name: 'Arnold', gender: 'male' },
+  { id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam', gender: 'male' }
 ];
 
-export default function CreateBot(
-  // { bots }: CreateBotProps
-) {
+export default function CreateBot() {
+// { bots }: CreateBotProps
   const [isOpen, setIsOpen] = useState(false);
   const [newBot, setNewBot] = useState({
     name: '',
@@ -65,34 +102,41 @@ export default function CreateBot(
     e.preventDefault();
     try {
       await createBot({
-          name: newBot.name,
-          role: newBot.role,
-          description: newBot.description,
-          prompt: newBot.prompt,
-          company_id: companyId,
-          voice_id: newBot.voiceId,
-          icon: newBot.icon,
+        name: newBot.name,
+        role: newBot.role,
+        description: newBot.description,
+        prompt: newBot.prompt,
+        company_id: companyId,
+        voice_id: newBot.voiceId,
+        icon: newBot.icon
       });
-      setNewBot({ name: '', description: '', role: '', icon: 'Bot', prompt: '', voiceId: voiceOptions[0].id });
+      setNewBot({
+        name: '',
+        description: '',
+        role: '',
+        icon: 'Bot',
+        prompt: '',
+        voiceId: voiceOptions[0].id
+      });
       setIsOpen(false);
       toast({
-        title: "Success",
-        description: "Bot created successfully",
+        title: 'Success',
+        description: 'Bot created successfully'
       });
       window.location.reload();
     } catch (error) {
       console.error('Failed to create bot:', error);
       toast({
-        title: "Error",
-        description: "Failed to create bot",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to create bot',
+        variant: 'destructive'
       });
     }
   };
 
   return (
     <div>
-      <Dialog open={isOpen} onOpenChange={setIsOpen} >
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button className="w-full bg-primary-dark">
             <Plus className="mr-2 h-4 w-4" /> Create New Bot
@@ -103,7 +147,7 @@ export default function CreateBot(
             <DialogTitle>Bot Configuration</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleCreateBot} className="space-y-4">
-          <div>
+            <div>
               <Label htmlFor="name">Bot Name</Label>
               <Input
                 id="name"
@@ -113,8 +157,7 @@ export default function CreateBot(
                 required
               />
             </div>
-           
-          
+
             <div>
               <Label htmlFor="role">Role</Label>
               <Input
@@ -131,7 +174,9 @@ export default function CreateBot(
                 id="description"
                 value={newBot.description}
                 placeholder="e.g Technical recruiter who specializes in hiring DevOps engineers"
-                onChange={(e) => setNewBot({ ...newBot, description: e.target.value })}
+                onChange={(e) =>
+                  setNewBot({ ...newBot, description: e.target.value })
+                }
                 required
               />
             </div>
@@ -140,7 +185,9 @@ export default function CreateBot(
               <Label htmlFor="voice">Voice</Label>
               <Select
                 value={newBot.voiceId}
-                onValueChange={(value) => setNewBot({ ...newBot, voiceId: value })}
+                onValueChange={(value) =>
+                  setNewBot({ ...newBot, voiceId: value })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a voice" />
@@ -177,46 +224,50 @@ export default function CreateBot(
               </Select>
             </div>
 
-             <div className="space-y-2">
+            <div className="space-y-2">
               <Label htmlFor="prompt">Enter Prompt</Label>
               <Textarea
                 id="prompt"
                 placeholder="e.g. You are an experienced DevOps recruiter. Focus on asking questions about CI/CD pipelines, infrastructure as code, containerization with Docker/Kubernetes, cloud platforms (AWS/Azure/GCP), monitoring/logging, and automation. Evaluate both technical skills and problem-solving approach. Be thorough but friendly. Ask for specific examples of projects and challenges they've overcome."
                 className="min-h-[150px]"
                 value={newBot.prompt}
-                onChange={(e) => setNewBot({ ...newBot, prompt: e.target.value })}
+                onChange={(e) =>
+                  setNewBot({ ...newBot, prompt: e.target.value })
+                }
                 required
               />
               <div className="flex justify-between gap-2">
                 <div>
-                <Button 
-                  type="button"
-                  variant="outline"
-                  className="flex items-center gap-2 bg-primary-dark text-white"
-                  onClick={() => {/* Add speech logic */}}
-                >
-                  <Volume2 className="h-4 w-4" />
-                  Listen
-                </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex items-center gap-2 bg-primary-dark text-white"
+                    onClick={() => {
+                      /* Add speech logic */
+                    }}
+                  >
+                    <Volume2 className="h-4 w-4" />
+                    Listen
+                  </Button>
                 </div>
                 <div className="flex items-center gap-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline">
-                      Speed/Emotion
-                      <ChevronDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-background">
-                    <DropdownMenuItem>Slow</DropdownMenuItem>
-                    <DropdownMenuItem>Normal</DropdownMenuItem>
-                    <DropdownMenuItem>Fast</DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>Happy</DropdownMenuItem>
-                    <DropdownMenuItem>Neutral</DropdownMenuItem>
-                    <DropdownMenuItem>Serious</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline">
+                        Speed/Emotion
+                        <ChevronDown className="ml-2 h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="bg-background">
+                      <DropdownMenuItem>Slow</DropdownMenuItem>
+                      <DropdownMenuItem>Normal</DropdownMenuItem>
+                      <DropdownMenuItem>Fast</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>Happy</DropdownMenuItem>
+                      <DropdownMenuItem>Neutral</DropdownMenuItem>
+                      <DropdownMenuItem>Serious</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             </div>
