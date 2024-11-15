@@ -9,18 +9,24 @@ import AIInterviewer from './AIInterviewer';
 import CandidateVideo from './CandidateVideo';
 import TranscriptPanel from './TranscriptPanel';
 import ControlPanel from './ControlPanel';
-import { Job } from '@/types/merge';
+import { Job as MergeJob } from '@/types/merge';
+import { Tables } from '@/types/types_db';
+type Company = Tables<'companies'>;
 
 interface VoiceInterviewSessionProps {
   state: TransportState;
   onLeave: () => void;
   startAudioOff?: boolean;
+  job: MergeJob;
+  company: Company;
 }
 
 export default function VoiceInterviewSession({
   state,
   onLeave,
   startAudioOff = false,
+  job,
+  company
 }: VoiceInterviewSessionProps) {
   const voiceClient = useVoiceClient()!;
   const [hasStarted, setHasStarted] = useState<boolean>(false);
@@ -86,10 +92,10 @@ export default function VoiceInterviewSession({
 
   return (
     <div className="flex flex-col h-screen">
-      {/* <InterviewHeader job={job} /> */}
+      <InterviewHeader job={job} company={company} />
 
-      <main className="flex-grow grid grid-cols-3 gap-4 p-4">
-        <div className=" h-screen col-span-1 flex justify-between flex-col gap-1">
+      <main className="flex-grow grid h-1/2 grid-cols-3 gap-4 p-4">
+        <div className=" h-full col-span-1 flex justify-between flex-col gap-1">
           <div className="h-1/2">
             <AIInterviewer isReady={state === 'ready'} />
           </div>

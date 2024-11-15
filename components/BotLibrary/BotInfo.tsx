@@ -4,8 +4,7 @@ type Bot = Tables<'bots'>;
 
 interface BotInfoProps {
   bot: Bot;
-  };
-
+}
 
 export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
   return (
@@ -17,9 +16,7 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
       <div className="space-y-4">
         <div>
           <h3 className="font-semibold mb-2">About this Bot</h3>
-          <p className="text-gray-600 dark:text-gray-300">
-            {bot.description}
-          </p>
+          <p className="text-gray-600 dark:text-gray-300">{bot.description}</p>
         </div>
         <div className="flex justify-end">
           <Button>Join a sample call and meet your interviewer</Button>
@@ -28,4 +25,3 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
     </div>
   );
 };
-

@@ -21,7 +21,9 @@ export function JobHeader({ job }: JobHeaderProps) {
   return (
     <Card className="w-full max-w-4xl shadow-lg rounded-lg p-4 bg-white">
       <CardHeader className="border-b border-gray-200 mb-4">
-        <CardTitle className="text-2xl font-bold text-gray-800">{job.name}</CardTitle>
+        <CardTitle className="text-2xl font-bold text-gray-800">
+          {job.name}
+        </CardTitle>
         <div className="flex flex-row justify-between mb-4">
           <div className="flex items-center space-x-4 text-sm text-gray-600">
             <span className="flex items-center">
@@ -40,7 +42,8 @@ export function JobHeader({ job }: JobHeaderProps) {
       <CardContent className="space-y-6">
         <section>
           <h3 className="text-lg font-semibold flex items-center mb-2">
-            <ClipboardListIcon className="mr-2 h-5 w-5 text-gray-500" /> Job Description
+            <ClipboardListIcon className="mr-2 h-5 w-5 text-gray-500" /> Job
+            Description
           </h3>
           <CardDescription className="text-gray-600">
             <div

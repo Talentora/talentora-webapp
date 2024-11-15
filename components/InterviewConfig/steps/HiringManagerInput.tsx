@@ -9,7 +9,10 @@ interface HiringManagerInputProps {
   jobId: string;
 }
 
-export const HiringManagerInput: React.FC<HiringManagerInputProps> = ({ onCompletion, jobId }) => {
+export const HiringManagerInput: React.FC<HiringManagerInputProps> = ({
+  onCompletion,
+  jobId
+}) => {
   const [requirements, setRequirements] = useState('');
   const [idealCandidate, setIdealCandidate] = useState('');
   const [additionalNotes, setAdditionalNotes] = useState('');
@@ -23,18 +26,19 @@ export const HiringManagerInput: React.FC<HiringManagerInputProps> = ({ onComple
         hiring_manager_notes: additionalNotes
       });
       toast({
-        title: "Success",
-        description: "Additional notes saved successfully.",
-        variant: "default",
+        title: 'Success',
+        description: 'Additional notes saved successfully.',
+        variant: 'default'
       });
       // Validate that at least requirements or ideal candidate is filled
-      const isComplete = requirements.trim() !== '' || idealCandidate.trim() !== '';
+      const isComplete =
+        requirements.trim() !== '' || idealCandidate.trim() !== '';
       onCompletion(isComplete);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to save additional notes.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to save additional notes.',
+        variant: 'destructive'
       });
     } finally {
       setIsLoading(false); // Set loading to false after the operation
@@ -47,11 +51,8 @@ export const HiringManagerInput: React.FC<HiringManagerInputProps> = ({ onComple
       <Card>
         <CardContent className="pt-6">
           <div className="space-y-6">
-        
             <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Additional Notes
-              </label>
+              <label className="text-sm font-medium">Additional Notes</label>
               <Textarea
                 placeholder="Enter any additional context or specific preferences to tell the AI.  This will help it tailor the interview to the hiring manager's needs..."
                 value={additionalNotes}
@@ -60,7 +61,7 @@ export const HiringManagerInput: React.FC<HiringManagerInputProps> = ({ onComple
               />
             </div>
 
-            <Button 
+            <Button
               className="w-32 mt-4 float-right"
               onClick={handleSave}
               disabled={isLoading} // Added isLoading to disable button

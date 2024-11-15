@@ -1,5 +1,10 @@
 // [POST] /api
-import { defaultBotProfile, defaultMaxDuration, defaultServices, defaultConfig } from '@/utils/rtvi.config';
+import {
+  defaultBotProfile,
+  defaultMaxDuration,
+  defaultServices,
+  defaultConfig
+} from '@/utils/rtvi.config';
 
 export async function POST(request: Request) {
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
@@ -29,7 +34,7 @@ export async function POST(request: Request) {
     },
     config: defaultConfig,
     recording_settings: {
-      type: "cloud"
+      type: 'cloud'
     },
     service_options: {
       vad: {
@@ -37,15 +42,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // service: "vad",
-    // options: [
-    //   {
-    //     name: "params",
-    //     value: {
-    //       stop_secs: 0.5
-    //     }
-    //   }
-    // ]
   };
   console.log('Payload to be sent:', payload);
 

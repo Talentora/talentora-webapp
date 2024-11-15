@@ -1,6 +1,10 @@
-import ApplicantPortal from "@/components/Applicants/Applicant/ApplicantPortal";
+import ApplicantPortal from '@/components/Applicants/Applicant/ApplicantPortal';
 
-export default async function ApplicantPage({ params }: { params: { id: string } }) {
+export default async function ApplicantPage({
+  params
+}: {
+  params: { id: string };
+}) {
   async function getApplicantCandidate() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
@@ -29,12 +33,12 @@ export default async function ApplicantPage({ params }: { params: { id: string }
   }
 
   const applicantCandidate = await getApplicantCandidate();
-  console.log("applicantCandidate", applicantCandidate);
-  
+  console.log('applicantCandidate', applicantCandidate);
+
   if (!applicantCandidate) {
     return <div>Failed to fetch applicant candidate</div>;
   }
 
-  console.log("params", params);
-//   return <ApplicantPortal ApplicantCandidate={applicantCandidate} />;
+  console.log('params', params);
+  //   return <ApplicantPortal ApplicantCandidate={applicantCandidate} />;
 }
