@@ -2,87 +2,149 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { VoiceClientAudio, VoiceClientProvider } from 'realtime-ai-react';
-import { DailyVoiceClient } from 'realtime-ai-daily';
-import { LLMHelper, VoiceClient } from 'realtime-ai';
-import { Button } from '@/components/ui/button';
+import { 
+  RTVIClient, 
+  RTVIEvent, 
+  TransportState,
+  BotLLMTextData,
+  TranscriptData,
+  Participant
+} from 'realtime-ai';
 import { DailyTransport } from '@daily-co/realtime-ai-daily';
 import App from '@/components/Bot/App';
-import {
-  BOT_READY_TIMEOUT,
-  defaultConfig,
-  defaultServices
-} from '@/utils/rtvi.config';
+import { Button } from '@/components/ui/button';
 import { Tables } from '@/types/types_db';
-type BotConfig = Tables<'bots'>;
-type JobInterviewConfig = Tables<'job_interview_config'>;
-type CompanyContext = Tables<'company_context'>;
+import { Job as MergeJob } from '@/types/merge';
+
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
-type Application = Tables<'applications'>;
-import { Job as MergeJob } from '@/types/merge';
-import { Candidate as MergeCandidate } from '@/types/merge';
+
 interface BotProps {
-  bot: BotConfig;
-  jobInterviewConfig: JobInterviewConfig;
-  companyContext: CompanyContext;
+  bot: Tables<'bots'>;
+  jobInterviewConfig: Tables<'job_interview_config'>;
+  companyContext: Tables<'company_context'>;
   job: Job;
   company: Company;
   mergeJob: MergeJob;
-  // applicationData: MergeCandidate;
 }
 
 export default function Bot(botProps: BotProps) {
   const [showSplash, setShowSplash] = useState(true);
-  const voiceClientRef = useRef<DailyVoiceClient | null>(null);
+  const [isUserReady, setIsUserReady] = useState(false);
+  const voiceClientRef = useRef<RTVIClient | null>(null);
+  const [transportState, setTransportState] = useState<TransportState>('disconnected');
+
+  const { job, company, jobInterviewConfig } = botProps;
+
+  if (!job || !company || !jobInterviewConfig) {
+    return null;
+  }
 
   useEffect(() => {
-    if (!showSplash || voiceClientRef.current) {
-      return;
-    }
+    if (voiceClientRef.current || !showSplash) return;
 
-    const voiceClient = new DailyVoiceClient({
-      // baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
-      baseUrl: '/api/bot',
-      services: defaultServices,
-      config: defaultConfig,
-      timeout: BOT_READY_TIMEOUT,
-      enableCam: true
+    const transport = new DailyTransport();
+    const rtviClient = new RTVIClient({
+      transport,
+      params: {
+        baseUrl: "/api/bot",
+        services: {
+          stt: "deepgram",
+          llm: "together", 
+          tts: "cartesia"
+        },
+        config: [
+          {
+            service: "tts",
+            options: [
+              { 
+                name: "voice", 
+                value: "79a125e8-cd45-4c13-8a67-188112f4dd22" 
+              }
+            ]
+          },
+          {
+            service: "llm",
+            options: [
+              { 
+                name: "model", 
+                value: "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo" 
+              },
+              {
+                name: "messages",
+                value: [
+                  {
+                    role: "system",
+                    content: `You are an AI interviewer conducting an interview for the ${job.name} position at ${company.name}. 
+                    Assess the candidate's qualifications and experience professionally.
+                    Keep responses clear and concise. Avoid special characters except '!' or '?'.`
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      enableMic: false,
+      enableCam: true,
+      timeout: 15000,
     });
 
-    // const dailyTransport = new DailyTransport();
+    rtviClient.on(RTVIEvent.TransportStateChanged, (state: TransportState) => {
+      console.log("[EVENT] Transport state:", state);
+      setTransportState(state);
+      if (state === 'ready' && isUserReady) {
+        rtviClient.connect().catch(error => {
+          console.error('Failed to connect:', error);
+        });
+      }
+    });
 
-    // const voiceClient = new DailyVoiceClient({
-    //   // baseUrl: "/api/connectBot",
-    //   baseUrl: '/api/bot',
-    //   services: defaultServices,
-    //   config: defaultConfig,
-    //   timeout: BOT_READY_TIMEOUT,
-    //   enableCam: true
-    // });
+    rtviClient.on(RTVIEvent.BotReady, () => {
+      console.log("[EVENT] Bot ready");
+    });
 
-    const llmHelper = new LLMHelper({});
+    voiceClientRef.current = rtviClient;
+    
 
-    voiceClient.registerHelper('llm', llmHelper);
-    voiceClientRef.current = voiceClient;
-  }, [showSplash]);
+  }, [showSplash, botProps, isUserReady]);
+
+  const startInterview = async () => {
+    setShowSplash(false);
+    setIsUserReady(true);
+
+    voiceClientRef.current?.initDevices();
+
+
+    // try {
+    //   await voiceClientRef.current.connect();
+    // } catch (error) {
+    //   console.error('Failed to start interview:', error);
+    //   voiceClientRef.current.disconnect();
+    // }
+  };
 
   if (showSplash) {
     return (
-      <main className="w-full flex items-center justify-center bg-primary-200 p-4 bg-[length:auto_50%] lg:bg-auto bg-colorWash bg-no-repeat bg-right-top">
-        <div className="flex flex-col gap-8 lg:gap-12 items-center max-w-full lg:max-w-3xl">
-          <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-balance text-left">
-            Talentora
-          </h1>
-
-          <p className="text-primary-500 text-xl font-semibold leading-relaxed">
-            Enter your interview now
-          </p>
-
-          <Button onClick={() => setShowSplash(false)}>Try Demo</Button>
+      <main className="w-full flex items-center justify-center bg-primary-200 p-4">
+        <div className="flex flex-col gap-8 items-center max-w-3xl">
+            <h1 className="text-4xl font-bold tracking-tight">
+              AI Interview for {job.name}
+            </h1>
+            <p className="text-xl text-primary-500">
+              at {company.name}
+            </p>
+            <Button 
+              onClick={startInterview}
+              disabled={transportState === 'connecting'}
+            >
+              Start Interview
+            </Button>
         </div>
       </main>
     );
   }
+
 
   return (
     <VoiceClientProvider voiceClient={voiceClientRef.current!}>
