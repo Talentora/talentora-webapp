@@ -1,20 +1,13 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { VoiceClientAudio, VoiceClientProvider } from 'realtime-ai-react';
-import { 
-  RTVIClient, 
-  RTVIEvent, 
-  TransportState,
-  BotLLMTextData,
-  TranscriptData,
-  Participant
-} from 'realtime-ai';
-import { DailyTransport } from '@daily-co/realtime-ai-daily';
+import { VoiceClientAudio } from 'realtime-ai-react';
+import { RTVIClient, RTVIEvent, TransportState } from 'realtime-ai';
 import App from '@/components/Bot/App';
-import { Button } from '@/components/ui/button';
+import { DailyTransport } from '@daily-co/realtime-ai-daily';
 import { Tables } from '@/types/types_db';
 import { Job as MergeJob } from '@/types/merge';
+import { VoiceClientProvider } from './Context';
 
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
@@ -29,7 +22,6 @@ interface BotProps {
 }
 
 export default function Bot(botProps: BotProps) {
-  const [showSplash, setShowSplash] = useState(true);
   const [isUserReady, setIsUserReady] = useState(false);
   const voiceClientRef = useRef<RTVIClient | null>(null);
   const [transportState, setTransportState] = useState<TransportState>('disconnected');
@@ -41,7 +33,6 @@ export default function Bot(botProps: BotProps) {
   }
 
   useEffect(() => {
-    if (voiceClientRef.current || !showSplash) return;
 
     const transport = new DailyTransport();
     const rtviClient = new RTVIClient({
@@ -90,6 +81,10 @@ export default function Bot(botProps: BotProps) {
       timeout: 15000,
     });
 
+    console.log("[EVENT] Bot created");
+
+    rtviClient.initDevices();
+
     rtviClient.on(RTVIEvent.TransportStateChanged, (state: TransportState) => {
       console.log("[EVENT] Transport state:", state);
       setTransportState(state);
@@ -100,55 +95,29 @@ export default function Bot(botProps: BotProps) {
       }
     });
 
-    rtviClient.on(RTVIEvent.BotReady, () => {
-      console.log("[EVENT] Bot ready");
-    });
-
     voiceClientRef.current = rtviClient;
-    
 
-  }, [showSplash, botProps, isUserReady]);
+    // Cleanup function to disconnect and reset the ref
+    return () => {
+      rtviClient.disconnect();
+      voiceClientRef.current = null;
+    };
+  }, [ botProps, isUserReady]);
 
   const startInterview = async () => {
-    setShowSplash(false);
     setIsUserReady(true);
 
-    voiceClientRef.current?.initDevices();
-
-
-    // try {
-    //   await voiceClientRef.current.connect();
-    // } catch (error) {
-    //   console.error('Failed to start interview:', error);
-    //   voiceClientRef.current.disconnect();
-    // }
+    try {
+      await voiceClientRef.current?.connect();
+    } catch (error) {
+      console.error('Failed to start interview:', error);
+      voiceClientRef.current?.disconnect();
+    }
   };
-
-  if (showSplash) {
-    return (
-      <main className="w-full flex items-center justify-center bg-primary-200 p-4">
-        <div className="flex flex-col gap-8 items-center max-w-3xl">
-            <h1 className="text-4xl font-bold tracking-tight">
-              AI Interview for {job.name}
-            </h1>
-            <p className="text-xl text-primary-500">
-              at {company.name}
-            </p>
-            <Button 
-              onClick={startInterview}
-              disabled={transportState === 'connecting'}
-            >
-              Start Interview
-            </Button>
-        </div>
-      </main>
-    );
-  }
-
 
   return (
     <VoiceClientProvider voiceClient={voiceClientRef.current!}>
-      <App {...botProps} />
+      <App {...botProps}  />
       <VoiceClientAudio />
     </VoiceClientProvider>
   );

@@ -16,9 +16,10 @@ import ControlPanel from './ControlPanel';
 import { Job as MergeJob } from '@/types/merge';
 import { Tables } from '@/types/types_db';
 type Company = Tables<'companies'>;
+import { useVoiceClientContext } from '../Context';
 
 interface VoiceInterviewSessionProps {
-  state: TransportState;
+  // state: TransportState;
   onLeave: () => void;
   startAudioOff?: boolean;
   job: MergeJob;
@@ -26,13 +27,14 @@ interface VoiceInterviewSessionProps {
 }
 
 export default function VoiceInterviewSession({
-  state,
+  // state,
   onLeave,
   startAudioOff = false,
   job,
   company
 }: VoiceInterviewSessionProps) {
-  const voiceClient = useVoiceClient()!;
+  const voiceClient = useVoiceClientContext()!;
+
   const transportState = useVoiceClientTransportState();
   const [muted, setMuted] = useState(startAudioOff);
   const [isCameraOn, setIsCameraOn] = useState(true);
@@ -41,31 +43,14 @@ export default function VoiceInterviewSession({
     { speaker: string; text: string }[]
   >([]);
 
-  const VoiceClient = useVoiceClient()!;
-
-  VoiceClient.on(RTVIEvent.BotStoppedSpeaking, () => {
-    console.log("[EVENT] Bot stopped speaking");
-  });
-
-  VoiceClient.on(RTVIEvent.BotTranscript, (text: string) => {
-    setTranscriptData((prev) => [...prev, { speaker: 'AI', text: text.trim() }]);
-  });
-
-  VoiceClient.on(RTVIEvent.UserTranscript, (data: TranscriptData) => {
-    setTranscriptData((prev) => [
-      ...prev,
-      { speaker: 'You', text: data.text.trim() }
-    ]);
-  });
-
 
 
 
   useEffect(() => {
-    if (state === 'error') {
+    if (transportState === 'error') {
       onLeave();
     }
-  }, [state, onLeave]);
+  }, [transportState, onLeave]);
 
 
   const handleMicToggle = () => {
