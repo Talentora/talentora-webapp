@@ -640,7 +640,6 @@ export const getCompanyContext = async (id: string): Promise<any | null> => {
       console.error('Error fetching company context:', error);
       return null;
     }
-    console.log('companyContext', companyContext);
     return companyContext;
   } catch (err) {
     console.error('Unexpected error fetching company context:', err);
@@ -814,6 +813,8 @@ export const getJobInterviewConfig = async (
       .eq('job_id', jobId)
       .single();
 
+    console.log("interviewConfig",interviewConfig)
+
     if (error) {
       console.error('Error fetching interview config:', error);
       return null;
@@ -857,8 +858,6 @@ export const getAccountTokenFromApplication = async (
       .eq('id', applicationId)
       .single();
 
-    console.log("applicationData",applicationData)
-
     if (applicationError) {
       console.error('Error fetching application:', applicationError);
       return {token: null, company: null};
@@ -871,8 +870,7 @@ export const getAccountTokenFromApplication = async (
       .eq('merge_id', applicationData.job_id)
       .single();
 
-    console.log("jobData",jobData)
-
+      
     if (jobError) {
       console.error('Error fetching job:', jobError);
       return {token: null, company: null};
@@ -885,7 +883,6 @@ export const getAccountTokenFromApplication = async (
       .eq('id', jobData.company_id)
       .single();
 
-    console.log("companyData",companyData)
 
     if (companyError) {
       console.error('Error fetching company:', companyError);
@@ -902,3 +899,31 @@ export const getAccountTokenFromApplication = async (
 };
 
 
+
+
+/**
+ * Fetches an application by its ID.
+ *
+ * @param applicationId - The ID of the application to fetch.
+ * @returns The application data or null if not found.
+ */
+export const getApplication = async (applicationId: string): Promise<Tables<'applications'> | null> => {
+  try {
+    const supabase = createClient();
+    const { data: application, error } = await supabase
+      .from('applications')
+      .select('*')
+      .eq('id', applicationId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching application:', error);
+      return null;
+    }
+
+    return application;
+  } catch (err) {
+    console.error('Unexpected error fetching application:', err);
+    return null;
+  }
+};

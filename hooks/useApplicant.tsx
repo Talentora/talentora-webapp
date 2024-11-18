@@ -3,9 +3,13 @@ import { Tables } from '@/types/types_db';
 import { createClient } from '@/utils/supabase/client';
 import { useUser } from './useUser';
 import { getAccountTokenFromApplication } from '@/utils/supabase/queries';
+import { Application as MergeApplication, Job as MergeJob } from '@/types/merge';
 
 // Hook to fetch applicant data
-const useApplicantData = (userId: string | undefined) => {
+const useApplicantData = (userId: string | undefined): {
+  applicant: Tables<'applicants'> | null;
+  error: Error | null;
+} => {
   const [applicant, setApplicant] = useState<Tables<'applicants'> | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const supabase = createClient();
@@ -68,7 +72,7 @@ const useApplications = (applicantId: string | undefined) => {
 };
 
 // Helper function to fetch job details
-const fetchJobDetails = async (jobId: string, token: string) => {
+export const fetchJobDetails = async (jobId: string, token: string): Promise<MergeJob | null> => {
   try {
     const response = await fetch(`/api/jobs/${jobId}`, {
       headers: { 'X-Account-Token': token }
@@ -83,17 +87,35 @@ const fetchJobDetails = async (jobId: string, token: string) => {
   }
 };
 
+export const fetchApplicationData = async (applicationId: string, token: string): Promise<MergeApplication | null> => {
+  try {
+    const response = await fetch(`/api/applications/${applicationId}`, {
+      headers: { 'X-Account-Token': token }
+    });
+    if (response.ok) {
+      return await response.json();
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching job data:', error);
+    return null;
+  }
+};
+
+type EnrichedApplication = MergeJob & {
+  company: Tables<'companies'> | null;
+  application_data: Tables<'applications'>;
+}
+
 // Main hook that combines all the data
 export const useApplicant = () => {
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [accountTokens, setAccountTokens] = useState<{[key: string]: string | null}>({});
-  const [enrichedApplications, setEnrichedApplications] = useState<Tables<'applications'>[] | null>(null);
+  const [enrichedApplications, setEnrichedApplications] = useState<EnrichedApplication[] | null>(null);
   
   const { applicant, error: applicantError } = useApplicantData(user?.id);
-  console.log("applicant",applicant)
   const { applications, error: applicationsError } = useApplications(applicant?.id);
-  console.log("applications",applications)
 
   useEffect(() => {
     const enrichApplications = async () => {
@@ -101,20 +123,19 @@ export const useApplicant = () => {
 
       try {
         const tokens: {[key: string]: string | null} = {};
-        const enriched = [];
+        const enriched: EnrichedApplication[] = [];
 
-        console.log("applications before for loop",applications)
-        for (const application of applications) {
+        for (const application of applications as Tables<'applications'>[]) {
           const {token,company} = await getAccountTokenFromApplication(application.id);
-          console.log("token",token)
           tokens[application.id] = token;
 
           if (token) {
             const jobDetails = await fetchJobDetails(application.job_id, token);
-            console.log("jobDetails",jobDetails)
-            enriched.push({...jobDetails,company:company});
+            if (jobDetails) {
+              enriched.push({...jobDetails, company, application_data: application});
+            }
           } else {
-            enriched.push(application);
+            enriched.push({...application as unknown as MergeJob, company, application_data: application});
           }
         }
 
