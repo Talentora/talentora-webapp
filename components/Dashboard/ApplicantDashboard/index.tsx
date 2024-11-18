@@ -42,6 +42,7 @@ export default function JobPortal() {
       </div>
     )
   }
+  
   return (
     <div className="min-h-screen">
       <header className=" text-primary py-8 px-6">
@@ -53,8 +54,8 @@ export default function JobPortal() {
         </div>
       </header>
 
-      <main className="container px-4 py-8">
-        <div className="grid gap-6 md:grid-cols-2">
+      <main className="container px-4">
+        <div className="grid gap-6 md:grid-cols-2 px-10 ">
           {enrichedApplications?.length === 0 ? (
             <Card className="border bg-foreground p-5 border-border shadow-sm relative">
               <CardHeader>
@@ -124,7 +125,7 @@ export default function JobPortal() {
                   </div>
                   <div className="flex gap-3">
                     <Button variant="outline">Practice</Button>
-                    <Link href={`/assessment/${application.id}/${applicant?.id}`}>
+                    <Link href={`/assessment/${application.application_data.id}`}>
                       <Button 
                         className="bg-[#6366f1] hover:bg-[#5558e6]"
                       >

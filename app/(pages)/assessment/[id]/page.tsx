@@ -1,5 +1,4 @@
 'use client';
-import { createClient } from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
 import Bot from '@/components/Bot';
 import { Tables } from '@/types/types_db';
@@ -10,15 +9,16 @@ type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
 type CompanyContext = Tables<'company_context'>;
 import { Job as MergeJob, Candidate as MergeCandidate } from '@/types/merge';
+import { getAccountTokenFromApplication } from '@/utils/supabase/queries';
 import {
   getCompany,
   getBotById,
   getJobInterviewConfig,
   getJob,
-  getCompanyContext
+  getCompanyContext,
+  getApplication,
 } from '@/utils/supabase/queries';
-
-
+import { fetchJobDetails, fetchApplicationData, useApplicant } from '@/hooks/useApplicant';
 
 type BotProps = {
   bot: BotConfig;
@@ -27,72 +27,83 @@ type BotProps = {
   job: Job;
   company: Company;
   mergeJob: MergeJob;
-  applicationData: MergeCandidate;
+  application: Application;
 }
-
-
-
 
 export default function Assessment({
   params
 }: {
-  params: { jobId: string; applicantId: string };
+  params: { id: string };
 }) {
+  const applicationId = params.id;
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const jobId = params.applicantId;
-  const applicantId = params.jobId;
   const [isVisible, setIsVisible] = useState(false);
-
-
   const [botProps, setBotProps] = useState<BotProps | null>(null);
 
-
-  const fetchApplicationData = async (applicantId: string) => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/applications/${applicantId}`
-    );
-    if (!response.ok) {
-      throw new Error('Failed to fetch application data from API');
-    }
-    const data = await response.json();
-    return data;
-  };
-
-  const fetchJob = async (jobId: string) => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs/${jobId}`
-    );
-    if (!response.ok) {
-      throw new Error('Failed to fetch job data from API');
-    }
-    const job: MergeJob = await response.json();
-    return job;
-  };
+  const { applicant } = useApplicant();
 
   useEffect(() => {
     const fetchAllData = async () => {
+      if (!applicationId) {
+        setError('Application ID is required');
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        const config = await getJobInterviewConfig(jobId);
-        const job = await getJob(config.job_id);
-        const company = await getCompany(job.company_id);
-        const bot = await getBotById(config.bot_id.toString());
-        const companyContext = await getCompanyContext(job.company_id);
-        const mergeJob = await fetchJob(jobId);
-        const applicationData = await fetchApplicationData(applicantId);
-
-
-        if (config && job && company && bot && companyContext && mergeJob && applicationData) {
-          setBotProps({
-            jobInterviewConfig: config,
-            job,
-            company,
-            bot,
-            companyContext,
-            mergeJob,
-            applicationData
-          });
+        // Fetch initial application and token
+        const { token: account_token, company: tokenCompany } = await getAccountTokenFromApplication(applicationId);
+        if (!account_token) {
+          throw new Error('Failed to get account token');
         }
+
+        const application = await getApplication(applicationId);
+        if (!application) {
+          throw new Error('Application not found');
+        }
+
+        // Fetch job related data
+        const jobId = application.job_id;
+        if (!jobId) {
+          throw new Error('Job ID not found in application');
+        }
+
+        const [config, job, mergeJob] = await Promise.all([
+          getJobInterviewConfig(jobId),
+          getJob(jobId),
+          fetchJobDetails(jobId, account_token)
+        ]);
+
+        if (!config || !job || !mergeJob) {
+          throw new Error('Failed to fetch job related data');
+        }
+
+        // Fetch company related data
+        const [company, companyContext] = await Promise.all([
+          getCompany(job.company_id),
+          getCompanyContext(job.company_id)
+        ]);
+
+        if (!company || !companyContext) {
+          throw new Error('Failed to fetch company related data');
+        }
+
+        // Fetch bot data
+        const bot = await getBotById(config.bot_id.toString());
+        if (!bot) {
+          throw new Error('Failed to fetch bot data');
+        }
+
+        setBotProps({
+          jobInterviewConfig: config,
+          job,
+          company,
+          bot,
+          companyContext,
+          mergeJob,
+          application
+        });
         
       } catch (err) {
         console.error('Failed to fetch data:', err);
@@ -102,12 +113,12 @@ export default function Assessment({
       }
     };
 
+    setIsLoading(true);
     fetchAllData();
-  }, [jobId, applicantId]);
+  }, [applicationId]);
 
   return (
     <div className="flex flex-col items-center min-h-screen">
-
       {isLoading ? (
         <div className="flex flex-col items-center">
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -120,10 +131,9 @@ export default function Assessment({
         </div>
       ) : (
         <>
-          {botProps && <Bot {...botProps} />}
+          {/* {botProps && <Bot {...botProps} />} */}
 
           <div className="space-y-6 w-full max-w-4xl p-6">
-            {/* show hide button  */}
             <button
               onClick={() => setIsVisible(!isVisible)}
               className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded fixed bottom-4 left-4"
@@ -131,8 +141,6 @@ export default function Assessment({
               {isVisible ? 'Hide' : 'Show'} Payload Data
             </button>
 
-
-            {/* bot context data  */}
             {isVisible && botProps && 
               [
                 { title: 'Job Interview Configuration', data: botProps.jobInterviewConfig },
@@ -141,7 +149,6 @@ export default function Assessment({
                 { title: 'Job Details', data: botProps.job },
                 { title: 'Company Context', data: botProps.companyContext },
                 { title: 'Merge Job', data: botProps.mergeJob },
-                { title: 'Application Data', data: botProps.applicationData }
               ].map(({ title, data }) => (
                 <div key={title} className="bg-white rounded-lg shadow p-6">
                   <h2 className="text-lg font-semibold mb-4">{title}</h2>
@@ -150,10 +157,7 @@ export default function Assessment({
                   </pre>
                 </div>
               ))}
-
-
           </div>
-
         </>
       )}
     </div>
