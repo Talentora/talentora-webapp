@@ -16,8 +16,7 @@ import ControlPanel from './ControlPanel';
 import { Job as MergeJob } from '@/types/merge';
 import { Tables } from '@/types/types_db';
 type Company = Tables<'companies'>;
-import { useVoiceClientContext } from '../Context';
-
+import { useRTVIClientTransportState, useRTVIClient } from 'realtime-ai-react';
 interface VoiceInterviewSessionProps {
   // state: TransportState;
   onLeave: () => void;
@@ -33,9 +32,9 @@ export default function VoiceInterviewSession({
   job,
   company
 }: VoiceInterviewSessionProps) {
-  const voiceClient = useVoiceClientContext()!;
+  const voiceClient = useRTVIClient()!;
 
-  const transportState = useVoiceClientTransportState();
+  const transportState = useRTVIClientTransportState();
   const [muted, setMuted] = useState(startAudioOff);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(!startAudioOff);

@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { VoiceClientAudio } from 'realtime-ai-react';
-import { RTVIClient, RTVIEvent, TransportState } from 'realtime-ai';
+import { RTVIClientAudio,RTVIClientProvider } from 'realtime-ai-react';
+import { BotLLMTextData, LLMHelper, RTVIClient, RTVIEvent, RTVIMessage, TranscriptData, TransportState } from 'realtime-ai';
 import App from '@/components/Bot/App';
 import { DailyTransport } from '@daily-co/realtime-ai-daily';
 import { Tables } from '@/types/types_db';
 import { Job as MergeJob } from '@/types/merge';
-import { VoiceClientProvider } from './Context';
+import Splash from "@/components/Bot/Splash";
 
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
@@ -25,6 +25,8 @@ export default function Bot(botProps: BotProps) {
   const [isUserReady, setIsUserReady] = useState(false);
   const voiceClientRef = useRef<RTVIClient | null>(null);
   const [transportState, setTransportState] = useState<TransportState>('disconnected');
+  const [showSplash, setShowSplash] = useState(true);
+
 
   const { job, company, jobInterviewConfig } = botProps;
 
@@ -33,10 +35,13 @@ export default function Bot(botProps: BotProps) {
   }
 
   useEffect(() => {
+    if (!showSplash || voiceClientRef.current) {
+      return;
+    }
 
-    const transport = new DailyTransport();
+    const dailyTransport = new DailyTransport();
     const rtviClient = new RTVIClient({
-      transport,
+      transport: dailyTransport as any, // Type assertion to fix transport type error
       params: {
         baseUrl: "/api/bot",
         services: {
@@ -66,7 +71,7 @@ export default function Bot(botProps: BotProps) {
                 value: [
                   {
                     role: "system",
-                    content: `You are an AI interviewer conducting an interview for the ${job.name} position at ${company.name}. 
+                    content: `You are an AI interviewer conducting an interview for the ${job?.name || ''} position at ${company?.name || ''}. 
                     Assess the candidate's qualifications and experience professionally.
                     Keep responses clear and concise. Avoid special characters except '!' or '?'.`
                   }
@@ -81,9 +86,15 @@ export default function Bot(botProps: BotProps) {
       timeout: 15000,
     });
 
+
+    const llmHelper = new LLMHelper({});
+    rtviClient.registerHelper("llm", llmHelper);
+
+    voiceClientRef.current = rtviClient;
+
     console.log("[EVENT] Bot created");
 
-    rtviClient.initDevices();
+    // rtviClient.initDevices();
 
     rtviClient.on(RTVIEvent.TransportStateChanged, (state: TransportState) => {
       console.log("[EVENT] Transport state:", state);
@@ -95,30 +106,19 @@ export default function Bot(botProps: BotProps) {
       }
     });
 
-    voiceClientRef.current = rtviClient;
-
-    // Cleanup function to disconnect and reset the ref
-    return () => {
-      rtviClient.disconnect();
-      voiceClientRef.current = null;
-    };
+  
   }, [ botProps, isUserReady]);
 
-  const startInterview = async () => {
-    setIsUserReady(true);
 
-    try {
-      await voiceClientRef.current?.connect();
-    } catch (error) {
-      console.error('Failed to start interview:', error);
-      voiceClientRef.current?.disconnect();
-    }
-  };
+
+  if (showSplash) {
+    return <Splash handleReady={() => setShowSplash(false)} company={company} job={job} />;
+  }
 
   return (
-    <VoiceClientProvider voiceClient={voiceClientRef.current!}>
+    <RTVIClientProvider client={voiceClientRef.current!}>
       <App {...botProps}  />
-      <VoiceClientAudio />
-    </VoiceClientProvider>
+      <RTVIClientAudio />
+    </RTVIClientProvider>
   );
 }

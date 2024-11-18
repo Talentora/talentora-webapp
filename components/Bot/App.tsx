@@ -1,17 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useVoiceClient, useVoiceClientTransportState } from 'realtime-ai-react';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { useRTVIClient, useRTVIClientTransportState, useRTVIClientEvent } from 'realtime-ai-react';
 import { useRecording } from '@daily-co/daily-react';
 import VoiceInterviewSession from '@/components/Bot/VideoInterviewSession';
 import { Alert } from '@/components/ui/alert';
 import { Tables } from '@/types/types_db';
 import { Job as MergeJob } from '@/types/merge';
-import { TransportState } from 'realtime-ai';
-import { useVoiceClientContext } from './Context';
+import { RTVIError, RTVIEvent, RTVIMessage } from 'realtime-ai';
 import { Configure } from './Setup/Configure';
-import { Card, CardContent } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '../ui/card';
 import { Button } from '../ui/button';
+import { Ear, Loader2 } from 'lucide-react';
+
 type BotConfig = Tables<'bots'>;
 type JobInterviewConfig = Tables<'job_interview_config'>;
 type CompanyContext = Tables<'company_context'>;
@@ -27,126 +28,135 @@ interface BotProps {
   mergeJob: MergeJob;
 }
 
-export default function App({ bot, jobInterviewConfig, companyContext, job, company, mergeJob }: BotProps) {
-  const voiceClient = useVoiceClientContext()!;
-  const { startRecording, stopRecording } = useRecording();
-  const [error, setError] = useState<string | null>(null);
-  const transportState = useVoiceClientTransportState();
-  const [startAudioOff, setStartAudioOff] = useState(false);
-  const [hasUserInteracted, setHasUserInteracted] = useState(false);
-  const [interviewStarted, setInterviewStarted] = useState(false);
+const status_text = {
+  idle: "Initializing...",
+  initialized: "Start",
+  authenticating: "Requesting bot...",
+  connecting: "Connecting...",
+};
 
+export default function App({ bot, jobInterviewConfig, companyContext, job, company, mergeJob }: BotProps) {
+  const voiceClient = useRTVIClient()!;
+  const { startRecording, stopRecording } = useRecording();
+  const transportState = useRTVIClientTransportState();
+  
+  const [appState, setAppState] = useState<'idle' | 'ready' | 'connecting' | 'connected'>('idle');
+  const [error, setError] = useState<string | null>(null);
+  const [startAudioOff, setStartAudioOff] = useState(false);
+  const mountedRef = useRef<boolean>(false);
+
+
+  useRTVIClientEvent(
+    RTVIEvent.Error,
+    useCallback((message: RTVIMessage) => {
+      const errorData = message.data as { error: string; fatal: boolean };
+      if (!errorData.fatal) return;
+      setError(errorData.error);
+    }, [])
+  );
+
+  useEffect(() => {
+    // Initialize local audio devices
+    if (!voiceClient || mountedRef.current) return;
+    mountedRef.current = true;
+    voiceClient.initDevices();
+  }, [appState, voiceClient]);
+
+  useEffect(() => {
+    switch (transportState) {
+      case "initialized":
+        setAppState("ready");
+        break;
+      case "authenticating":
+      case "connecting":
+        setAppState("connecting");
+        break;
+      case "connected":
+      case "ready":
+        setAppState("connected");
+        break;
+      default:
+        setAppState("idle");
+    }
+  }, [transportState]);
 
   async function start() {
-    setError(null);
+    if (!voiceClient) return;
 
-    const connectionTimeout = setTimeout(() => {
-      if (transportState !== 'ready') {
-        setError('Bot failed to join. Server may be busy. Please try again later.');
-        voiceClient.disconnect();
-      }
-    }, 15000);
-
+    // Join the session
     try {
-      setInterviewStarted(true);
-      await voiceClient.enableCam(true);
-      startRecording();
+      // Disable the mic until the bot has joined
+      // to avoid interrupting the bot's welcome message
+      voiceClient.enableMic(false);
       await voiceClient.connect();
-      clearTimeout(connectionTimeout);
     } catch (e) {
-      clearTimeout(connectionTimeout);
-      setError('Unable to authenticate. Server may be offline or busy.');
-      await voiceClient.disconnect();
+      setError((e as RTVIError).message || "Unknown error occured");
+      voiceClient.disconnect();
     }
   }
 
   async function leave() {
-    try {
-      stopRecording();
-      await voiceClient.disconnect();
-      window.location.reload();
-    } catch (error) {
-      console.error('Error during leave:', error);
-    }
+    await voiceClient.disconnect();
+  }
+
+  /**
+   * UI States
+   */
+
+  // Error: show full screen message
+  if (error) {
+    return (
+      <Alert intent="danger" title="An error occurred">
+        {error}
+      </Alert>
+    );
   }
 
   const handleStartAudioOff = () => {
     setStartAudioOff(prev => !prev);
   };
 
-  const handleUserInteraction = () => {
-    setHasUserInteracted(true);
-  };
+  
 
-  if (error) {
-    return (
-      <Alert className="bg-destructive text-destructive-foreground">
-        <p>{error}</p>
-      </Alert>
-    );
-  }
-
-  if (!hasUserInteracted) {
-    return (
-      <div className="w-full max-w-md mx-auto mt-8 p-6 border rounded-lg shadow-sm">
-        <h1 className="text-2xl font-bold mb-4">Welcome to your AI Interview</h1>
-        <div className="space-y-4">
-          <p className="text-gray-600">
-            You are about to begin an AI-powered interview with {company.name}. This interview is conducted by Talentora's advanced AI interviewer, designed to assess your qualifications for the {job.name} position.
-          </p>
-          <p className="text-gray-600">
-            The AI interviewer will ask you relevant questions about your experience and skills. Please speak naturally and clearly when responding.
-          </p>
-          <p className="text-gray-600 font-medium">
-            Tips for a successful interview:
-          </p>
-          <ul className="list-disc pl-5 text-gray-600">
-            <li>Ensure you're in a quiet environment</li>
-            <li>Check your camera and microphone are working</li>
-            <li>Speak clearly and take your time with responses</li>
-          </ul>
-        </div>
-        <Button 
-          onClick={handleUserInteraction}
-          className="w-full mt-6 px-4 py-3 bg-primary-dark text-white rounded-lg hover:bg-accent font-medium"
-        >
-          Start Interview
-        </Button>
-      </div>
-    );
-  }
-
-
-  // if (transportState == 'ready') {
-  if (interviewStarted) {
+  if (appState === 'connected') {
     return (
       <VoiceInterviewSession
-        // state={transportState}
         onLeave={leave}
         job={mergeJob}
         company={company}
-        startAudioOff={false}
+        startAudioOff={startAudioOff}
       />
     );
   }
 
+  const isReady = appState === 'ready';
+
   return (
-    <Card className="w-full max-w-md mx-auto mt-8 w-3/4">
-      <CardContent className="p-6">
-        <h1 className="text-2xl font-bold mb-4">Configure your devices</h1>
-        <p className="text-gray-600 mb-4">Please ensure your microphone and camera are working properly.</p>
+    <Card className="animate-appear max-w-lg mx-auto mt-8">
+      <CardHeader>
+        <CardTitle>Configuration</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex flex-row gap-2 bg-primary-50 px-4 py-2 md:p-2 text-sm items-center justify-center rounded-md font-medium text-pretty">
+          <Ear className="size-7 md:size-5 text-primary-400" />
+          Works best in a quiet environment with a good internet connection.
+        </div>
         <Configure
           state={transportState}
           startAudioOff={startAudioOff}
           handleStartAudioOff={handleStartAudioOff}
         />
-        <Button 
-          onClick={start} 
-          className="mt-4"
-        >
-          Click to Begin
-        </Button>
       </CardContent>
+      <CardFooter>
+        <Button 
+          onClick={start}
+          disabled={!isReady}
+          className="w-full"
+        >
+          {!isReady && <Loader2 className="animate-spin mr-2" />}
+          {status_text[transportState as keyof typeof status_text]}
+        </Button>
+      </CardFooter>
     </Card>
   );
 }
