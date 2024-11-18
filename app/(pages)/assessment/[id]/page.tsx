@@ -147,7 +147,7 @@ export default function Assessment({
         <>
           {botProps && <Bot {...botProps} />}
 
-          <div className="space-y-6 w-full max-w-4xl p-6">
+          <div className="w-full max-w-4xl p-6">
             <button
               onClick={() => setIsVisible(!isVisible)}
               className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded fixed bottom-4 left-4"
