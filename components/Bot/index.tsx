@@ -2,12 +2,15 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { RTVIClientAudio,RTVIClientProvider } from 'realtime-ai-react';
-import { BotLLMTextData, LLMHelper, RTVIClient, RTVIEvent, RTVIMessage, TranscriptData, TransportState } from 'realtime-ai';
+import { BotLLMTextData, LLMHelper, Participant, RTVIClient, RTVIEvent, RTVIMessage, TranscriptData, TransportState } from 'realtime-ai';
 import App from '@/components/Bot/App';
 import { DailyTransport } from '@daily-co/realtime-ai-daily';
 import { Tables } from '@/types/types_db';
 import { Job as MergeJob } from '@/types/merge';
 import Splash from "@/components/Bot/Splash";
+import { BOT_READY_TIMEOUT } from '@/utils/rtvi.config';
+import { defaultConfig } from '@/utils/rtvi.config';
+import { defaultServices } from '@/utils/rtvi.config';
 
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
@@ -26,7 +29,7 @@ export default function Bot(botProps: BotProps) {
   const voiceClientRef = useRef<RTVIClient | null>(null);
   const [transportState, setTransportState] = useState<TransportState>('disconnected');
   const [showSplash, setShowSplash] = useState(true);
-
+  const [transcript, setTranscript] = useState<TranscriptData[]>([]);
 
   const { job, company, jobInterviewConfig } = botProps;
 
@@ -40,52 +43,20 @@ export default function Bot(botProps: BotProps) {
     }
 
     const dailyTransport = new DailyTransport();
+  
     const rtviClient = new RTVIClient({
-      transport: dailyTransport as any, // Type assertion to fix transport type error
+      transport: dailyTransport as any,
       params: {
         baseUrl: "/api/bot",
-        services: {
-          stt: "deepgram",
-          llm: "together", 
-          tts: "cartesia"
+        requestData: {
+          services: defaultServices,
+          config: defaultConfig,
         },
-        config: [
-          {
-            service: "tts",
-            options: [
-              { 
-                name: "voice", 
-                value: "79a125e8-cd45-4c13-8a67-188112f4dd22" 
-              }
-            ]
-          },
-          {
-            service: "llm",
-            options: [
-              { 
-                name: "model", 
-                value: "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo" 
-              },
-              {
-                name: "messages",
-                value: [
-                  {
-                    role: "system",
-                    content: `You are an AI interviewer conducting an interview for the ${job?.name || ''} position at ${company?.name || ''}. 
-                    Assess the candidate's qualifications and experience professionally.
-                    Keep responses clear and concise. Avoid special characters except '!' or '?'.`
-                  }
-                ]
-              }
-            ]
-          }
-        ]
       },
-      enableMic: false,
+      timeout: BOT_READY_TIMEOUT,
+      enableMic: true,
       enableCam: true,
-      timeout: 15000,
     });
-
 
     const llmHelper = new LLMHelper({});
     rtviClient.registerHelper("llm", llmHelper);
@@ -94,7 +65,6 @@ export default function Bot(botProps: BotProps) {
 
     console.log("[EVENT] Bot created");
 
-    // rtviClient.initDevices();
 
     rtviClient.on(RTVIEvent.TransportStateChanged, (state: TransportState) => {
       console.log("[EVENT] Transport state:", state);
@@ -106,6 +76,47 @@ export default function Bot(botProps: BotProps) {
       }
     });
 
+
+    rtviClient.on(RTVIEvent.BotStartedSpeaking, () => {
+      console.log("[EVENT] Bot started speaking");
+    });
+
+    rtviClient.on(RTVIEvent.BotStoppedSpeaking, () => {
+      console.log("[EVENT] Bot stopped speaking");
+    });
+
+    rtviClient.on(RTVIEvent.BotTranscript, (transcript: TranscriptData) => {
+      console.log("[EVENT] Bot transcript:", transcript);
+      setTranscript(prev => [...prev, transcript]);
+    });
+
+    rtviClient.on(RTVIEvent.UserTranscript, (transcript: TranscriptData) => {
+      console.log("[EVENT] User transcript:", transcript);
+      setTranscript(prev => [...prev, transcript]);
+    });
+
+    
+    rtviClient.on(RTVIEvent.MessageError, (message: RTVIMessage) => {
+      console.error("[EVENT] Message error:", message);
+    });
+
+    rtviClient.on(RTVIEvent.Error, (message: RTVIMessage) => {
+      console.error("[EVENT] Bot error:", message);
+    });
+
+    rtviClient.on(RTVIEvent.ParticipantConnected, (participant: Participant) => {
+      console.log("[EVENT] Participant connected:", participant);
+      // Greet the user when the bot joins
+      if (participant.type === 'bot') {
+        const llmHelper = rtviClient.getHelper("llm") as LLMHelper;
+        llmHelper.setContext({
+          messages: [{
+            role: "system", 
+            content: "You are an AI interviewer. Briefly introduce yourself and let the candidate know you'll be conducting their interview today. Keep it professional but friendly. Avoid special characters except ! or ?."
+          }]
+        });
+      }
+    });
   
   }, [ botProps, isUserReady]);
 
@@ -117,7 +128,7 @@ export default function Bot(botProps: BotProps) {
 
   return (
     <RTVIClientProvider client={voiceClientRef.current!}>
-      <App {...botProps}  />
+      <App {...botProps} transcript={transcript} />
       <RTVIClientAudio />
     </RTVIClientProvider>
   );

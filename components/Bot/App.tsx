@@ -7,8 +7,9 @@ import VoiceInterviewSession from '@/components/Bot/VideoInterviewSession';
 import { Alert } from '@/components/ui/alert';
 import { Tables } from '@/types/types_db';
 import { Job as MergeJob } from '@/types/merge';
-import { RTVIError, RTVIEvent, RTVIMessage } from 'realtime-ai';
-import { Configure } from './Setup/Configure';
+import { LLMHelper, RTVIError, RTVIEvent, RTVIMessage } from 'realtime-ai';
+// import { Configure } from './Setup/Configure';
+import Configure from './Setup';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '../ui/card';
 import { Button } from '../ui/button';
 import { Ear, Loader2 } from 'lucide-react';
@@ -26,8 +27,10 @@ interface BotProps {
   job: Job;
   company: Company;
   mergeJob: MergeJob;
+  transcript: TranscriptData[];
+  // transcript: { speaker: string; text: string }[];
 }
-
+import { TranscriptData } from 'realtime-ai';
 const status_text = {
   idle: "Initializing...",
   initialized: "Start",
@@ -35,7 +38,7 @@ const status_text = {
   connecting: "Connecting...",
 };
 
-export default function App({ bot, jobInterviewConfig, companyContext, job, company, mergeJob }: BotProps) {
+export default function App({ bot, jobInterviewConfig, companyContext, job, company, mergeJob, transcript }: BotProps) {
   const voiceClient = useRTVIClient()!;
   const { startRecording, stopRecording } = useRecording();
   const transportState = useRTVIClientTransportState();
@@ -80,28 +83,47 @@ export default function App({ bot, jobInterviewConfig, companyContext, job, comp
     }
   }, [transportState]);
 
+
+function promptBot() {
+  const llmHelper = voiceClient.getHelper("llm") as LLMHelper;
+  console.log("Prompting Bot");
+  llmHelper.setContext({
+    messages: [{
+      role: "system",
+      content: `You are an AI interviewer conducting an interview for the ${job?.name || ''} position at ${company?.name || ''}.
+      
+      Company Context:
+      ${companyContext?.description || 'No company context provided'}
+
+      Job Requirements:
+      ${jobInterviewConfig?.requirements || 'No specific requirements provided'}
+
+      Interview Instructions:
+      ${jobInterviewConfig?.instructions || 'Assess the candidate\'s qualifications and experience professionally.'}
+
+      Keep responses clear and concise. Avoid special characters except '!' or '?'.`
+    }]
+  });
+}
+
   async function start() {
     if (!voiceClient) return;
 
     // Join the session
     try {
-      // Disable the mic until the bot has joined
-      // to avoid interrupting the bot's welcome message
-      voiceClient.enableMic(false);
       await voiceClient.connect();
+      promptBot();
+      startRecording();
     } catch (e) {
-      setError((e as RTVIError).message || "Unknown error occured");
+      setError((e as RTVIError).message || "Unknown error occurred");
       voiceClient.disconnect();
     }
   }
 
   async function leave() {
     await voiceClient.disconnect();
+    stopRecording();
   }
-
-  /**
-   * UI States
-   */
 
   // Error: show full screen message
   if (error) {
@@ -112,12 +134,6 @@ export default function App({ bot, jobInterviewConfig, companyContext, job, comp
     );
   }
 
-  const handleStartAudioOff = () => {
-    setStartAudioOff(prev => !prev);
-  };
-
-  
-
   if (appState === 'connected') {
     return (
       <VoiceInterviewSession
@@ -125,6 +141,7 @@ export default function App({ bot, jobInterviewConfig, companyContext, job, comp
         job={mergeJob}
         company={company}
         startAudioOff={startAudioOff}
+        transcript={transcript}
       />
     );
   }
@@ -141,22 +158,8 @@ export default function App({ bot, jobInterviewConfig, companyContext, job, comp
           <Ear className="size-7 md:size-5 text-primary-400" />
           Works best in a quiet environment with a good internet connection.
         </div>
-        <Configure
-          state={transportState}
-          startAudioOff={startAudioOff}
-          handleStartAudioOff={handleStartAudioOff}
-        />
+        <Configure onStartInterview={start} />
       </CardContent>
-      <CardFooter>
-        <Button 
-          onClick={start}
-          disabled={!isReady}
-          className="w-full"
-        >
-          {!isReady && <Loader2 className="animate-spin mr-2" />}
-          {status_text[transportState as keyof typeof status_text]}
-        </Button>
-      </CardFooter>
     </Card>
   );
 }
