@@ -1,7 +1,7 @@
-import { Book, Info } from "lucide-react";
 import React from "react";
 import { Tables } from "@/types/types_db";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 
 type SplashProps = {
   handleReady: () => void;
@@ -11,9 +11,11 @@ type SplashProps = {
 
 export const Splash: React.FC<SplashProps> = ({ handleReady, company, job }) => {
   return (
-    <div className="w-full max-w-md mx-auto mt-8 p-6 border rounded-lg shadow-sm">
-      <h1 className="text-2xl font-bold mb-4">Welcome to your AI Interview</h1>
-      <div className="space-y-4">
+    <Card className="w-full max-w-md mx-auto mt-8 bg-foreground border border-border p-5">
+      <CardHeader>
+        <CardTitle>Welcome to your AI Interview</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
         <p className="text-gray-600">
           You are about to begin an AI-powered interview with {company?.name}. This interview is conducted by Talentora's advanced AI interviewer, designed to assess your qualifications for the {job?.name} position.
         </p>
@@ -28,14 +30,16 @@ export const Splash: React.FC<SplashProps> = ({ handleReady, company, job }) => 
           <li>Check your camera and microphone are working</li>
           <li>Speak clearly and take your time with responses</li>
         </ul>
-      </div>
-      <Button 
-        onClick={handleReady}
-        className="w-full mt-6 px-4 py-3 bg-primary-dark text-white rounded-lg hover:bg-accent font-medium"
-      >
-        Start Interview
-      </Button>
-    </div>
+      </CardContent>
+      <CardFooter>
+        <Button 
+          onClick={handleReady}
+          className="w-full px-4 py-3 bg-primary-dark text-white rounded-lg hover:bg-accent font-medium"
+        >
+          Start Interview
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 
