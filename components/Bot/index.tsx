@@ -28,7 +28,7 @@ interface BotProps {
   job: Job;
   company: Company;
   mergeJob: MergeJob;
-  applicationData: MergeCandidate;
+  // applicationData: MergeCandidate;
 }
 
 export default function Bot(botProps: BotProps) {
@@ -41,7 +41,8 @@ export default function Bot(botProps: BotProps) {
     }
 
     const voiceClient = new DailyVoiceClient({
-      baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
+      // baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
+      baseUrl: '/api/bot',
       services: defaultServices,
       config: defaultConfig,
       timeout: BOT_READY_TIMEOUT,

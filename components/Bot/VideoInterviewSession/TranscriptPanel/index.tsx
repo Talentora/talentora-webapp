@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -7,13 +7,21 @@ interface TranscriptPanelProps {
 }
 
 export default function TranscriptPanel({ transcript }: TranscriptPanelProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [transcript]);
+
   return (
-    <div className="bg-white rounded-lg shadow-lg flex flex-col h-full">
+    <div className="bg-white rounded-lg shadow-lg flex flex-col overflow-hidden h-full">
       <h3 className="p-4 text-lg font-semibold text-gray-800 border-b">
         Transcript
       </h3>
-      <ScrollArea className="flex-grow overflow-auto">
-        <div className="space-y-4 p-4">
+      <ScrollArea className="flex-grow" style={{ height: '100%' }}>
+        <div className="space-y-4 p-4" ref={scrollRef}>
           {transcript.map((entry, index) => (
             <div key={index} className="flex items-start space-x-2">
               <Avatar>

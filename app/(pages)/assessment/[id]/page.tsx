@@ -120,9 +120,23 @@ export default function Assessment({
   return (
     <div className="flex flex-col items-center min-h-screen">
       {isLoading ? (
-        <div className="flex flex-col items-center">
-          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-2">Fetching your data...</p>
+        <div className="flex flex-col items-center justify-center min-h-[300px] p-8">
+          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mb-6"></div>
+          <div className="animate-fade-in">
+            <p className="text-xl font-medium text-primary-700 text-center animate-pulse">
+              {[
+                "Warming up the interview bot...",
+                "Practicing firm handshakes...", 
+                "Ironing the virtual suit...",
+                "Rehearsing professional small talk...",
+                "Brewing coffee for the interviewer...",
+                "Polishing tough questions...",
+                "Adjusting the virtual tie...",
+                "Setting up the perfect lighting..."
+              ][Math.floor((Date.now() / 2000) % 8)]}
+            </p>
+            <p className="mt-2 text-sm text-gray-500 text-center">Please wait while we prepare your interview</p>
+          </div>
         </div>
       ) : error ? (
         <div className="text-red-500 text-center">
@@ -131,7 +145,7 @@ export default function Assessment({
         </div>
       ) : (
         <>
-          {/* {botProps && <Bot {...botProps} />} */}
+          {botProps && <Bot {...botProps} />}
 
           <div className="space-y-6 w-full max-w-4xl p-6">
             <button
