@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Mic, Webcam } from 'lucide-react';
-import { useVoiceClientMediaDevices } from 'realtime-ai-react';
+import { useVoiceClient, useVoiceClientMediaDevices } from 'realtime-ai-react';
 
 import {
   Select,
@@ -27,6 +27,7 @@ interface DeviceSelectProps {}
  * @returns {JSX.Element} The rendered DeviceSelect component
  */
 export const DeviceSelect: React.FC<DeviceSelectProps> = () => {
+  const voiceClient = useVoiceClient()!;
   const {
     availableMics,
     selectedMic,
@@ -42,6 +43,8 @@ export const DeviceSelect: React.FC<DeviceSelectProps> = () => {
     updateCam(selectedCam?.deviceId);
   }, [updateMic, selectedMic, updateCam, selectedCam]);
 
+  console.log('availableMics', availableMics);
+  console.log('availableCams', availableCams);
   return (
     <div className="flex flex-col flex-wrap gap-4">
       {/* Microphone selection */}

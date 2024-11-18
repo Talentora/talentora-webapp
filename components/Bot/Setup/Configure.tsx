@@ -30,7 +30,6 @@ export const Configure: React.FC<ConfigureProps> = React.memo(
     const modalRef = useRef<HTMLDialogElement>(null);
     const voiceClient = useVoiceClient();
 
-    const [context, setContext] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -40,9 +39,6 @@ export const Configure: React.FC<ConfigureProps> = React.memo(
           try {
             setIsLoading(true);
             setError(null);
-            const llmHelper = voiceClient.getHelper('llm') as LLMHelper;
-            const ctx = await llmHelper.getContext();
-            setContext(JSON.stringify(ctx, null, 2));
           } catch (err) {
             console.error('Error fetching context:', err);
             setError('Failed to fetch context. The bot may not be ready yet.');

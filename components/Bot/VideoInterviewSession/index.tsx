@@ -1,8 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { TransportState, VoiceEvent, Transcript } from 'realtime-ai';
-import { useVoiceClient, useVoiceClientEvent } from 'realtime-ai-react';
+import { TransportState, TranscriptData, RTVIEvent } from 'realtime-ai';
+import {
+  useVoiceClient,
+  useVoiceClientEvent,
+  useVoiceClientTransportState
+} from 'realtime-ai-react';
 
 import InterviewHeader from './InterviewHeader';
 import AIInterviewer from './AIInterviewer';
@@ -29,37 +33,40 @@ export default function VoiceInterviewSession({
   company
 }: VoiceInterviewSessionProps) {
   const voiceClient = useVoiceClient()!;
-  const [hasStarted, setHasStarted] = useState<boolean>(false);
+  const transportState = useVoiceClientTransportState();
   const [muted, setMuted] = useState(startAudioOff);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(!startAudioOff);
-  const [transcript, setTranscript] = useState<
+  const [transcriptData, setTranscriptData] = useState<
     { speaker: string; text: string }[]
   >([]);
 
-  const handleBotStoppedSpeaking = useCallback(() => {
-    if (!hasStarted) {
-      setHasStarted(true);
-    }
-  }, [hasStarted]);
+  const VoiceClient = useVoiceClient()!;
 
-  useVoiceClientEvent(VoiceEvent.BotStoppedSpeaking, handleBotStoppedSpeaking);
+  VoiceClient.on(RTVIEvent.BotStoppedSpeaking, () => {
+    console.log("[EVENT] Bot stopped speaking");
+  });
 
-  useEffect(() => {
-    setHasStarted(false);
-  }, []);
+  VoiceClient.on(RTVIEvent.BotTranscript, (text: string) => {
+    setTranscriptData((prev) => [...prev, { speaker: 'AI', text: text.trim() }]);
+  });
 
-  useEffect(() => {
-    if (hasStarted && !startAudioOff) {
-      voiceClient.enableMic(true);
-    }
-  }, [voiceClient, startAudioOff, hasStarted]);
+  VoiceClient.on(RTVIEvent.UserTranscript, (data: TranscriptData) => {
+    setTranscriptData((prev) => [
+      ...prev,
+      { speaker: 'You', text: data.text.trim() }
+    ]);
+  });
+
+
+
 
   useEffect(() => {
     if (state === 'error') {
       onLeave();
     }
   }, [state, onLeave]);
+
 
   const handleMicToggle = () => {
     voiceClient.enableMic(!muted);
@@ -73,22 +80,7 @@ export default function VoiceInterviewSession({
 
   const handleAudioToggle = () => {
     setIsAudioEnabled(!isAudioEnabled);
-    // Implement audio toggle logic here
   };
-
-  const handleBotTranscript = useCallback((text: string) => {
-    setTranscript((prev) => [...prev, { speaker: 'AI', text: text.trim() }]);
-  }, []);
-
-  const handleUserTranscript = useCallback((data: Transcript) => {
-    setTranscript((prev) => [
-      ...prev,
-      { speaker: 'You', text: data.text.trim() }
-    ]);
-  }, []);
-
-  useVoiceClientEvent(VoiceEvent.BotTranscript, handleBotTranscript);
-  useVoiceClientEvent(VoiceEvent.UserTranscript, handleUserTranscript);
 
   return (
     <div className="flex flex-col h-screen">
@@ -97,10 +89,10 @@ export default function VoiceInterviewSession({
       <main className="flex-grow grid grid-cols-3 gap-4 p-4 h-3/4">
         <div className="col-span-1 flex flex-col gap-4">
           <div className="flex-grow">
-            <AIInterviewer isReady={state === 'ready'} />
+            <AIInterviewer isReady={transportState === 'ready'} />
           </div>
           <div className="h-64">
-            <TranscriptPanel transcript={transcript} />
+            <TranscriptPanel transcript={transcriptData} />
           </div>
         </div>
         <div className="col-span-2">
