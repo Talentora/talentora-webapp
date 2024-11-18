@@ -1,18 +1,21 @@
 import React from 'react';
-import { VoiceClientVideo } from 'realtime-ai-react';
+import { RTVIClientVideo } from 'realtime-ai-react';
 
-interface CandidateVideoProps {
+
+export default function CandidateVideo({
+  isCameraOn,
+}: {
   isCameraOn: boolean;
-}
-
-export default function CandidateVideo({ isCameraOn }: CandidateVideoProps) {
+}) {
   return (
     <div className="relative bg-black rounded-lg overflow-hidden h-full">
+      <h1 className="text-white">Is Camera On: {isCameraOn ? 'Yes' : 'No'}</h1>
       {isCameraOn ? (
-        <VoiceClientVideo
+        <RTVIClientVideo
           participant="local"
-          mirror={true}
           className="h-full w-full object-cover"
+          // fit="cover"
+          mirror
         />
       ) : (
         <div className="flex h-full items-center justify-center bg-gray-800 text-white">

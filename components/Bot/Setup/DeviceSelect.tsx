@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/select';
 
 import { AudioIndicatorBar } from './AudioIndicator';
+import { VoiceVisualizer } from 'realtime-ai-react';
 /**
  * Props for the DeviceSelect component.
  * Currently empty as the component doesn't accept any props.
@@ -39,12 +40,16 @@ export const DeviceSelect: React.FC<DeviceSelectProps> = () => {
 
   // Update selected devices when they change
   useEffect(() => {
+;
+    if (selectedMic) {
+    } else {
+      console.warn("No microphone selected");
+    }
     updateMic(selectedMic?.deviceId);
     updateCam(selectedCam?.deviceId);
   }, [updateMic, selectedMic, updateCam, selectedCam]);
 
-  console.log('availableMics', availableMics);
-  console.log('availableCams', availableCams);
+
   return (
     <div className="flex flex-col flex-wrap gap-4">
       {/* Microphone selection */}
@@ -66,7 +71,6 @@ export const DeviceSelect: React.FC<DeviceSelectProps> = () => {
         </SelectContent>
       </Select>
       <AudioIndicatorBar />
-
       {/* Camera selection */}
       <Select onValueChange={(value) => updateCam(value)}>
         <SelectTrigger>
