@@ -835,3 +835,70 @@ export const getJob = async (jobId: string): Promise<any | null> => {
     .single();
   return data || null;
 };
+
+
+/**
+ * Gets the account token for a company associated with an application through its job.
+ * 
+ * @param applicationId - The ID of the application
+ * @returns The account token string or null if not found
+ */
+export const getAccountTokenFromApplication = async (
+  applicationId: string
+): Promise<{token: string | null,company: any | null}> => {
+  try {
+    const supabase = createClient();
+    
+    // Join applications -> jobs -> companies to get the account token
+    // First get the application to get the job_id
+    const { data: applicationData, error: applicationError } = await supabase
+      .from('applications')
+      .select('job_id')
+      .eq('id', applicationId)
+      .single();
+
+    console.log("applicationData",applicationData)
+
+    if (applicationError) {
+      console.error('Error fetching application:', applicationError);
+      return {token: null, company: null};
+    }
+
+    // Then get the job to get the company_id
+    const { data: jobData, error: jobError } = await supabase
+      .from('jobs')
+      .select('company_id, merge_id')
+      .eq('merge_id', applicationData.job_id)
+      .single();
+
+    console.log("jobData",jobData)
+
+    if (jobError) {
+      console.error('Error fetching job:', jobError);
+      return {token: null, company: null};
+    }
+
+    // Finally get the company details
+    const { data: companyData, error: companyError } = await supabase
+      .from('companies')
+      .select('id, name, merge_account_token')
+      .eq('id', jobData.company_id)
+      .single();
+
+    console.log("companyData",companyData)
+
+    if (companyError) {
+      console.error('Error fetching company:', companyError);
+      return {token: null, company: null};
+    }
+
+    const account_token = companyData.merge_account_token
+    return {token: account_token, company: companyData};
+
+  } catch (err) {
+    console.error('Unexpected error fetching account token:', err);
+    return {token: null, company: null};
+  }
+};
+
+

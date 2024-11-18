@@ -14,7 +14,8 @@ export const unprotectedRoutes = [
 
 // Add the applicant route to the unprotected routes
 const applicantRoutes = [
-  /^\/bot(\/.*)?$/ // Matches '/bot' and any subpath like '/bot/*'
+  /^\/assessment(\/.*)?$/,// Matches '/bot' and any subpath like '/bot/*'
+  /^\/api(\/.*)?$/ // Matches '/api' and any subpath like '/api/*'
 ];
 
 // Combine unprotected and applicant routes
