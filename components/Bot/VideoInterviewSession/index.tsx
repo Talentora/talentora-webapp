@@ -69,26 +69,21 @@ export default function VoiceInterviewSession({
   // const audioStream = useRTVIClientMediaTrack('bot', 'audio');
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen w-3/4">
       <InterviewHeader job={job} company={company} />
-      {/* <h1 className="text-black">Is Camera On: {isCameraOn ? 'Yes' : 'No'}</h1>
-      <h1 className="text-black">Is Mic On: {!isMuted ? 'Yes' : 'No'}</h1> */}
-
-
-      <main className="flex-grow grid grid-cols-3 gap-4 p-4 h-3/4">
-        <div className="col-span-1 flex flex-col gap-4">
-          <div className="flex-grow">
+  
+      <main className="flex-grow flex h-full gap-4 p-4">
+        <div className="flex flex-col w-1/3">
+          <div className="flex-grow flex flex-col gap-4">
             <AIInterviewer isReady={transportState === 'ready'} />
-          </div>
-          <div className="h-64">
             <TranscriptPanel transcript={transcript} />
           </div>
         </div>
-        <div className="col-span-2">
+        <div className="flex-grow w-2/3 h-full">
           <CandidateVideo isCameraOn={isCameraOn} />
         </div>
       </main>
-
+  
       <ControlPanel
         isMuted={isMuted}
         isCameraOn={isCameraOn}

@@ -1,15 +1,28 @@
 import React from 'react';
-import { RTVIClientVideo } from 'realtime-ai-react';
-
+import { RTVIClientVideo, useRTVIClient } from 'realtime-ai-react';
+import { useEffect } from 'react';
 
 export default function CandidateVideo({
   isCameraOn,
 }: {
   isCameraOn: boolean;
 }) {
+
+
+  useEffect(() => {
+    console.log("Is Camera On", isCameraOn);
+  }, [isCameraOn]);
+
+  const voiceClient = useRTVIClient();
+
+  // useEffect(() => {
+  //   // voiceClient.isCamEnabled = true;
+  //   voiceClient?.setCameraEnabled(isCameraOn);
+  // }, []);
+
   return (
-    <div className="relative bg-black rounded-lg overflow-hidden h-full">
-      <h1 className="text-white">Is Camera On: {isCameraOn ? 'Yes' : 'No'}</h1>
+    <div className="relative bg-black rounded-lg overflow-hidden">
+      {/* <h1 className="t  ext-white">Is Camera On: {isCameraOn ? 'Yes' : 'No'}</h1> */}
       {isCameraOn ? (
         <RTVIClientVideo
           participant="local"
