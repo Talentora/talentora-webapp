@@ -101,25 +101,4 @@ jobs:
           git commit -m "Update generated types based on Postgres schema" || echo "Nothing to commit"
           git pull origin ${{ github.head_ref || github.ref_name }}  # Pull the latest changes
           git push origin ${{ github.head_ref || github.ref_name }}  # Push to the correct branch
-
-  deploy-preview: # Make sure this can be deployed. Only run when on a pull request
-    runs-on: ubuntu-latest
-    needs: install-and-test
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build for preview
-        run: npm run build
-
-      - name: Start Next.js server for preview
-        run: npm run start
+          
