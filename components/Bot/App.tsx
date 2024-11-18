@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRTVIClient, useRTVIClientTransportState, useRTVIClientEvent } from 'realtime-ai-react';
 import { useRecording } from '@daily-co/daily-react';
-import VoiceInterviewSession from '@/components/Bot/VideoInterviewSession';
+import VideoInterviewSession from '@/components/Bot/VideoInterviewSession';
 import { Alert } from '@/components/ui/alert';
 import { Tables } from '@/types/types_db';
 import { Job as MergeJob } from '@/types/merge';
@@ -107,7 +107,7 @@ function promptBot() {
 }
 
   async function start() {
-    if (!voiceClient) return;
+    if (!voiceClient) return
 
     // Join the session
     try {
@@ -136,7 +136,7 @@ function promptBot() {
 
   if (appState === 'connected') {
     return (
-      <VoiceInterviewSession
+      <VideoInterviewSession
         onLeave={leave}
         job={mergeJob}
         company={company}
