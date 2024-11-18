@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { RTVIClientAudio,RTVIClientProvider } from 'realtime-ai-react';
-import { BotLLMTextData, LLMHelper, Participant, RTVIClient, RTVIEvent, RTVIMessage, TranscriptData, TransportState } from 'realtime-ai';
+import { BotLLMTextData, LLMHelper, Participant, RTVIActionRequestData, RTVIClient, RTVIEvent, RTVIMessage, TranscriptData, TransportState } from 'realtime-ai';
 import App from '@/components/Bot/App';
 import { DailyTransport } from '@daily-co/realtime-ai-daily';
 import { Tables } from '@/types/types_db';
@@ -87,12 +87,12 @@ export default function Bot(botProps: BotProps) {
 
     rtviClient.on(RTVIEvent.BotTranscript, (transcript: TranscriptData) => {
       console.log("[EVENT] Bot transcript:", transcript);
-      setTranscript(prev => [...prev, transcript]);
+      setTranscript(prev => [...prev, { ...transcript, role: 'bot' }]);
     });
 
     rtviClient.on(RTVIEvent.UserTranscript, (transcript: TranscriptData) => {
       console.log("[EVENT] User transcript:", transcript);
-      setTranscript(prev => [...prev, transcript]);
+      setTranscript(prev => [...prev, { ...transcript, role: 'user' }]); 
     });
 
     
@@ -104,17 +104,18 @@ export default function Bot(botProps: BotProps) {
       console.error("[EVENT] Bot error:", message);
     });
 
-    rtviClient.on(RTVIEvent.ParticipantConnected, (participant: Participant) => {
+    rtviClient.on(RTVIEvent.ParticipantConnected, async (participant: Participant) => {
       console.log("[EVENT] Participant connected:", participant);
       // Greet the user when the bot joins
-      if (participant.type === 'bot') {
-        const llmHelper = rtviClient.getHelper("llm") as LLMHelper;
-        llmHelper.setContext({
-          messages: [{
-            role: "system", 
-            content: "You are an AI interviewer. Briefly introduce yourself and let the candidate know you'll be conducting their interview today. Keep it professional but friendly. Avoid special characters except ! or ?."
-          }]
-        });
+      if (participant.local) {
+        const response = await rtviClient.action({
+          service: "tts",
+          action: "say", 
+          arguments: [{ 
+            name: "text",
+            value: "Hello! I'm your AI interviewer today. I'll be asking you some questions to learn more about your experience and qualifications. Let's get started!"
+          }],
+        } as RTVIActionRequestData);
       }
     });
   

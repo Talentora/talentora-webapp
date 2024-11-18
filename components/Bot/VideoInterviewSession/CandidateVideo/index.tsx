@@ -26,7 +26,7 @@ export default function CandidateVideo({
       {isCameraOn ? (
         <RTVIClientVideo
           participant="local"
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover rounded-lg"
           // fit="cover"
           mirror
         />

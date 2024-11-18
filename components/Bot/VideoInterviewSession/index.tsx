@@ -17,7 +17,7 @@ import ControlPanel from './ControlPanel';
 import { Job as MergeJob } from '@/types/merge';
 import { Tables } from '@/types/types_db';
 type Company = Tables<'companies'>;
-interface VoiceInterviewSessionProps {
+interface VideoInterviewSessionProps {
   onLeave: () => void;
   startAudioOff?: boolean;
   job: MergeJob;
@@ -25,13 +25,13 @@ interface VoiceInterviewSessionProps {
   transcript: TranscriptData[];
 }
 
-export default function VoiceInterviewSession({
+export default function VideoInterviewSession({
   onLeave,
   startAudioOff = false,
   job,
   company,
   transcript
-}: VoiceInterviewSessionProps) {
+}: VideoInterviewSessionProps) {
   const voiceClient = useRTVIClient()!;
 
   const transportState = useRTVIClientTransportState();
@@ -73,7 +73,7 @@ export default function VoiceInterviewSession({
       <InterviewHeader job={job} company={company} />
   
       <main className="flex-grow flex h-full gap-4 p-4">
-        <div className="flex flex-col w-1/3">
+        <div className="flex flex-col w-1/3 h-full">
           <div className="flex-grow flex flex-col gap-4">
             <AIInterviewer isReady={transportState === 'ready'} />
             <TranscriptPanel transcript={transcript} />
