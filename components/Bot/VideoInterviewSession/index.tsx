@@ -94,16 +94,16 @@ export default function VoiceInterviewSession({
     <div className="flex flex-col h-screen">
       <InterviewHeader job={job} company={company} />
 
-      <main className="flex-grow grid h-1/2 grid-cols-3 gap-4 p-4">
-        <div className=" h-full col-span-1 flex justify-between flex-col gap-1">
-          <div className="h-1/2">
+      <main className="flex-grow grid grid-cols-3 gap-4 p-4 h-3/4">
+        <div className="col-span-1 flex flex-col gap-4">
+          <div className="flex-grow">
             <AIInterviewer isReady={state === 'ready'} />
           </div>
-          <div className="h-1/2">
+          <div className="h-64">
             <TranscriptPanel transcript={transcript} />
           </div>
         </div>
-        <div className="col-span-2 h-full">
+        <div className="col-span-2">
           <CandidateVideo isCameraOn={isCameraOn} />
         </div>
       </main>
