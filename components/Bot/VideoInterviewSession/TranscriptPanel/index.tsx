@@ -16,16 +16,18 @@ export default function TranscriptPanel({ transcript }: TranscriptPanelProps) {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
+    console.log("Transcript", transcript);
   }, [transcript]);
 
 
   return (
-    <div className="bg-white rounded-lg shadow-lg flex flex-col overflow-hidden h-full">
+    <div className="bg-white rounded-lg shadow-lg flex flex-col overflow-hidden h-1/2">
       <h3 className="p-4 text-lg font-semibold text-gray-800 border-b">
         Transcript
       </h3>
       <ScrollArea className="flex-grow" style={{ height: '100%' }}>
         <div className="space-y-4 p-4" ref={scrollRef}>
+          
           {transcript.map((entry, index) => (
             <div key={index} className="flex items-start space-x-2">
               <Avatar>

@@ -148,6 +148,8 @@ function promptBot() {
 
   const isReady = appState === 'ready';
 
+  console.log("Voice Client", voiceClient);
+
   return (
     <Card className="animate-appear max-w-lg mx-auto mt-8">
       <CardHeader>
