@@ -58,9 +58,9 @@ export default function VideoInterviewSession({
         <InterviewHeader job={job} company={company} />
       </div>
 
-      <main className="flex basis-2/3 gap-4 p-4 overflow-hidden">
+      <main className="flex basis-2/3 gap-4 p-4 overflow-hidden m-5">
         {/* Sidebar */}
-        <div className="flex-1 flex-col h-full w-1/3">
+        <div className="flex-1 flex-col h-full w-1/3 gap-2">
           <div className="flex-1 overflow-hidden">
             <AIInterviewer isReady={transportState === 'ready'} />
           </div>
