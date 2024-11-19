@@ -6,8 +6,6 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { useApplicant } from '@/hooks/useApplicant';
-import { useSearchParams } from 'next/navigation';
 
 export default function ConclusionPage() {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
