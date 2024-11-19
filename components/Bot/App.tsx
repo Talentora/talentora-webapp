@@ -19,7 +19,7 @@ type JobInterviewConfig = Tables<'job_interview_config'>;
 type CompanyContext = Tables<'company_context'>;
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
-
+type Application = Tables<'applications'>;
 interface BotProps {
   bot: BotConfig;
   jobInterviewConfig: JobInterviewConfig;
@@ -28,9 +28,12 @@ interface BotProps {
   company: Company;
   mergeJob: MergeJob;
   transcript: TranscriptData[];
+  application: Application;
   // transcript: { speaker: string; text: string }[];
 }
 import { TranscriptData } from 'realtime-ai';
+import { createAISummary } from '@/utils/supabase/queries';
+import { useRouter } from 'next/navigation';
 const status_text = {
   idle: "Initializing...",
   initialized: "Start",
@@ -38,15 +41,32 @@ const status_text = {
   connecting: "Connecting...",
 };
 
-export default function App({ bot, jobInterviewConfig, companyContext, job, company, mergeJob, transcript }: BotProps) {
+export default function App({ bot, jobInterviewConfig, companyContext, job, company, mergeJob, transcript,application }: BotProps) {
   const voiceClient = useRTVIClient()!;
-  const { startRecording, stopRecording } = useRecording();
+  const { startRecording, stopRecording } = useRecording({
+    onRecordingStarted: (ev) => {
+      const recordingId = ev.recordingId;
+      console.log("Recording started with ID:", recordingId);
+
+      if (!recordingId) return;
+      createAISummary(applicationId, recordingId);
+    },
+    onRecordingError: (ev) => {
+      console.error("Recording error:", ev);
+    },
+    onRecordingData: (ev) => {
+      console.log("Recording data:", ev);
+    }
+  });
   const transportState = useRTVIClientTransportState();
   
   const [appState, setAppState] = useState<'idle' | 'ready' | 'connecting' | 'connected'>('idle');
   const [error, setError] = useState<string | null>(null);
   const [startAudioOff, setStartAudioOff] = useState(false);
   const mountedRef = useRef<boolean>(false);
+  const applicationId = application.id;
+
+  const router = useRouter();
 
 
   useRTVIClientEvent(
@@ -107,22 +127,28 @@ function promptBot() {
 }
 
   async function start() {
-    if (!voiceClient) return
+    if (!voiceClient) return;
 
     // Join the session
     try {
-      await voiceClient.connect();
-      promptBot();
-      startRecording();
+        await voiceClient.connect();
+        await voiceClient.enableCam(true);
+        await voiceClient.enableMic(true);
+        promptBot();
+        
+        // Update the useRecording hook to capture the recording ID
+        startRecording();
     } catch (e) {
-      setError((e as RTVIError).message || "Unknown error occurred");
-      voiceClient.disconnect();
+        setError((e as RTVIError).message || "Unknown error occurred");
+        voiceClient.disconnect();
     }
   }
 
   async function leave() {
     await voiceClient.disconnect();
     stopRecording();
+    router.push('/assessment/conclusion');
+
   }
 
   // Error: show full screen message

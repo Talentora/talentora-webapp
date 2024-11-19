@@ -22,7 +22,10 @@ interface BotProps {
   job: Job;
   company: Company;
   mergeJob: MergeJob;
+  application: Tables<'applications'>;
 }
+
+import { useRouter } from 'next/navigation';
 
 export default function Bot(botProps: BotProps) {
   const [isUserReady, setIsUserReady] = useState(false);
@@ -31,11 +34,13 @@ export default function Bot(botProps: BotProps) {
   const [showSplash, setShowSplash] = useState(true);
   const [transcript, setTranscript] = useState<TranscriptData[]>([]);
 
-  const { job, company, jobInterviewConfig } = botProps;
+  const { job, company, jobInterviewConfig, application} = botProps;
 
   if (!job || !company || !jobInterviewConfig) {
     return null;
   }
+
+  const router = useRouter();
 
   useEffect(() => {
     if (!showSplash || voiceClientRef.current) {
@@ -56,6 +61,7 @@ export default function Bot(botProps: BotProps) {
       timeout: BOT_READY_TIMEOUT,
       enableMic: true,
       enableCam: true,
+      
     });
 
     const llmHelper = new LLMHelper({});
@@ -95,13 +101,18 @@ export default function Bot(botProps: BotProps) {
       setTranscript(prev => [...prev, { ...transcript, role: 'user' }]); 
     });
 
-    
+
     rtviClient.on(RTVIEvent.MessageError, (message: RTVIMessage) => {
       console.error("[EVENT] Message error:", message);
     });
 
     rtviClient.on(RTVIEvent.Error, (message: RTVIMessage) => {
       console.error("[EVENT] Bot error:", message);
+    });
+
+    rtviClient.on("disconnected", () => {
+      console.log("[EVENT] Bot disconnected");
+      router.push('/assessment/conclusion');
     });
 
     rtviClient.on(RTVIEvent.ParticipantConnected, async (participant: Participant) => {

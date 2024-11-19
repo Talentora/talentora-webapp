@@ -15,7 +15,7 @@ export default function AIInterviewer({ isReady }: AIInterviewerProps) {
 
 
   return (
-    <div className="bg-gradient-to-b from-blue-500 to-purple-600 rounded-lg h-1/2 flex items-center justify-center">
+    <div className="bg-gradient-to-b from-blue-500 to-purple-600 rounded-lg flex items-center justify-center h-full">
       <div className="flex flex-col items-center justify-center text-white">
         {!isReady ? (
           <div className="flex items-center gap-2">
@@ -24,11 +24,7 @@ export default function AIInterviewer({ isReady }: AIInterviewerProps) {
           </div>
         ) : (
           <>
-            {/* {audioStream ? (
-              <WaveForm audioStream={audioStream} />
-            ) : (
-              <WaveForm audioStream={new MediaStream()} /> // Stationary waveform when no audio
-            )} */}
+            
             <VoiceVisualizer participantType="bot" barColor='white'/>
           </>
         )}
