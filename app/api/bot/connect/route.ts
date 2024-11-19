@@ -210,6 +210,18 @@ export async function POST(request: Request) {
     // },
     config: [...config],
     rtvi_client_version,
+    recording_settings: {
+      type: 'cloud',
+      // type: 'raw-tracks', // or 'cloud' if you want to use Daily's cloud
+      // recordings_bucket: {
+      //   // Assuming you have a mechanism to handle this in your backend
+      //   bucket_name: "Interviews",
+      //   bucket_region: "us-east-1", // Not typically needed for Supabase
+      //   allow_api_access: true,
+      //   allow_streaming_from_bucket: true,
+      // }
+    },
+  
     
   };
 

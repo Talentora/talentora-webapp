@@ -41,6 +41,9 @@ export const Splash: React.FC<SplashProps> = ({ handleReady, company, job }) => 
           <div className="space-y-4">
             <div className="max-h-60 overflow-y-auto border rounded-lg p-4">
               <h2 className="font-medium mb-4">Terms and Conditions</h2>
+              <p className="text-red-500 text-sm mb-2">
+                Note: This is not a legally binding terms and conditions document. It is for informational purposes only.
+              </p>
               <p className="text-gray-600">
                 By proceeding with this AI interview, you acknowledge and agree to the following:
               </p>
