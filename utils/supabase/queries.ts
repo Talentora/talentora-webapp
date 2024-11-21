@@ -826,6 +826,8 @@ export const getJobInterviewConfig = async (
   }
 };
 
+
+
 export const getJob = async (jobId: string): Promise<any | null> => {
   const supabase = createClient();
   const { data, error } = await supabase

@@ -1,13 +1,12 @@
 'use client';
 
-import { TrendingUp } from 'lucide-react';
+import { useMemo } from 'react';
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
@@ -19,27 +18,41 @@ import {
   ChartLegendContent,
   ChartLegend
 } from '@/components/ui/chart';
-const chartData = [
-  { month: 'January', desktop: 186, mobile: 80 },
-  { month: 'February', desktop: 305, mobile: 200 },
-  { month: 'March', desktop: 237, mobile: 120 },
-  { month: 'April', desktop: 73, mobile: 190 },
-  { month: 'May', desktop: 209, mobile: 130 },
-  { month: 'June', desktop: 214, mobile: 140 }
-];
+import { ApplicantCandidate } from '@/types/merge';
+
+interface ApplicationsGraphProps {
+  applicants?: ApplicantCandidate[];
+}
 
 const chartConfig = {
-  desktop: {
-    label: 'Desktop',
+  applications: {
+    label: 'Applications',
     color: 'blue'
-  },
-  mobile: {
-    label: 'Mobile',
-    color: 'red'
   }
 } satisfies ChartConfig;
 
-export function ApplicationsGraph() {
+export function ApplicationsGraph({ applicants = [] }: ApplicationsGraphProps) {
+  const chartData = useMemo(() => {
+    const monthlyData = new Map();
+    
+    applicants.forEach(applicant => {
+      const date = new Date(applicant.created_at);
+      const monthYear = `${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
+      
+      const count = monthlyData.get(monthYear) || 0;
+      monthlyData.set(monthYear, count + 1);
+    });
+
+    // Convert to array and sort by date
+    return Array.from(monthlyData.entries())
+      .map(([month, applications]) => ({
+        month,
+        applications
+      }))
+      .sort((a, b) => new Date(a.month) - new Date(b.month))
+      .slice(-6); // Last 6 months
+  }, [applicants]);
+
   return (
     <Card>
       <CardHeader>
@@ -72,19 +85,11 @@ export function ApplicationsGraph() {
               content={<ChartTooltipContent indicator="dot" />}
             />
             <Area
-              dataKey="mobile"
+              dataKey="applications"
               type="natural"
-              fill="var(--color-mobile)"
+              fill="var(--color-applications)"
               fillOpacity={0.4}
-              stroke="var(--color-mobile)"
-              stackId="a"
-            />
-            <Area
-              dataKey="desktop"
-              type="natural"
-              fill="var(--color-desktop)"
-              fillOpacity={0.4}
-              stroke="var(--color-desktop)"
+              stroke="var(--color-applications)"
               stackId="a"
             />
           </AreaChart>
