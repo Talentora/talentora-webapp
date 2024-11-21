@@ -93,13 +93,7 @@ export async function GET(request: Request) {
         }
 
         return {
-          application: {
-            id: application.id,
-            created_at: application.created_at,
-            status: application.status,
-            current_stage: application.current_stage,
-            job_id: application.job
-          },
+          application: application,
           candidate: candidateData,
           interviewStages: stageData,
           job: jobData
