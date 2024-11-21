@@ -6,7 +6,7 @@ import { JobTable } from './job-table';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getJobInterviewConfig } from '@/utils/supabase/queries';
-type SortField = 'name' | 'status' | 'created_at' | 'opened_at';
+type SortField = 'name' | 'status' | 'created_at' | 'opened_at' | 'configured' | 'departments' | 'offices';
 import { JobFilters, JobFilters as JobFiltersType } from './JobFilters';
 import { Tables } from '@/types/types_db';
 import {
@@ -107,7 +107,7 @@ export default function JobListPage() {
 
   // Memoize the jobs to prevent unnecessary re-renders
   const filteredJobs = useMemo(() => {
-    return jobs.filter(job => {
+    let filtered = jobs.filter(job => {
       // Search filter
       const matchesSearch = job.name.toLowerCase().includes(searchTerm.toLowerCase());
       
@@ -137,7 +137,37 @@ export default function JobListPage() {
 
       return matchesSearch && matchesStatus && matchesConfig && matchesDepartment;
     });
-  }, [jobs, searchTerm, filters]);
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      let comparison = 0;
+      switch (sortField) {
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case 'status':
+          comparison = a.status.localeCompare(b.status);
+          break;
+        case 'created_at':
+          comparison = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          break;
+        case 'configured':
+          comparison = (a.isConfigured ? 1 : 0) - (b.isConfigured ? 1 : 0);
+          break;
+        case 'departments':
+          comparison = (a.departments?.[0]?.name || '').localeCompare(b.departments?.[0]?.name || '');
+          break;
+        case 'offices':
+          comparison = (a.offices?.[0]?.name || '').localeCompare(b.offices?.[0]?.name || '');
+          break;
+        default:
+          comparison = 0;
+      }
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+
+    return filtered;
+  }, [jobs, searchTerm, filters, sortField, sortDirection]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
@@ -216,7 +246,7 @@ export default function JobListPage() {
             )}
           </div>
         </>
-      {/* )} */}
+      {/* ) */}
     </div>
   );
 }
