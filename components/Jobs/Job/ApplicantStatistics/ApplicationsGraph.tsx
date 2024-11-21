@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo } from 'react';
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
+import * as React from 'react';
+import { Bar, BarChart } from "recharts"
 
 import {
   Card,
@@ -14,9 +14,7 @@ import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
-  ChartLegendContent,
-  ChartLegend
+  ChartTooltipContent
 } from '@/components/ui/chart';
 import { ApplicantCandidate } from '@/types/merge';
 
@@ -25,74 +23,85 @@ interface ApplicationsGraphProps {
 }
 
 const chartConfig = {
+  views: {
+    label: 'Applications',
+  },
   applications: {
     label: 'Applications',
-    color: 'blue'
+    color: 'hsl(var(--chart-1))',
   }
 } satisfies ChartConfig;
 
 export function ApplicationsGraph({ applicants = [] }: ApplicationsGraphProps) {
-  const chartData = useMemo(() => {
-    const monthlyData = new Map();
+  const chartData = React.useMemo(() => {
+    const dailyData = new Map();
     
     applicants.forEach(applicant => {
-      const date = new Date(applicant.created_at);
-      const monthYear = `${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
+      // Handle potential invalid dates by checking if created_at exists
+      if (!applicant.created_at) return;
+
+      // Parse date and validate
+      const timestamp = Date.parse(applicant.created_at);
+      if (isNaN(timestamp)) return;
       
-      const count = monthlyData.get(monthYear) || 0;
-      monthlyData.set(monthYear, count + 1);
+      const date = new Date(timestamp);
+      const dateStr = date.toISOString().split('T')[0];
+      
+      const count = dailyData.get(dateStr) || 0;
+      dailyData.set(dateStr, count + 1);
     });
 
     // Convert to array and sort by date
-    return Array.from(monthlyData.entries())
-      .map(([month, applications]) => ({
-        month,
+    return Array.from(dailyData.entries())
+      .map(([date, applications]) => ({
+        date,
         applications
       }))
-      .sort((a, b) => new Date(a.month) - new Date(b.month))
-      .slice(-6); // Last 6 months
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .slice(-90); // Last 90 days
   }, [applicants]);
+
+  const total = React.useMemo(
+    () => ({
+      applications: chartData.reduce((acc, curr) => acc + curr.applications, 0)
+    }),
+    [chartData]
+  );
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Applications over Time</CardTitle>
-        <CardDescription>
-          Showing total applications for the last 6 months
-        </CardDescription>
+      <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
+        <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
+          <CardTitle>Applications over Time</CardTitle>
+          <CardDescription>
+            Showing total applications for the last 90 days
+          </CardDescription>
+        </div>
+        <div className="flex">
+          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left sm:border-l sm:border-t-0 sm:px-8 sm:py-6">
+            <span className="text-xs text-muted-foreground">
+              Total Applications
+            </span>
+            <span className="text-lg font-bold leading-none sm:text-3xl">
+              {total.applications.toLocaleString()}
+            </span>
+          </div>
+        </div>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig}>
-          <AreaChart
-            accessibilityLayer
+      <CardContent className="px-2 sm:p-6">
+        <ChartContainer
+          config={chartConfig}
+          className="aspect-auto h-[250px] w-full"
+        >
+          <BarChart
             data={chartData}
-            margin={{
-              left: 12,
-              right: 12
-            }}
-          >
-            <ChartLegend content={<ChartLegendContent />} />
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dot" />}
-            />
-            <Area
-              dataKey="applications"
-              type="natural"
-              fill="var(--color-applications)"
-              fillOpacity={0.4}
-              stroke="var(--color-applications)"
-              stackId="a"
-            />
-          </AreaChart>
+            index="date"
+            categories={['applications']}
+            colors={['blue']}
+            valueFormatter={(value: number) => value.toString()}
+            showLegend={false}
+            yAxisWidth={48}
+          />
         </ChartContainer>
       </CardContent>
     </Card>
