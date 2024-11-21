@@ -1,29 +1,38 @@
-import { Job } from '@/types/merge';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { EnrichedJob } from './JobList';
+import { Badge } from '@/components/ui/badge';
 
-export function JobRow({ job }: { job: Job }) {
+export function JobRow({ job }: { job: EnrichedJob }) {
   return (
     <TableRow>
       <TableCell>{job.name}</TableCell>
       <TableCell>
-        {job.status
-          ? job.status.charAt(0).toUpperCase() +
-            job.status.slice(1).toLowerCase()
-          : ''}
+        <Badge variant={job.status.toLowerCase() === 'open' ? 'success' : 'secondary'}>
+          {job.status
+            ? job.status.charAt(0).toUpperCase() +
+              job.status.slice(1).toLowerCase()
+            : ''}
+        </Badge>
       </TableCell>
-      <TableCell>{new Date(job.created_at).toLocaleDateString()}</TableCell>
-      <TableCell>{new Date(job.modified_at).toLocaleDateString()}</TableCell>
+      <TableCell>
+        {new Date(job.created_at).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        })}
+      </TableCell>
+      <TableCell>
+        <Badge variant={job.isConfigured ? 'success' : 'failure'}>
+          {job.isConfigured ? 'Yes' : 'No'}
+        </Badge>
+      </TableCell>
       <TableCell>
         {job.departments?.length
           ? job.departments
               .filter(Boolean)
-              .map(
-                (dept) =>
-                  dept.name.charAt(0).toUpperCase() +
-                  dept.name.slice(1).toLowerCase()
-              )
+              .map(dept => dept.name)
               .join(', ')
           : 'No department'}
       </TableCell>
@@ -31,14 +40,14 @@ export function JobRow({ job }: { job: Job }) {
         {job.offices?.length
           ? job.offices
               .filter(Boolean)
-              .map(
-                (office) =>
-                  office.name.charAt(0).toUpperCase() +
-                  office.name.slice(1).toLowerCase()
-              )
+              .map(office => office.name)
               .join(', ')
           : 'No office'}
       </TableCell>
+
+
+     
+     
       <TableCell>
         <Link href={`/jobs/${job.id}`} passHref>
           <Button variant="outline">View details</Button>
