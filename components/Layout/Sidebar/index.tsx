@@ -42,42 +42,42 @@ const Page = () => {
           </Link> */}
 
             <Link
-              className="flex items-center space-x-2 text-gray-100 hover:bg-gray-200 hover:text-gray-900 px-4 py-2 rounded"
+              className="flex items-center space-x-2 text-gray-100 hover:bg-accent hover:text-gray-900 px-4 py-2 rounded"
               href="/jobs"
             >
               <BriefcaseIcon className="h-5 w-5" />
               <span>Jobs</span>
             </Link>
             <Link
-              className="flex items-center space-x-2 text-gray-100 hover:bg-gray-200 hover:text-gray-900 px-4 py-2 rounded"
+              className="flex items-center space-x-2 text-gray-100 hover:bg-accent  hover:text-gray-900 px-4 py-2 rounded"
               href="/bot"
             >
               <Bot className="h-5 w-5" />
               <span>Bot Library</span>
             </Link>
             <Link
-              className="flex items-center space-x-2 text-gray-100 hover:bg-gray-200 hover:text-gray-900 px-4 py-2 rounded"
+              className="flex items-center space-x-2 text-gray-100 hover:bg-accent  hover:text-gray-900 px-4 py-2 rounded"
               href="/applicants"
             >
               <Users className="h-5 w-5" />
               <span>Applicants</span>
             </Link>
             <Link
-              className="flex items-center space-x-2 text-gray-100 hover:bg-gray-200 hover:text-gray-900 px-4 py-2 rounded"
+              className="flex items-center space-x-2 text-gray-100 hover:bg-accent  hover:text-gray-900 px-4 py-2 rounded"
               href="settings/onboarding"
             >
               <ClipboardListIcon className="h-5 w-5" />
               <span>Onboarding</span>
             </Link>
             <Link
-              className="flex items-center space-x-2 text-gray-100 hover:bg-gray-200 hover:text-gray-900 px-4 py-2 rounded"
+              className="flex items-center space-x-2 text-gray-100 hover:bg-accent  hover:text-gray-900 px-4 py-2 rounded"
               href="/settings"
             >
               <SettingsIcon className="h-5 w-5" />
               <span>Settings</span>
             </Link>
             <Link
-              className="flex items-center space-x-2 text-gray-100 hover:bg-gray-200 hover:text-gray-900 px-4 py-2 rounded"
+              className="flex items-center space-x-2 text-gray-100 hover:bg-accent hover:text-gray-900 px-4 py-2 rounded"
               href="/assessment"
             >
               <FastForwardIcon className="h-5 w-5" />
