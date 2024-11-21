@@ -42,6 +42,13 @@ export default function VideoInterviewSession({
     }
   }, [transportState, onLeave]);
 
+  useEffect(() => {
+    if (transportState === 'connected') {
+      // Ensure the camera is enabled when connected
+      voiceClient.enableCam(isCameraOn);
+    }
+  }, [transportState, isCameraOn, voiceClient]);
+
   const handleMicToggle = () => {
     voiceClient.enableMic(!isMuted);
     setMuted(!isMuted);
