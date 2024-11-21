@@ -1,4 +1,4 @@
-import { Job } from '@/types/merge';
+import { EnrichedJob } from './JobList';
 import {
   Table,
   TableBody,
@@ -14,17 +14,19 @@ import { ArrowUpDown } from 'lucide-react';
 type SortField = 'name' | 'status' | 'created_at' | 'opened_at';
 
 interface JobTableProps {
-  jobs: Job[];
+  jobs: EnrichedJob[];
   sortField: SortField;
   sortDirection: 'asc' | 'desc';
   onSort: (field: SortField) => void;
+  loading?: boolean;
 }
-
+import { JobsTableSkeleton } from './JobsSkeleton';
 export function JobTable({
   jobs,
   sortField,
   sortDirection,
-  onSort
+  onSort,
+  loading
 }: JobTableProps) {
   //   console.log('Jobs received in JobTable:', jobs) // Debugging Statement
 
@@ -54,25 +56,21 @@ export function JobTable({
               )}
             </Button>
           </TableHead>
-          <TableHead>
-            <Button variant="ghost" onClick={() => onSort('opened_at')}>
-              Opened At
-              {sortField === 'opened_at' && (
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-              )}
-            </Button>
-          </TableHead>
+          <TableHead>AI Bot Configured</TableHead>
+         
           <TableHead>Departments</TableHead>
           <TableHead>Offices</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {jobs.length > 0 ? (
+        {loading ? (
+          <JobsTableSkeleton />
+        ) : jobs.length > 0 ? (
           jobs.map((job) => <JobRow key={job.id} job={job} />)
         ) : (
           <TableRow>
-            <TableCell colSpan={6} className="text-center">
+            <TableCell colSpan={9} className="text-center">
               No jobs found.
             </TableCell>
           </TableRow>
@@ -81,3 +79,4 @@ export function JobTable({
     </Table>
   );
 }
+
