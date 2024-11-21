@@ -47,38 +47,78 @@ export async function GET(
 
     const application: Application = await applicationResponse.json();
     const candidateId = application.candidate;
+    const stageId = application.current_stage;
+    const jobId = application.job;
 
-    // Fetch candidate details
-    const candidateResponse = await fetch(
-      `${baseURL}/candidates/${candidateId}`,
-      {
+    // Fetch candidate, stage and job details in parallel
+    const [candidateResponse, stageResponse, jobResponse] = await Promise.all([
+      fetch(`${baseURL}/candidates/${candidateId}`, {
         headers: {
           Accept: 'application/json',
           Authorization: `Bearer ${apiKey}`,
           'X-Account-Token': accountToken
         }
-      }
-    );
+      }),
+      stageId ? fetch(`${baseURL}/job-interview-stages/${stageId}`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+          'X-Account-Token': accountToken
+        }
+      }) : null,
+      jobId ? fetch(`${baseURL}/jobs/${jobId}`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+          'X-Account-Token': accountToken
+        }
+      }) : null
+    ]);
 
-    if (!candidateResponse.ok) {
-      console.error(
-        `Failed to fetch candidate data for application ${applicationId}`
-      );
-      // Return the application data without candidate details
-      return NextResponse.json(application, { status: 200 });
+    let candidateData = null;
+    let stageData = null;
+    let jobData = null;
+
+    if (candidateResponse.ok) {
+      candidateData = await candidateResponse.json();
+    } else {
+      console.error(`Failed to fetch candidate ${candidateId}`);
     }
 
-    const candidate: Candidate = await candidateResponse.json();
-    const applicationWithCandidate = { ...application, candidate };
+    if (stageResponse && stageResponse.ok) {
+      stageData = await stageResponse.json();
+    } else if (stageId) {
+      console.error(`Failed to fetch stage ${stageId}`);
+    }
 
-    return NextResponse.json(applicationWithCandidate, { status: 200 });
+    if (jobResponse && jobResponse.ok) {
+      jobData = await jobResponse.json();
+    } else if (jobId) {
+      console.error(`Failed to fetch job ${jobId}`);
+    }
+
+    const enrichedApplication = {
+      application: {
+        id: application.id,
+        created_at: application.created_at,
+        status: application.status,
+        current_stage: application.current_stage,
+        job_id: application.job
+      },
+      candidate: candidateData,
+      interviewStages: stageData,
+      job: jobData
+    };
+
+    return NextResponse.json(enrichedApplication, { status: 200 });
+
   } catch (error) {
     console.error(
-      `An error occurred while fetching the application or candidate:`,
+      `An error occurred while fetching the application data:`,
       error
     );
     return NextResponse.json(
-      { error: 'An error occurred while fetching the application' },
+      { error: 'Failed to fetch application data and related resources' },
       { status: 500 }
     );
   }
