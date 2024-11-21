@@ -112,7 +112,7 @@ export default function Bot(botProps: BotProps) {
 
     rtviClient.on("disconnected", () => {
       console.log("[EVENT] Bot disconnected");
-      router.push('/assessment/conclusion');
+      // router.push('/assessment/conclusion');
     });
 
     rtviClient.on(RTVIEvent.ParticipantConnected, async (participant: Participant) => {
