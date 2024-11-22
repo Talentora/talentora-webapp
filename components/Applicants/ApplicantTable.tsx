@@ -34,7 +34,8 @@ export default function ApplicantTable({
   };
 
   return (
-    <div className="border border-gray-200 rounded-lg">
+    <div >
+      {/* // <h1 className="text-xl font-semibold">Applicants Table </h1> */}
       <Table className="border rounded-lg">
         <TableHeader className="bg-primary-dark text-background rounded-lg">
           <TableRow>
