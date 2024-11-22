@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { DialogHeader, DialogTitle, DialogDescription, DialogContent, Dialog } from '@/components/ui/dialog';
 type InterviewConfig = Tables<'job_interview_config'>;
 type Bot = Tables<'bots'>;
-
+import InterviewQuestions from './InterviewQuestions';
 export default function JobConfig({ jobId }: { jobId: string }) {
   const [loading, setLoading] = useState(true);
   const [interviewConfig, setInterviewConfig] = useState<InterviewConfig | null>(null);
@@ -41,10 +41,11 @@ export default function JobConfig({ jobId }: { jobId: string }) {
 
   return (
     <>
-      <div className="flex flex-row gap-4 h-full">
+      <div className="grid grid-cols-2 gap-4 h-full">
         <InterviewSettings loading={loading} interviewConfig={interviewConfig} setShowSetupDialog={setShowSetupDialog} jobId={jobId} />
         <InterviewBot loading={loading} botInfo={botInfo} jobId={jobId} interviewConfig={interviewConfig} />
         <InterviewStatus loading={loading} interviewConfig={interviewConfig} botInfo={botInfo} />
+        <InterviewQuestions jobId={jobId} />
       </div>
 
       <Dialog open={showSetupDialog} onOpenChange={setShowSetupDialog}>

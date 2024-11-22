@@ -31,11 +31,10 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
       {visible && (
         <CardContent>
           <Card className="p-5 bg-foreground border border-border shadow-3xl h-full">
-            <ApplicantTable applicants={applicants} disablePortal={true} />
-          </Card>
-          <br />
-          <Card className="p-5 bg-foreground border border-border shadow-3xl h-full">
             <ApplicationsGraph applicants={applicants} />
+            <div className="mt-6">
+              <ApplicantTable applicants={applicants} disablePortal={true} />
+            </div>
           </Card>
         </CardContent>
       )}
