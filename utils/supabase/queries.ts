@@ -296,17 +296,25 @@ export const getMergeApiKey = async (): Promise<string | null> => {
  * @returns The created bot data.
  * @throws Error if the creation operation fails.
  */
-export const createBot = async (botData: any) => {
+export const createBot = async (botData: any): Promise<Tables<'bots'>> => {
   const supabase = createClient();
 
-  // Insert the bot
-  const { data: createdBot, error: botError } = await supabase
+  const { data, error } = await supabase
     .from('bots')
-    .insert(botData);
+    .insert(botData)
+    .select()
+    .single();
 
-  if (botError) {
-    throw new Error(`Failed to create bot: ${botError.message}`);
+  if (error) {
+    console.error('Failed to create bot:', error);
+    throw error;
   }
+
+  if (!data) {
+    throw new Error('No data returned from bot creation');
+  }
+
+  return data;
 };
 
 /**

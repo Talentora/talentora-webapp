@@ -88,7 +88,8 @@ ${colorConfig
     const color =
       itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
       itemConfig.color;
-    return color ? `  --color-${key}: ${color};` : null;
+    // Changed the default color to black if not specified
+    return color ? `  --color-${key}: ${color};` : `  --color-${key}: black;`;
   })
   .join('\n')}
 }

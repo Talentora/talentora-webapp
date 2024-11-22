@@ -97,6 +97,19 @@ const InterviewBot = ({ loading, botInfo, jobId, interviewConfig }: InterviewBot
     setShowDialog(true);
   };
 
+  const removeBot = async () => {
+    try {
+      await updateJobInterviewConfig(jobId, {
+        bot_id: null
+      });
+      setShowDialog(false);
+      setStep('select');
+      window.location.reload();
+    } catch (error) {
+      console.error('Error removing bot:', error);
+    }
+  };
+
   return (
     <div className="flex-1">
       <Card className="p-5 bg-foreground border border-border shadow-3xl h-full">
@@ -173,6 +186,7 @@ const InterviewBot = ({ loading, botInfo, jobId, interviewConfig }: InterviewBot
                   >
                     <LucideIcon icon={bot.icon || 'Bot'} />
                     <span>{bot.name}</span>
+                    {bot.id === botInfo?.id && <span> (Current)</span>}
                   </div>
                 ))}
               </div>
@@ -191,6 +205,11 @@ const InterviewBot = ({ loading, botInfo, jobId, interviewConfig }: InterviewBot
                 <Button variant="destructive" onClick={() => selectedBot && confirmBotChange(selectedBot)}>
                   Yes, Change Bot
                 </Button>
+                {selectedBot?.id !== botInfo?.id && (
+                  <Button variant="outline" onClick={removeBot}>
+                    Remove Bot
+                  </Button>
+                )}
               </DialogFooter>
             </>
           )}

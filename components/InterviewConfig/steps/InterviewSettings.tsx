@@ -13,36 +13,52 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/Toasts/use-toast';
 import { Slider } from '@/components/ui/slider';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
+import { Tables } from '@/types/types_db';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface InterviewSettingsProps {
   jobId: string;
   onCompletion: (isComplete: boolean) => void;
+  existingConfig?: Tables<'job_interview_config'> | null;
 }
+
+const SettingsSkeleton = () => (
+  <div className="space-y-6">
+    <Skeleton className="h-8 w-3/4" />
+    <div className="space-y-4">
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-10 w-full" />
+    </div>
+    <div className="flex justify-end">
+      <Skeleton className="h-10 w-32" />
+    </div>
+  </div>
+);
 
 export const InterviewSettings = ({
   jobId,
-  onCompletion
+  onCompletion,
+  existingConfig
 }: InterviewSettingsProps) => {
-  const [interviewName, setInterviewName] = useState('');
-  const [duration, setDuration] = useState(30);
-  const [interviewType, setInterviewType] = useState('standard');
-  const [isLoading, setIsLoading] = useState(false); // Added state for loading
+  const [interviewName, setInterviewName] = useState(existingConfig?.interview_name || '');
+  const [duration, setDuration] = useState(existingConfig?.duration || 30);
+  const [interviewType, setInterviewType] = useState(existingConfig?.type || 'standard');
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  //   // Check if required fields are filled to enable completion
-  //   useEffect(() => {
-  //     if (interviewName && duration && interviewType) {
-  //     //   onCompletion(true);
-  //     } else {
-  //       onCompletion(false);
-  //     }
-  //   }, [interviewName, duration, interviewType, onCompletion]);
+  useEffect(() => {
+    if (existingConfig) {
+      setInterviewName(existingConfig.interview_name || '');
+      setDuration(existingConfig.duration || 30);
+      setInterviewType(existingConfig.type || 'standard');
+    }
+  }, [existingConfig]);
 
   const handleSave = async () => {
-    setIsLoading(true); // Set loading to true when save is clicked
+    setIsLoading(true);
     try {
       if (interviewName && interviewType && duration) {
-        // TODO: Implement save to database
         await updateJobInterviewConfig(jobId, {
           interview_name: interviewName,
           type: interviewType,
@@ -61,66 +77,72 @@ export const InterviewSettings = ({
         variant: 'destructive'
       });
     } finally {
-      setIsLoading(false); // Set loading to false after the operation
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="space-y-4 m-10">
-      <h2 className="text-2xl font-bold">Interview Settings</h2>
+      <h2 className="text-2xl font-bold">
+        {existingConfig ? 'Edit Interview Settings' : 'Interview Settings'}
+      </h2>
 
       <Card className="p-4">
         <CardHeader>
           <CardTitle>Basic Configuration</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Interview Name</label>
-            <Input
-              placeholder="e.g 'Sales Engineer Behavioral Interview'"
-              value={interviewName}
-              onChange={(e) => setInterviewName(e.target.value)}
-            />
-          </div>
+          {isLoading ? (
+            <SettingsSkeleton />
+          ) : (
+            <>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Interview Name</label>
+                <Input
+                  placeholder="e.g 'Sales Engineer Behavioral Interview'"
+                  value={interviewName}
+                  onChange={(e) => setInterviewName(e.target.value)}
+                />
+              </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Duration (minutes)</label>
-            <div className="flex items-center space-x-4">
-              <Slider
-                value={[duration]}
-                onValueChange={(value) => setDuration(value[0])}
-                min={10}
-                max={40}
-                step={5}
-              />
-              <span>{duration} minutes</span>
-            </div>
-          </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Duration (minutes)</label>
+                <div className="flex items-center space-x-4">
+                  <Slider
+                    value={[duration]}
+                    onValueChange={(value) => setDuration(value[0])}
+                    min={10}
+                    max={40}
+                    step={5}
+                  />
+                  <span>{duration} minutes</span>
+                </div>
+              </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Interview Type</label>
-            <Select value={interviewType} onValueChange={setInterviewType}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select interview type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="standard">Standard Interview</SelectItem>
-                <SelectItem value="technical">Technical Assessment</SelectItem>
-                <SelectItem value="behavioral">Behavioral Interview</SelectItem>
-                <SelectItem value="case">Case Study Interview</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Interview Type</label>
+                <Select value={interviewType} onValueChange={setInterviewType}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select interview type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="standard">Standard Interview</SelectItem>
+                    <SelectItem value="technical">Technical Assessment</SelectItem>
+                    <SelectItem value="behavioral">Behavioral Interview</SelectItem>
+                    <SelectItem value="case">Case Study Interview</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-          <Button
-            className="w-32 mt-4 float-right"
-            onClick={handleSave}
-            disabled={
-              !interviewName || !duration || !interviewType || isLoading
-            } // Added isLoading to disable button
-          >
-            {isLoading ? 'Saving...' : 'Save Settings'}
-          </Button>
+              <Button
+                className="w-32 mt-4 float-right"
+                onClick={handleSave}
+                disabled={!interviewName || !duration || !interviewType || isLoading}
+              >
+                {isLoading ? 'Saving...' : existingConfig ? 'Update' : 'Save Settings'}
+              </Button>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
