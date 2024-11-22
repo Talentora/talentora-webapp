@@ -18,10 +18,12 @@ import {
   deleteInterviewQuestion
 } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
+import { Tables } from '@/types/types_db';
 
 interface QuestionSetupProps {
   jobId: string;
   onCompletion: (isComplete: boolean) => void;
+  existingConfig?: Tables<'job_interview_config'> | null;
 }
 
 type Question = {
@@ -31,35 +33,35 @@ type Question = {
   order: number;
 };
 
-export const QuestionSetup = ({ jobId, onCompletion }: QuestionSetupProps) => {
+export const QuestionSetup = ({ jobId, onCompletion, existingConfig }: QuestionSetupProps) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [newQuestion, setNewQuestion] = useState('');
   const [responseExample, setResponseExample] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showQuestionCard, setShowQuestionCard] = useState(false);
   const [isAddingQuestion, setIsAddingQuestion] = useState(false);
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    // Fetch initial questions
     const fetchQuestions = async () => {
       try {
         const fetchedQuestions = await getInterviewQuestions(jobId);
         setQuestions(fetchedQuestions || []);
       } catch (error) {
         showErrorToast('Error loading questions');
+      } finally {
+        setLoading(false);
       }
     };
     fetchQuestions();
   }, [jobId]);
 
-  // Effect to check questions length and call onCompletion
   useEffect(() => {
-    if (questions.length > 0) {
+    if (questions.length > 0 && !loading) {
       onCompletion(true);
     }
-  }, [questions.length]);
+  }, [questions.length, loading]);
 
   const showErrorToast = (message: string) => {
     toast({
@@ -95,11 +97,15 @@ export const QuestionSetup = ({ jobId, onCompletion }: QuestionSetupProps) => {
     setIsGeneratingQuestion(true);
     try {
       const generatedQuestion = await generateQuestionFromAI();
-      setNewQuestion(generatedQuestion);
       toast({
         title: 'AI-generated question',
         description: 'New question added'
       });
+      setNewQuestion(generatedQuestion);
+      setResponseExample('');
+      setQuestions((prev) => [...prev, { id: '', question: generatedQuestion, sample_response: '', order: questions.length + 1 }]);
+      // Ensure the new question is displayed in the editor
+      setShowQuestionCard(true);
     } catch (error) {
       showErrorToast('Error generating question');
     } finally {

@@ -1,8 +1,6 @@
 'use client';
 import { JobHeader } from './JobHeader';
-import ApplicantStatistics from './ApplicantStatistics';
 import { RecentApplicants } from './RecentApplicants';
-import { BotConfig } from './BotConfig';
 import { EnrichedJob } from '../JobList';
 import JobConfig from './JobConfig';
 import { ApplicantCandidate } from '@/types/merge';
@@ -59,7 +57,7 @@ export default function JobPage({
           </Link>
         </div>
         <JobHeader job={job} />
-        <JobConfig jobId={job.id} />
+        <JobConfig jobId={job.id} applicants={applicants} />
       </>
     );
   }, [job, jobLoading]);
