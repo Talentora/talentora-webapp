@@ -108,7 +108,7 @@ export const TeamMembersStep = ({
                     className="mr-2"
                   />
                   <label htmlFor={`checkbox-${recruiter.id}`}>
-                    {`${recruiter.first_name} ${recruiter.last_name}`}
+                    {`${recruiter.first_name ? `${recruiter.first_name} ${recruiter.last_name}` : recruiter.email}`}
                   </label>
                 </div>
               );
