@@ -31,8 +31,8 @@ const CreateBot = () => {
     role: '',
     icon: 'Bot',
     prompt: '',
-    voiceId: '',
-    emotions: {
+    voice: null, // Changed from voiceId to voice and set to null
+    emotion: {
       speed: 1,
       anger: 1,
       curiosity: 1,
@@ -66,6 +66,8 @@ const CreateBot = () => {
     fetchVoices();
   }, []);
 
+  console.log("newBot",newBot)
+
   const handleCreateBot = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -75,9 +77,9 @@ const CreateBot = () => {
         description: newBot.description,
         prompt: newBot.prompt,
         company_id: company?.id,
-        voice_id: newBot.voiceId,
+        voice: newBot.voice, // Changed from voiceId to voice?.id
         icon: newBot.icon,
-        emotions: newBot.emotions
+        emotion: newBot.emotion
       });
       setIsOpen(false);
       toast({
@@ -109,7 +111,7 @@ const CreateBot = () => {
         model_id: "sonic-english",
         voice: {
           mode: "id",
-          id: "a0e99841-438c-4a64-b679-ae501e7d6091"
+          id: newBot.voice?.id // Changed from voiceId to voice?.id
         },
         transcript: speakText,
         emotions: emotions,
