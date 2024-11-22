@@ -34,7 +34,10 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog';
 import { Tables } from '@/types/types_db';
-import { deleteBot } from '@/utils/supabase/queries';
+import { deleteBot, updateBot } from '@/utils/supabase/queries';
+import CreateBot from './CreateBot';
+import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 type Bot = Tables<'bots'>;
 
 const iconOptions = {
@@ -46,15 +49,42 @@ const iconOptions = {
   Stethoscope
 };
 
-export default function BotSettings({ bot }: { bot: Bot }) {
+interface BotSettingsProps {
+  bot: Bot;
+  onBotDeleted: (botId: number) => void;
+  onBotUpdated: (bot: Bot) => void;
+}
+
+export default function BotSettings({ bot, onBotDeleted, onBotUpdated }: BotSettingsProps) {
+  const [showEditDialog, setShowEditDialog] = useState(false);
+
   const handleDeleteBot = async () => {
-    await deleteBot(bot.id);
-    window.location.reload();
+    try {
+      await deleteBot(bot.id);
+      onBotDeleted(bot.id);
+      toast({
+        title: 'Success',
+        description: 'Bot deleted successfully'
+      });
+    } catch (error) {
+      console.error('Failed to delete bot:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete bot',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent event bubbling
+    setShowEditDialog(true);
   };
 
   return (
-    <Dialog>
-      {/* Dialog Trigger */}
+    <>
+      <Dialog>
+        {/* Dialog Trigger */}
         <Card className="flex flex-row cursor-pointer hover:shadow-lg transition-shadow bg-foreground border border-gray-200 rounded-lg p-5 relative">
           <div className="absolute top-2 right-2">
             <DropdownMenu>
@@ -64,10 +94,11 @@ export default function BotSettings({ bot }: { bot: Bot }) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-background">
-                <DropdownMenuItem
-                  onClick={handleDeleteBot}
-                >
+                <DropdownMenuItem onClick={handleDeleteBot}>
                   Delete
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleEditClick}>
+                  Edit
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -96,6 +127,17 @@ export default function BotSettings({ bot }: { bot: Bot }) {
       <DialogContent className="h-2/3 overflow-auto">
         <BotInfo bot={bot} /> 
       </DialogContent>
-    </Dialog>
+      </Dialog>
+
+      {/* Edit Bot Dialog */}
+      {showEditDialog && (
+        <CreateBot 
+          isEdit={true}
+          existingBot={bot}
+          onClose={() => setShowEditDialog(false)}
+          onBotUpdated={onBotUpdated}
+        />
+      )}
+    </>
   );
 }
