@@ -29,6 +29,10 @@ const InterviewQuestions = ({ loading, interviewConfig, jobId, onQuestionsUpdate
     }
   };
 
+  const handleEditQuestions = () => {
+    setShowQuestionsDialog(true);
+  };
+
   return (
     <>
       <Card className="hover:bg-accent/50 transition-colors p-5 bg-foreground border border-border shadow-3xl h-full">
