@@ -17,6 +17,8 @@ import { createClient } from '@/utils/supabase/client';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { Table } from '../ui/table';
+import { updateBot } from '@/utils/supabase/queries';
+import { Skeleton } from '../ui/skeleton';
 
 export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
 
@@ -37,6 +39,8 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
   ];
 
   const [jobInterviewConfigs, setJobInterviewConfigs] = useState<any[]>([]);
+
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchJobInterviewConfigs = async () => {
@@ -63,6 +67,7 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
 
         console.log("jobData", jobData)
         setJobInterviewConfigs(jobData);
+        setIsLoading(false);
       } catch (err) {
         console.error('Unexpected error fetching job interview configurations:', err);
       }
@@ -73,6 +78,14 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
 
   console.log(chartData)
   
+  const handleEditBot = async (updatedBot: Bot) => {
+    try {
+      await updateBot(updatedBot);
+    } catch (error) {
+      console.error('Failed to update bot:', error);
+    }
+  };
+
   return (
     <div className="gap-5">
       <div className="flex items-center gap-5 mb-4">
@@ -96,7 +109,7 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
           <h3 className="font-semibold mb-2">Jobs Using This Bot:</h3>
           <div className="overflow-x-auto">
             <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-              <BotJobTable jobInterviewConfigs={jobInterviewConfigs} />
+              <BotJobTable jobInterviewConfigs={jobInterviewConfigs} isLoading={isLoading} />
             </div>
           </div>
         </div>
@@ -129,7 +142,9 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
             </CardContent>
           </Card>
         </div>
-        
+        <div>
+          <Button onClick={() => handleEditBot(bot)}>Edit Bot</Button>
+        </div>
       </div>
     </div>
   );
@@ -137,7 +152,17 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
 
 
 
-function BotJobTable({ jobInterviewConfigs }: { jobInterviewConfigs: any[] }): JSX.Element {
+function BotJobTable({ jobInterviewConfigs, isLoading }: { jobInterviewConfigs: any[], isLoading: boolean }): JSX.Element {
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    );
+  }
+
   return (
     <table className="min-w-full divide-y divide-gray-200">
       <thead className="bg-gray-50">
@@ -151,20 +176,27 @@ function BotJobTable({ jobInterviewConfigs }: { jobInterviewConfigs: any[] }): J
         </tr>
       </thead>
       <tbody className="bg-white divide-y divide-gray-200">
-        {jobInterviewConfigs.map((job, index) => (
-          <tr key={index} className="hover:bg-gray-100">
-            <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-gray-900">{job.name}</div>
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              <span className={job.status === 'OPEN' ? "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800" : "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"}>
-                {job.status === 'OPEN' ? 'Yes' : 'No'}
-              </span>
+        {jobInterviewConfigs.length > 0 ? (
+          jobInterviewConfigs.map((job, index) => (
+            <tr key={index} className="hover:bg-gray-100">
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">{job.name}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <span className={job.status === 'OPEN' ? "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800" : "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"}>
+                  {job.status === 'OPEN' ? 'Yes' : 'No'}
+                </span>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={2} className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-900">
+              No jobs using this bot.
             </td>
           </tr>
-        ))}
+        )}
       </tbody>
     </table>
   );
 }
-
