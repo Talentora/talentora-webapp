@@ -1,15 +1,15 @@
 'use client';
 import { BotInfo } from '@/components/BotLibrary/BotInfo';
-import { createClient } from '@/utils/supabase/client';
 import { Tables } from '@/types/types_db';
 type Bot = Tables<'bots'>;
 import { useEffect, useState } from 'react';
-import { Loader2 } from 'lucide-react';
 import { getBotById } from '@/utils/supabase/queries';
+import { BotSkeleton } from '@/components/BotLibrary/BotSkeleton';
 
 export default function BotPage({ params }: { params: { id: string } }) {
   const [bot, setBot] = useState<Bot | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const botId = parseInt(params.id);
 
   useEffect(() => {
@@ -24,6 +24,8 @@ export default function BotPage({ params }: { params: { id: string } }) {
       } catch (err) {
         setError(`Failed to fetch bot, ${err}`);
         console.error(err);
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -36,12 +38,8 @@ export default function BotPage({ params }: { params: { id: string } }) {
     return <div className="text-red-500">{error}</div>;
   }
 
-  if (!bot) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader2 className="animate-spin" />
-      </div>
-    );
+  if (isLoading || !bot) {
+    return <BotSkeleton />;
   }
 
   return <BotInfo bot={bot} />;
