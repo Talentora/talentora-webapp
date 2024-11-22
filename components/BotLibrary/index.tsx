@@ -1,9 +1,9 @@
 'use client';
 import { useState } from 'react';
-import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import BotSettings from './BotSettings';
-import CreateBot from './CreateBot';
+import CreateBot from './CreateBot'; // Corrected import
+import { Search } from 'lucide-react';
 import { Tables } from '@/types/types_db';
 type Bot = Tables<'bots'>;
 
@@ -24,7 +24,7 @@ export default function BotLibrary({ bots }: { bots: Bot[] }) {
               onChange={(e) => {
                 const searchTerm = e.target.value.toLowerCase();
                 const filteredBots = bots.filter(
-                  (bot) =>
+                  (bot: Bot) =>
                     bot?.name?.toLowerCase().includes(searchTerm) ||
                     bot?.description?.toLowerCase().includes(searchTerm)
                 );
@@ -35,9 +35,11 @@ export default function BotLibrary({ bots }: { bots: Bot[] }) {
               <Search className="h-5 w-5 text-gray-400" />
             </div>
           </div>
-          <CreateBot />
+          <div className="flex flex-row justify-end">
+            <CreateBot />
+          </div>
         </div>
-        {filteredBots.map((bot) => (
+        {filteredBots.map((bot: Bot) => (
           <BotSettings key={bot.id} bot={bot} />
         ))}
         {bots.length === 0 && (
