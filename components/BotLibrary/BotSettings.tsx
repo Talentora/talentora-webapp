@@ -49,12 +49,12 @@ const iconOptions = {
 export default function BotSettings({ bot }: { bot: Bot }) {
   const handleDeleteBot = async () => {
     await deleteBot(bot.id);
+    window.location.reload();
   };
 
   return (
     <Dialog>
       {/* Dialog Trigger */}
-      <DialogTrigger asChild>
         <Card className="flex flex-row cursor-pointer hover:shadow-lg transition-shadow bg-foreground border border-gray-200 rounded-lg p-5 relative">
           <div className="absolute top-2 right-2">
             <DropdownMenu>
@@ -65,10 +65,7 @@ export default function BotSettings({ bot }: { bot: Bot }) {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-background">
                 <DropdownMenuItem
-                  onClick={async () => {
-                    await handleDeleteBot();
-                    window.location.reload();
-                  }}
+                  onClick={handleDeleteBot}
                 >
                   Delete
                 </DropdownMenuItem>
@@ -80,6 +77,7 @@ export default function BotSettings({ bot }: { bot: Bot }) {
               <Bot className="h-10 w-10" />
             </div>
           </CardHeader>
+          <DialogTrigger asChild>
 
           <CardContent className="w-2/3 flex flex-col gap-2">
             <CardTitle className="text-center">{bot.name}</CardTitle>
@@ -90,12 +88,13 @@ export default function BotSettings({ bot }: { bot: Bot }) {
               {bot.description}
             </p>
           </CardContent>
+          </DialogTrigger>
+
         </Card>
-      </DialogTrigger>
 
       {/* Dialog Content */}
-      <DialogContent>
-        <BotInfo bot={bot} />
+      <DialogContent className="h-2/3 overflow-auto">
+        <BotInfo bot={bot} /> 
       </DialogContent>
     </Dialog>
   );

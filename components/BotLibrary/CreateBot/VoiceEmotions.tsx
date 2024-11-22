@@ -28,13 +28,16 @@ export function VoiceEmotions({
   onBack,
   onNext
 }: VoiceEmotionsProps) {
+
+    console.log("emotions",newBot.emotions)
+
   return (
     <form className="space-y-4">
       <div>
         <Label htmlFor="voice">Voice</Label>
         <Select
-          value={newBot.voiceId}
-          onValueChange={(value) => setNewBot({ ...newBot, voiceId: value })}
+          value={newBot.voice?.id}
+          onValueChange={(value) => setNewBot({ ...newBot, voice: voiceOptions.find(voice => voice.id === value) })}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select a voice" />
@@ -104,6 +107,8 @@ export function VoiceEmotions({
   );
 }
 
+
+
 function EmotionSliders({ newBot, setNewBot }: { newBot: any; setNewBot: (bot: any) => void }) {
   const emotions = ['speed', 'anger', 'curiosity', 'positivity', 'sadness', 'surprise'];
   return (
@@ -118,21 +123,18 @@ function EmotionSliders({ newBot, setNewBot }: { newBot: any; setNewBot: (bot: a
             id={emotion}
             min={1}
             max={5}
-            value={[newBot.emotions[emotion]]}
+            value={newBot.emotions?.emotion} // Changed to handle undefined values
             onValueChange={(value) =>
               setNewBot({
                 ...newBot,
-                emotions: {
-                  ...newBot.emotions,
+                emotion: {
+                  ...newBot.emotion,
                   [emotion]: value[0]
                 }
               })
             }
-            className={emotion === 'speed' ? 'bg-gray-200' : ''}
+            className={'bg-gray-200' }
           />
-          {/* <span>
-            {emotion.charAt(0).toUpperCase() + emotion.slice(1)}: {newBot.emotions[emotion]}
-          </span> */}
         </div>
       ))}
     </div>
