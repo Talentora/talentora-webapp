@@ -19,7 +19,7 @@ interface InterviewSettingsProps {
 
 const InterviewSettings = ({ loading, interviewConfig, setShowSetupDialog, jobId }: InterviewSettingsProps) => {
   const [showEditDialog, setShowEditDialog] = useState(false);
-
+  const [showQuestionsDialog, setShowQuestionsDialog] = useState(false);
   const handleEdit = () => {
     setShowEditDialog(true);
   };

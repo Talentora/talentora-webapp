@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { iconOptions } from './CreateBot/BotDetails';
 import { createClient } from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
-import { updateBot } from '@/utils/supabase/queries';
 import { Skeleton } from '../ui/skeleton';
 import { useRouter } from 'next/navigation';
 interface BotInfoProps {
@@ -16,6 +15,7 @@ interface BotInfoProps {
 }
 
 export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
+  const router = useRouter();
 
   const chartConfig = {
     desktop: {
@@ -71,15 +71,7 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
     fetchJobInterviewConfigs();
   }, [bot.id]);
 
-  console.log(chartData)
-  
-  const handleEditBot = async (updatedBot: Bot) => {
-    try {
-      await updateBot(updatedBot);
-    } catch (error) {
-      console.error('Failed to update bot:', error);
-    }
-  };
+
 
   return (
     <div className="space-y-6 max-w-full">
@@ -156,10 +148,7 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
           </Card>
         </section>
 
-        {/* Edit Button */}
-        <section className="flex justify-end">
-          <Button onClick={() => handleEditBot(bot)}>Edit Bot</Button>
-        </section>
+      
       </div>
     </div>
   );
@@ -179,7 +168,6 @@ function BotJobTable({ jobInterviewConfigs, isLoading }: { jobInterviewConfigs: 
 
   // ...
 
-  const router = useRouter();
 
   return (
     <div className="overflow-hidden">

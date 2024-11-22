@@ -58,7 +58,7 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
 
   useEffect(() => {
     onCompletion(hasMergeApiKey);
-  }, [hasMergeApiKey]);
+  }, [hasMergeApiKey, onCompletion,createMergeLinkToken]);
 
   const onSuccess = useCallback(
     async (public_token: string) => {

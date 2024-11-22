@@ -57,10 +57,10 @@ export default function JobPage({
           </Link>
         </div>
         <JobHeader job={job} />
-        <JobConfig jobId={job.id} applicants={applicants} />
+        <JobConfig jobId={job.id} applicants={applicants || []} />
       </>
     );
-  }, [job, jobLoading]);
+  }, [job, jobLoading, applicants]);
 
   // Memoize the applicants section
   const applicantsSection = useMemo(() => {

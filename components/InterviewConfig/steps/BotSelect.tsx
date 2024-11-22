@@ -38,7 +38,7 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
 
   useEffect(() => {
     onCompletion(!!selectedBot);
-  }, [selectedBot]);
+  }, [selectedBot, onCompletion]);
 
   if (loading)
     return (

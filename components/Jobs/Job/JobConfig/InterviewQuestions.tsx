@@ -18,10 +18,6 @@ interface InterviewQuestionsProps {
 const InterviewQuestions = ({ loading, interviewConfig, jobId, onQuestionsUpdate }: InterviewQuestionsProps) => {
   const [showQuestionsDialog, setShowQuestionsDialog] = useState(false);
 
-  // const handleEditQuestions = () => {
-  //   setShowQuestionsDialog(true);
-  // };
-
   const handleCompletion = (isComplete: boolean) => {
     if (isComplete) {
       setShowQuestionsDialog(false);
