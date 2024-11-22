@@ -1,22 +1,19 @@
 import { Button } from '@/components/ui/button';
 import { Tables } from '@/types/types_db';
-import { Slider } from '@/components/ui/slider';
-import { Label } from '@/components/ui/label';
 import { PolarAngleAxis, PolarGrid, Radar } from 'recharts';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '../ui/chart';
 import { RadarChart } from 'recharts';
-import { TrendingUp } from 'lucide-react';
 type Bot = Tables<'bots'>;
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { iconOptions } from './CreateBot/BotDetails';
+import { createClient } from '@/utils/supabase/client';
+import { useEffect, useState } from 'react';
+import { updateBot } from '@/utils/supabase/queries';
+import { Skeleton } from '../ui/skeleton';
+import { useRouter } from 'next/navigation';
 interface BotInfoProps {
   bot: Bot;
 }
-
-import { iconOptions } from './CreateBot/BotDetails'
-import { createClient } from '@/utils/supabase/client';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { Table } from '../ui/table';
 
 export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
 
@@ -37,6 +34,8 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
   ];
 
   const [jobInterviewConfigs, setJobInterviewConfigs] = useState<any[]>([]);
+
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchJobInterviewConfigs = async () => {
@@ -63,6 +62,7 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
 
         console.log("jobData", jobData)
         setJobInterviewConfigs(jobData);
+        setIsLoading(false);
       } catch (err) {
         console.error('Unexpected error fetching job interview configurations:', err);
       }
@@ -73,47 +73,73 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
 
   console.log(chartData)
   
+  const handleEditBot = async (updatedBot: Bot) => {
+    try {
+      await updateBot(updatedBot);
+    } catch (error) {
+      console.error('Failed to update bot:', error);
+    }
+  };
+
   return (
-    <div className="gap-5">
+    <div className="space-y-6 max-w-full">
       <div className="flex items-center gap-5 mb-4">
         {iconOptions[bot.icon as keyof typeof iconOptions]}
         <span className="text-lg font-semibold">{bot.name}</span>
       </div>
-      <div className="space-y-4">
-        <div>
+      
+      <div className="space-y-6">
+        {/* About Section */}
+        <section>
           <h3 className="font-semibold mb-2">About this Bot:</h3>
-          <p className="text-gray-600 dark:text-gray-300">{bot.description}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <h3 className="font-semibold mb-2">Role:</h3>
-          <p className="text-gray-600 dark:text-gray-300">{bot.role}</p>
-        </div>
-        <div>
+          <p className="text-gray-600 dark:text-gray-300 whitespace-pre-wrap break-words">
+            {bot.description}
+          </p>
+        </section>
+
+        {/* Role Section */}
+        <section className="flex items-center gap-2">
+          <h3 className="font-semibold">Role:</h3>
+          <p className="text-gray-600 dark:text-gray-300 break-words">
+            {bot.role}
+          </p>
+        </section>
+
+        {/* Prompt Section */}
+        <section>
           <h3 className="font-semibold mb-2">Prompt:</h3>
-          <pre className="text-gray-600 dark:text-gray-300">{JSON.stringify(bot.prompt ? bot.prompt : 'No prompt available')}</pre>
-        </div>
-        <div className="space-y-4">
+          <pre className="text-gray-600 dark:text-gray-300 whitespace-pre-wrap break-words bg-gray-50 p-4 rounded-lg overflow-x-hidden">
+            {bot.prompt ? JSON.stringify(bot.prompt, null, 2) : 'No prompt available'}
+          </pre>
+        </section>
+
+        {/* Jobs Section */}
+        <section className="space-y-4">
           <h3 className="font-semibold mb-2">Jobs Using This Bot:</h3>
           <div className="overflow-x-auto">
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-              <BotJobTable jobInterviewConfigs={jobInterviewConfigs} />
+            <div className="shadow rounded-lg border border-gray-200">
+              <BotJobTable jobInterviewConfigs={jobInterviewConfigs} isLoading={isLoading} />
             </div>
           </div>
-        </div>
-        <div>
+        </section>
+
+        {/* Voice and Emotions Section */}
+        <section className="space-y-4">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold mb-2">Voice:</h3>
-            <p className="text-gray-600 dark:text-gray-300">{bot.voice?.name}</p>
+            <h3 className="font-semibold">Voice:</h3>
+            <p className="text-gray-600 dark:text-gray-300">
+              {bot.voice?.name || 'No voice selected'}
+            </p>
           </div>
+          
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold">Emotion Radar Chart</CardTitle>
-             
             </CardHeader>
             <CardContent className="pb-0">
               <ChartContainer
                 config={chartConfig}
-                className="mx-auto aspect-square "
+                className="mx-auto aspect-square w-full max-w-md"
               >
                 <RadarChart data={chartData} scale={{ type: 'linear', min: 1, max: 5 }}>
                   <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
@@ -128,43 +154,81 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
               </ChartContainer>
             </CardContent>
           </Card>
-        </div>
-        
+        </section>
+
+        {/* Edit Button */}
+        <section className="flex justify-end">
+          <Button onClick={() => handleEditBot(bot)}>Edit Bot</Button>
+        </section>
       </div>
     </div>
   );
 };
 
+// Update the BotJobTable component to match the new styling
+function BotJobTable({ jobInterviewConfigs, isLoading }: { jobInterviewConfigs: any[], isLoading: boolean }): JSX.Element {
+  if (isLoading) {
+    return (
+      <div className="space-y-4 p-4">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    );
+  }
 
+  // ...
 
-function BotJobTable({ jobInterviewConfigs }: { jobInterviewConfigs: any[] }): JSX.Element {
+  const router = useRouter();
+
   return (
-    <table className="min-w-full divide-y divide-gray-200">
-      <thead className="bg-gray-50">
-        <tr>
-          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Name
-          </th>
-          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            Is Active
-          </th>
-        </tr>
-      </thead>
-      <tbody className="bg-white divide-y divide-gray-200">
-        {jobInterviewConfigs.map((job, index) => (
-          <tr key={index} className="hover:bg-gray-100">
-            <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-gray-900">{job.name}</div>
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              <span className={job.status === 'OPEN' ? "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800" : "px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800"}>
-                {job.status === 'OPEN' ? 'Yes' : 'No'}
-              </span>
-            </td>
+    <div className="overflow-hidden">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Name
+            </th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Is Active
+            </th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {jobInterviewConfigs.length > 0 ? (
+            isLoading ? (
+              <tr>
+                <td colSpan={2} className="px-6 py-4 text-center text-sm text-gray-900">
+                  Loading...
+                </td>
+              </tr>
+            ) : jobInterviewConfigs.map((job, index) => (
+              <tr key={index} className="hover:bg-gray-100 cursor-pointer" onClick={() => {
+                router.push(`/jobs/${job.id}`);
+              }}>
+                <td className="px-6 py-4">
+                  <div className="text-sm text-gray-900 break-words">{job.name}</div>
+                </td>
+                <td className="px-6 py-4">
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    job.status === 'OPEN' 
+                      ? "bg-green-100 text-green-800" 
+                      : "bg-red-100 text-red-800"
+                  }`}>
+                    {job.status === 'OPEN' ? 'Yes' : 'No'}
+                  </span>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={2} className="px-6 py-4 text-center text-sm text-gray-900">
+                No jobs using this bot.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 }
-

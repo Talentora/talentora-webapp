@@ -13,26 +13,41 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
-import { createBot } from '@/utils/supabase/queries';
+import { createBot, updateBot } from '@/utils/supabase/queries';
 import { useCompany } from '@/hooks/useCompany';
 import { useToast } from '@/components/Toasts/use-toast';
 import { BotDetails } from './BotDetails';
 import { VoiceEmotions } from './VoiceEmotions';
 import { Label } from '@/components/ui/label';
+import { Tables } from '@/types/types_db';
 
-const CreateBot = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface CreateBotProps {
+  isEdit?: boolean;
+  existingBot?: Tables<'bots'>;
+  onClose?: () => void;
+  onBotCreated?: (bot: Tables<'bots'>) => void;
+  onBotUpdated?: (bot: Tables<'bots'>) => void;
+}
+
+const CreateBot = ({ 
+  isEdit, 
+  existingBot, 
+  onClose,
+  onBotCreated,
+  onBotUpdated 
+}: CreateBotProps) => {
+  const [isOpen, setIsOpen] = useState(isEdit || false);
   const [activeTab, setActiveTab] = useState('bot-details');
   const [speakText, setSpeakText] = useState('Hello, how can I assist you today?');
   const [voiceOptions, setVoiceOptions] = useState<Voice[]>([]);
   const [newBot, setNewBot] = useState({
-    name: '',
-    description: '',
-    role: '',
-    icon: 'Bot',
-    prompt: '',
-    voice: null, // Changed from voiceId to voice and set to null
-    emotion: {
+    name: existingBot?.name || '',
+    description: existingBot?.description || '',
+    role: existingBot?.role || '',
+    icon: existingBot?.icon || 'Bot',
+    prompt: existingBot?.prompt || '',
+    voice: existingBot?.voice || null,
+    emotion: existingBot?.emotion || {
       speed: 1,
       anger: 1,
       curiosity: 1,
@@ -66,40 +81,68 @@ const CreateBot = () => {
     fetchVoices();
   }, []);
 
+  useEffect(() => {
+    if (isEdit) {
+      setIsOpen(true);
+    }
+  }, [isEdit]);
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open && onClose) {
+      onClose();
+    }
+  };
+
   console.log("newBot",newBot)
 
-  const handleCreateBot = async (e: React.FormEvent) => {
+  const handleSaveBot = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newBot.name || !newBot.description || !newBot.role || !newBot.voice || !newBot.prompt) {
-      toast({
-        title: 'Error',
-        description: 'All fields must be populated before creating the bot',
-        variant: 'destructive'
-      });
-      return;
-    }
     try {
-      await createBot({
-        name: newBot.name,
-        role: newBot.role,
-        description: newBot.description,
-        prompt: newBot.prompt,
-        company_id: company?.id,
-        voice: newBot.voice, // Changed from voiceId to voice?.id
-        icon: newBot.icon,
-        emotion: newBot.emotion
-      });
+      if (isEdit && existingBot) {
+        const updatedBot = await updateBot(existingBot.id, {
+          name: newBot.name,
+          role: newBot.role,
+          description: newBot.description,
+          prompt: newBot.prompt,
+          company_id: company?.id,
+          voice: newBot.voice,
+          icon: newBot.icon,
+          emotion: newBot.emotion
+        });
+        if (onBotUpdated && updatedBot) {
+          onBotUpdated(updatedBot);
+        }
+      } else {
+        const botData = {
+          name: newBot.name,
+          role: newBot.role,
+          description: newBot.description,
+          prompt: newBot.prompt,
+          company_id: company?.id,
+          voice: newBot.voice,
+          icon: newBot.icon,
+          emotion: newBot.emotion
+        };
+        
+        const createdBot = await createBot(botData);
+        if (onBotCreated && createdBot) {
+          onBotCreated(createdBot);
+        }
+      }
+      
       setIsOpen(false);
+      if (onClose) onClose();
+      
       toast({
         title: 'Success',
-        description: 'Bot created successfully'
+        description: `Bot ${isEdit ? 'updated' : 'created'} successfully`
       });
-      window.location.reload();
     } catch (error) {
-      console.error('Failed to create bot:', error);
+      console.error('Failed to save bot:', error);
       toast({
         title: 'Error',
-        description: 'Failed to create bot',
+        description: `Failed to ${isEdit ? 'update' : 'create'} bot`,
         variant: 'destructive'
       });
     }
@@ -135,17 +178,84 @@ const CreateBot = () => {
     }
   };
 
+  if (isEdit) {
+    return (
+      <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+        <DialogContent className="space-y-4">
+          <DialogHeader>
+            <DialogTitle>Edit Bot</DialogTitle>
+          </DialogHeader>
+          <Tabs defaultValue="bot-details" value={activeTab} onValueChange={setActiveTab}>
+            <TabsList>
+              <TabsTrigger value="bot-details">Bot Details</TabsTrigger>
+              <TabsTrigger value="voice-emotion">Voice and Emotion</TabsTrigger>
+              <TabsTrigger value="prompting">Prompting</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="bot-details">
+              <BotDetails
+                newBot={newBot}
+                setNewBot={setNewBot}
+                onNext={() => setActiveTab('voice-emotion')}
+              />
+            </TabsContent>
+
+            <TabsContent value="voice-emotion">
+              <VoiceEmotions
+                newBot={newBot}
+                setNewBot={setNewBot}
+                voiceOptions={voiceOptions}
+                speakText={speakText}
+                setSpeakText={setSpeakText}
+                onListen={handleListen}
+                onBack={() => setActiveTab('bot-details')}
+                onNext={() => setActiveTab('prompting')}
+              />
+            </TabsContent>
+
+            <TabsContent value="prompting">
+              <form onSubmit={handleSaveBot} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="prompt">Enter Prompt</Label>
+                  <Textarea
+                    id="prompt"
+                    placeholder="e.g. You are an experienced DevOps recruiter..."
+                    className="min-h-[150px]"
+                    value={newBot.prompt}
+                    onChange={(e) => setNewBot({ ...newBot, prompt: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="flex justify-between">
+                  <Button
+                    type="button"
+                    onClick={() => setActiveTab('voice-emotion')}
+                    className="bg-primary-dark text-white"
+                  >
+                    Back
+                  </Button>
+                  <Button type="submit">
+                    Save Changes
+                  </Button>
+                </div>
+              </form>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
-    
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="w-full bg-primary-dark">
+        <Button className="w-full bg-primary-dark" onClick={() => setIsOpen(true)}>
           <Plus className="mr-2 h-4 w-4" /> Create New Bot
         </Button>
       </DialogTrigger>
       <DialogContent className="space-y-4">
         <DialogHeader>
-          <DialogTitle>Bot Configuration</DialogTitle>
+          <DialogTitle>Create New Bot</DialogTitle>
         </DialogHeader>
         <Tabs defaultValue="bot-details" value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
@@ -176,7 +286,7 @@ const CreateBot = () => {
           </TabsContent>
 
           <TabsContent value="prompting">
-            <form onSubmit={handleCreateBot} className="space-y-4">
+            <form onSubmit={handleSaveBot} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="prompt">Enter Prompt</Label>
                 <Textarea
@@ -196,7 +306,9 @@ const CreateBot = () => {
                 >
                   Back
                 </Button>
-                <Button type="submit">Create Bot</Button>
+                <Button type="submit">
+                  Create Bot
+                </Button>
               </div>
             </form>
           </TabsContent>
@@ -204,7 +316,6 @@ const CreateBot = () => {
       </DialogContent>
     </Dialog>
   );
-}
-
+};
 
 export default CreateBot;

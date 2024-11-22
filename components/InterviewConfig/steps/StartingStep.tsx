@@ -39,7 +39,7 @@ export const StartingStep: React.FC<{
     const supabase = createClient();
     const { data: existingJob } = await supabase
       .from('jobs')
-      .select('*')
+      .select()
       .eq('merge_id', Number(jobId))
       .single();
 
@@ -52,8 +52,7 @@ export const StartingStep: React.FC<{
       .from('jobs')
       .insert({
         merge_id: jobId, // Keep as string since it's a UUID
-        company_id: companyId // Already a UUID string
-        // config_id: null,
+        company_id: companyId, // Already a UUID string
       })
       .select()
       .single();
