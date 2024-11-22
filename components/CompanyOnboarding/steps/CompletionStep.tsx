@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const CompletionStep: React.FC = () => {
   return (
@@ -15,7 +16,7 @@ export const CompletionStep: React.FC = () => {
         </Link>
       </div>
       <div className="w-1/2 border border-gray-300">
-        <img src="" alt="Empty Image" />
+        <Image src="" alt="Empty Image" />
       </div>
     </div>
   );

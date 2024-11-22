@@ -26,7 +26,7 @@ export const StartingStep: React.FC<{
     };
 
     checkAndCreateJob();
-  }, [recruiter, job, mergeJobId]);
+  }, [recruiter, job, mergeJobId, doesJobExist, createJob]);
   if (!job) {
     return (
       <div className="flex items-center justify-center">

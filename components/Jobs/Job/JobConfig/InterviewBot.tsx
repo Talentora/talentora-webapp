@@ -72,7 +72,7 @@ const InterviewBot = ({ loading, botInfo, jobId, interviewConfig }: InterviewBot
       if (bots) setAvailableBots(bots);
     }
     fetchBots();
-  }, []);
+  }, [supabase]);
 
   const handleBotChange = async (bot: Bot) => {
     setSelectedBot(bot);

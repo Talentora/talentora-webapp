@@ -96,7 +96,6 @@ export default function JobConfig({ jobId, applicants }: { jobId: string, applic
           interviewConfig={interviewConfig} 
           setShowSetupDialog={setShowSetupDialog} 
           jobId={jobId} 
-          onConfigUpdate={fetchData}
         />
         <InterviewBot 
           loading={loading} 
@@ -114,7 +113,6 @@ export default function JobConfig({ jobId, applicants }: { jobId: string, applic
           loading={loading} 
           interviewConfig={interviewConfig} 
           jobId={jobId}
-          onQuestionsUpdate={fetchData}
         />
         </div>
         {setupFlags.isReady === "yes" && (

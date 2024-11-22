@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export const StartingStep: React.FC<{
   onCompletion: (isComplete: boolean) => void;
 }> = ({ onCompletion }) => {
@@ -12,7 +14,7 @@ export const StartingStep: React.FC<{
         </ul>
       </div>
       <div className="w-1/2 border border-gray-300">
-        <img src="" alt="Empty Image" />
+        <Image src="" alt="Empty Image" />
       </div>
     </div>
   );
