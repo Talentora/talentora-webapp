@@ -70,6 +70,14 @@ const CreateBot = () => {
 
   const handleCreateBot = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!newBot.name || !newBot.description || !newBot.role || !newBot.voice || !newBot.prompt) {
+      toast({
+        title: 'Error',
+        description: 'All fields must be populated before creating the bot',
+        variant: 'destructive'
+      });
+      return;
+    }
     try {
       await createBot({
         name: newBot.name,
@@ -100,12 +108,12 @@ const CreateBot = () => {
   const handleListen = async () => {
     try {
       const emotions = {
-        speed: newBot.emotions.speed,
-        anger: newBot.emotions.anger,
-        curiosity: newBot.emotions.curiosity,
-        positivity: newBot.emotions.positivity,
-        sadness: newBot.emotions.sadness,
-        surprise: newBot.emotions.surprise,
+        speed: newBot.emotion.speed,
+        anger: newBot.emotion.anger,
+        curiosity: newBot.emotion.curiosity,
+        positivity: newBot.emotion.positivity,
+        sadness: newBot.emotion.sadness,
+        surprise: newBot.emotion.surprise,
       };
       const response = await tts.buffer({
         model_id: "sonic-english",
