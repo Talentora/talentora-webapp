@@ -124,7 +124,7 @@ export default function BotSettings({ bot, onBotDeleted, onBotUpdated }: BotSett
         </Card>
 
       {/* Dialog Content */}
-      <DialogContent className="h-2/3 overflow-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <BotInfo bot={bot} /> 
       </DialogContent>
       </Dialog>
