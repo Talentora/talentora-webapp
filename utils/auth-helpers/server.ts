@@ -200,13 +200,14 @@ export async function signUp(formData: FormData) {
   if (!isValidEmail(email)) {
     console.log('Invalid email format detected.');
     redirectPath = getErrorRedirect(
-      '/signin/signup',
+      `/signin/signup?role=${role}`,
       'Invalid email address.',
       'Please try again.'
     );
   }
 
   const supabase = createClient();
+
   console.log('Supabase client created. Attempting to sign up user...');
   const { error, data } = await supabase.auth.signUp({
     email,
@@ -219,30 +220,34 @@ export async function signUp(formData: FormData) {
   });
 
   if (error) {
-    console.log('Sign-up failed with error:', error.message);
-    redirectPath = getErrorRedirect(
-      '/signin/signup',
-      'Sign up failed.',
-      error.message
-    );
+
+    redirectPath = `/signin/signup?role=${role}`
+    // redirectPath = getStatusRedirect(
+    //   `/signin/signup?role=${role}`,
+    //   'Sign up failed.',
+    //   error.message
+    // );
   } else if (data.session) {
     console.log('Sign-up successful with active session.');
-    redirectPath = getStatusRedirect(
-      '/settings/onboarding',
-      'Success!',
-      `You are now signed in as a ${role}.`
-    );
+    redirectPath = `/signin/signup?role=${role}`
+
+    // redirectPath = getStatusRedirect(
+    //   '/settings/onboarding',
+    //   'Success!',
+    //   `You are now signed in as a ${role}.`
+    // );
   } else if (
     data.user &&
     data.user.identities &&
     data.user.identities.length == 0
   ) {
     console.log('Sign-up failed: Account already exists with no identities.');
-    redirectPath = getErrorRedirect(
-      '/signin/signup',
+    redirectPath = getStatusRedirect(
+      `/signin/signup?role=${role}`,
       'Sign up failed.',
       'There is already an account associated with this email address. Try resetting your password.'
     );
+
   } else if (data.user) {
     console.log('Sign-up successful: Email confirmation required.');
     redirectPath = getStatusRedirect(
@@ -253,7 +258,7 @@ export async function signUp(formData: FormData) {
   } else {
     console.log('Sign-up failed: Unknown error.');
     redirectPath = getErrorRedirect(
-      '/signin/signup',
+      `/signin/signup?role=${role}`,
       'Hmm... Something went wrong.',
       'You could not be signed up.'
     );

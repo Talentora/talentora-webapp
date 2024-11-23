@@ -74,16 +74,6 @@ export default function PasswordSignIn({
           Forgot your password?
         </Link>
       </p>
-      {allowEmail && (
-        <p>
-          <Link
-            href={`/signin/email_signin?role=${role}`}
-            className="font-light text-sm"
-          >
-            Sign in via magic link
-          </Link>
-        </p>
-      )}
       <p>
         <Link
           href={`/signin/signup?role=${role}`}

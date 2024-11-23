@@ -15,7 +15,7 @@ export default function SignUp() {
 
   const handleContinue = () => {
     if (selectedType) {
-      router.push(`/signin/passwordSignin?role=${selectedType}`);
+      router.push(`/signin/signup?role=${selectedType}`);
     }
   };
 
