@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { createClient } from '@/utils/supabase/client';
 import { Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 

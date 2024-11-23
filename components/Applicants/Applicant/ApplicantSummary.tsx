@@ -146,13 +146,13 @@ export default function ApplicantSummary({
                 backgroundColor: 'rgba(153, 102, 255, 0.2)'
               }
             ]}
-            options={{
-              scales: {
-                x: {
-                  display: false
-                }
-              }
-            }}
+            // options={{
+            //   scales: {
+            //     x: {
+            //       display: false
+            //     }
+            //   }
+            // }}
           />
         </CardContent>
       </Card>

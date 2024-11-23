@@ -101,7 +101,6 @@ export async function GET(
       application: {
         id: application.id,
         created_at: application.created_at,
-        status: application.status,
         current_stage: application.current_stage,
         job_id: application.job
       },

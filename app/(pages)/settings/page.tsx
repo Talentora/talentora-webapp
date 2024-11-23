@@ -1,17 +1,22 @@
-import { Tables } from '@/types/types_db';
-type Recruiter = Tables<'recruiters'>;
-type Company = Tables<'companies'>;
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import CustomerPortalForm from '@/components/AccountForms/CustomerPortalForm';
 import EmailForm from '@/components/AccountForms/EmailForm';
 import NameForm from '@/components/AccountForms/NameForm';
 import CompanyForm from '@/components/AccountForms/CompanyForm';
-import { redirect } from 'next/navigation';
 import { useRecruiter } from '@/hooks/useRecruiter';
 import { useCompany } from '@/hooks/useCompany';
 
-export default async function Account() {
+export default function Account() {
+  const { company, loading: companyLoading } = useCompany();
+  const { recruiter, loading: recruiterLoading } = useRecruiter();
+
+  if (companyLoading || recruiterLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <section className="p-10">
       <div className="max-w-6xl px-4 mx-auto sm:px-6 sm:pt-24 lg:px-8">

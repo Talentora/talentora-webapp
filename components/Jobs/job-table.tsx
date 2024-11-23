@@ -11,7 +11,7 @@ import { JobRow } from './job-row';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-react';
 
-type SortField = 'name' | 'status' | 'created_at' | 'opened_at';
+type SortField = 'name' | 'status' | 'created_at' | 'opened_at' | 'configured' | 'departments' | 'offices';
 
 interface JobTableProps {
   jobs: EnrichedJob[];
@@ -95,7 +95,7 @@ export function JobTable({
           jobs.map((job) => <JobRow key={job.id} job={job} />)
         ) : (
           <TableRow>
-            <TableCell colSpan={9} className="text-center">
+            <TableCell colSpan={7} className="text-center">
               No jobs found.
             </TableCell>
           </TableRow>

@@ -1,20 +1,20 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import { Tables } from '@/types/types_db';
 import { DialogHeader, DialogTitle, DialogDescription, DialogContent, Dialog } from '@/components/ui/dialog';
 import { Table, TableHeader, TableBody, TableCell, TableRow, TableFooter } from '@/components/ui/table';
 import { Input } from '@/components/ui/input'; // Added for search functionality
 import { inviteCandidate } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
+import { ApplicantCandidate } from '@/types/merge';
 interface InviteApplicantsProps {
   jobId: string;
-  applicants: Tables<'applicants'>[];
+  applicants: ApplicantCandidate[];
 }
 
 const InviteApplicants = ({ jobId, applicants }: InviteApplicantsProps) => {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
-  const [selectedApplicants, setSelectedApplicants] = useState<Tables<'applicants'>[]>([]);
+  const [selectedApplicants, setSelectedApplicants] = useState<ApplicantCandidate[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState(''); // Added for search functionality
   const applicantsPerPage = 25;
@@ -33,17 +33,9 @@ const InviteApplicants = ({ jobId, applicants }: InviteApplicantsProps) => {
       const inviteResult = await inviteCandidate(
         name, email, candidate_id);
       if (inviteResult.error) {
-        toast({
-          title: 'Error inviting candidate',
-          description: inviteResult.error,
-          variant: 'destructive'
-        });
+        toast({ variant: 'destructive', title: 'Error', description: inviteResult.error });
       } else {
-        toast({
-          title: 'Candidate invited successfully',
-          description: `Invite sent to ${name} (${email})`,
-          variant: 'success'
-        });
+        toast({ variant: 'default', title: 'Success', description: `Invite sent to ${name} (${email})` });
       }
     });
   };
@@ -52,7 +44,7 @@ const InviteApplicants = ({ jobId, applicants }: InviteApplicantsProps) => {
     setSelectedApplicants(applicants);
   };
 
-  const handlePageChange = (newPage) => {
+  const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
 

@@ -1,6 +1,6 @@
 import { Input } from '@/components/ui/input';
 import { Button } from '../ui/button';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export function SearchFilter({
   onSearch,

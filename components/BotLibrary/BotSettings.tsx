@@ -62,17 +62,10 @@ export default function BotSettings({ bot, onBotDeleted, onBotUpdated }: BotSett
     try {
       await deleteBot(bot.id);
       onBotDeleted(bot.id);
-      toast({
-        title: 'Success',
-        description: 'Bot deleted successfully'
-      });
+      toast.success('Bot deleted successfully');
     } catch (error) {
       console.error('Failed to delete bot:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to delete bot',
-        variant: 'destructive'
-      });
+      toast.error('Failed to delete bot');
     }
   };
 
