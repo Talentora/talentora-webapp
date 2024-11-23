@@ -135,6 +135,7 @@ export async function signInWithPassword(formData: FormData) {
   const cookieStore = cookies();
   const email = String(formData.get('email')).trim();
   const password = String(formData.get('password')).trim();
+  const role = String(formData.get('role')).trim();
   let redirectPath: string;
 
   const supabase = createClient();
@@ -149,6 +150,7 @@ export async function signInWithPassword(formData: FormData) {
       'Sign in failed.',
       error.message
     );
+    redirectPath = `/signin/password_signin?role=${role}`
   } else if (data.user) {
     cookieStore.set('preferredSignInView', 'password_signin', { path: '/' });
     redirectPath = getStatusRedirect('/', 'Success!', 'You are now signed in.');

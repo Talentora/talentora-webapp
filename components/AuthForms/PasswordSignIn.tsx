@@ -24,6 +24,16 @@ export default function PasswordSignIn({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true);
+    const formData = new FormData(e.currentTarget);
+    formData.append('role', role);
+    e.currentTarget = e.currentTarget.cloneNode(true) as HTMLFormElement;
+    e.currentTarget.appendChild(
+      Object.assign(document.createElement('input'), {
+        type: 'hidden',
+        name: 'role',
+        value: role
+      })
+    );
     await handleRequest(e, signInWithPassword, router);
     setIsSubmitting(false);
   };
