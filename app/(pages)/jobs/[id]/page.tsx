@@ -40,8 +40,8 @@ export default function Page({ params }: JobPageProps) {
 
   return (
     <JobPage 
-      job={job} 
-      applicants={applicants} 
+      job={job || undefined} 
+      applicants={applicants || []} 
       jobLoading={jobLoading}
       applicantsLoading={applicantsLoading}
     />

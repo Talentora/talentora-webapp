@@ -15,26 +15,7 @@ interface BotInfoProps {
 }
 
 export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
-  const router = useRouter();
-
-  const chartConfig = {
-    desktop: {
-      label: "Desktop",
-      color: "hsl(var(--chart-1))",
-    },
-  } satisfies ChartConfig
-
-  const chartData = [
-    { emotion: 'speed', value: bot.emotion.speed },
-    { emotion: 'anger', value: bot.emotion.anger },
-    { emotion: 'curiosity', value: bot.emotion.curiosity },
-    { emotion: 'positivity', value: bot.emotion.positivity },
-    { emotion: 'sadness', value: bot.emotion.sadness },
-    { emotion: 'surprise', value: bot.emotion.surprise }
-  ];
-
   const [jobInterviewConfigs, setJobInterviewConfigs] = useState<any[]>([]);
-
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -70,6 +51,32 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
 
     fetchJobInterviewConfigs();
   }, [bot.id]);
+
+  const chartConfig = {
+    desktop: {
+      label: "Desktop",
+      color: "hsl(var(--chart-1))",
+    },
+  } satisfies ChartConfig
+
+  if (!bot.emotion) return null;
+
+  // emotion and voice are Json objects
+  const emotion = bot.emotion as { [key: string]: number };
+  const voice = bot.voice as { [key: string]: string };
+
+  const chartData = [
+    { emotion: 'speed', value: emotion.speed },
+    { emotion: 'anger', value: emotion.anger },
+    { emotion: 'curiosity', value: emotion.curiosity },
+    { emotion: 'positivity', value: emotion.positivity },
+    { emotion: 'sadness', value: emotion.sadness },
+    { emotion: 'surprise', value: emotion.surprise }
+  ];
+
+
+
+  
 
 
 
@@ -120,7 +127,7 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
           <div className="flex items-center gap-2">
             <h3 className="font-semibold">Voice:</h3>
             <p className="text-gray-600 dark:text-gray-300">
-              {bot.voice?.name || 'No voice selected'}
+              {voice?.name || 'No voice selected'}
             </p>
           </div>
           
@@ -133,7 +140,7 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
                 config={chartConfig}
                 className="mx-auto aspect-square w-full max-w-md"
               >
-                <RadarChart data={chartData} scale={{ type: 'linear', min: 1, max: 5 }}>
+                <RadarChart data={chartData}>
                   <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
                   <PolarAngleAxis dataKey="emotion" />
                   <PolarGrid />
@@ -156,6 +163,8 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
 
 // Update the BotJobTable component to match the new styling
 function BotJobTable({ jobInterviewConfigs, isLoading }: { jobInterviewConfigs: any[], isLoading: boolean }): JSX.Element {
+  const router = useRouter();
+
   if (isLoading) {
     return (
       <div className="space-y-4 p-4">
@@ -166,7 +175,6 @@ function BotJobTable({ jobInterviewConfigs, isLoading }: { jobInterviewConfigs: 
     );
   }
 
-  // ...
 
 
   return (

@@ -58,8 +58,8 @@ export function JobFilters({ onFilterChange, initialFilters, departments }: JobF
     const newFilters = {
       ...filters,
       [category]: {
-        ...filters[category],
-        [subcategory]: value ?? !filters[category][subcategory],
+        ...(filters[category] as { [key: string]: boolean }),
+        [subcategory]: value ?? !(filters[category] as { [key: string]: boolean })[subcategory],
       },
     }
     setFilters(newFilters)
@@ -174,7 +174,14 @@ function FilterSection({ title, children }: { title: string; children: React.Rea
   )
 }
 
-function FilterCheckbox({ id, label, checked, onCheckedChange }) {
+interface FilterCheckboxProps {
+  id: string;
+  label: string;
+  checked: boolean;
+  onCheckedChange: () => void;
+}
+
+function FilterCheckbox({ id, label, checked, onCheckedChange }: FilterCheckboxProps) {
   return (
     <div className="flex items-center space-x-2">
       <Checkbox id={id} checked={checked} onCheckedChange={onCheckedChange} />

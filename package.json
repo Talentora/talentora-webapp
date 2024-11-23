@@ -17,7 +17,7 @@
     "supabase:reset": "npx supabase db reset",
     "supabase:link": "npx supabase link",
     "supabase:update-schema": "npx supabase db dump --file schema.sql",
-    "supabase:generate-types": "npx supabase gen types typescript --local --schema --debug public > types/types_db.ts",
+    "supabase:generate-types": "npx supabase gen types typescript --local --schema public --debug > types/types_db.ts",
     "supabase:generate-migration": "npx supabase db diff | npx supabase migration new newmigration",
     "supabase:generate-seed": "npx supabase db dump --data-only -f supabase/seed.sql",
     "supabase:push": "npx supabase db push",
@@ -115,7 +115,7 @@
     "supabase": "^1.200.3",
     "tailwindcss": "^3.4.12",
     "ts-jest": "^29.2.5",
-    "typescript": "^5.6.2",
+    "typescript": "^5.7.2",
     "webpack": "^5.95.0"
   },
   "proxy": "https://api.merge.dev"

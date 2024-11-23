@@ -100,7 +100,7 @@ const CreateBot = ({
     e.preventDefault();
     try {
       if (isEdit && existingBot) {
-        const updatedBot = await updateBot(existingBot.id, {
+        const updatedBot = await updateBot(existingBot.id.toString(), {
           name: newBot.name,
           role: newBot.role,
           description: newBot.description,
@@ -147,22 +147,25 @@ const CreateBot = ({
       });
     }
   };
+  // emotion is a Json object
+  const emotion = newBot.emotion as { [key: string]: number };
+  const voice = newBot.voice as { [key: string]: string };
 
   const handleListen = async () => {
     try {
       const emotions = {
-        speed: newBot.emotion.speed,
-        anger: newBot.emotion.anger,
-        curiosity: newBot.emotion.curiosity,
-        positivity: newBot.emotion.positivity,
-        sadness: newBot.emotion.sadness,
-        surprise: newBot.emotion.surprise,
+        speed: emotion.speed,
+        anger: emotion.anger,
+        curiosity: emotion.curiosity,
+        positivity: emotion.positivity,
+        sadness: emotion.sadness,
+        surprise: emotion.surprise,
       };
       const response = await tts.buffer({
         model_id: "sonic-english",
         voice: {
           mode: "id",
-          id: newBot.voice?.id // Changed from voiceId to voice?.id
+          id: voice?.id // Changed from voiceId to voice?.id
         },
         transcript: speakText,
         emotions: emotions,

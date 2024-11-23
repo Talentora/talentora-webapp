@@ -1,4 +1,3 @@
-// components/Jobs/Job/InterviewQuestions.tsx
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, MessageSquare } from 'lucide-react';
 import { Tables } from '@/types/types_db';
@@ -22,16 +21,22 @@ const InterviewQuestions = ({ loading, interviewConfig, jobId, onQuestionsUpdate
     (typeof interviewConfig.interview_questions === 'string' ? 
       JSON.parse(interviewConfig.interview_questions) : 
       interviewConfig.interview_questions) : [];
+  
+  const questionCount = interviewConfig?.interview_questions ? 
+    (typeof interviewConfig.interview_questions === 'string' ? 
+      interviewQuestions.length : 
+      interviewQuestions.length) : 0;
+
+  const questions = interviewConfig?.interview_questions ? 
+    (typeof interviewConfig.interview_questions === 'string' ? 
+      JSON.parse(interviewConfig.interview_questions) : 
+      interviewConfig.interview_questions) : [];
 
   const handleCompletion = (isComplete: boolean) => {
     if (isComplete) {
       setShowQuestionsDialog(false);
       onQuestionsUpdate?.();
     }
-  };
-
-  const handleEditQuestions = () => {
-    setShowQuestionsDialog(true);
   };
 
   return (
@@ -48,48 +53,37 @@ const InterviewQuestions = ({ loading, interviewConfig, jobId, onQuestionsUpdate
             <div className="flex justify-center items-center py-4">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
-          ) : interviewConfig ? (
+          ) : (
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  You have <strong>{interviewQuestions.length || 0}</strong> questions configured for your <strong>{interviewConfig.type || 'standard'}</strong> interview.
+                  You have <strong>{questionCount}</strong> questions configured for your <strong>{interviewConfig?.type || 'standard'}</strong> interview.
                 </p>
               </div>
               <Separator />
-              <div className="space-y-2">
-                {interviewQuestions.slice(0, 2).map((question, index) => (
-                  <div key={index} className="flex items-center gap-4">
-                    <div className="flex flex-col">
-                      <span className="text-xs text-muted-foreground font-semibold">Question:</span>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {question.question.length > 50 ? `${question.question.substring(0, 50)}...` : question.question}
-                      </p>
+              {questions.length > 0 && (
+                <div className="space-y-2">
+                  {questions.slice(0, 2).map((question: any, index: number) => (
+                    <div key={index} className="text-sm text-muted-foreground">
+                      {index + 1}. {question.question}
                     </div>
-                  
-                  </div>
-                ))}
-                {interviewQuestions.length > 2 && (
-                  <p className="text-sm text-muted-foreground">
-                    ...
-                  </p>
-                )}
-              </div>
-              <div className="">
+                  ))}
+                  {questions.length > 2 && (
+                    <p className="text-sm text-muted-foreground italic">
+                      and {questions.length - 2} more questions...
+                    </p>
+                  )}
+                </div>
+              )}
+              <div className="flex justify-end">
                 <Button 
                   onClick={() => setShowQuestionsDialog(true)}
+                  className="opacity-0 hover:opacity-100 transition-opacity duration-500 ease-in-out"
                 >
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Manage Questions
                 </Button>
               </div>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center gap-3 py-4" onClick={handleEditQuestions}>
-              <MessageSquare className="h-12 w-12 text-muted-foreground" />
-              <p className="text-muted-foreground text-center">
-                No interview questions configured.<br />
-                Click to set up your questions.
-              </p>
             </div>
           )}
         </CardContent>
@@ -102,7 +96,7 @@ const InterviewQuestions = ({ loading, interviewConfig, jobId, onQuestionsUpdate
           </DialogHeader>
           <QuestionSetup 
             jobId={jobId}
-            onCompletion={()=>{}}
+            onCompletion={handleCompletion}
             existingConfig={interviewConfig}
           />
         </DialogContent>
@@ -111,4 +105,4 @@ const InterviewQuestions = ({ loading, interviewConfig, jobId, onQuestionsUpdate
   );
 };
 
-export default InterviewQuestions;
+export default InterviewQuestions; 

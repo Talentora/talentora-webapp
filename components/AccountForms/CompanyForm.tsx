@@ -11,18 +11,24 @@ import {
   CardContent,
   CardFooter
 } from '@/components/ui/card';
-import { useState } from 'react';
 type Company = Tables<'companies'>;
+import { useState } from 'react';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useCompany } from '@/hooks/useCompany';
+import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
 
 const CompanyForm = () => {
-  const { company } = useCompany();
   const [showApiKey, setShowApiKey] = useState(false);
 
-  if (!company) return null; // Ensure company is not null before rendering
+  const { company, loading }: { company: Company | null; loading: boolean } = useCompany();
 
-  return (
+
+
+  if (loading) return <CompanyFormSkeleton />; // Display skeleton while loading
+
+  if (!company) return null;
+  else {
+    return (
     <Card className="my-8 bg-card text-card-foreground">
       <CardHeader>
         <CardTitle className="text-primary">Company Information</CardTitle>
@@ -38,7 +44,7 @@ const CompanyForm = () => {
               alt={company.name}
             /> */}
             <AvatarFallback>
-              {company.name.slice(0, 2).toUpperCase()}
+              {company?.name?.slice(0, 2).toUpperCase() || 'CO'}
             </AvatarFallback>
           </Avatar>
           <div>
@@ -97,8 +103,72 @@ const CompanyForm = () => {
           </div>
         </div>
       </CardContent>
-    </Card>
-  );
+      </Card>
+    );
+  }
 };
+
+// CompanyFormSkeleton component to display while loading
+const CompanyFormSkeleton = () => (
+  <Card className="my-8 bg-card text-card-foreground">
+    <CardHeader>
+      <CardTitle className="text-primary">Company Information</CardTitle>
+      <CardDescription className="text-muted-foreground">
+        View and manage your company details.
+      </CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div className="flex flex-row items-center space-x-4 pb-4">
+        <Avatar className="w-16 h-16">
+          <Skeleton className="w-16 h-16 rounded-full" />
+        </Avatar>
+        <div>
+          <h2 className="text-2xl font-bold text-primary">
+            <Skeleton className="w-1/2 h-8" />
+          </h2>
+          <Badge variant="outline" className="mt-1 bg-primary text-white">
+            <Skeleton className="w-1/2 h-8" />
+          </Badge>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <h3 className="font-semibold text-sm text-muted-foreground">
+            Website
+          </h3>
+          <p className="mt-1">
+            <Skeleton className="w-1/2 h-8" />
+          </p>
+        </div>
+        <div>
+          <h3 className="font-semibold text-sm text-muted-foreground">
+            Location
+          </h3>
+          <p className="mt-1">
+            <Skeleton className="w-1/2 h-8" />
+          </p>
+        </div>
+        <div className="col-span-2">
+          <h3 className="font-semibold text-sm text-muted-foreground">
+            Description
+          </h3>
+          <p className="mt-1">
+            <Skeleton className="w-full h-8" />
+          </p>
+        </div>
+      </div>
+      <div className="col-span-2 mt-4">
+        <h3 className="font-semibold text-sm text-muted-foreground">
+          API Key
+        </h3>
+        <div className="mt-1 flex items-center">
+          <div className="bg-secondary p-2 rounded relative cursor-pointer">
+            <Skeleton className="w-1/2 h-8" />
+          </div>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
 
 export default CompanyForm;

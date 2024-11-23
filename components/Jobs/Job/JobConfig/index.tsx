@@ -1,5 +1,5 @@
 // components/Jobs/Job/JobConfig.tsx
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { getBotById, getJobInterviewConfig } from '@/utils/supabase/queries';
 import { Tables } from '@/types/types_db';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { DialogHeader, DialogTitle, DialogDescription, DialogContent, Dialog } f
 import InterviewQuestions from './InterviewQuestions';
 import AssessmentCount from './AssessmentCount';
 import InviteApplicants from './InviteApplicants';
-
+import { ApplicantCandidate } from '@/types/merge';
 type InterviewConfig = Tables<'job_interview_config'>;
 type Bot = Tables<'bots'>;
 
@@ -23,7 +23,7 @@ interface SetupFlags {
   isReady: "yes" | "no" | "almost";
 }
 
-export default function JobConfig({ jobId, applicants }: { jobId: string, applicants: Tables<'applicants'>[] }) {
+export default function JobConfig({ jobId, applicants }: { jobId: string, applicants: ApplicantCandidate[] }) {
   const [loading, setLoading] = useState(true);
   const [interviewConfig, setInterviewConfig] = useState<InterviewConfig | null>(null);
   const [botInfo, setBotInfo] = useState<Bot | null>(null);
@@ -36,7 +36,7 @@ export default function JobConfig({ jobId, applicants }: { jobId: string, applic
     isReady: "no"
   });
 
-  const updateSetupFlags = (config: InterviewConfig | null) => {
+  const updateSetupFlags = useCallback((config: InterviewConfig | null) => {
     if (!config) {
       setSetupFlags({
         hasBotId: false,
@@ -63,30 +63,30 @@ export default function JobConfig({ jobId, applicants }: { jobId: string, applic
       hasDuration,
       isReady
     });
-  };
-
-  const fetchData = async () => {
-    try {
-      const config = await getJobInterviewConfig(jobId);
-      setInterviewConfig(config);
-      updateSetupFlags(config);
-      
-      if (config?.bot_id) {
-        const botData = await getBotById(String(config.bot_id));
-        setBotInfo(botData);
-      } else {
-        setShowSetupDialog(true);
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, []);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const config = await getJobInterviewConfig(jobId);
+        setInterviewConfig(config);
+        updateSetupFlags(config);
+        
+        if (config?.bot_id) {
+          const botData = await getBotById(String(config.bot_id));
+          setBotInfo(botData);
+        } else {
+          setShowSetupDialog(true);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchData();
-  }, [jobId]);
+  }, [jobId, updateSetupFlags]);
 
   return (
     <>

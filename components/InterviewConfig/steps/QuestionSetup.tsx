@@ -33,6 +33,12 @@ type Question = {
   order: number;
 };
 
+interface InterviewCard {
+  questionData: Question;
+  onUpdate: (id: string, data: Partial<Question>) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
+}
+
 export const QuestionSetup = ({ jobId, onCompletion, existingConfig }: QuestionSetupProps) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [newQuestion, setNewQuestion] = useState('');
@@ -42,6 +48,14 @@ export const QuestionSetup = ({ jobId, onCompletion, existingConfig }: QuestionS
   const [isAddingQuestion, setIsAddingQuestion] = useState(false);
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false);
   const { toast } = useToast();
+
+  const showErrorToast = useCallback((message: string) => {
+    toast({
+      title: message,
+      description: 'Please try again later.',
+      variant: 'destructive'
+    });
+  }, [toast]);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -55,21 +69,13 @@ export const QuestionSetup = ({ jobId, onCompletion, existingConfig }: QuestionS
       }
     };
     fetchQuestions();
-  }, [jobId]);
+  }, [jobId, showErrorToast]);
 
   useEffect(() => {
     if (questions.length > 0 && !loading) {
       onCompletion(true);
     }
-  }, [questions.length, loading]);
-
-  const showErrorToast = (message: string) => {
-    toast({
-      title: message,
-      description: 'Please try again later.',
-      variant: 'destructive'
-    });
-  };
+  }, [questions.length, loading, onCompletion]);
 
   const handleAddQuestion = useCallback(async () => {
     if (!newQuestion || !responseExample) return;
@@ -86,12 +92,11 @@ export const QuestionSetup = ({ jobId, onCompletion, existingConfig }: QuestionS
       setResponseExample('');
       toast({ title: 'Question added successfully' });
     } catch (error) {
-      showErrorToast('Error adding question');
+      showErrorToast('Failed to add question');
     } finally {
       setIsAddingQuestion(false);
-      setShowQuestionCard(false);
     }
-  }, [newQuestion, responseExample, questions.length, jobId]);
+  }, [newQuestion, responseExample, questions.length, showErrorToast, toast, jobId]);
 
   const handleGenerateQuestion = useCallback(async () => {
     setIsGeneratingQuestion(true);
@@ -111,7 +116,7 @@ export const QuestionSetup = ({ jobId, onCompletion, existingConfig }: QuestionS
     } finally {
       setIsGeneratingQuestion(false);
     }
-  }, []);
+  }, [jobId, questions.length, showErrorToast, toast]);
 
   const generateQuestionFromAI = async (): Promise<string> => {
     return new Promise((resolve) =>
@@ -223,29 +228,18 @@ export const QuestionSetup = ({ jobId, onCompletion, existingConfig }: QuestionS
   );
 };
 
-const InterviewCard = ({
-  questionData: { id, question, sample_response, order },
-  onUpdate,
-  onDelete
-}: {
-  questionData: Question;
-  onUpdate: (
-    id: string,
-    data: { question?: string; sample_response?: string }
-  ) => Promise<void>;
-  onDelete: (id: string) => Promise<void>;
-}) => {
+const InterviewCard = ({ questionData, onUpdate, onDelete }: InterviewCard) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedQuestion, setEditedQuestion] = useState(question);
-  const [editedResponse, setEditedResponse] = useState(sample_response);
+  const [isClicked, setIsClicked] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isClicked, setIsClicked] = useState(false);
+  const [editedQuestion, setEditedQuestion] = useState(questionData.question);
+  const [editedResponse, setEditedResponse] = useState(questionData.sample_response);
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await onUpdate(id, {
+      await onUpdate(questionData.id, {
         question: editedQuestion,
         sample_response: editedResponse
       });
@@ -258,7 +252,7 @@ const InterviewCard = ({
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await onDelete(id);
+      await onDelete(questionData.id);
     } finally {
       setIsDeleting(false);
     }
@@ -311,7 +305,7 @@ const InterviewCard = ({
             className="cursor-pointer flex flex-row justify-between"
           >
             <CardTitle className="hover:opacity-75 transition-opacity">
-              {order}. {question}
+              {questionData.order}. {questionData.question}
             </CardTitle>
             <Pencil
               onClick={(e) => {
@@ -323,7 +317,7 @@ const InterviewCard = ({
           </CardHeader>
           {isClicked && (
             <CardContent>
-              <p>{sample_response}</p>
+              <p>{questionData.sample_response}</p>
             </CardContent>
           )}
         </>

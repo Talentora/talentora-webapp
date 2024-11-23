@@ -7,8 +7,13 @@ export function JobRow({ job }: { job: EnrichedJob }) {
   const router = useRouter();
   const { interviewConfig } = job;
 
+  const interviewQuestions: { question: string; sampleResponse: string }[] = interviewConfig?.interview_questions ? 
+    (typeof interviewConfig.interview_questions === 'string' ? 
+      JSON.parse(interviewConfig.interview_questions) : 
+      interviewConfig.interview_questions) : [];
+
   const hasBotId = !!interviewConfig?.bot_id;
-  const hasQuestions = interviewConfig?.interview_questions?.length > 0;
+  const hasQuestions = interviewQuestions.length > 0;
   const hasInterviewName = !!interviewConfig?.interview_name;
   const hasDuration = !!interviewConfig?.duration;
 

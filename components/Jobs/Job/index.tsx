@@ -10,7 +10,6 @@ import {
   JobConfigSkeleton,
   BotConfigSkeleton 
 } from './JobSkeleton';
-import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo } from 'react';
