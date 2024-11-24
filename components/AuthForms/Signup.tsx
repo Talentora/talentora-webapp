@@ -97,16 +97,6 @@ export default function SignUp({
           Sign in with email and password
         </Link>
       </p>
-      {allowEmail && (
-        <p>
-          <Link
-            href={`/signin/email_signin?role=${role}`}
-            className="font-light text-sm"
-          >
-            Sign in via magic link
-          </Link>
-        </p>
-      )}
     </div>
   );
 }
