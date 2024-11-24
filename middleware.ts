@@ -7,6 +7,7 @@ import { createClient } from './utils/supabase/server';
 export const unprotectedRoutes = [
   /^\/$/, // Matches '/'
   /^\/signin(\/.*)?$/, // Matches '/signin' and any subpath like '/signin/*'
+  /^\/signup(\/.*)?$/,
   /^\/about$/, // Matches '/about'
   /^\/pricing$/, // Matches '/pricing'
   /^\/api\/auth\/callback$/ // Matches '/api/auth/callback'
