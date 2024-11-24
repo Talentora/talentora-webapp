@@ -4,7 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Slider } from '@/components/ui/slider';
-import { ChevronDown, Volume2 } from 'lucide-react';
+import { ChevronDown, SlidersHorizontal,Mic, Volume2 } from 'lucide-react';
 import { Voice } from "@cartesia/cartesia-js";
 
 interface VoiceEmotionsProps {
@@ -39,7 +39,8 @@ export function VoiceEmotions({
           value={newBot.voice?.id}
           onValueChange={(value) => setNewBot({ ...newBot, voice: voiceOptions.find(voice => voice.id === value) })}
         >
-          <SelectTrigger>
+          <SelectTrigger className="flex items-center gap-2">
+            <Mic className="h-4 w-4" />
             <SelectValue placeholder="Select a voice" />
           </SelectTrigger>
           <SelectContent>
@@ -66,9 +67,10 @@ export function VoiceEmotions({
       <div className="flex justify-between gap-2">
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="outline">
-              Speed/Emotion
-              <ChevronDown className="ml-2 h-4 w-4" />
+            <Button variant="outline" className="flex items-center gap-2">
+              <SlidersHorizontal className="h-4 w-4" />
+              Speed/Mix
+              {/* <ChevronDown className="ml-2 h-4 w-4" /> */}
             </Button>
           </DialogTrigger>
           <DialogContent>
@@ -83,7 +85,7 @@ export function VoiceEmotions({
           onClick={onListen}
         >
           <Volume2 className="h-4 w-4" />
-          Listen
+          Speak
         </Button>
       </div>
 
