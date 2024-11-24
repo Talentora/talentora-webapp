@@ -174,7 +174,7 @@ function useToast() {
   React.useEffect(() => {
     const listener = (newState: State) => setState(newState);
     listeners.push(listener);
-    
+
     return () => {
       const index = listeners.indexOf(listener);
       if (index > -1) {

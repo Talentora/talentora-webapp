@@ -1,19 +1,20 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { getSubscription } from '@/utils/supabase/queries';
 import { useUser } from './useUser';
 import { Tables } from '@/types/types_db';
 
-type Subscription = Tables<'subscriptions'>;
-
-export const useSubscription = () => {
+export function useSubscription() {
   const { user } = useUser();
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [subscription, setSubscription] = useState<Tables<'subscriptions'> | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSubscription = async () => {
       if (!user) {
+        setLoading(false);
         return;
       }
       try {
@@ -30,4 +31,4 @@ export const useSubscription = () => {
   }, [user]);
 
   return { subscription, loading, error };
-};
+}

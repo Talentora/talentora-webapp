@@ -1,19 +1,37 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { VoiceClientAudio, VoiceClientProvider } from "realtime-ai-react";
+import { VoiceClientAudio, VoiceClientProvider } from 'realtime-ai-react';
 import { DailyVoiceClient } from 'realtime-ai-daily';
 import { LLMHelper, VoiceClient } from 'realtime-ai';
 import { Button } from '@/components/ui/button';
-import { DailyTransport } from "@daily-co/realtime-ai-daily";
+import { DailyTransport } from '@daily-co/realtime-ai-daily';
 import App from '@/components/Bot/App';
 import {
   BOT_READY_TIMEOUT,
   defaultConfig,
   defaultServices
 } from '@/utils/rtvi.config';
+import { Tables } from '@/types/types_db';
+type BotConfig = Tables<'bots'>;
+type JobInterviewConfig = Tables<'job_interview_config'>;
+type CompanyContext = Tables<'company_context'>;
+type Job = Tables<'jobs'>;
+type Company = Tables<'companies'>;
+type Application = Tables<'applications'>;
+import { Job as MergeJob } from '@/types/merge';
+import { Candidate as MergeCandidate } from '@/types/merge';
+interface BotProps {
+  bot: BotConfig;
+  jobInterviewConfig: JobInterviewConfig;
+  companyContext: CompanyContext;
+  job: Job;
+  company: Company;
+  mergeJob: MergeJob;
+  applicationData: MergeCandidate;
+}
 
-export default function Bot() {
+export default function Bot(botProps: BotProps) {
   const [showSplash, setShowSplash] = useState(true);
   const voiceClientRef = useRef<DailyVoiceClient | null>(null);
 
@@ -21,47 +39,31 @@ export default function Bot() {
     if (!showSplash || voiceClientRef.current) {
       return;
     }
-    
-    // const voiceClient = new DailyVoiceClient({
-    //   baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
-    //   services: defaultServices,
-    //   config: defaultConfig,
-    //   timeout: BOT_READY_TIMEOUT,
-    //   enableCam: true
-    // });
-
-    const dailyTransport = new DailyTransport();
-
-    const config1 = {
-      "interview_config": {
-        "interviewer_name": "Sally",
-        "company": "Google",
-        "role": "Software Engineer III, AI/Machine Learning",
-        "job_description": "This role requires expertise in: Python and machine learning frameworks, Building and deploying ML models, Experience with cloud platforms (GCP preferred), Strong system design and architecture skills, Collaboration with cross-functional teams"
-      }
-    };
 
     const voiceClient = new DailyVoiceClient({
-      // baseUrl: "/api/connectBot",
-      baseUrl: "/api/bot",
+      baseUrl: process.env.NEXT_PUBLIC_BASE_URL || '',
       services: defaultServices,
       config: defaultConfig,
       timeout: BOT_READY_TIMEOUT,
       enableCam: true
     });
 
+    // const dailyTransport = new DailyTransport();
+
+    // const voiceClient = new DailyVoiceClient({
+    //   // baseUrl: "/api/connectBot",
+    //   baseUrl: '/api/bot',
+    //   services: defaultServices,
+    //   config: defaultConfig,
+    //   timeout: BOT_READY_TIMEOUT,
+    //   enableCam: true
+    // });
+
     const llmHelper = new LLMHelper({});
 
     voiceClient.registerHelper('llm', llmHelper);
     voiceClientRef.current = voiceClient;
-
-
-    
   }, [showSplash]);
-
-
-
-
 
   if (showSplash) {
     return (
@@ -83,7 +85,7 @@ export default function Bot() {
 
   return (
     <VoiceClientProvider voiceClient={voiceClientRef.current!}>
-      <App />
+      <App {...botProps} />
       <VoiceClientAudio />
     </VoiceClientProvider>
   );

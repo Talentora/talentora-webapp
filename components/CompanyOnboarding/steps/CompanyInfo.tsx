@@ -29,7 +29,7 @@ export const CompanyInfoStep: React.FC<{
 
   useEffect(() => {
     onCompletion(hasCompany);
-  }, [hasCompany]);
+  }, [hasCompany, onCompletion]);
 
   const [headquarters, setHeadquarters] = useState('');
   const [industry, setIndustry] = useState('');

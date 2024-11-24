@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { createCompanyContext, getCompanyContext, updateCompanyContext } from '@/utils/supabase/queries';
+import {
+  createCompanyContext,
+  getCompanyContext,
+  updateCompanyContext
+} from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 import { useCompany } from '@/hooks/useCompany';
 
@@ -78,7 +81,10 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({
         if (!company?.id) {
           throw new Error('Company ID is required');
         }
-        const updatedCompanyContext = await updateCompanyContext(company.id, companyContext);
+        const updatedCompanyContext = await updateCompanyContext(
+          company.id,
+          companyContext
+        );
         console.log('Updating company context:', updatedCompanyContext);
         toast({
           title: 'Company Context',
@@ -86,7 +92,8 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({
           variant: 'default' // Changed from 'success' to 'default' to match the expected type
         });
       } else {
-        const createdCompanyContext = await createCompanyContext(companyContext);
+        const createdCompanyContext =
+          await createCompanyContext(companyContext);
         console.log('Saving company context:', createdCompanyContext);
         toast({
           title: 'Company Context',
@@ -293,7 +300,9 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({
             )
           }
         >
-          {companyContextExists ? 'Update Company Context' : 'Save Company Context'}
+          {companyContextExists
+            ? 'Update Company Context'
+            : 'Save Company Context'}
         </Button>
       </div>
     </div>

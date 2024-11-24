@@ -1,14 +1,23 @@
 type Application = {
   id: string;
   remote_id: string;
+  created_at: string;
+  modified_at: string;
   candidate: string;
   job: string;
   applied_at: string;
   rejected_at: string | null;
+  offers: string[];
   source: string | null;
   credited_to: string | null;
+  screening_question_answers: any[];
   current_stage: string | null;
   reject_reason: string | null;
+  remote_was_deleted: boolean;
+  field_mappings: {
+    organization_defined_targets: Record<string, any>;
+    linked_account_defined_targets: Record<string, any>;
+  };
   remote_data: any | null;
 };
 

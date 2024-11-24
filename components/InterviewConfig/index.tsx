@@ -1,18 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { useState } from 'react';
 import { InterviewConfigSteps } from './InterviewConfigSteps';
 import { OnboardingNavigation } from '@/components/CompanyOnboarding/OnboardingNavigation';
 import { useJob } from '@/hooks/useJob';
-import { useSearchParams } from 'next/navigation';
 
 export default function InterviewConfig({ jobId }: { jobId: string }) {
   const totalSteps = 6;
@@ -23,11 +14,7 @@ export default function InterviewConfig({ jobId }: { jobId: string }) {
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, totalSteps));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
-  const { job, loading, error } = useJob(jobId);
-
-  // if (!job) {
-  //   return <div>No job provided</div>;
-  // }
+  const { job, jobLoading, error } = useJob(jobId);
 
 
   const handleStepCompletion = (stepNumber: number, isComplete: boolean) => {
@@ -74,7 +61,7 @@ export default function InterviewConfig({ jobId }: { jobId: string }) {
           </div>
         </div>
       </div>
-      </div>
+    </div>
     // </div>
   );
 }

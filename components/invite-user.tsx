@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { inviteUser } from '@/utils/supabase/queries';
+import { inviteRecruiter } from '@/utils/supabase/queries';
 import {
   Card,
   CardContent,
@@ -60,7 +60,7 @@ export function InviteUserComponent() {
     setIsLoading(true);
 
     // Simulate API call
-    await inviteUser(name, email);
+    await inviteRecruiter(name, email);
     // await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Reset form and show success message

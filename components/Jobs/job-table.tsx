@@ -1,4 +1,4 @@
-import { Job } from '@/types/merge';
+import { EnrichedJob } from './JobList';
 import {
   Table,
   TableBody,
@@ -11,20 +11,22 @@ import { JobRow } from './job-row';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-react';
 
-type SortField = 'name' | 'status' | 'created_at' | 'opened_at';
+type SortField = 'name' | 'status' | 'created_at' | 'opened_at' | 'configured' | 'departments' | 'offices';
 
 interface JobTableProps {
-  jobs: Job[];
+  jobs: EnrichedJob[];
   sortField: SortField;
   sortDirection: 'asc' | 'desc';
   onSort: (field: SortField) => void;
+  loading?: boolean;
 }
-
+import { JobsTableSkeleton } from './JobsSkeleton';
 export function JobTable({
   jobs,
   sortField,
   sortDirection,
-  onSort
+  onSort,
+  loading
 }: JobTableProps) {
   //   console.log('Jobs received in JobTable:', jobs) // Debugging Statement
 
@@ -32,6 +34,12 @@ export function JobTable({
     <Table>
       <TableHeader>
         <TableRow>
+        <TableHead>
+            <Button variant="ghost" onClick={() => onSort('name')}>
+              Job Id
+              {sortField === 'name' && <ArrowUpDown className="ml-2 h-4 w-4" />}
+            </Button>
+          </TableHead>
           <TableHead>
             <Button variant="ghost" onClick={() => onSort('name')}>
               Job Name
@@ -55,24 +63,39 @@ export function JobTable({
             </Button>
           </TableHead>
           <TableHead>
-            <Button variant="ghost" onClick={() => onSort('opened_at')}>
-              Opened At
-              {sortField === 'opened_at' && (
+            <Button variant="ghost" onClick={() => onSort('configured')}>
+              AI Bot Configured
+              {sortField === 'configured' && (
                 <ArrowUpDown className="ml-2 h-4 w-4" />
               )}
             </Button>
           </TableHead>
-          <TableHead>Departments</TableHead>
-          <TableHead>Offices</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead>
+            <Button variant="ghost" onClick={() => onSort('departments')}>
+              Departments
+              {sortField === 'departments' && (
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              )}
+            </Button>
+          </TableHead>
+          <TableHead>
+            <Button variant="ghost" onClick={() => onSort('offices')}>
+              Offices
+              {sortField === 'offices' && (
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              )}
+            </Button>
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {jobs.length > 0 ? (
+        {loading ? (
+          <JobsTableSkeleton />
+        ) : jobs.length > 0 ? (
           jobs.map((job) => <JobRow key={job.id} job={job} />)
         ) : (
           <TableRow>
-            <TableCell colSpan={6} className="text-center">
+            <TableCell colSpan={7} className="text-center">
               No jobs found.
             </TableCell>
           </TableRow>
@@ -81,3 +104,4 @@ export function JobTable({
     </Table>
   );
 }
+

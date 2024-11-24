@@ -2,12 +2,7 @@
 import { Tables } from '@/types/types_db';
 import { createClient } from '@/utils/supabase/server';
 type Recruiter = Tables<'recruiters'>;
-type Subscription = Tables<'subscriptions'>;
-type Product = Tables<'products'>;
-type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
-import { useUser } from '@/hooks/useUser';
-import { useCompany } from '@/hooks/useCompany';
 type Bot = Tables<'bots'>;
 // CRUD operations for the company table
 
@@ -173,7 +168,7 @@ export const getProducts = async () => {
   return products;
 };
 
-export async function inviteUser(name: string | null, email: string) {
+export async function inviteRecruiter(name: string | null, email: string) {
   const supabase = createClient();
 
   try {
@@ -191,6 +186,38 @@ export async function inviteUser(name: string | null, email: string) {
   } catch (err) {
     console.error('Error inviting user:', err);
     return { success: false, error: err };
+  }
+}
+
+export async function inviteCandidate(
+  name: string,
+  emailAddress: string,
+  candidate_id: string
+): Promise<{ data?: any; error?: any }> {
+  try {
+    const supabase = createClient();
+
+    const { data, error } = await supabase.auth.admin.inviteUserByEmail(
+      emailAddress,
+      {
+        data: {
+          role: 'candidate', // You can change this to the appropriate role
+          full_name: name,
+          candidate_id: candidate_id
+        }
+      }
+    );
+    // Return a plain object
+    return {
+      data,
+      error
+    };
+  } catch (err) {
+    console.error('Error inviting candidate:', err);
+    return {
+      data: null,
+      error: err instanceof Error ? err.message : 'Unknown error occurred'
+    };
   }
 }
 
@@ -262,7 +289,6 @@ export const getMergeApiKey = async (): Promise<string | null> => {
   }
 };
 
-
 /**
  * Creates a new bot in the database.
  *
@@ -270,19 +296,25 @@ export const getMergeApiKey = async (): Promise<string | null> => {
  * @returns The created bot data.
  * @throws Error if the creation operation fails.
  */
-export const createBot = async (botData: any) => {
+export const createBot = async (botData: any): Promise<Tables<'bots'>> => {
   const supabase = createClient();
 
-
-  // Insert the bot
-  const { data: createdBot, error: botError } = await supabase
+  const { data, error } = await supabase
     .from('bots')
     .insert(botData)
-    
+    .select()
+    .single();
 
-  if (botError) {
-    throw new Error(`Failed to create bot: ${botError.message}`);
+  if (error) {
+    console.error('Failed to create bot:', error);
+    throw error;
   }
+
+  if (!data) {
+    throw new Error('No data returned from bot creation');
+  }
+
+  return data;
 };
 
 /**
@@ -295,18 +327,12 @@ export const deleteBot = async (id: number) => {
   const supabase = createClient();
 
   // Delete the bot
-  const { error: botError } = await supabase
-    .from('bots')
-    .delete()
-    .eq('id', id);
+  const { error: botError } = await supabase.from('bots').delete().eq('id', id);
 
   if (botError) {
     throw new Error(`Failed to delete bot: ${botError.message}`);
   }
 };
-
-
-
 
 /**
  * Fetches all bots from the database.
@@ -317,9 +343,7 @@ export const deleteBot = async (id: number) => {
 export const getBots = async (): Promise<Bot[] | null> => {
   const supabase = createClient();
 
-  const { data, error } = await supabase
-    .from('bots')
-    .select('*');
+  const { data, error } = await supabase.from('bots').select('*');
 
   if (error) {
     throw new Error(`Failed to fetch bots: ${error.message}`);
@@ -359,7 +383,10 @@ export const getBotById = async (id: string): Promise<Bot | null> => {
  * @returns The updated bot data.
  * @throws Error if the update operation fails.
  */
-export const updateBot = async (id: string, botData: any): Promise<Bot | null> => {
+export const updateBot = async (
+  id: string,
+  botData: any
+): Promise<Bot | null> => {
   const supabase = createClient();
 
   // Filter out undefined/null values from botData
@@ -382,10 +409,9 @@ export const updateBot = async (id: string, botData: any): Promise<Bot | null> =
   return data?.[0] || null;
 };
 
-
 /**
  * Creates a new interview question for a job.
- * 
+ *
  * @param question - The interview question text
  * @param sampleResponse - Example of a good response
  * @param order - Order number of the question
@@ -394,14 +420,16 @@ export const updateBot = async (id: string, botData: any): Promise<Bot | null> =
  */
 export const createInterviewQuestion = async (
   question: string,
-  sampleResponse: string, 
+  sampleResponse: string,
   order: number,
   jobId: string
 ): Promise<any> => {
   const supabase = createClient();
 
   if (!question || !sampleResponse || !jobId) {
-    throw new Error('Missing required fields: question, sampleResponse, and jobId are required');
+    throw new Error(
+      'Missing required fields: question, sampleResponse, and jobId are required'
+    );
   }
 
   if (typeof order !== 'number') {
@@ -417,13 +445,16 @@ export const createInterviewQuestion = async (
 
   console.log('existingConfig', existingConfig);
 
-  if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 is "not found" error
-    throw new Error(`Failed to fetch existing questions: ${fetchError.message}`);
+  if (fetchError && fetchError.code !== 'PGRST116') {
+    // PGRST116 is "not found" error
+    throw new Error(
+      `Failed to fetch existing questions: ${fetchError.message}`
+    );
   }
 
   // Ensure existingQuestions is an array
-  const existingQuestions = Array.isArray(existingConfig?.interview_questions) 
-    ? existingConfig.interview_questions 
+  const existingQuestions = Array.isArray(existingConfig?.interview_questions)
+    ? existingConfig.interview_questions
     : [];
 
   // Add new question
@@ -433,7 +464,7 @@ export const createInterviewQuestion = async (
     sample_response: sampleResponse,
     order
   };
-  console.log("newQuestion", newQuestion);
+  console.log('newQuestion', newQuestion);
 
   const updatedQuestions = [...existingQuestions, newQuestion];
   // If config exists, update it. Otherwise create new config.
@@ -441,15 +472,16 @@ export const createInterviewQuestion = async (
     .from('job_interview_config')
     .update({
       // job_id: jobId,
-      interview_questions: updatedQuestions,
+      interview_questions: updatedQuestions
       // created_at: new Date().toISOString()
     })
     .eq('job_id', jobId)
     .select();
 
-
   if (upsertError) {
-    throw new Error(`Failed to create interview question: ${upsertError.message}`);
+    throw new Error(
+      `Failed to create interview question: ${upsertError.message}`
+    );
   }
 
   return newQuestion;
@@ -468,7 +500,7 @@ export const updateInterviewQuestion = async (
   jobId: string,
   updates: {
     question?: string;
-    sample_response?: string;  // Changed from 'response' to 'sample_response' to match data structure
+    sample_response?: string; // Changed from 'response' to 'sample_response' to match data structure
   }
 ): Promise<void> => {
   const supabase = createClient();
@@ -483,11 +515,14 @@ export const updateInterviewQuestion = async (
     throw new Error(`Failed to fetch questions: ${fetchError.message}`);
   }
 
-  if (!config?.interview_questions || !Array.isArray(config.interview_questions)) {
+  if (
+    !config?.interview_questions ||
+    !Array.isArray(config.interview_questions)
+  ) {
     throw new Error('No valid questions array found');
   }
 
-  const updatedQuestions = config.interview_questions.map((q: any) => 
+  const updatedQuestions = config.interview_questions.map((q: any) =>
     q.id === questionId ? { ...q, ...updates } : q
   );
 
@@ -500,7 +535,6 @@ export const updateInterviewQuestion = async (
     throw new Error(`Failed to update question: ${updateError.message}`);
   }
 };
-
 
 /**
  * Gets all interview questions for a job.
@@ -523,12 +557,10 @@ export const getInterviewQuestions = async (jobId: string): Promise<any[]> => {
   }
 
   // Ensure we return an array
-  return Array.isArray(data?.interview_questions) ? data.interview_questions : [];
+  return Array.isArray(data?.interview_questions)
+    ? data.interview_questions
+    : [];
 };
-
-
-
-
 
 // /**
 //  * Updates the order of multiple interview questions.
@@ -555,7 +587,6 @@ export const getInterviewQuestions = async (jobId: string): Promise<any[]> => {
 //   }
 // };
 
-
 /**
  * Creates a new company context in the database.
  *
@@ -566,18 +597,27 @@ export const getInterviewQuestions = async (jobId: string): Promise<any[]> => {
 export const createCompanyContext = async (
   companyContextData: any
 ): Promise<any> => {
-  console.log('Attempting to create company context with data:', companyContextData);
+  console.log(
+    'Attempting to create company context with data:',
+    companyContextData
+  );
   const supabase = createClient();
 
-  const { data: createdCompanyContext, error: companyContextError } = await supabase
-    .from('company_context')
-    .insert(companyContextData)
-    .select()
-    .single();
+  const { data: createdCompanyContext, error: companyContextError } =
+    await supabase
+      .from('company_context')
+      .insert(companyContextData)
+      .select()
+      .single();
 
   if (companyContextError) {
-    console.error('Failed to create company context:', companyContextError.message);
-    throw new Error(`Failed to create company context: ${companyContextError.message}`);
+    console.error(
+      'Failed to create company context:',
+      companyContextError.message
+    );
+    throw new Error(
+      `Failed to create company context: ${companyContextError.message}`
+    );
   }
 
   if (!createdCompanyContext) {
@@ -595,9 +635,7 @@ export const createCompanyContext = async (
  * @param id - The ID of the company context to fetch.
  * @returns The company context data or null if not found.
  */
-export const getCompanyContext = async (
-  id: string
-): Promise<any | null> => {
+export const getCompanyContext = async (id: string): Promise<any | null> => {
   try {
     const supabase = createClient();
     const { data: companyContext, error } = await supabase
@@ -610,7 +648,7 @@ export const getCompanyContext = async (
       console.error('Error fetching company context:', error);
       return null;
     }
-
+    console.log('companyContext', companyContext);
     return companyContext;
   } catch (err) {
     console.error('Unexpected error fetching company context:', err);
@@ -670,12 +708,9 @@ export const deleteCompanyContext = async (id: string): Promise<void> => {
   }
 };
 
-
-
-
 /**
  * Updates the job interview configuration with specified columns.
- * 
+ *
  * @param jobId - The ID of the job to update.
  * @param configData - An object containing the columns to update.
  * @returns The updated job interview config data.
@@ -695,9 +730,7 @@ export const updateJobInterviewConfig = async (
 
   // Filter out undefined values to ensure only provided fields are updated
   const filteredConfigData = Object.fromEntries(
-    Object.entries(configData).filter(
-      ([_, value]) => value !== undefined
-    )
+    Object.entries(configData).filter(([_, value]) => value !== undefined)
   );
 
   if (Object.keys(filteredConfigData).length === 0) {
@@ -722,7 +755,9 @@ export const updateJobInterviewConfig = async (
       .single();
 
     if (error) {
-      throw new Error(`Failed to update job interview config: ${error.message}`);
+      throw new Error(
+        `Failed to update job interview config: ${error.message}`
+      );
     }
 
     return { data, error };
@@ -748,12 +783,17 @@ export const deleteInterviewQuestion = async (
     throw new Error(`Failed to fetch questions: ${fetchError.message}`);
   }
 
-  if (!config?.interview_questions || !Array.isArray(config.interview_questions)) {
+  if (
+    !config?.interview_questions ||
+    !Array.isArray(config.interview_questions)
+  ) {
     throw new Error('No valid questions array found');
   }
 
   // Filter out the question to delete
-  const updatedQuestions = config.interview_questions.filter((q: any) => q.id !== questionId);
+  const updatedQuestions = config.interview_questions.filter(
+    (q: any) => q.id !== questionId
+  );
 
   const { error: updateError } = await supabase
     .from('job_interview_config')
@@ -764,8 +804,6 @@ export const deleteInterviewQuestion = async (
     throw new Error(`Failed to delete question: ${updateError.message}`);
   }
 };
-
-
 
 /**
  * Fetches the interview config for a job by its ID.
@@ -796,3 +834,14 @@ export const getJobInterviewConfig = async (
   }
 };
 
+
+
+export const getJob = async (jobId: string): Promise<any | null> => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('jobs')
+    .select('*')
+    .eq('merge_id', jobId)
+    .single();
+  return data || null;
+};

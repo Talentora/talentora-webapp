@@ -5,9 +5,6 @@ import { useRecruiter } from '@/hooks/useRecruiter';
 import { Loader2 } from 'lucide-react';
 import { Job } from '@/types/merge';
 
-
-
-
 export const StartingStep: React.FC<{
   onCompletion: (isComplete: boolean) => void;
   job: Job;
@@ -17,10 +14,41 @@ export const StartingStep: React.FC<{
 
   useEffect(() => {
     if (!job) return;
-    
+
+    const doesJobExist = async (jobId: string) => {
+      const supabase = createClient();
+      const { data: existingJob } = await supabase
+        .from('jobs')
+        .select()
+        .eq('merge_id', Number(jobId))
+        .single();
+
+      return !!existingJob;
+    };
+
+    const createJob = async (jobId: string, companyId: string) => {
+      const supabase = createClient();
+      const { data: newJob, error: jobError } = await supabase
+        .from('jobs')
+        .insert({
+          merge_id: jobId, // Keep as string since it's a UUID
+          company_id: companyId, // Already a UUID string
+        })
+        .select()
+        .single();
+
+      if (jobError) {
+        throw new Error('Error creating job: ' + jobError.message);
+      }
+
+      onCompletion(true);
+
+      return newJob;
+    };
+
     const checkAndCreateJob = async () => {
       const jobExists = await doesJobExist(mergeJobId || '');
-      
+
       if (!jobExists && recruiter?.company_id && mergeJobId) {
         console.log('creating job');
         const newJob = await createJob(mergeJobId, recruiter.company_id);
@@ -29,45 +57,13 @@ export const StartingStep: React.FC<{
     };
 
     checkAndCreateJob();
-  }, [recruiter, job, mergeJobId]);
+  }, [recruiter, job, mergeJobId, onCompletion]);
   if (!job) {
     return (
       <div className="flex items-center justify-center">
         <Loader2 className="h-6 w-6 animate-spin" />
       </div>
     );
-  }
-
-  async function doesJobExist(jobId: string) {
-    const supabase = createClient();
-    const { data: existingJob } = await supabase
-      .from('jobs')
-      .select('*')
-      .eq('merge_id', Number(jobId))
-      .single();
-    
-    return !!existingJob;
-  }
-
-  async function createJob(jobId: string, companyId: string) {
-    const supabase = createClient();
-    const { data: newJob, error: jobError } = await supabase
-      .from('jobs')
-      .insert({
-        merge_id: jobId,      // Keep as string since it's a UUID
-        company_id: companyId, // Already a UUID string
-        // config_id: null,
-      })
-      .select()
-      .single();
-  
-    if (jobError) {
-      throw new Error('Error creating job: ' + jobError.message);
-    }
-
-    onCompletion(true);
-  
-    return newJob;
   }
 
   return (

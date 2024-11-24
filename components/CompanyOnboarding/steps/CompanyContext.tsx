@@ -1,10 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
 
 interface CompanyContextProps {
   onCompletion: (isComplete: boolean) => void;
@@ -35,27 +31,44 @@ export const CompanyContext: React.FC<CompanyContextProps> = ({
     <div className="space-y-8">
       <div className="space-y-4">
         <h2 className="text-2xl font-bold">Company Context</h2>
-        
+
         <div className="prose max-w-none">
           <p className="text-gray-700 leading-relaxed">
-            Providing detailed company context is crucial for our AI recruiter to effectively represent your organization to potential candidates. This information helps create more meaningful conversations and ensures candidates receive accurate, engaging information about your company. Here's what we'll need from you:
+            Providing detailed company context is crucial for our AI recruiter
+            to effectively represent your organization to potential candidates.
+            This information helps create more meaningful conversations and
+            ensures candidates receive accurate, engaging information about your
+            company. Here's what we'll need from you:
           </p>
-          
+
           <ul className="list-disc pl-6 space-y-2 mt-4">
-            <li><strong>Company Description:</strong> Your mission, vision, and core activities that define what you do</li>
-            <li><strong>Culture and Values:</strong> What makes your workplace unique and what principles guide your team</li>
-            <li><strong>Company History:</strong> Your origin story and key milestones that shaped your organization</li>
-            <li><strong>Vision and Goals:</strong> Where you're headed and what you aim to achieve</li>
-            <li><strong>Products and Services:</strong> What you offer and how it creates value</li>
-            <li><strong>Target Audience:</strong> Who you serve and how you meet their needs</li>
+            <li>
+              <strong>Company Description:</strong> Your mission, vision, and
+              core activities that define what you do
+            </li>
+            <li>
+              <strong>Culture and Values:</strong> What makes your workplace
+              unique and what principles guide your team
+            </li>
+            <li>
+              <strong>Company History:</strong> Your origin story and key
+              milestones that shaped your organization
+            </li>
+            <li>
+              <strong>Vision and Goals:</strong> Where you're headed and what
+              you aim to achieve
+            </li>
+            <li>
+              <strong>Products and Services:</strong> What you offer and how it
+              creates value
+            </li>
+            <li>
+              <strong>Target Audience:</strong> Who you serve and how you meet
+              their needs
+            </li>
           </ul>
         </div>
-
-    
       </div>
-
-    
-     
     </div>
   );
 };

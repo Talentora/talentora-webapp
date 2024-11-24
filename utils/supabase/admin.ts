@@ -98,7 +98,7 @@ const deletePriceRecord = async (price: Stripe.Price) => {
 const upsertCompanyToSupabase = async (uuid: string, customerId: string) => {
   const { error: upsertError } = await supabaseAdmin
     .from('companies')
-    .upsert([{ id: uuid, subscription_id: customerId, name: '' }]);
+    .upsert([{ id: uuid, subscription_id: customerId, name: '', industry: '', location: '', billing_address: null, company_context: null, description: null, website_url: null }]);
 
   if (upsertError)
     throw new Error(

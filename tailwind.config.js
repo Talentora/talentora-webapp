@@ -17,7 +17,7 @@ module.exports = {
         primary: {
           DEFAULT: 'black',
           light: '#white',
-          dark: '#5650F0'
+          dark: '#1E1768'
         },
         foreground: '#FFFFFF',
         background: '#F5F6FA',

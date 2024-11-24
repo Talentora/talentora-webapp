@@ -1,29 +1,47 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/client';
-import { AuthUser } from '@/types/types_auth';
 
-export const useUser = () => {
-  const [user, setUser] = useState<AuthUser | null>(null);
+import { useState, useEffect } from 'react';
+import { createClient } from '@/utils/supabase/client';
+import { User } from '@supabase/supabase-js';
+
+interface UseUserReturn {
+  user: User | null;
+  loading: boolean;
+  error: Error | null;
+}
+
+export function useUser(): UseUserReturn {
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    async function fetchUser() {
-      const supabase = createClient(); // Ensure this is called in a server context
+    const supabase = createClient();
+
+    const fetchUser = async () => {
       try {
-        const { data, error } = await supabase.auth.getUser();
+        const { data: { user }, error } = await supabase.auth.getUser();
         if (error) throw error;
-        setUser(data.user);
+        setUser(user);
       } catch (err) {
-        setError('Failed to fetch user');
+        setError(err instanceof Error ? err : new Error('Failed to fetch user'));
+        console.error('Error fetching user:', err);
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
-  return { user, loading };
-};
+  return { user, loading, error };
+}
