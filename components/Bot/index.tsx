@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { RTVIClientAudio,RTVIClientProvider } from 'realtime-ai-react';
-import { BotLLMTextData, LLMHelper, Participant, RTVIActionRequestData, RTVIClient, RTVIEvent, RTVIMessage, TranscriptData, TransportState } from 'realtime-ai';
+import { BotLLMTextData, LLMHelper, Participant, RTVIActionRequestData, RTVIClient, RTVIEvent, RTVIMessage } from 'realtime-ai';
 import App from '@/components/Bot/App';
 import { DailyTransport } from '@daily-co/realtime-ai-daily';
 import { Tables } from '@/types/types_db';
@@ -25,18 +25,24 @@ interface BotProps {
   application: Tables<'applications'>;
 }
 
+type TranscriptData = {
+  // speaker: string;
+  text: string;
+  role: 'bot' | 'user';
+}
+
 import { useRouter } from 'next/navigation';
 
 export default function Bot(botProps: BotProps) {
   const [isUserReady, setIsUserReady] = useState(false);
-  const voiceClientRef = useRef<RTVIClient | null>(null);
-  const [transportState, setTransportState] = useState<TransportState>('disconnected');
+  const voiceClientRef = useRef(null);
+  const [transportState, setTransportState] = useState('disconnected');
   const [showSplash, setShowSplash] = useState(true);
   const [transcript, setTranscript] = useState<TranscriptData[]>([]);
   const router = useRouter();
 
 
-  const { job, company, jobInterviewConfig, application} = botProps;
+  const { job, company, jobInterviewConfig, application, mergeJob} = botProps;
 
  
 
@@ -66,16 +72,16 @@ export default function Bot(botProps: BotProps) {
     const llmHelper = new LLMHelper({});
     rtviClient.registerHelper("llm", llmHelper);
 
-    voiceClientRef.current = rtviClient;
+    voiceClientRef.current = rtviClient as any;
 
     console.log("[EVENT] Bot created");
 
 
-    rtviClient.on(RTVIEvent.TransportStateChanged, (state: TransportState) => {
+    rtviClient.on(RTVIEvent.TransportStateChanged, (state: string) => {
       console.log("[EVENT] Transport state:", state);
       setTransportState(state);
       if (state === 'ready' && isUserReady) {
-        rtviClient.connect().catch(error => {
+        rtviClient.connect().catch((error: Error) => {
           console.error('Failed to connect:', error);
         });
       }
@@ -90,12 +96,12 @@ export default function Bot(botProps: BotProps) {
       console.log("[EVENT] Bot stopped speaking");
     });
 
-    rtviClient.on(RTVIEvent.BotTranscript, (transcript: TranscriptData) => {
+    rtviClient.on(RTVIEvent.BotTranscript, (transcript: any) => {
       console.log("[EVENT] Bot transcript:", transcript);
       setTranscript(prev => [...prev, { ...transcript, role: 'bot' }]);
     });
 
-    rtviClient.on(RTVIEvent.UserTranscript, (transcript: TranscriptData) => {
+    rtviClient.on(RTVIEvent.UserTranscript, (transcript: any) => {
       console.log("[EVENT] User transcript:", transcript);
       setTranscript(prev => [...prev, { ...transcript, role: 'user' }]); 
     });
@@ -129,12 +135,12 @@ export default function Bot(botProps: BotProps) {
       }
     });
   
-  }, [ botProps, isUserReady]);
+  }, [ botProps, isUserReady, showSplash]);
 
 
 
   if (showSplash) {
-    return <Splash handleReady={() => setShowSplash(false)} company={company} job={job} />;
+    return <Splash handleReady={() => setShowSplash(false)} company={company} mergeJob={mergeJob} />;
   }
 
   if (!job || !company || !jobInterviewConfig) {

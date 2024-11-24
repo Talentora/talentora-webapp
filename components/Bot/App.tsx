@@ -31,7 +31,15 @@ interface BotProps {
   application: Application;
   // transcript: { speaker: string; text: string }[];
 }
-import { TranscriptData } from 'realtime-ai';
+
+type TranscriptData = {
+  // speaker: string;
+  text: string;
+  role: 'bot' | 'user';
+}
+
+
+// import { TranscriptData } from 'realtime-ai';
 import { createAISummary } from '@/utils/supabase/queries';
 import { useRouter } from 'next/navigation';
 const status_text = {
@@ -69,14 +77,11 @@ export default function App({ bot, jobInterviewConfig, companyContext, job, comp
   const router = useRouter();
 
 
-  useRTVIClientEvent(
-    RTVIEvent.Error,
-    useCallback((message: RTVIMessage) => {
-      const errorData = message.data as { error: string; fatal: boolean };
-      if (!errorData.fatal) return;
-      setError(errorData.error);
-    }, [])
-  );
+
+  voiceClient.on(RTVIEvent.Error, (message: string) => {
+    console.log("Error", message);
+    setError(message);
+  });
 
   useEffect(() => {
     // Initialize local audio devices
@@ -105,21 +110,19 @@ export default function App({ bot, jobInterviewConfig, companyContext, job, comp
 
 
 function promptBot() {
-  const llmHelper = voiceClient.getHelper("llm") as LLMHelper;
+  const llmHelper = voiceClient.getHelper("llm");
   console.log("Prompting Bot");
   llmHelper.setContext({
     messages: [{
       role: "system",
-      content: `You are an AI interviewer conducting an interview for the ${job?.name || ''} position at ${company?.name || ''}.
+      content: `You are an AI interviewer conducting an interview for the ${mergeJob?.name || ''} position at ${company?.name || ''}.
+
+      Description: ${mergeJob?.description || 'No job description provided'}
       
       Company Context:
       ${companyContext?.description || 'No company context provided'}
 
-      Job Requirements:
-      ${jobInterviewConfig?.requirements || 'No specific requirements provided'}
-
-      Interview Instructions:
-      ${jobInterviewConfig?.instructions || 'Assess the candidate\'s qualifications and experience professionally.'}
+      
 
       Keep responses clear and concise. Avoid special characters except '!' or '?'.`
     }]
@@ -139,7 +142,7 @@ function promptBot() {
         // Update the useRecording hook to capture the recording ID
         startRecording();
     } catch (e) {
-        setError((e as RTVIError).message || "Unknown error occurred");
+        setError((e as Error).message || "Unknown error occurred");
         voiceClient.disconnect();
     }
   }

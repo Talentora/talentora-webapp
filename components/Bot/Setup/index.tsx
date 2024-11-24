@@ -75,9 +75,9 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({ onStartIntervie
                     <SelectValue placeholder="Select a microphone" />
                   </SelectTrigger>
                   <SelectContent>
-                    {availableMics.map(mic => (
-                      <SelectItem key={mic.deviceId} value={mic.deviceId || 'default'}>
-                        {mic.label || 'Unknown Microphone'}
+                    {availableMics.map((mic: { deviceId: string; label: string }) => (
+                      <SelectItem key={mic.deviceId} value={mic.deviceId}>
+                        {mic.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -116,9 +116,9 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({ onStartIntervie
                     <SelectValue placeholder="Select a camera" />
                   </SelectTrigger>
                   <SelectContent>
-                    {availableCams.map(camera => (
-                      <SelectItem key={camera.deviceId} value={camera.deviceId || 'default'}>
-                        {camera.label || 'Unknown Camera'}
+                    {availableCams.map((camera: { deviceId: string; label: string }) => (
+                      <SelectItem key={camera.deviceId} value={camera.deviceId}>
+                        {camera.label}
                       </SelectItem>
                     ))}
                   </SelectContent>

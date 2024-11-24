@@ -3,14 +3,14 @@ import { Tables } from "@/types/types_db";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-
+import { Job as MergeJob } from "@/types/merge";
 type SplashProps = {
   handleReady: () => void;
   company: Tables<'companies'>;
-  job: Tables<'jobs'>;
+  mergeJob: MergeJob;
 };
 
-export const Splash: React.FC<SplashProps> = ({ handleReady, company, job }) => {
+export const Splash: React.FC<SplashProps> = ({ handleReady, company, mergeJob }) => {
   const [showTerms, setShowTerms] = useState(true); // Start with terms shown
   const [termsAccepted, setTermsAccepted] = useState(false);
 
@@ -23,7 +23,7 @@ export const Splash: React.FC<SplashProps> = ({ handleReady, company, job }) => 
         {!showTerms ? (
           <>
             <p className="text-gray-600">
-              You are about to begin an AI-powered interview with {company?.name}. This interview is conducted by Talentora's advanced AI interviewer, designed to assess your qualifications for the {job?.name} position.
+              You are about to begin an AI-powered interview with {company?.name}. This interview is conducted by Talentora's advanced AI interviewer, designed to assess your qualifications for the {mergeJob?.name} position.
             </p>
             <p className="text-gray-600">
               The AI interviewer will ask you relevant questions about your experience and skills. Please speak naturally and clearly when responding.

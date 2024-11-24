@@ -1,20 +1,38 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { useCompany } from '@/hooks/useCompany';
+import { getCompany, getRecruiter } from '@/utils/supabase/queries';
+import { getUser } from '@/utils/supabase/queries';
 
 export async function GET(request: Request, response: NextApiResponse) {
-  const { company } = useCompany();
-  const accountToken = company?.merge_account_token;
-  console.log('accountToken', accountToken);
+  const user = await getUser();
 
-  if (!accountToken) {
-    return response.status(400).json({ message: 'Account token not found', integration_status: 'disconnected' });
+  if (!user) {
+    return response.status(400).json({ message: 'User not found', integration_status: 'disconnected' });
   }
 
-  if (request.method !== 'GET') {
-    return response.status(405).json({ message: 'Method not allowed' });
+  const recruiter = await getRecruiter(user?.id);
+  if (!recruiter) {
+    return response.status(400).json({ message: 'Recruiter not found', integration_status: 'disconnected' });
+  }
+
+  const companyId = recruiter?.company_id;
+
+  if (!companyId) {
+    return response.status(400).json({ message: 'Company ID not found', integration_status: 'disconnected' });
   }
 
   try {
+    const company = await getCompany(companyId);
+    const accountToken = company?.merge_account_token;
+    console.log('accountToken', accountToken);
+
+    if (!accountToken) {
+      return response.status(400).json({ message: 'Account token not found', integration_status: 'disconnected' });
+    }
+
+    if (request.method !== 'GET') {
+      return response.status(405).json({ message: 'Method not allowed' });
+    }
+
     const mergeResponse = await fetch('https://api.merge.dev/api/ats/v1/account-details', {
       method: 'GET',
       headers: {
