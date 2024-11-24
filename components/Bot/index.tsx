@@ -33,14 +33,13 @@ export default function Bot(botProps: BotProps) {
   const [transportState, setTransportState] = useState<TransportState>('disconnected');
   const [showSplash, setShowSplash] = useState(true);
   const [transcript, setTranscript] = useState<TranscriptData[]>([]);
+  const router = useRouter();
+
 
   const { job, company, jobInterviewConfig, application} = botProps;
 
-  if (!job || !company || !jobInterviewConfig) {
-    return null;
-  }
+ 
 
-  const router = useRouter();
 
   useEffect(() => {
     if (!showSplash || voiceClientRef.current) {
@@ -136,6 +135,10 @@ export default function Bot(botProps: BotProps) {
 
   if (showSplash) {
     return <Splash handleReady={() => setShowSplash(false)} company={company} job={job} />;
+  }
+
+  if (!job || !company || !jobInterviewConfig) {
+    return null;
   }
 
   return (
