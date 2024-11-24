@@ -9,6 +9,7 @@ import CustomerPortalForm from '@/components/AccountForms/CustomerPortalForm';
 import EmailForm from '@/components/AccountForms/EmailForm';
 import NameForm from '@/components/AccountForms/NameForm';
 import CompanyForm from '@/components/AccountForms/CompanyForm';
+import IntegrationForm from '@/components/AccountForms/IntegrationForm';
 import Link from 'next/link';
 import InvitePage from '@/components/Invite';
 
@@ -20,28 +21,34 @@ export default function SettingsPage() {
     <section className="p-6">
       <div className="p-2">
         <Tabs defaultValue="account" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-transparent border rounded-lg">
+          <TabsList className="flex w-full bg-transparent rounded-lg">
             <TabsTrigger 
               value="account" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
+              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
               Account
             </TabsTrigger>
             <TabsTrigger 
               value="company" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
+              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
               Company
             </TabsTrigger>
             <TabsTrigger 
+              value="integration" 
+              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
+            >
+              Integration
+            </TabsTrigger>
+            <TabsTrigger 
               value="billing" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
+              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
               Billing
             </TabsTrigger>
             <TabsTrigger 
               value="team" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
+              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
               Team
             </TabsTrigger>
@@ -72,6 +79,19 @@ export default function SettingsPage() {
             </Card>
           </TabsContent>
           
+          <TabsContent value="integration">
+            <Card>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl">Integrations</CardTitle>
+                <CardDescription>Manage your integrations with external services.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <IntegrationForm />
+                <p>Integration settings and options will be displayed here.</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
           <TabsContent value="billing">
             <Card>
               <CardHeader className="pb-4">
@@ -98,3 +118,8 @@ export default function SettingsPage() {
     </section>
   );
 }
+
+
+
+
+
