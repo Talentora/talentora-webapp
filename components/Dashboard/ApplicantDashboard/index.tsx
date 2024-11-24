@@ -5,9 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CircleDot } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Assessment from "@/app/(pages)/assessment/[jobId]/[applicantId]/page"
+import { useState } from "react"
 
 export default function JobPortal() {
   const router = useRouter()
+
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [applicantId, setApplicantId] = useState<string | null>(null);
 
   const handleStartInterview = (jobTitle: string) => {
     router.push(`/assessment/${jobId}/${applicantId}`)

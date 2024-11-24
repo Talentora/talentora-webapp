@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useTTS } from '@cartesia/cartesia-js/react';
-import Cartesia, { Voice } from "@cartesia/cartesia-js";
+import Cartesia, { StreamRequest, Voice } from "@cartesia/cartesia-js";
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -59,8 +59,14 @@ const CreateBot = ({
 
   const { company } = useCompany();
   const { toast } = useToast();
+  const apiKey = process.env.NEXT_PUBLIC_CARTESIA_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('NEXT_PUBLIC_CARTESIA_API_KEY is not set');
+  }
+
   const tts = useTTS({
-    apiKey: process.env.NEXT_PUBLIC_CARTESIA_API_KEY,
+    apiKey: apiKey,
     sampleRate: 44100,
   });
 
@@ -169,7 +175,7 @@ const CreateBot = ({
         },
         transcript: speakText,
         emotions: emotions,
-      });
+      } as StreamRequest);
       await tts.play();
     } catch (error) {
       console.error('Error playing audio:', error);

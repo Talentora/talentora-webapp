@@ -65,7 +65,7 @@ export function ApplicationsGraph({ applicants = [] }: ApplicationsGraphProps) {
     }
     
     applicants.forEach(applicant => {
-      const createdAt = applicant.application?.created_at;
+      const createdAt = applicant.created_at;
       if (!createdAt) return;
 
       const timestamp = Date.parse(createdAt);
