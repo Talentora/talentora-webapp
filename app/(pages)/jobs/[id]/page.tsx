@@ -20,6 +20,8 @@ export default function Page({ params }: JobPageProps) {
     refetchApplicants 
   } = useJob(jobId);
 
+
+
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-[50vh] gap-4">

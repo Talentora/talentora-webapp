@@ -20,28 +20,28 @@ export default function SettingsPage() {
     <section className="p-6">
       <div className="p-2">
         <Tabs defaultValue="account" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-transparent border rounded-lg">
+          <TabsList className="flex w-full bg-transparent rounded-lg">
             <TabsTrigger 
               value="account" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
+              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
               Account
             </TabsTrigger>
             <TabsTrigger 
               value="company" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
+              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
               Company
             </TabsTrigger>
             <TabsTrigger 
               value="billing" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
+              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
               Billing
             </TabsTrigger>
             <TabsTrigger 
               value="team" 
-              className="data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
+              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
               Team
             </TabsTrigger>
