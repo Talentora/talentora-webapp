@@ -1,36 +1,48 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getCompany, getRecruiter } from '@/utils/supabase/queries';
 import { getUser } from '@/utils/supabase/queries';
+import { NextResponse } from 'next/server';
 
-export async function GET(request: Request, response: NextApiResponse) {
-  const user = await getUser();
+export async function GET(request: Request) {
+  async function getCompanyData() {
+    const user = await getUser();
 
-  if (!user) {
-    return response.status(400).json({ message: 'User not found', integration_status: 'disconnected' });
+    if (!user) {
+      return NextResponse.json({ message: 'User not found', integration_status: 'disconnected' }, { status: 400 });
+    }
+
+    const recruiter = await getRecruiter(user?.id);
+    if (!recruiter) {
+      return NextResponse.json({ message: 'Recruiter not found', integration_status: 'disconnected' }, { status: 400 });
+    }
+
+    const companyId = recruiter?.company_id;
+
+    if (!companyId) {
+      return NextResponse.json({ message: 'Company ID not found', integration_status: 'disconnected' }, { status: 400 });
+    }
+    
+
+    const company = await getCompany(companyId);
+    return company;
   }
 
-  const recruiter = await getRecruiter(user?.id);
-  if (!recruiter) {
-    return response.status(400).json({ message: 'Recruiter not found', integration_status: 'disconnected' });
-  }
+  const company = await getCompanyData();
 
-  const companyId = recruiter?.company_id;
-
-  if (!companyId) {
-    return response.status(400).json({ message: 'Company ID not found', integration_status: 'disconnected' });
+  if (!company) {
+    return NextResponse.json({ message: 'Company not found', integration_status: 'disconnected' }, { status: 400 });
   }
 
   try {
-    const company = await getCompany(companyId);
     const accountToken = company?.merge_account_token;
     console.log('accountToken', accountToken);
 
     if (!accountToken) {
-      return response.status(400).json({ message: 'Account token not found', integration_status: 'disconnected' });
+      return NextResponse.json({ message: 'Account token not found', integration_status: 'disconnected' }, { status: 400 });
     }
 
     if (request.method !== 'GET') {
-      return response.status(405).json({ message: 'Method not allowed' });
+      return NextResponse.json({ message: 'Method not allowed' }, { status: 405 });
     }
 
     const mergeResponse = await fetch('https://api.merge.dev/api/ats/v1/account-details', {
@@ -43,10 +55,11 @@ export async function GET(request: Request, response: NextApiResponse) {
     });
 
     const data = await mergeResponse.json();
+    console.log('data', data);
 
-    return response.status(200).json({ data, integration_status: 'connected' });
+    return NextResponse.json({ data, integration_status: 'connected' }, { status: 200 });
   } catch (error) {
     console.error(error);
-    return response.status(500).json({ message: 'Internal Server Error', integration_status: 'disconnected' });
+    return NextResponse.json({ message: 'Internal Server Error', integration_status: 'disconnected' }, { status: 500 });
   }
-};
+}
