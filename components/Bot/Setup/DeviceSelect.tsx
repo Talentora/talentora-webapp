@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Mic, Webcam } from 'lucide-react';
-import { useVoiceClientMediaDevices } from 'realtime-ai-react';
+import { useRTVIClient, useRTVIClientMediaDevices } from 'realtime-ai-react';
 
 import {
   Select,
@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/select';
 
 import { AudioIndicatorBar } from './AudioIndicator';
-
+import { VoiceVisualizer } from 'realtime-ai-react';
 /**
  * Props for the DeviceSelect component.
  * Currently empty as the component doesn't accept any props.
@@ -27,20 +27,28 @@ interface DeviceSelectProps {}
  * @returns {JSX.Element} The rendered DeviceSelect component
  */
 export const DeviceSelect: React.FC<DeviceSelectProps> = () => {
+  const voiceClient = useRTVIClient()!;
+
   const {
-    availableMics,
+    availableMics,  
     selectedMic,
     updateMic,
     availableCams,
     selectedCam,
     updateCam
-  } = useVoiceClientMediaDevices();
+  } = useRTVIClientMediaDevices();
 
   // Update selected devices when they change
   useEffect(() => {
+;
+    if (selectedMic) {
+    } else {
+      console.warn("No microphone selected");
+    }
     updateMic(selectedMic?.deviceId);
     updateCam(selectedCam?.deviceId);
   }, [updateMic, selectedMic, updateCam, selectedCam]);
+
 
   return (
     <div className="flex flex-col flex-wrap gap-4">
@@ -63,7 +71,6 @@ export const DeviceSelect: React.FC<DeviceSelectProps> = () => {
         </SelectContent>
       </Select>
       <AudioIndicatorBar />
-
       {/* Camera selection */}
       <Select onValueChange={(value) => updateCam(value)}>
         <SelectTrigger>

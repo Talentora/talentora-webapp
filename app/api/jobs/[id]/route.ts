@@ -1,16 +1,22 @@
 // app/api/jobs/[id]/route.ts
 import { Job } from '@/types/merge';
-import { getMergeApiKey } from '@/utils/supabase/queries';
 import { NextResponse } from 'next/server';
+import { getMergeApiKey } from '@/utils/supabase/queries';
 
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  const accountToken = await getMergeApiKey();
   const jobId = params.id;
   const baseURL = `https://api.merge.dev/api/ats/v1`;
   const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
+  const headerToken = req.headers.get('X-Account-Token');
+  const recruiterToken = await getMergeApiKey();
+
+  console.log("recruiterToken",recruiterToken)
+  console.log("headerToken",headerToken)
+  const accountToken = recruiterToken || headerToken;
+  console.log("accountToken",accountToken)
 
   if (!apiKey || !accountToken) {
     return NextResponse.json(

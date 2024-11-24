@@ -1,18 +1,43 @@
 import React from 'react';
-import { VoiceClientVideo } from 'realtime-ai-react';
+import { RTVIClientVideo, useRTVIClient } from 'realtime-ai-react';
+import { useEffect } from 'react';
+import { useParticipant, usePermissions } from '@daily-co/daily-react';
 
-interface CandidateVideoProps {
+export default function CandidateVideo({
+  isCameraOn,
+}: {
   isCameraOn: boolean;
-}
+}) {
 
-export default function CandidateVideo({ isCameraOn }: CandidateVideoProps) {
+
+  useEffect(() => {
+    console.log("Is Camera On", isCameraOn);
+  }, [isCameraOn]);
+
+  const voiceClient = useRTVIClient();
+  const { canSendAudio, canSendVideo } = usePermissions();
+
+  console.log("Can Send Audio", canSendAudio);
+  console.log("Can Send Video", canSendVideo);
+
+
+  // useEffect(() => {
+  //   // voiceClient.isCamEnabled = true;
+  //   voiceClient?.setCameraEnabled(isCameraOn);
+  // }, []);
+
+  console.log("Voice Client", voiceClient);
+  console.log("Is Camera On", isCameraOn);
+
   return (
-    <div className="relative bg-black rounded-lg overflow-hidden h-full">
+    <div className="relative bg-black rounded-lg overflow-hidden">
+      {/* <h1 className="t  ext-white">Is Camera On: {isCameraOn ? 'Yes' : 'No'}</h1> */}
       {isCameraOn ? (
-        <VoiceClientVideo
+        <RTVIClientVideo
           participant="local"
+          className="h-full w-full object-cover rounded-lg"
+          // fit="cover"
           mirror={true}
-          className="h-full w-full object-cover"
         />
       ) : (
         <div className="flex h-full items-center justify-center bg-gray-800 text-white">
