@@ -890,7 +890,7 @@ export const getAccountTokenFromApplication = async (
     const { data: companyData, error: companyError } = await supabase
       .from('companies')
       .select('id, name, merge_account_token')
-      .eq('id', jobData.company_id)
+      .eq('id', jobData?.company_id || '')
       .single();
 
 
@@ -949,11 +949,11 @@ export const getApplication = async (applicationId: string): Promise<Tables<'app
 export const createAISummary = async (
   applicationId: string,
   recordingId: string
-): Promise<Tables<'AI_Summaries'> | null> => {
+): Promise<Tables<'AI_summary'> | null> => {
   try {
     const supabase = createClient();
     const { data: aiSummary, error } = await supabase
-      .from('AI_Summaries')
+      .from('AI_summary')
       .insert([{
         application_id: applicationId,
         recording_id: recordingId,

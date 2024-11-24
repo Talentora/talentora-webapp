@@ -6,7 +6,6 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-<<<<<<< HEAD
 export type Database = {
   graphql_public: {
     Tables: {
@@ -911,9 +910,6 @@ export type Database = {
     }
   }
 }
-=======
-export type Database = {}
->>>>>>> feature/load-applicant-data
 
 type PublicSchema = Database[Extract<keyof Database, "public">]
 
