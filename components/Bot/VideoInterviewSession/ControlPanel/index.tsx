@@ -9,26 +9,26 @@ import {
   VolumeX,
   LogOut
 } from 'lucide-react';
+import { useRTVIClient } from 'realtime-ai-react';
 
 interface ControlPanelProps {
+  onLeave: () => void;
   isMuted: boolean;
   isCameraOn: boolean;
-  isAudioEnabled: boolean;
   onMicToggle: () => void;
   onCameraToggle: () => void;
-  onAudioToggle: () => void;
-  onLeave: () => void;
 }
 
 export default function ControlPanel({
+  onLeave,
   isMuted,
   isCameraOn,
-  isAudioEnabled,
   onMicToggle,
   onCameraToggle,
-  onAudioToggle,
-  onLeave
 }: ControlPanelProps) {
+
+
+
   return (
     <footer className="p-4 shadow-t">
       <div className="mx-auto flex max-w-7xl items-center justify-between">
@@ -39,12 +39,12 @@ export default function ControlPanel({
             className={`${isMuted ? 'bg-red-100 hover:bg-red-200' : ''}`}
             onClick={onMicToggle}
           >
-            {isMuted ? (
-              <MicOff className="mr-2 h-4 w-4" />
-            ) : (
+            {!isMuted ? (
               <Mic className="mr-2 h-4 w-4" />
+            ) : (
+              <MicOff className="mr-2 h-4 w-4" />
             )}
-            {isMuted ? 'Unmute' : 'Mute'} Mic
+            {!isMuted ? 'Mute' : 'Unmute'} Mic
           </Button>
           <Button
             size="sm"
@@ -59,19 +59,7 @@ export default function ControlPanel({
             )}
             {isCameraOn ? 'Turn Off' : 'Turn On'} Camera
           </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className={`${!isAudioEnabled ? 'bg-red-100 hover:bg-red-200' : ''}`}
-            onClick={onAudioToggle}
-          >
-            {isAudioEnabled ? (
-              <Volume2 className="mr-2 h-4 w-4" />
-            ) : (
-              <VolumeX className="mr-2 h-4 w-4" />
-            )}
-            {isAudioEnabled ? 'Mute' : 'Unmute'} Audio
-          </Button>
+        
         </div>
         <Button size="sm" variant="destructive" onClick={onLeave}>
           <LogOut className="mr-2 h-4 w-4" />

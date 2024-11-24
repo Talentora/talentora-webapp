@@ -648,7 +648,6 @@ export const getCompanyContext = async (id: string): Promise<any | null> => {
       console.error('Error fetching company context:', error);
       return null;
     }
-    console.log('companyContext', companyContext);
     return companyContext;
   } catch (err) {
     console.error('Unexpected error fetching company context:', err);
@@ -822,6 +821,8 @@ export const getJobInterviewConfig = async (
       .eq('job_id', jobId)
       .single();
 
+    console.log("interviewConfig",interviewConfig)
+
     if (error) {
       console.error('Error fetching interview config:', error);
       return null;
@@ -845,3 +846,132 @@ export const getJob = async (jobId: string): Promise<any | null> => {
     .single();
   return data || null;
 };
+
+
+/**
+ * Gets the account token for a company associated with an application through its job.
+ * 
+ * @param applicationId - The ID of the application
+ * @returns The account token string or null if not found
+ */
+export const getAccountTokenFromApplication = async (
+  applicationId: string
+): Promise<{token: string | null,company: any | null}> => {
+  try {
+    const supabase = createClient();
+    
+    // Join applications -> jobs -> companies to get the account token
+    // First get the application to get the job_id
+    const { data: applicationData, error: applicationError } = await supabase
+      .from('applications')
+      .select('job_id')
+      .eq('id', applicationId)
+      .single();
+
+    if (applicationError) {
+      console.error('Error fetching application:', applicationError);
+      return {token: null, company: null};
+    }
+
+    // Then get the job to get the company_id
+    const { data: jobData, error: jobError } = await supabase
+      .from('jobs')
+      .select('company_id, merge_id')
+      .eq('merge_id', applicationData.job_id)
+      .single();
+
+      
+    if (jobError) {
+      console.error('Error fetching job:', jobError);
+      return {token: null, company: null};
+    }
+
+    // Finally get the company details
+    const { data: companyData, error: companyError } = await supabase
+      .from('companies')
+      .select('id, name, merge_account_token')
+      .eq('id', jobData.company_id)
+      .single();
+
+
+    if (companyError) {
+      console.error('Error fetching company:', companyError);
+      return {token: null, company: null};
+    }
+
+    const account_token = companyData.merge_account_token
+    return {token: account_token, company: companyData};
+
+  } catch (err) {
+    console.error('Unexpected error fetching account token:', err);
+    return {token: null, company: null};
+  }
+};
+
+
+
+
+/**
+ * Fetches an application by its ID.
+ *
+ * @param applicationId - The ID of the application to fetch.
+ * @returns The application data or null if not found.
+ */
+export const getApplication = async (applicationId: string): Promise<Tables<'applications'> | null> => {
+  try {
+    const supabase = createClient();
+    const { data: application, error } = await supabase
+      .from('applications')
+      .select('*')
+      .eq('id', applicationId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching application:', error);
+      return null;
+    }
+
+    return application;
+  } catch (err) {
+    console.error('Unexpected error fetching application:', err);
+    return null;
+  }
+};
+
+
+/**
+ * Creates a new AI summary record for an application.
+ *
+ * @param applicationId - The ID of the application to create summary for
+ * @param recordingId - The ID of the recording to associate with the summary
+ * @returns The created AI summary record or null if creation failed
+ */
+export const createAISummary = async (
+  applicationId: string,
+  recordingId: string
+): Promise<Tables<'AI_Summaries'> | null> => {
+  try {
+    const supabase = createClient();
+    const { data: aiSummary, error } = await supabase
+      .from('AI_Summaries')
+      .insert([{
+        application_id: applicationId,
+        recording_id: recordingId,
+      }])
+      .select()
+      .single();
+
+    console.log("aiSummary", aiSummary)
+
+    if (error) {
+      console.error('Error creating AI summary:', error);
+      return null;
+    }
+
+    return aiSummary;
+  } catch (err) {
+    console.error('Unexpected error creating AI summary:', err);
+    return null;
+  }
+};
+
