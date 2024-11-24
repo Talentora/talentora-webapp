@@ -40,8 +40,7 @@ export default function NameForm() {
       <CardHeader>
         <CardTitle className="text-primary">Your Name</CardTitle>
         <CardDescription className="text-muted-foreground">
-          Please enter your full name, or a display name you are comfortable
-          with.
+          Please enter your full name, or a display name.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -65,7 +64,7 @@ export default function NameForm() {
           type="submit"
           form="nameForm"
           loading={isSubmitting}
-          className="bg-button-primary text-button-primary-foreground"
+          className="bg-white text-black border border-gray-300"
         >
           Update Name
         </Button>
