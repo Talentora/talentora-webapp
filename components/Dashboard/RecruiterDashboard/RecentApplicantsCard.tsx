@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Navigation, Loader2 } from 'lucide-react';
+import { Navigation } from 'lucide-react';
 import ApplicantTable from '../../Applicants/ApplicantTable';
 import { ApplicantCandidate } from '@/types/merge';
 import { useState, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
 
 export default function RecentApplicantsCard() {
   const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
@@ -13,7 +14,7 @@ export default function RecentApplicantsCard() {
   useEffect(() => {
     const fetchData = async () => {
       const applicationsResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/applications`
+        `/api/applications`
       );
 
       if (applicationsResponse.ok) {
@@ -42,7 +43,10 @@ export default function RecentApplicantsCard() {
       <CardContent className="pt-4">
         {isLoading ? (
           <div className="flex justify-center items-center h-32">
-            <Loader2 className="h-8 w-8 animate-spin" />
+            <Skeleton className="h-4 w-32 mb-2" />
+            <Skeleton className="h-2 w-24" />
+            <Skeleton className="h-4 w-32 mb-2" />
+            <Skeleton className="h-2 w-24" />
           </div>
         ) : (
           <ApplicantTable applicants={applicants} />
