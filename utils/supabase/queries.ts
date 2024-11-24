@@ -1,6 +1,7 @@
 'use server';
 import { Tables } from '@/types/types_db';
 import { createClient } from '@/utils/supabase/server';
+import { BotWithJobs } from '@/types/custom';
 type Recruiter = Tables<'recruiters'>;
 type Company = Tables<'companies'>;
 type Bot = Tables<'bots'>;
@@ -340,16 +341,15 @@ export const deleteBot = async (id: number) => {
  * @returns An array of bot data.
  * @throws Error if the fetch operation fails.
  */
-export const getBots = async (): Promise<Bot[] | null> => {
-  const supabase = createClient();
+export const getBots = async (): Promise<BotWithJobs[] | null> => {
+  try {
+    const botsWithJobIds = await getBotsWithJobIds();
+    return botsWithJobIds;
 
-  const { data, error } = await supabase.from('bots').select('*');
-
-  if (error) {
-    throw new Error(`Failed to fetch bots: ${error.message}`);
+  } catch (error) {
+    console.error('Failed to fetch bots:', error);
+    return null;
   }
-
-  return data || null;
 };
 
 /**
@@ -975,3 +975,42 @@ export const createAISummary = async (
   }
 };
 
+/**
+ * Fetches all bots along with their associated job interview configurations.
+ * 
+ * This function queries the 'bots' table to retrieve all bots and their corresponding
+ * job interview configurations. It filters out configurations where the bot_id does not match
+ * the current bot's id. The results are ordered by the bot's creation date in descending order.
+ * 
+ * @returns A promise that resolves to an array of BotWithJobs objects or throws an error if the query fails.
+ */
+export const getBotsWithJobIds = async (): Promise<BotWithJobs[]> => {
+  const supabase = createClient();
+
+  // Query to fetch all bots with their job_interview_configs where bot_id is not null
+  const { data: botsWithJobs, error } = await supabase
+    .from('bots')
+    .select(`
+      *,
+      job_interview_config!left (
+        job_id,
+        bot_id
+      )
+    `)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching bots with jobs:', error);
+    throw error;
+  }
+
+  // Process the fetched bots to filter out job_interview_configs where bot_id doesn't match the current bot
+  const processedBots = botsWithJobs?.map(bot => ({
+    ...bot,
+    job_interview_config: bot.job_interview_config?.filter(
+      config => config.bot_id === bot.id && config.bot_id !== null
+    ) as { job_id: string; bot_id: number }[]
+  })) || [];
+
+  return processedBots;
+};
