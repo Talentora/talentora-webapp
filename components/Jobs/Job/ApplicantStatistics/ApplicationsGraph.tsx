@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts"
 
 import {
   Card,
@@ -18,9 +18,12 @@ import {
 } from '@/components/ui/chart';
 import { ApplicantCandidate } from '@/types/merge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ApplicationsGraphProps {
   applicants?: ApplicantCandidate[];
+  isLoading?: boolean;
+  hideHeader?: boolean;
 }
 
 const chartConfig = {
@@ -46,9 +49,12 @@ const BUCKET_SIZES = {
   '30d': 30,
 } as const;
 
-export function ApplicationsGraph({ applicants = [] }: ApplicationsGraphProps) {
+export function ApplicationsGraph({ applicants = [], isLoading,hideHeader = false }: ApplicationsGraphProps) {
   const [dateRange, setDateRange] = React.useState<keyof typeof DATE_RANGES>('90d');
   const [bucketSize, setBucketSize] = React.useState<keyof typeof BUCKET_SIZES>('1d');
+
+  console.log('isLoading', isLoading);
+  console.log('applicants', applicants);
 
   const chartData = React.useMemo(() => {
     const dailyData = new Map();
@@ -66,13 +72,22 @@ export function ApplicationsGraph({ applicants = [] }: ApplicationsGraphProps) {
     
     applicants.forEach(applicant => {
       const createdAt = applicant.created_at;
-      if (!createdAt) return;
+      if (!createdAt) {
+        console.error(`No created_at for applicant: ${applicant.id}`);
+        return;
+      }
 
       const timestamp = Date.parse(createdAt);
-      if (isNaN(timestamp)) return;
+      if (isNaN(timestamp)) {
+        console.error(`Invalid date for applicant: ${createdAt}`);
+        return;
+      }
       
       const date = new Date(timestamp);
-      if (date < startDate || date > endDate) return;
+      if (date < startDate || date > endDate) {
+        console.warn(`Date out of range: ${date}`);
+        return;
+      }
       
       // Find the bucket this date belongs to
       const bucketDate = new Date(date);
@@ -83,6 +98,9 @@ export function ApplicationsGraph({ applicants = [] }: ApplicationsGraphProps) {
       dailyData.set(dateStr, count + 1);
     });
 
+    // Log the dailyData to see the processed data
+    console.log('Daily Data:', Array.from(dailyData.entries()));
+
     return Array.from(dailyData.entries())
       .map(([date, applications]) => ({
         date,
@@ -90,6 +108,9 @@ export function ApplicationsGraph({ applicants = [] }: ApplicationsGraphProps) {
       }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [applicants, dateRange, bucketSize]);
+
+  // Log the final chartData to see what is being passed to the chart
+  console.log('Chart Data:', chartData);
 
   const total = React.useMemo(
     () => ({
@@ -100,6 +121,7 @@ export function ApplicationsGraph({ applicants = [] }: ApplicationsGraphProps) {
 
   return (
     <Card>
+      {!hideHeader && (
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
           <CardTitle>Applications over Time</CardTitle>
@@ -151,23 +173,31 @@ export function ApplicationsGraph({ applicants = [] }: ApplicationsGraphProps) {
               {total.applications.toLocaleString()}
             </span>
           </div>
-        </div>
-      </CardHeader>
+          </div>
+        </CardHeader>
+      )}
       <CardContent className="px-2 sm:p-6">
         <ChartContainer
           config={chartConfig}
-          className="aspect-auto h-[250px] w-full"
+          className="aspect-auto"
         >
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Bar 
-                dataKey="applications"
-                fill="hsl(var(--chart-1))"
-              />
-            </BarChart>
+          <ResponsiveContainer >
+            {isLoading ? (
+              <div className="flex justify-center items-center h-full">
+                <Skeleton className="h-32 w-full" />
+              </div>
+            ) : (
+              <BarChart data={chartData} layout="horizontal" stackOffset="sign">
+                <XAxis type="category" dataKey="date" />
+                <YAxis type="number" />
+                <Tooltip />
+                <Legend />
+                <Bar 
+                  dataKey="applications"
+                  fill="hsl(var(--chart-1))"
+                />
+              </BarChart>
+            )}
           </ResponsiveContainer>
         </ChartContainer>
       </CardContent>

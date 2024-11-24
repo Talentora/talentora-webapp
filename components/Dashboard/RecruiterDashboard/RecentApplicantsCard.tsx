@@ -7,33 +7,33 @@ import { ApplicantCandidate } from '@/types/merge';
 import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
 
-export default function RecentApplicantsCard() {
-  const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default function RecentApplicantsCard({ applicants, isLoading }: { applicants: ApplicantCandidate[], isLoading: boolean }) {
+  // const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
+  // const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const applicationsResponse = await fetch(
-        `/api/applications`
-      );
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const applicationsResponse = await fetch(
+  //       `/api/applications`
+  //     );
 
-      if (applicationsResponse.ok) {
-        const applicantsData = await applicationsResponse.json();
-        setApplicants(applicantsData);
-      }
-      setIsLoading(false);
-    };
+  //     if (applicationsResponse.ok) {
+  //       const applicantsData = await applicationsResponse.json();
+  //       setApplicants(applicantsData);
+  //     }
+  //     setIsLoading(false);
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   return (
-    <Card className="p-5 border border-gray-400 rounded-lg shadow-sm bg-foreground col-span-2">
+    <Card className="p-5 border border-border rounded-lg shadow-sm bg-foreground col-span-2">
       <CardHeader className="pb-2 flex flex-row justify-between">
         <CardTitle>Recent Applicants</CardTitle>
         <Link href="/applicants">
           <Button
-            className="bg-[#5650F0] text-white hover:bg-[#4a45d1] flex items-center "
+            className="bg-primary-dark text-white flex items-center "
             variant="outline"
           >
             View All
