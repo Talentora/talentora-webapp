@@ -13,34 +13,78 @@ import SettingsCard from './SettingsCard';
 import ApplicantCountCard from './FactCards/ApplicantCount';
 import CompletedAssessmentsCard from './FactCards/CompletedAssessments';
 import BotCard from './BotCard';
+import {ApplicationsGraph} from '@/components/Jobs/Job/ApplicantStatistics/ApplicationsGraph';
+import BotCountCard from './FactCards/BotCountCard';
+import InvitedCandidatesCard from './FactCards/InvitedCandidates';
 
 export default function RecruiterDashboard() {
+
+  const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
+  const [applicantsLoading, setApplicantsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const applicationsResponse = await fetch(
+        `/api/applications`
+      );
+
+      if (applicationsResponse.ok) {
+        const applicantsData = await applicationsResponse.json();
+        setApplicants(applicantsData);
+      }
+      setApplicantsLoading(false);
+    };
+
+    fetchData();
+  }, []);
+
+  const factWindow = 90;
 
 
   return (
     <div className="flex w-full">
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-8 mb-6">
         <h1 className="text-2xl font-bold">Recruiting Dashboard</h1>
 
         
 
-        <div className="grid grid-cols-2 gap-6 ">
-          {/* fact 1  */}
-          <ApplicantCountCard  />
+        <div className="flex flex-col gap-6 ">
 
+          <div className="flex flex-col">
+            <h1 className="text-lg font-medium">{factWindow} Day Facts</h1>
+            <div className="flex flex-row gap-6">
+              <ApplicantCountCard factWindow={factWindow} />
+              <InvitedCandidatesCard factWindow={factWindow} />
+              <CompletedAssessmentsCard factWindow={factWindow} />
+              <BotCountCard />
+            </div>
+          </div>
 
-          {/* fact 2 */}
-          <CompletedAssessmentsCard />
+          <div className="flex flex-row gap-6">
+          <Card className="border border-border  rounded-lg p-4 bg-foreground">
+              <CardTitle>Applications Over Time</CardTitle>
+              <CardContent>
+                <ApplicationsGraph applicants={applicants} isLoading={applicantsLoading} hideHeader={true} />
+              </CardContent>
+            </Card>
+            <ActiveJobsCard />
 
-          <ActiveJobsCard />
+          </div>
 
-          <RecentApplicantsCard />
+          <div className="flex flex-row gap-6">
+            
+            <RecentApplicantsCard
+              applicants={applicants}
+              isLoading={applicantsLoading}
+             />
+          </div>
 
           {/* bot */}
-          <BotCard />
-         
 
-          <SettingsCard />
+          <div className="flex flex-row gap-6">
+            <BotCard />
+            <SettingsCard />
+          </div>
         </div>
       </main>
     </div>

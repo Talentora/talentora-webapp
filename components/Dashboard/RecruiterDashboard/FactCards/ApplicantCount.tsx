@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { ApplicantCandidate } from '@/types/merge';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const ApplicantCountCard = () => {
+const ApplicantCountCard = ({ factWindow }: { factWindow: number }) => {
   const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -21,12 +21,12 @@ const ApplicantCountCard = () => {
     };
 
     fetchData();
-  }, []);
+  }, [factWindow]);
 
   if (isLoading) {
     return (
       <Card className="border p-5 border-gray-300 rounded-lg shadow-sm bg-foreground">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardHeader className="flex flex-row justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
             Total Applicants This Month
           </CardTitle>
@@ -43,33 +43,15 @@ const ApplicantCountCard = () => {
   }
 
   const currentMonth = new Date().getMonth();
-  const currentYear = new Date().getFullYear();
-  const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-  const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+  const factWindowDaysAgo = new Date();
+  factWindowDaysAgo.setDate(factWindowDaysAgo.getDate() - factWindow);
 
-  const currentMonthApplicants = applicants.filter((applicant) => {
+  const lastFactWindowDaysApplicants = applicants.filter((applicant) => {
     const appliedDate = new Date(applicant.applied_at);
-    return (
-      appliedDate.getMonth() === currentMonth &&
-      appliedDate.getFullYear() === currentYear
-    );
+    return appliedDate >= factWindowDaysAgo;
   }).length;
 
-  const lastMonthApplicants = applicants.filter((applicant) => {
-    const appliedDate = new Date(applicant.applied_at);
-    return (
-      appliedDate.getMonth() === lastMonth &&
-      appliedDate.getFullYear() === lastMonthYear
-    );
-  }).length;
-
-  const percentageChange =
-    lastMonthApplicants === 0
-      ? currentMonthApplicants > 0
-        ? 100
-        : 0
-      : ((currentMonthApplicants - lastMonthApplicants) / lastMonthApplicants) *
-        100;
+  const percentageChange = 0; // Since we're only looking at the last fact window days, there's no previous period to compare to.
 
   return (
     <Card className="border p-5 border-gray-300 rounded-lg shadow-sm bg-foreground">
@@ -82,7 +64,7 @@ const ApplicantCountCard = () => {
         </Link>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{currentMonthApplicants}</div>
+        <div className="text-2xl font-bold">{lastFactWindowDaysApplicants}</div>
         <p className="text-xs text-muted-foreground">
           {percentageChange >= 0 ? '+' : ''}
           {percentageChange.toFixed(2)}% from last month

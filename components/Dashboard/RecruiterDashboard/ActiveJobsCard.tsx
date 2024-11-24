@@ -28,6 +28,9 @@ export default function ActiveJobsCard() {
     <Card className="p-5 border border-gray-300 bg-foreground rounded-lg shadow-sm relative col-span-2">
       <CardHeader>
         <CardTitle>Active Job Titles</CardTitle>
+        <Link href="/jobs">
+          <Button className="absolute top-0 right-0 mt-2 mr-2 bg-primary-dark hover:bg-accent">View All</Button>
+        </Link>
       </CardHeader>
       <CardContent>
         {isLoading ? (
