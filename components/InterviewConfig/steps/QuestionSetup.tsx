@@ -116,7 +116,7 @@ export const QuestionSetup = ({ jobId, onCompletion, existingConfig }: QuestionS
     } finally {
       setIsGeneratingQuestion(false);
     }
-  }, [jobId, questions.length, showErrorToast, toast]);
+  }, [ questions.length, showErrorToast, toast]);
 
   const generateQuestionFromAI = async (): Promise<string> => {
     return new Promise((resolve) =>
