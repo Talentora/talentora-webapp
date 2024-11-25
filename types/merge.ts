@@ -146,6 +146,7 @@ export type ApplicantCandidate = Application & {
   candidate: Candidate;
   job: Job;
   interviewStages: JobInterviewStage;
+  application: Application;
 };
 
 export type Job = SimpleJob & { departments: Department[]; offices: Office[] };

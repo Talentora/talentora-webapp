@@ -13,7 +13,7 @@ import SettingsCard from './SettingsCard';
 import ApplicantCountCard from './FactCards/ApplicantCount';
 import CompletedAssessmentsCard from './FactCards/CompletedAssessments';
 import BotCard from './BotCard';
-import {ApplicationsGraph} from '@/components/Jobs/Job/ApplicantStatistics/ApplicationsGraph';
+import ApplicationsGraph from '@/components/Jobs/Job/ApplicantStatistics/ApplicationsGraph';
 import BotCountCard from './FactCards/BotCountCard';
 import InvitedCandidatesCard from './FactCards/InvitedCandidates';
 
@@ -30,6 +30,7 @@ export default function RecruiterDashboard() {
 
       if (applicationsResponse.ok) {
         const applicantsData = await applicationsResponse.json();
+        console.log('applicantsData', applicantsData);
         setApplicants(applicantsData);
       }
       setApplicantsLoading(false);
@@ -64,7 +65,11 @@ export default function RecruiterDashboard() {
           <Card className="border border-border  rounded-lg p-4 bg-foreground">
               <CardTitle>Applications Over Time</CardTitle>
               <CardContent>
-                <ApplicationsGraph applicants={applicants} isLoading={applicantsLoading} hideHeader={true} />
+                <ApplicationsGraph 
+                applicants={applicants} 
+                isLoading={applicantsLoading} 
+                hideHeader={true} 
+                />
               </CardContent>
             </Card>
             <ActiveJobsCard />
