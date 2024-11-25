@@ -19,11 +19,11 @@ export async function GET(request: Request) {
       id: '', // default value for id, or make it null if that's acceptable
       industry: '',
       location: '',
-      merge_account_token: null,
+      merge_account_token: '',
       name: '',
-      payment_method: null,
-      subscription_id: null,
-      website_url: null,
+      payment_method: '',
+      subscription_id: '',
+      website_url: '',
     };
 
     if (!user) {
