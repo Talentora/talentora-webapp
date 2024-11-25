@@ -2,9 +2,12 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getCompany, getRecruiter } from '@/utils/supabase/queries';
 import { getUser } from '@/utils/supabase/queries';
 import { NextResponse } from 'next/server';
+import { Tables } from '@/types/types_db';
+
+type Company = Tables<'companies'>;
 
 export async function GET(request: Request) {
-  async function getCompanyData() {
+  async function getCompanyData(): Promise<Company | null> {
     const user = await getUser();
 
     if (!user) {
