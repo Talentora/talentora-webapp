@@ -31,7 +31,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
     
-      <body className="w-full bg-gradient-to-br from-purple-500/[0.2] via-white to-pink-500/[0.2] p-0">
+      <body className="w-full bg-gradient-to-br from-purple-500/[0.1] via-white to-pink-500/[0.1] p-0">
         <NextTopLoader />
 
         <div className="flex">
