@@ -122,7 +122,7 @@ export default function App({ bot, jobInterviewConfig, companyContext, job, comp
         
         // Update the useRecording hook to capture the recording ID
         const recording = startRecording();
-        console.log("Started Recording", recording);
+        console.log("Recording", recording);
     } catch (e) {
         setError((e as Error).message || "Unknown error occurred");
         voiceClient.disconnect();

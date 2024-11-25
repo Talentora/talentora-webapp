@@ -15,10 +15,6 @@ export default function CandidateVideo({
   }, [isCameraOn]);
 
   const voiceClient = useRTVIClient();
-  const { canSendAudio, canSendVideo } = usePermissions();
-
-  console.log("Can Send Audio", canSendAudio);
-  console.log("Can Send Video", canSendVideo);
 
 
   // useEffect(() => {
@@ -26,8 +22,6 @@ export default function CandidateVideo({
   //   voiceClient?.setCameraEnabled(isCameraOn);
   // }, []);
 
-  console.log("Voice Client", voiceClient);
-  console.log("Is Camera On", isCameraOn);
 
   return (
     <div className="bg-black rounded-lg">
@@ -40,7 +34,7 @@ export default function CandidateVideo({
           mirror={true}
         />
       ) : (
-        <div className="flex h-full w-full items-center justify-center bg-gray-800 text-white rounded-lg">
+        <div className="h-full w-full items-center flex justify-center bg-gray-800 text-white rounded-lg">
           <p>Camera Off</p>
         </div>
       )}
