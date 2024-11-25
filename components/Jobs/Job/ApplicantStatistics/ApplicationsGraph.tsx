@@ -49,12 +49,23 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
     }[interval] || 7;
 
     const startDate = new Date(now.getTime() - (timeRangeInDays * 24 * 60 * 60 * 1000));
-    const bins: { [key: string]: { date: string; [key: string]: number | string } } = {};
+    const bins: { [key: string]: { date: string; displayDate: string; [key: string]: number | string } } = {};
 
     // Create empty bins
     for (let d = new Date(startDate); d <= now; d.setDate(d.getDate() + intervalInDays)) {
       const binKey = d.toISOString().split('T')[0];
-      bins[binKey] = { date: binKey };
+      let displayDate = binKey;
+      
+      // Format display date based on interval
+      if (interval === '1 month') {
+        displayDate = d.toLocaleString('default', { month: 'short', year: 'numeric' });
+      } else if (interval === '1 week') {
+        displayDate = d.toLocaleString('default', { month: 'short', day: 'numeric' });
+      } else {
+        displayDate = d.toLocaleString('default', { month: 'short', day: 'numeric' });
+      }
+      
+      bins[binKey] = { date: binKey, displayDate };
     }
 
     // Fill bins with data
@@ -72,7 +83,15 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
         const jobId = applicant.job.id;
 
         if (!bins[binKey]) {
-          bins[binKey] = { date: binKey };
+          let displayDate = binKey;
+          if (interval === '1 month') {
+            displayDate = binDate.toLocaleString('default', { month: 'short', year: 'numeric' });
+          } else if (interval === '1 week') {
+            displayDate = binDate.toLocaleString('default', { month: 'short', day: 'numeric' });
+          } else {
+            displayDate = binDate.toLocaleString('default', { month: 'short', day: 'numeric' });
+          }
+          bins[binKey] = { date: binKey, displayDate };
         }
         
         if (!bins[binKey][jobId]) {
@@ -149,7 +168,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
             <BarChart data={chartData} width={500} height={300}>
               <CartesianGrid vertical={false} />
               <XAxis
-                dataKey="date"
+                dataKey="displayDate"
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
