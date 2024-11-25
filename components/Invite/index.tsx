@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { inviteRecruiter } from '@/utils/supabase/queries';
+// import { inviteRecruiter } from '@/utils/supabase/queries';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Job } from '@/types/merge';
 
@@ -63,11 +63,12 @@ export default function InvitePage({ jobs }: InvitePageProps) {
 
     try {
       for (const email of validEmails) {
-        const response = await inviteRecruiter(null, email);
+        // const response = await inviteRecruiter(null, email);
 
-        if (!response.success) {
-          throw new Error(`Failed to send invitation to ${email}`);
-        }
+        // if (!response.success) {
+        //   throw new Error(`Failed to send invitation to ${email}`);
+        // }
+        // TODO
       }
 
       setStatus('success');
