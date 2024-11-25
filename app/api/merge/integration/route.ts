@@ -7,67 +7,28 @@ import { Tables } from '@/types/types_db';
 type Company = Tables<'companies'>;
 
 export async function GET(request: Request) {
-  async function getCompanyData(): Promise<Company | null> {
+  async function getCompanyData() {
     const user = await getUser();
 
-    let responseData = {
-      message: '',
-      integration_status: 'disconnected',
-      billing_address: null as string | null, // Explicitly define null as string | null
-      company_context: null as string | null,
-      description: null as string | null,
-      id: '' as string, // Ensure id is string or set as ''
-      industry: '' as string,
-      location: '' as string,
-      merge_account_token: null as string | null,
-      name: '' as string,
-      payment_method: null as string | null,
-      subscription_id: null as string | null,
-      website_url: null as string | null,
-    };
-
     if (!user) {
-      responseData.message = 'User not found';
-      responseData.integration_status = 'disconnected'
-      return NextResponse.json(responseData, { status: 400 });    
+      return NextResponse.json({ message: 'User not found', integration_status: 'disconnected' }, { status: 400 });
     }
 
     const recruiter = await getRecruiter(user?.id);
     if (!recruiter) {
-      responseData.message = 'User not found';
-      responseData.integration_status = 'disconnected'
-      return NextResponse.json(responseData, { status: 400 });   
+      return NextResponse.json({ message: 'Recruiter not found', integration_status: 'disconnected' }, { status: 400 });
     }
 
     const companyId = recruiter?.company_id;
 
     if (!companyId) {
-      responseData.message = 'Company ID not found';
-      responseData.integration_status = 'disconnected'
-      return NextResponse.json(responseData, { status: 400 });    
+      return NextResponse.json({ message: 'Company ID not found', integration_status: 'disconnected' }, { status: 400 });
     }
     
 
     const company = await getCompany(companyId);
-    if (!company) {
-      responseData.message = 'Company not found';
-      return NextResponse.json(responseData, { status: 400 });
-    }
-
-    // Assuming company object exists, populate the response data
-    responseData = {
-      ...responseData,
-      id: company.id || '',
-      name: company.name || '',
-      industry: company.industry || '',
-      location: company.location || '',
-      // Add any other company properties you need
-    };
-
-    // Return company data along with the integration status
-    responseData.integration_status = 'connected';
-    return NextResponse.json(responseData, { status: 200 });
-  }  
+    return company;
+  }
 
   const company = await getCompanyData();
 
@@ -76,7 +37,9 @@ export async function GET(request: Request) {
   }
 
   try {
-    const accountToken = company?.merge_account_token;
+    const typedCompany = company as Company;
+
+    const accountToken = typedCompany?.merge_account_token;
     console.log('accountToken', accountToken);
 
     if (!accountToken) {
