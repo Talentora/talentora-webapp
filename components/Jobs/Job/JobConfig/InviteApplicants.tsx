@@ -31,7 +31,7 @@ const InviteApplicants = ({ jobId, applicants }: InviteApplicantsProps) => {
       const email = applicant.candidate.email_addresses[0].value;
       const candidate_id = applicant.candidate.id;
       const inviteResult = await inviteCandidate(
-        name, email, candidate_id);
+        name, email, candidate_id, jobId);
       if (inviteResult.error) {
         toast({ variant: 'destructive', title: 'Error', description: inviteResult.error });
       } else {
