@@ -8,7 +8,7 @@ import { DailyTransport } from '@daily-co/realtime-ai-daily';
 import { Tables } from '@/types/types_db';
 import { Job as MergeJob } from '@/types/merge';
 import Splash from "@/components/Bot/Splash";
-import { BOT_READY_TIMEOUT } from '@/utils/rtvi.config';
+import { BOT_READY_TIMEOUT, defaultLLMPrompt } from '@/utils/rtvi.config';
 import { defaultConfig } from '@/utils/rtvi.config';
 import { defaultServices } from '@/utils/rtvi.config';
 
@@ -24,6 +24,19 @@ interface BotProps {
   mergeJob: MergeJob;
   application: Tables<'applications'>;
 }
+
+type voice = {
+  id: string;
+  name: string;
+  gender: string;
+  language: string;
+  embedding: number[];
+  is_public: boolean;
+  api_status: string;
+  created_at: string;
+  description: string;
+}
+ 
 
 type TranscriptData = {
   // speaker: string;
@@ -42,9 +55,33 @@ export default function Bot(botProps: BotProps) {
   const router = useRouter();
 
 
-  const { job, company, jobInterviewConfig, application, mergeJob} = botProps;
+  const { job, company, jobInterviewConfig, application, mergeJob, bot} = botProps;
 
- 
+  const voice: voice = bot.voice as voice;
+  const description = bot.description;
+  const prompts = bot.prompt;
+  const emotion: {
+    anger: number;
+    speed: number;
+    sadness: number;
+    surprise: number;
+    curiosity: number;
+    positivity: number;
+  } = bot.emotion as {
+    anger: number;
+    speed: number;
+    sadness: number;
+    surprise: number;
+    curiosity: number;
+    positivity: number;
+  } || { // Provide a default value to avoid null assignment
+    anger: 0,
+    speed: 0,
+    sadness: 0,
+    surprise: 0,
+    curiosity: 0,
+    positivity: 0,
+  };
 
 
   useEffect(() => {
@@ -60,7 +97,45 @@ export default function Bot(botProps: BotProps) {
         baseUrl: "/api/bot",
         requestData: {
           services: defaultServices,
-          config: defaultConfig,
+          config: [
+            {
+              service: "tts", 
+              options: [{ name: "voice", value: voice.id }]
+            },
+            {
+              service: "llm",
+              options: [
+                { name: "model", value: "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo" },
+                {
+                  name: "initial_messages",
+                  value: [
+                    {
+                      role: "system",
+                      content: defaultLLMPrompt
+                    },
+                    {
+                      role: "system",
+                      content: `You are an AI interviewer name ${bot.name}. You are interviewing a candidate for a job - ${mergeJob.name}. Here's the job description: ${mergeJob.description}`
+                    },
+                    {
+                      role: "system",
+                      content: `Here's some additional information about the company: ${company.description}`
+                    },
+                    {
+                      role: "system",
+                      content: `Here's are some sample interview questions: ${JSON.stringify(jobInterviewConfig.interview_questions)}`
+                    },
+                    {
+                      role: "system", 
+                      content: `This is the ${jobInterviewConfig.interview_name} ${jobInterviewConfig.type} interview. You are an AI interviewer with the role of ${bot.role}. Here's some additional information about you: ${description}. You've been given the following instructions: ${prompts}`
+                    }
+                  ]
+                },
+                { name: "run_on_config", value: true }
+              ]
+            },
+            ...defaultConfig.filter(config => config.service !== "llm" && config.service !== "tts")
+          ],
         },
       },
       timeout: BOT_READY_TIMEOUT,
@@ -123,16 +198,7 @@ export default function Bot(botProps: BotProps) {
     rtviClient.on(RTVIEvent.ParticipantConnected, async (participant: Participant) => {
       console.log("[EVENT] Participant connected:", participant);
       // Greet the user when the bot joins
-      if (participant.local) {
-        const response = await rtviClient.action({
-          service: "tts",
-          action: "say", 
-          arguments: [{ 
-            name: "text",
-            value: "Hello! I'm your AI interviewer today. I'll be asking you some questions to learn more about your experience and qualifications. Let's get started!"
-          }],
-        } as RTVIActionRequestData);
-      }
+      
     });
   
   }, [ botProps, isUserReady, showSplash]);

@@ -62,7 +62,7 @@ export const defaultServices = {
   stt: "deepgram",
 };
 
-export const defaultLLMPrompt = `You are a assistant called ExampleBot. You can ask me anything.
+export const defaultLLMPrompt = `You are interviewing a candidate for a job.
 Keep responses brief and legible.
 Your responses will converted to audio. Please do not include any special characters in your response other than '!' or '?'.
 Start by briefly introducing yourself.`;

@@ -188,7 +188,7 @@ import {
 
 export async function POST(request: Request) {
   const { services, config, rtvi_client_version } = await request.json();
-
+  console.log("config", config);
   const dailyAPIKey = process.env.NEXT_PUBLIC_DAILY_BOT_API_KEY;
   const dailyBotsUrl = "https://api.daily.co/v1/bots/start";
 
