@@ -10,19 +10,41 @@ export async function GET(request: Request) {
   async function getCompanyData(): Promise<Company | null> {
     const user = await getUser();
 
+    let responseData = {
+      message: '',
+      integration_status: 'disconnected',
+      billing_address: null,
+      company_context: null,
+      description: null,
+      id: '', // default value for id, or make it null if that's acceptable
+      industry: '',
+      location: '',
+      merge_account_token: null,
+      name: '',
+      payment_method: null,
+      subscription_id: null,
+      website_url: null,
+    };
+
     if (!user) {
-      return NextResponse.json({ message: 'User not found', integration_status: 'disconnected' }, { status: 400 });
+      responseData.message = 'User not found';
+      responseData.integration_status = 'disconnected'
+      return NextResponse.json(responseData, { status: 400 });    
     }
 
     const recruiter = await getRecruiter(user?.id);
     if (!recruiter) {
-      return NextResponse.json({ message: 'Recruiter not found', integration_status: 'disconnected' }, { status: 400 });
+      responseData.message = 'User not found';
+      responseData.integration_status = 'disconnected'
+      return NextResponse.json(responseData, { status: 400 });   
     }
 
     const companyId = recruiter?.company_id;
 
     if (!companyId) {
-      return NextResponse.json({ message: 'Company ID not found', integration_status: 'disconnected' }, { status: 400 });
+      responseData.message = 'Company ID not found';
+      responseData.integration_status = 'disconnected'
+      return NextResponse.json(responseData, { status: 400 });    
     }
     
 
