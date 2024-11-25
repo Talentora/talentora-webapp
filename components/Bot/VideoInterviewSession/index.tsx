@@ -13,6 +13,7 @@ import TranscriptPanel from './TranscriptPanel';
 import ControlPanel from './ControlPanel';
 import { Job as MergeJob } from '@/types/merge';
 import { Tables } from '@/types/types_db';
+import { RTVIClient } from 'realtime-ai';
 
 type Company = Tables<'companies'>;
 
@@ -31,10 +32,21 @@ export default function VideoInterviewSession({
   company,
   transcript,
 }: VideoInterviewSessionProps) {
-  const voiceClient = useRTVIClient()!;
+  const voiceClient: RTVIClient = useRTVIClient()!;
   const transportState = useRTVIClientTransportState();
   const [isMuted, setMuted] = useState(startAudioOff);
   const [isCameraOn, setIsCameraOn] = useState(true);
+
+  // Initialize devices when component mounts
+  useEffect(() => {
+    if (transportState === 'connected') {
+      // Set initial states based on startAudioOff prop
+      voiceClient.enableMic(!startAudioOff);
+      voiceClient.enableCam(true);
+      setMuted(startAudioOff);
+      setIsCameraOn(true);
+    }
+  }, [transportState, startAudioOff, voiceClient]);
 
   useEffect(() => {
     if (transportState === 'error') {
@@ -42,52 +54,47 @@ export default function VideoInterviewSession({
     }
   }, [transportState, onLeave]);
 
-  useEffect(() => {
-    if (transportState === 'connected') {
-      // Ensure the camera is enabled when connected
-      voiceClient.enableCam(isCameraOn);
-    }
-  }, [transportState, isCameraOn, voiceClient]);
-
   const handleMicToggle = () => {
-    voiceClient.enableMic(!isMuted);
-    setMuted(!isMuted);
+    const newMutedState = !isMuted;
+    voiceClient.enableMic(!newMutedState);
+    setMuted(newMutedState);
   };
 
   const handleCameraToggle = () => {
-    voiceClient.enableCam(!isCameraOn);
-    setIsCameraOn(!isCameraOn);
+    const newCameraState = !isCameraOn;
+    voiceClient.enableCam(newCameraState);
+    setIsCameraOn(newCameraState);
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden ">
+    <div className="flex flex-col h-screen w-screen">
       <div className="basis-1/6">
         <InterviewHeader job={job} company={company} />
       </div>
 
-      <main className="flex basis-2/3 gap-4 p-4 overflow-hidden m-5">
+      <main className="flex basis-1/2 gap-4 p-4 m-5">
         {/* Sidebar */}
-        <div className="flex-1 flex-col h-full w-1/3 gap-2">
-          <div className="flex-1 overflow-hidden">
+        <div className="flex-col h-full w-1/3 gap-2">
+          <div className="flex-1">
             <AIInterviewer isReady={transportState === 'ready'} />
           </div>
-          <div className="flex">
+          <div className="flex basis-1/2 overflow-y-auto">
             <TranscriptPanel transcript={transcript} />
           </div>
         </div>
         {/* Main Content */}
-        <div className="w-2/3 h-full overflow-hidden">
-          <CandidateVideo isCameraOn={isCameraOn} />
+        <div className="w-2/3 h-full">
+          <CandidateVideo isCameraOn={isCameraOn && voiceClient.isCamEnabled} />
         </div>
       </main>
 
       <footer className="basis-1/6">
         <ControlPanel
-        isMuted={isMuted}
-        isCameraOn={isCameraOn}
-        onMicToggle={handleMicToggle}
-        onCameraToggle={handleCameraToggle}
-        onLeave={onLeave}
+          isMuted={isMuted || !voiceClient.isMicEnabled}
+          isCameraOn={isCameraOn && voiceClient.isCamEnabled}
+          onMicToggle={handleMicToggle}
+          onCameraToggle={handleCameraToggle}
+          onLeave={onLeave}
         />
       </footer>
     </div>

@@ -109,25 +109,7 @@ export default function App({ bot, jobInterviewConfig, companyContext, job, comp
   }, [transportState]);
 
 
-function promptBot() {
-  const llmHelper = voiceClient.getHelper("llm");
-  console.log("Prompting Bot");
-  llmHelper.setContext({
-    messages: [{
-      role: "system",
-      content: `You are an AI interviewer conducting an interview for the ${mergeJob?.name || ''} position at ${company?.name || ''}.
 
-      Description: ${mergeJob?.description || 'No job description provided'}
-      
-      Company Context:
-      ${companyContext?.description || 'No company context provided'}
-
-      
-
-      Keep responses clear and concise. Avoid special characters except '!' or '?'.`
-    }]
-  });
-}
 
   async function start() {
     if (!voiceClient) return;
@@ -137,10 +119,10 @@ function promptBot() {
         await voiceClient.connect();
         await voiceClient.enableCam(true);
         await voiceClient.enableMic(true);
-        promptBot();
         
         // Update the useRecording hook to capture the recording ID
-        startRecording();
+        const recording = startRecording();
+        console.log("Started Recording", recording);
     } catch (e) {
         setError((e as Error).message || "Unknown error occurred");
         voiceClient.disconnect();
@@ -149,7 +131,8 @@ function promptBot() {
 
   async function leave() {
     await voiceClient.disconnect();
-    stopRecording();
+    const recording = stopRecording();
+    console.log("Stopped Recording", recording);
     router.push('/assessment/conclusion');
 
   }
