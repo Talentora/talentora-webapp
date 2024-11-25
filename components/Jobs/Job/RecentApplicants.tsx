@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ApplicantTable from '@/components/Applicants/ApplicantTable';
 import { Button } from '@/components/ui/button';
-import {ApplicationsGraph} from './ApplicantStatistics/ApplicationsGraph';
+import ApplicationsGraph from './ApplicantStatistics/ApplicationsGraph';
 import { ApplicantCandidate } from '@/types/merge';
 interface RecentApplicantsProps {
   applicants: ApplicantCandidate[];
