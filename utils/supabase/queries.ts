@@ -5,6 +5,7 @@ import { BotWithJobs } from '@/types/custom';
 type Recruiter = Tables<'recruiters'>;
 type Company = Tables<'companies'>;
 type Bot = Tables<'bots'>;
+import { inviteRecruiterAdmin, inviteCandidateAdmin, listUsersAdmin } from '@/utils/supabase/admin';
 // CRUD operations for the company table
 
 /**
@@ -169,52 +170,85 @@ export const getProducts = async () => {
   return products;
 };
 
-export async function inviteRecruiter(name: string | null, email: string) {
-  const supabase = createClient();
-
-  try {
-    const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
-      data: {
-        role: 'recruiter', // You can change this to the appropriate role
-        full_name: name || undefined
-      }
-    });
-    if (error) {
-      console.error('Error inviting user:', error);
-      return { success: false, error };
-    }
-    return { success: true, data };
-  } catch (err) {
-    console.error('Error inviting user:', err);
-    return { success: false, error: err };
-  }
-}
-
 export async function inviteCandidate(
   name: string,
-  emailAddress: string,
-  candidate_id: string
-): Promise<{ data?: any; error?: any }> {
+  email: string,
+  candidate_id: string,
+  job_id: string
+): Promise<{ data?: any; error?: string | null }> {
   try {
+    // Check if user already exists in auth.users
     const supabase = createClient();
+    const { data: existingUser, error: userCheckError } = await listUsersAdmin();
+    const userExists = existingUser?.users?.some(user => user.email === email);
 
-    const { data, error } = await supabase.auth.admin.inviteUserByEmail(
-      emailAddress,
-      {
-        data: {
-          role: 'candidate', // You can change this to the appropriate role
-          full_name: name,
-          candidate_id: candidate_id
-        }
-      }
-    );
-    // Return a plain object
+    if (userCheckError) {
+      console.error('Error checking existing user:', userCheckError);
+      return {
+        data: null,
+        error: 'Failed to check if user exists'
+      };
+    }
+
+    if (userExists) {
+      return {
+        data: null,
+        error: 'User with this email already exists'
+      };
+    }
+
+
+    const candidate = await inviteCandidateAdmin(name, email);
+    
+    // Return early if invitation failed
+    if (!candidate) {
+      return {
+          data: null,
+          error: candidate.error instanceof Error ? candidate.error.message : candidate.error || 'Failed to invite candidate'
+        };
+    }
+
+    console.log('candidate', candidate);
+
+    const candidateId = candidate?.user?.id;
+    // console.log('candidateId', candidateId);
+
+    if (!candidateId) {
+      return {
+        data: null,
+        error: 'Failed to get candidate ID'
+      };
+    }
+
+    // Create application record linking the job and new user
+    const { data: application, error: applicationError } = await supabase
+      .from('applications')
+      .insert({
+        applicant_id: candidateId,
+        job_id: job_id,
+        // status: 'pending'  
+      })
+      .select()
+      .single();
+
+    if (applicationError) {
+      console.error('Error creating application:', applicationError);
+      return {
+        data: null,
+        error: applicationError.message
+      };
+    }
+
     return {
-      data,
-      error
+      data: {
+        candidate: candidate.data,
+        application: application
+      },
+      error: null
     };
+
   } catch (err) {
-    console.error('Error inviting candidate:', err);
+    console.error('Error in inviteCandidate:', err);
     return {
       data: null,
       error: err instanceof Error ? err.message : 'Unknown error occurred'
