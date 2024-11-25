@@ -25,7 +25,7 @@ export async function GET(request: Request) {
       subscription_id: null as string | null,
       website_url: null as string | null,
     };
-    
+
     if (!user) {
       responseData.message = 'User not found';
       responseData.integration_status = 'disconnected'
@@ -49,8 +49,25 @@ export async function GET(request: Request) {
     
 
     const company = await getCompany(companyId);
-    return company;
-  }
+    if (!company) {
+      responseData.message = 'Company not found';
+      return NextResponse.json(responseData, { status: 400 });
+    }
+
+    // Assuming company object exists, populate the response data
+    responseData = {
+      ...responseData,
+      id: company.id || '',
+      name: company.name || '',
+      industry: company.industry || '',
+      location: company.location || '',
+      // Add any other company properties you need
+    };
+
+    // Return company data along with the integration status
+    responseData.integration_status = 'connected';
+    return NextResponse.json(responseData, { status: 200 });
+  }  
 
   const company = await getCompanyData();
 
