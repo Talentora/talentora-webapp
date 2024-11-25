@@ -188,7 +188,7 @@ import {
 
 export async function POST(request: Request) {
   const { services, config, rtvi_client_version } = await request.json();
-
+  console.log("config", config);
   const dailyAPIKey = process.env.NEXT_PUBLIC_DAILY_BOT_API_KEY;
   const dailyBotsUrl = "https://api.daily.co/v1/bots/start";
 
@@ -203,11 +203,11 @@ export async function POST(request: Request) {
     bot_profile: defaultBotProfile,
     max_duration: defaultMaxDuration,
     services: { ...defaultServices, ...services },
-    // api_keys: {
-    //   openai: process.env.OPENAI_API_KEY,
-    //   grok: process.env.GROK_API_KEY,
-    //   gemini: process.env.GEMINI_API_KEY,
-    // },
+    api_keys: {
+      // anthropic: process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY,
+      // grok: process.env.GROK_API_KEY,
+      // gemini: process.env.GEMINI_API_KEY,
+    },
     config: [...config],
     rtvi_client_version,
     recording_settings: {
