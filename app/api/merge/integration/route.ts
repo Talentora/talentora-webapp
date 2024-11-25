@@ -13,19 +13,19 @@ export async function GET(request: Request) {
     let responseData = {
       message: '',
       integration_status: 'disconnected',
-      billing_address: null,
-      company_context: null,
-      description: null,
-      id: '', // default value for id, or make it null if that's acceptable
-      industry: '',
-      location: '',
-      merge_account_token: '',
-      name: '',
-      payment_method: '',
-      subscription_id: '',
-      website_url: '',
+      billing_address: null as string | null, // Explicitly define null as string | null
+      company_context: null as string | null,
+      description: null as string | null,
+      id: '' as string, // Ensure id is string or set as ''
+      industry: '' as string,
+      location: '' as string,
+      merge_account_token: null as string | null,
+      name: '' as string,
+      payment_method: null as string | null,
+      subscription_id: null as string | null,
+      website_url: null as string | null,
     };
-
+    
     if (!user) {
       responseData.message = 'User not found';
       responseData.integration_status = 'disconnected'
