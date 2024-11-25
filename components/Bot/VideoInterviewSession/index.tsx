@@ -5,6 +5,7 @@ import {
   useRTVIClient,
   useRTVIClientTransportState,
 } from 'realtime-ai-react';
+import { usePermissions } from '@daily-co/daily-react';
 
 import InterviewHeader from './InterviewHeader';
 import AIInterviewer from './AIInterviewer';
@@ -36,6 +37,8 @@ export default function VideoInterviewSession({
   const transportState = useRTVIClientTransportState();
   const [isMuted, setMuted] = useState(startAudioOff);
   const [isCameraOn, setIsCameraOn] = useState(true);
+
+  const { canSendAudio, canSendVideo } = usePermissions();
 
   // Initialize devices when component mounts
   useEffect(() => {
@@ -70,6 +73,7 @@ export default function VideoInterviewSession({
     <div className="flex flex-col h-screen w-screen">
       <div className="basis-1/6">
         <InterviewHeader job={job} company={company} />
+        
       </div>
 
       <main className="flex basis-1/2 gap-4 p-4 m-5">
