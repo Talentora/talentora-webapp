@@ -1,7 +1,6 @@
 import React from 'react';
 import { RTVIClientVideo, useRTVIClient } from 'realtime-ai-react';
 import { useEffect } from 'react';
-import { useParticipant, usePermissions } from '@daily-co/daily-react';
 
 export default function CandidateVideo({
   isCameraOn,
@@ -15,7 +14,7 @@ export default function CandidateVideo({
   }, [isCameraOn]);
 
   const voiceClient = useRTVIClient();
-
+  
 
   // useEffect(() => {
   //   // voiceClient.isCamEnabled = true;
