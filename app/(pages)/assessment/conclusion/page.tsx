@@ -5,6 +5,7 @@ import Confetti from 'react-confetti';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import FinishedIcon from './FinishedIcon';
 
 
 export default function ConclusionPage() {
@@ -47,14 +48,10 @@ export default function ConclusionPage() {
               We'll respond in 2-3 business days. Check your dashboard for updates.
             </li>
           </ul>
-          <Image
-              src="/success-interview.svg"
-              alt="Interview Success"
-              width={200}
-              height={200}
-              priority
-              className="w-full border border-primary-dark rounded-lg"
-            />
+          <div className="ml-8">
+            <FinishedIcon />
+            {/* <Image src="/finished-icon.svg" alt="Finished icon" width={200} height={200} /> */}
+          </div>
         </CardContent>
         <CardFooter className="flex gap-4 justify-center">
           <Link 
@@ -74,3 +71,9 @@ export default function ConclusionPage() {
     </div>
   );
 }
+
+
+
+
+
+
