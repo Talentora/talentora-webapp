@@ -120,8 +120,7 @@ export default function JobPortal() {
                 </CardHeader>
                 <CardContent>
                   <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-                    <CircleDot className="h-4 w-4 text-blue-500" />
-                    {application.status}
+                    Application Status: <strong>{application.status}</strong>
                   </div>
                   <div className="flex gap-3">
                     <Button variant="outline">Practice</Button>

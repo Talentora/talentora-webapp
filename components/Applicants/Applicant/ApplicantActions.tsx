@@ -30,9 +30,7 @@ export default function ApplicantActions({
     ApplicantCandidate?.candidate?.email_addresses?.[0]?.value || '';
 
   async function onScheduleAIInterview() {
-    // const name = `${firstName} ${lastName}`.trim();
-    const name = 'Ben Gardiner';
-    const emailAddress = 'ben@gardiner.com';
+    const name = `${firstName} ${lastName}`.trim();
 
     if (!name || !emailAddress || !candidateId) {
       toast({
