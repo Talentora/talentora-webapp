@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, Navigation, MoreHorizontal, Loader2 } from 'lucide-react';
+import { Plus, Navigation, MoreHorizontal } from 'lucide-react';
 import { Job } from '@/types/merge';
 import { useState, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
 
 export default function ActiveJobsCard() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -11,15 +12,15 @@ export default function ActiveJobsCard() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const jobsResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs`
-      );
+      setIsLoading(true);
+      const jobsResponse = await fetch(`/api/jobs`);
       if (jobsResponse.ok) {
         const jobsData = await jobsResponse.json();
         setJobs(jobsData);
       }
       setIsLoading(false);
     };
+
     fetchData();
   }, []);
 
@@ -27,11 +28,19 @@ export default function ActiveJobsCard() {
     <Card className="p-5 border border-gray-300 bg-foreground rounded-lg shadow-sm relative col-span-2">
       <CardHeader>
         <CardTitle>Active Job Titles</CardTitle>
+        <Link href="/jobs">
+          <Button className="absolute top-0 right-0 mt-2 mr-2 bg-primary-dark hover:bg-accent">View All</Button>
+        </Link>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="flex justify-center items-center h-32">
-            <Loader2 className="h-8 w-8 animate-spin" />
+          <div className="grid grid-cols-2 gap-4">
+            {[1, 2, 3, 4, 5].map((index) => (
+              <div key={index} className="p-4 border border-gray-200 rounded-lg">
+                <Skeleton className="h-4 w-32 mb-2" />
+                <Skeleton className="h-2 w-24" />
+              </div>
+            ))}
           </div>
         ) : jobs.length === 0 ? (
           <div className="text-center">

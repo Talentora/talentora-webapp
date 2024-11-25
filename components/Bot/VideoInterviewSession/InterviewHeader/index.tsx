@@ -39,7 +39,7 @@ export default function InterviewHeader(props: interviewHeaderProps) {
                 <DialogTitle>Job Description</DialogTitle>
               </DialogHeader>
               <div className="mt-4 prose prose-sm">
-                {job.description || 'No description available'}
+                <div dangerouslySetInnerHTML={{__html: job.description || 'No description available'}} className="whitespace-pre-wrap" />
               </div>
             </DialogContent>
           </Dialog>
