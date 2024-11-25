@@ -38,7 +38,6 @@ export default function VideoInterviewSession({
   const [isMuted, setMuted] = useState(startAudioOff);
   const [isCameraOn, setIsCameraOn] = useState(true);
 
-  const { canSendAudio, canSendVideo } = usePermissions();
 
   // Initialize devices when component mounts
   useEffect(() => {
@@ -94,8 +93,10 @@ export default function VideoInterviewSession({
 
       <footer className="basis-1/6">
         <ControlPanel
-          isMuted={isMuted || !voiceClient.isMicEnabled}
-          isCameraOn={isCameraOn && voiceClient.isCamEnabled}
+          // isMuted={isMuted || !voiceClient.isMicEnabled}
+          isMuted={isMuted}
+          isCameraOn={isCameraOn}
+          // isCameraOn={isCameraOn && voiceClient.isCamEnabled}
           onMicToggle={handleMicToggle}
           onCameraToggle={handleCameraToggle}
           onLeave={onLeave}
