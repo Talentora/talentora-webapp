@@ -1,5 +1,6 @@
 export const BOT_READY_TIMEOUT = 15 * 1000; // 15 seconds
 
+// export const defaultBotProfile = "vision_2024_10";
 export const defaultBotProfile = "voice_2024_10";
 export const defaultMaxDuration = 600;
 
@@ -57,6 +58,7 @@ export const LANGUAGES = [
 ];
 
 export const defaultServices = {
+  // llm: "anthropic",
   llm: "together",
   tts: "cartesia",
   stt: "deepgram",
