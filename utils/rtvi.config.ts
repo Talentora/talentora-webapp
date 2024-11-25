@@ -1,5 +1,6 @@
 export const BOT_READY_TIMEOUT = 15 * 1000; // 15 seconds
 
+// export const defaultBotProfile = "vision_2024_10";
 export const defaultBotProfile = "voice_2024_10";
 export const defaultMaxDuration = 600;
 
@@ -57,12 +58,13 @@ export const LANGUAGES = [
 ];
 
 export const defaultServices = {
+  // llm: "anthropic",
   llm: "together",
   tts: "cartesia",
   stt: "deepgram",
 };
 
-export const defaultLLMPrompt = `You are a assistant called ExampleBot. You can ask me anything.
+export const defaultLLMPrompt = `You are interviewing a candidate for a job.
 Keep responses brief and legible.
 Your responses will converted to audio. Please do not include any special characters in your response other than '!' or '?'.
 Start by briefly introducing yourself.`;

@@ -1,7 +1,6 @@
 import React from 'react';
 import { RTVIClientVideo, useRTVIClient } from 'realtime-ai-react';
 import { useEffect } from 'react';
-import { useParticipant, usePermissions } from '@daily-co/daily-react';
 
 export default function CandidateVideo({
   isCameraOn,
@@ -15,22 +14,16 @@ export default function CandidateVideo({
   }, [isCameraOn]);
 
   const voiceClient = useRTVIClient();
-  const { canSendAudio, canSendVideo } = usePermissions();
-
-  console.log("Can Send Audio", canSendAudio);
-  console.log("Can Send Video", canSendVideo);
-
+  
 
   // useEffect(() => {
   //   // voiceClient.isCamEnabled = true;
   //   voiceClient?.setCameraEnabled(isCameraOn);
   // }, []);
 
-  console.log("Voice Client", voiceClient);
-  console.log("Is Camera On", isCameraOn);
 
   return (
-    <div className="relative bg-black rounded-lg overflow-hidden">
+    <div className="bg-black rounded-lg">
       {/* <h1 className="t  ext-white">Is Camera On: {isCameraOn ? 'Yes' : 'No'}</h1> */}
       {isCameraOn ? (
         <RTVIClientVideo
@@ -40,7 +33,7 @@ export default function CandidateVideo({
           mirror={true}
         />
       ) : (
-        <div className="flex h-full items-center justify-center bg-gray-800 text-white">
+        <div className="h-full w-full items-center flex justify-center bg-gray-800 text-white rounded-lg">
           <p>Camera Off</p>
         </div>
       )}
