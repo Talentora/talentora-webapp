@@ -80,11 +80,15 @@ export async function POST(request: NextRequest) {
           name: "initial_messages",
           value: [
             {
-              role: "user",
+              role: "system",
               content: [
                 {
                   type: "text",
-                  text: `You are an AI interviewer name ${bot.name}. You are interviewing a candidate for a job - ${mergeJob.name}. Here's the job description: ${mergeJob.description}`
+                  text:"Keep your responses concise and to the point. If you don't know the answer, say so. If you are unsure of an answer, say so. If you are unsure of an answer, say so. Conduct the interview as a human might don't break the third wall just speak to the application and if you don't know the answer admit that you don't know and move onto the next question."
+                },
+                {
+                  type: "text",
+                  text: `You are an AI interviewer named ${bot.name}. You are interviewing a candidate for a job - ${mergeJob.name}. Here's the job description: ${mergeJob.description}`
                 },
                 {
                   type: "text",
@@ -94,10 +98,10 @@ export async function POST(request: NextRequest) {
                   type: "text",
                   text: `Here's are some sample interview questions: ${JSON.stringify(jobInterviewConfig.interview_questions)}`
                 },
-                {
-                  type: "text",
-                  text: `This is the ${jobInterviewConfig.interview_name} ${jobInterviewConfig.type} interview. You are an AI interviewer with the role of ${bot.role}. Here's some additional information about you: ${bot.description}. You've been given the following instructions: ${bot.prompts}`
-                }
+                // {
+                //   type: "text",
+                //   text: `Here's the candidate's application: ${JSON.stringify(application)}`
+                // }
               ]
             }
           ]
@@ -105,6 +109,27 @@ export async function POST(request: NextRequest) {
         {
           name: "run_on_config",
           value: true
+        }
+      ]
+    },
+    {
+      service: "stt",
+      options: [
+        {
+          name: "model",
+          value: "nova-2-medical"
+        },
+        {
+          name: "language",
+          value: "en"
+        },
+        {
+          name: "filler_word",
+          value: true
+        },
+        {
+          name: "redact",
+          value: "ssn"
         }
       ]
     }
