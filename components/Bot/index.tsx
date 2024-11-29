@@ -55,7 +55,7 @@ export default function Bot(botProps: BotProps) {
   const router = useRouter();
 
 
-  const { job, company, jobInterviewConfig, application, mergeJob, bot} = botProps;
+  const { job, company, jobInterviewConfig, application, mergeJob, bot, companyContext} = botProps;
 
   const voice: voice = bot.voice as voice;
   const description = bot.description;
@@ -96,47 +96,16 @@ export default function Bot(botProps: BotProps) {
       params: {
         baseUrl: "/api/bot",
         requestData: {
-          services: defaultServices,
-          config: [
-            {
-              service: "tts", 
-              options: [{ name: "voice", value: voice.id }]
-            },
-            {
-              service: "llm",
-              options: [
-                { name: "model", value: "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo" },
-                {
-                  name: "initial_messages",
-                  value: [
-                    {
-                      role: "system",
-                      content: defaultLLMPrompt
-                    },
-                    {
-                      role: "system",
-                      content: `You are an AI interviewer name ${bot.name}. You are interviewing a candidate for a job - ${mergeJob.name}. Here's the job description: ${mergeJob.description}`
-                    },
-                    {
-                      role: "system",
-                      content: `Here's some additional information about the company: ${company.description}`
-                    },
-                    {
-                      role: "system",
-                      content: `Here's are some sample interview questions: ${JSON.stringify(jobInterviewConfig.interview_questions)}`
-                    },
-                    {
-                      role: "system", 
-                      content: `This is the ${jobInterviewConfig.interview_name} ${jobInterviewConfig.type} interview. You are an AI interviewer with the role of ${bot.role}. Here's some additional information about you: ${description}. You've been given the following instructions: ${prompts}`
-                    }
-                  ]
-                },
-                { name: "run_on_config", value: true }
-              ]
-            },
-            ...defaultConfig.filter(config => config.service !== "llm" && config.service !== "tts")
-          ],
-        },
+          data: {
+            voice: voice,
+            job: mergeJob,
+            company: company,
+            jobInterviewConfig: jobInterviewConfig,
+            application: application,
+            bot: bot,
+            companyContext: companyContext
+          }
+        }
       },
       timeout: BOT_READY_TIMEOUT,
       enableMic: true,

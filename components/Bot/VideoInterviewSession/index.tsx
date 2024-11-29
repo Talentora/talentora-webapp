@@ -81,7 +81,7 @@ export default function VideoInterviewSession({
           <div className="flex-1">
             <AIInterviewer isReady={transportState === 'ready'} />
           </div>
-          <div className="flex basis-1/2 overflow-y-auto">
+          <div className="flex basis-1/2 w-full overflow-y-auto">
             <TranscriptPanel transcript={transcript} />
           </div>
         </div>
