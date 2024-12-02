@@ -28,6 +28,7 @@ export default function ApplicantActions({
   const candidateId = ApplicantCandidate?.candidate?.id || '';
   const emailAddress =
     ApplicantCandidate?.candidate?.email_addresses?.[0]?.value || '';
+  const jobId = ApplicantCandidate?.job?.id || '';
 
   async function onScheduleAIInterview() {
     const name = `${firstName} ${lastName}`.trim();
@@ -47,14 +48,15 @@ export default function ApplicantActions({
       const { data, error } = await inviteCandidate(
         name,
         emailAddress,
-        candidateId
+        candidateId,
+        jobId
       );
       console.log('Response:', { data, error });
 
       if (error) {
         toast({
           title: 'Failed to invite candidate',
-          description: error.message || 'An error occurred',
+          description: error || 'An error occurred',
           variant: 'destructive'
         });
         return;

@@ -56,7 +56,7 @@ export default function JobPage({
           </Link>
         </div>
         <JobHeader job={job} />
-        <JobConfig jobId={job.id} applicants={applicants || []} />
+        <JobConfig  jobId={job.id} applicants={applicants || []} isLoading={applicantsLoading} />
       </>
     );
   }, [job, jobLoading, applicants]);
