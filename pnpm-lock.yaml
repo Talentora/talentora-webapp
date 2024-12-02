@@ -156,7 +156,7 @@ importers:
         specifier: ^2.16.105
         version: 2.16.105
       react:
-        specifier: link:@cartesia/cartesia-js/react
+        specifier: ^18.3.1
         version: 18.3.1
       react-beautiful-dnd:
         specifier: ^13.1.1

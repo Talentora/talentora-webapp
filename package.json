@@ -76,7 +76,7 @@
     "onnxruntime-web": "^1.19.2",
     "pdf-ts": "^0.0.2",
     "pdfjs-dist": "^2.16.105",
-    "react": "link:@cartesia/cartesia-js/react",
+    "react": "^18.3.1",
     "react-beautiful-dnd": "^13.1.1",
     "react-chartjs-2": "^5.2.0",
     "react-confetti": "^6.1.0",

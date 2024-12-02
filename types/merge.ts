@@ -21,6 +21,39 @@ type Application = {
   remote_data: any | null;
 };
 
+type Activity = {
+  id: string;
+  remote_id: string | null;
+  created_at: string;
+  modified_at: string;
+  user: string;
+  remote_created_at: string | null;
+  activity_type: 'NOTE' | 'EMAIL' | 'OTHER';
+  subject: string | null;
+  body: string | null;
+  visibility: 'PRIVATE' | 'PUBLIC' | null;
+  candidate: string;
+  remote_was_deleted?: boolean;
+  field_mappings?: {
+    organization_defined_targets: Record<string, any>;
+    linked_account_defined_targets: Record<string, any>;
+  };
+  remote_data?: any[] | null;
+};
+
+type User = {
+  id: string;
+  remote_id: string;
+  created_at: string;
+  modified_at: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  disabled: boolean;
+  remote_created_at: string;
+  access_role: string;
+};
+
 type Candidate = {
   id: string;
   remote_id: string;
@@ -152,4 +185,4 @@ export type ApplicantCandidate = Application & {
 export type Job = SimpleJob & { departments: Department[]; offices: Office[] };
 
 // export types
-export type { Application, Candidate, JobInterviewStage, Recruiter };
+export type { Application, Candidate, JobInterviewStage, Recruiter, Activity, User };

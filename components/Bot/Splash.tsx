@@ -15,7 +15,7 @@ export const Splash: React.FC<SplashProps> = ({ handleReady, company, mergeJob }
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   return (
-    <Card className="w-full max-w-md mx-auto mt-8 bg-foreground border border-border p-5">
+    <Card className="w-full max-w-md mx-auto mt-8 border border-border p-5">
       <CardHeader>
         <CardTitle>Welcome to your AI Interview</CardTitle>
       </CardHeader>
