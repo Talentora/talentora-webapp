@@ -118,7 +118,7 @@ export const getStatusRedirect = (
 
 export const getErrorRedirect = (
   path: string,
-  errorName: string,
+  errorName: string = '',
   errorDescription: string = '',
   disableButton: boolean = false,
   arbitraryParams: string = ''

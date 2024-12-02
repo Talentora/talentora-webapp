@@ -30,10 +30,11 @@ const InviteApplicants = ({ jobId, applicants }: InviteApplicantsProps) => {
       const name = applicant.candidate.first_name + ' ' + applicant.candidate.last_name;
       const email = applicant.candidate.email_addresses[0].value;
       const candidate_id = applicant.candidate.id;
-      const inviteResult = await inviteCandidate(
+      const {data, error} = await inviteCandidate(
         name, email, candidate_id);
-      if (inviteResult.error) {
-        toast({ variant: 'destructive', title: 'Error', description: inviteResult.error });
+      if (error) {
+        toast({ variant: 'destructive', title: 'Error', description: error });
+
       } else {
         toast({ variant: 'default', title: 'Success', description: `Invite sent to ${name} (${email})` });
       }

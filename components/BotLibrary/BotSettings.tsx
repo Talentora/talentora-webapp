@@ -18,6 +18,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { iconOptions } from './CreateBot/BotDetails';
+
 import {
   Card,
   CardContent,
@@ -40,14 +42,6 @@ import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 type Bot = Tables<'bots'>;
 
-const iconOptions = {
-  Code,
-  Users,
-  BarChart,
-  Briefcase,
-  GraduationCap,
-  Stethoscope
-};
 
 interface BotSettingsProps {
   bot: Bot;
@@ -78,7 +72,7 @@ export default function BotSettings({ bot, onBotDeleted, onBotUpdated }: BotSett
     <>
       <Dialog>
         {/* Dialog Trigger */}
-        <Card className="flex flex-row cursor-pointer hover:shadow-lg transition-shadow bg-foreground border border-gray-200 rounded-lg p-5 relative">
+        <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-[#5650F0]/50 bg-card flex flex-row relative">
           <div className="absolute top-2 right-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -98,7 +92,8 @@ export default function BotSettings({ bot, onBotDeleted, onBotUpdated }: BotSett
           </div>
           <CardHeader className="w-1/3">
             <div className="w-full flex items-center justify-center mb-4 min-h-[100px]">
-              <Bot className="h-10 w-10" />
+              {/* <Bot className="h-10 w-10" /> */}
+              {iconOptions[bot.icon as keyof typeof iconOptions]}
             </div>
           </CardHeader>
           <DialogTrigger asChild>

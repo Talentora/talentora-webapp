@@ -17,7 +17,7 @@ export function useJob(jobId: string) {
     setJobLoading(true);
     try {
       console.log('Fetching job:', jobId); // Debug log
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/jobs/${jobId}`);
+      const response = await fetch(`/api/jobs/${jobId}`);
       console.log('Job response status:', response.status); // Debug log
       
       if (!response.ok) {
@@ -48,7 +48,7 @@ export function useJob(jobId: string) {
     setApplicantsLoading(true);
     try {
       console.log('Fetching applicants for job:', jobId); // Debug log
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/applications?jobId=${jobId}`);
+      const response = await fetch(`/api/applications?jobId=${jobId}`);
       console.log('Applicants response status:', response.status); // Debug log
       
       if (!response.ok) {

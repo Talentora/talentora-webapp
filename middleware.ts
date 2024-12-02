@@ -7,6 +7,7 @@ import { createClient } from './utils/supabase/server';
 export const unprotectedRoutes = [
   /^\/$/, // Matches '/'
   /^\/signin(\/.*)?$/, // Matches '/signin' and any subpath like '/signin/*'
+  /^\/signup(\/.*)?$/,
   /^\/about$/, // Matches '/about'
   /^\/pricing$/, // Matches '/pricing'
   /^\/api\/auth\/callback$/ // Matches '/api/auth/callback'
@@ -14,7 +15,8 @@ export const unprotectedRoutes = [
 
 // Add the applicant route to the unprotected routes
 const applicantRoutes = [
-  /^\/bot(\/.*)?$/ // Matches '/bot' and any subpath like '/bot/*'
+  /^\/assessment(\/.*)?$/,// Matches '/bot' and any subpath like '/bot/*'
+  /^\/api(\/.*)?$/ // Matches '/api' and any subpath like '/api/*'
 ];
 
 // Combine unprotected and applicant routes

@@ -1,38 +1,39 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Navigation, Loader2 } from 'lucide-react';
+import { Navigation } from 'lucide-react';
 import ApplicantTable from '../../Applicants/ApplicantTable';
 import { ApplicantCandidate } from '@/types/merge';
 import { useState, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
 
-export default function RecentApplicantsCard() {
-  const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default function RecentApplicantsCard({ applicants, isLoading }: { applicants: ApplicantCandidate[], isLoading: boolean }) {
+  // const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
+  // const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const applicationsResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/applications`
-      );
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const applicationsResponse = await fetch(
+  //       `/api/applications`
+  //     );
 
-      if (applicationsResponse.ok) {
-        const applicantsData = await applicationsResponse.json();
-        setApplicants(applicantsData);
-      }
-      setIsLoading(false);
-    };
+  //     if (applicationsResponse.ok) {
+  //       const applicantsData = await applicationsResponse.json();
+  //       setApplicants(applicantsData);
+  //     }
+  //     setIsLoading(false);
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   return (
-    <Card className="p-5 border border-gray-400 rounded-lg shadow-sm bg-foreground col-span-2">
+    <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-[#5650F0]/50 bg-card">
       <CardHeader className="pb-2 flex flex-row justify-between">
         <CardTitle>Recent Applicants</CardTitle>
         <Link href="/applicants">
           <Button
-            className="bg-[#5650F0] text-white hover:bg-[#4a45d1] flex items-center "
+            className="bg-primary-dark text-white flex items-center "
             variant="outline"
           >
             View All
@@ -42,7 +43,10 @@ export default function RecentApplicantsCard() {
       <CardContent className="pt-4">
         {isLoading ? (
           <div className="flex justify-center items-center h-32">
-            <Loader2 className="h-8 w-8 animate-spin" />
+            <Skeleton className="h-4 w-32 mb-2" />
+            <Skeleton className="h-2 w-24" />
+            <Skeleton className="h-4 w-32 mb-2" />
+            <Skeleton className="h-2 w-24" />
           </div>
         ) : (
           <ApplicantTable applicants={applicants} />

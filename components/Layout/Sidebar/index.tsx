@@ -7,7 +7,8 @@ import {
   Bot,
   ClipboardListIcon,
   SettingsIcon,
-  FastForwardIcon
+  FastForwardIcon,
+  Sparkles
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
@@ -52,8 +53,8 @@ const Page = () => {
               className="flex items-center space-x-2 text-gray-100 hover:bg-accent  hover:text-gray-900 px-4 py-2 rounded"
               href="/bot"
             >
-              <Bot className="h-5 w-5" />
-              <span>Bot Library</span>
+              <Sparkles className="h-5 w-5" />
+              <span>Ora Scouts</span>
             </Link>
             <Link
               className="flex items-center space-x-2 text-gray-100 hover:bg-accent  hover:text-gray-900 px-4 py-2 rounded"
@@ -62,13 +63,13 @@ const Page = () => {
               <Users className="h-5 w-5" />
               <span>Applicants</span>
             </Link>
-            <Link
+            {/* <Link
               className="flex items-center space-x-2 text-gray-100 hover:bg-accent  hover:text-gray-900 px-4 py-2 rounded"
               href="settings/onboarding"
             >
               <ClipboardListIcon className="h-5 w-5" />
               <span>Onboarding</span>
-            </Link>
+            </Link> */}
             <Link
               className="flex items-center space-x-2 text-gray-100 hover:bg-accent  hover:text-gray-900 px-4 py-2 rounded"
               href="/settings"
@@ -76,13 +77,13 @@ const Page = () => {
               <SettingsIcon className="h-5 w-5" />
               <span>Settings</span>
             </Link>
-            <Link
+            {/* <Link
               className="flex items-center space-x-2 text-gray-100 hover:bg-accent hover:text-gray-900 px-4 py-2 rounded"
               href="/assessment"
             >
               <FastForwardIcon className="h-5 w-5" />
               <span>Assessments</span>
-            </Link>
+            </Link> */}
           </nav>
         </div>
       </div>

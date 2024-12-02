@@ -6,24 +6,19 @@ import CreateBot from './CreateBot';
 import { Search } from 'lucide-react';
 import { Tables } from '@/types/types_db';
 import { BotLibrarySkeleton } from './BotSkeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { BotWithJobs } from '@/types/custom';
 
-type Bot = Tables<'bots'>;
+export default function BotLibrary({ bots: initialBots }: { bots: BotWithJobs[] }) {
+  const [bots, setBots] = useState<BotWithJobs[]>(initialBots || []);
+  const [filteredBots, setFilteredBots] = useState<BotWithJobs[]>(bots);
 
-export default function BotLibrary({ bots: initialBots }: { bots: Bot[] }) {
-  const [bots, setBots] = useState<Bot[]>(initialBots || []);
-  const [filteredBots, setFilteredBots] = useState<Bot[]>(bots);
-  const [isLoading, setIsLoading] = useState(true);
+  console.log("bots",bots);
+  console.log("filteredBots",filteredBots);
 
-  useEffect(() => {
-    // Simulate loading time for initial data
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
 
-    return () => clearTimeout(timer);
-  }, []);
 
-  const handleBotCreated = (newBot: Bot) => {
+  const handleBotCreated = (newBot: BotWithJobs) => {
     if (!newBot || !newBot.id) {
       console.error('Invalid bot data received');
       return;
@@ -39,7 +34,7 @@ export default function BotLibrary({ bots: initialBots }: { bots: Bot[] }) {
     setFilteredBots(updatedBots);
   };
 
-  const handleBotUpdated = (updatedBot: Bot) => {
+  const handleBotUpdated = (updatedBot: BotWithJobs) => {
     const updatedBots = bots.map(bot => 
       bot.id === updatedBot.id ? updatedBot : bot
     );
@@ -49,23 +44,32 @@ export default function BotLibrary({ bots: initialBots }: { bots: Bot[] }) {
 
   const handleSearch = (searchTerm: string) => {
     const filtered = bots.filter(
-      (bot: Bot) =>
+      (bot: BotWithJobs) =>
         bot?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         bot?.description?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredBots(filtered);
   };
 
-  if (isLoading) {
-    return <BotLibrarySkeleton />;
-  }
+  // Filter bots based on whether they have jobs configured
+  const activeBots = filteredBots.filter(
+    bot => bot.job_interview_config && bot.job_interview_config.length > 0
+  );
+  const inactiveBots = filteredBots.filter(
+    bot => !bot.job_interview_config || bot.job_interview_config.length === 0
+  );
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">AI Interviewer Bot Gallery</h1>
+      <h1 className="text-3xl font-bold mb-6 relative group">
+        <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">Ora</span> Scout Gallery
+        <div className="absolute hidden group-hover:block bg-white border border-gray-200 rounded-lg p-3 shadow-lg z-10 w-64 text-sm text-gray-600 top-full left-0 mt-1">
+          An Ora Scout is an AI-powered interview assistant that helps screen and evaluate candidates through natural conversations, providing consistent and unbiased initial assessments.
+        </div>
+      </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        <div className="col-span-full mb-4 flex flex-row justify-between gap-10">
+      <div className="mb-6">
+        <div className="flex flex-row justify-between gap-10 mb-4">
           <div className="relative w-full">
             <Input
               type="search"
@@ -81,19 +85,55 @@ export default function BotLibrary({ bots: initialBots }: { bots: Bot[] }) {
             <CreateBot onBotCreated={handleBotCreated} />
           </div>
         </div>
-        {filteredBots.filter(bot => bot && bot.id).map((bot: Bot) => (
-          <BotSettings 
-            key={bot.id} 
-            bot={bot} 
-            onBotDeleted={handleBotDeleted}
-            onBotUpdated={handleBotUpdated}
-          />
-        ))}
-        {bots.length === 0 && (
-          <div className="col-span-full flex flex-col items-center justify-center">
-            <p className="text-lg font-semibold mb-4">No bots available.</p>
-          </div>
-        )}
+
+        <Tabs defaultValue="active" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="active">
+              Active Bots ({activeBots.length})
+            </TabsTrigger>
+            <TabsTrigger value="inactive">
+              Inactive Bots ({inactiveBots.length})
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="active">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {activeBots.map((bot: BotWithJobs) => (
+                <BotSettings 
+                  key={bot.id} 
+                  bot={bot} 
+                  onBotDeleted={handleBotDeleted}
+                  onBotUpdated={handleBotUpdated}
+                />
+              ))}
+              {activeBots.length === 0 && (
+                <div className="col-span-full flex flex-col items-center justify-center p-6">
+                  <p className="text-lg font-semibold mb-2">No active Scouts</p>
+                  <p className="text-gray-500">Configure jobs for your Scouts to make them active</p>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="inactive">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {inactiveBots.map((bot: BotWithJobs) => (
+                <BotSettings 
+                  key={bot.id} 
+                  bot={bot} 
+                  onBotDeleted={handleBotDeleted}
+                  onBotUpdated={handleBotUpdated}
+                />
+              ))}
+              {inactiveBots.length === 0 && (
+                <div className="col-span-full flex flex-col items-center justify-center p-6">
+                  <p className="text-lg font-semibold mb-2">No inactive bots</p>
+                  <p className="text-gray-500">All your bots are currently active</p>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
