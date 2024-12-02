@@ -35,7 +35,7 @@ export default function EmailForm() {
   };
 
   return (
-    <Card className="my-8 bg-card text-card-foreground ">
+    <Card className="my-8 text-card-foreground ">
       <CardHeader>
         <CardTitle className="text-primary">Your Email</CardTitle>
         <CardDescription className="text-muted-foreground">

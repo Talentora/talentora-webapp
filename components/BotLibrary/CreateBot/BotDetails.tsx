@@ -28,7 +28,7 @@ export function BotDetails({ newBot, setNewBot, onNext }: BotDetailsProps) {
     <div>
       <form className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="name">Bot Name</Label>
+          <Label htmlFor="name">Ora Scout Name</Label>
           <Input
             id="name"
             value={newBot.name}
