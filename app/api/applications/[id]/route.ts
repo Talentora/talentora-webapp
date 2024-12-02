@@ -10,7 +10,13 @@ export async function GET(
   const applicationId = params.id;
   const baseURL = `https://api.merge.dev/api/ats/v1`;
   const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
-
+  if (!apiKey) {
+    console.error('NEXT_PUBLIC_MERGE_API_KEY is missing');
+  }
+  
+  if (!accountToken) {
+    console.error('Account Token is missing');
+  }
   if (!apiKey || !accountToken) {
     return NextResponse.json(
       { error: 'API credentials not found' },
