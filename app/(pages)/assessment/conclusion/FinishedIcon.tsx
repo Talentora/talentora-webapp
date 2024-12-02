@@ -1,5 +1,5 @@
 import * as React from "react";
-const FinishedIcon = (props) => (
+const FinishedIcon = (props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) => (
   <svg
     width={311}
     height={311}

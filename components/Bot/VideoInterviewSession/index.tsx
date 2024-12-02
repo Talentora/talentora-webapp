@@ -75,13 +75,13 @@ export default function VideoInterviewSession({
         
       </div>
 
-      <main className="flex basis-1/2 gap-4 p-4 m-5">
+      <main className="flex basis-1/3 gap-4 p-4 m-5">
         {/* Sidebar */}
         <div className="flex-col h-full w-1/3 gap-2">
           <div className="flex-1">
             <AIInterviewer isReady={transportState === 'ready'} />
           </div>
-          <div className="flex basis-1/2 overflow-y-auto">
+          <div className="flex basis-1/2 w-full overflow-y-auto">
             <TranscriptPanel transcript={transcript} />
           </div>
         </div>

@@ -147,31 +147,7 @@ export default function Assessment({
         <>
           {botProps && <Bot {...botProps} />}
 
-          <div className="w-full max-w-4xl p-6">
-            <button
-              onClick={() => setIsVisible(!isVisible)}
-              className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded fixed bottom-4 left-4"
-            >
-              {isVisible ? 'Hide' : 'Show'} Payload Data
-            </button>
-
-            {isVisible && botProps && 
-              [
-                { title: 'Job Interview Configuration', data: botProps.jobInterviewConfig },
-                { title: 'Bot Configuration', data: botProps.bot },
-                { title: 'Company Information', data: botProps.company },
-                { title: 'Job Details', data: botProps.job },
-                { title: 'Company Context', data: botProps.companyContext },
-                { title: 'Merge Job', data: botProps.mergeJob },
-              ].map(({ title, data }) => (
-                <div key={title} className="bg-white rounded-lg shadow p-6">
-                  <h2 className="text-lg font-semibold mb-4">{title}</h2>
-                  <pre className="bg-gray-50 p-4 rounded overflow-auto">
-                    {JSON.stringify(data, null, 2)}
-                  </pre>
-                </div>
-              ))}
-          </div>
+         
         </>
       )}
     </div>

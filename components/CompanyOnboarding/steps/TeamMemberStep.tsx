@@ -4,9 +4,10 @@ import { Label } from '@/components/ui/label';
 import { Check } from 'lucide-react';
 import { useToast } from '@/components/Toasts/use-toast';
 import { ToastAction } from '@/components/Toasts/toast';
-import { inviteRecruiter } from '@/utils/supabase/queries';
+// import { inviteRecruiter } from '@/utils/supabase/queries';
 import { Loader2 } from 'lucide-react';
 import { Recruiter } from '@/types/merge';
+import { inviteRecruiter } from '@/utils/supabase/queries';
 
 export const TeamMembersStep = ({
   onCompletion
@@ -57,9 +58,9 @@ export const TeamMembersStep = ({
   const handleInviteTeammates = async () => {
     try {
       for (const recruiter of selectedTeamMembers) {
-        const result = await inviteRecruiter(recruiter.name, recruiter.email);
-        if (!result.success) {
-          throw new Error(`Failed to invite ${recruiter.email}`);
+        const {data, error} = await inviteRecruiter(recruiter.name, recruiter.email);
+        if (error) {
+          throw new Error(`Failed to invite ${recruiter.email}: ${error}`);
         }
       }
 

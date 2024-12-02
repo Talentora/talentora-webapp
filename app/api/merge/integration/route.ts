@@ -1,9 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { getCompany, getRecruiter } from '@/utils/supabase/queries';
 import { getUser } from '@/utils/supabase/queries';
 import { NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
-export async function GET(request: Request) {
+
+export async function GET(request: NextRequest) {
   async function getCompanyData() {
     const user = await getUser();
 
@@ -22,19 +23,20 @@ export async function GET(request: Request) {
       return NextResponse.json({ message: 'Company ID not found', integration_status: 'disconnected' }, { status: 400 });
     }
     
-
     const company = await getCompany(companyId);
     return company;
   }
 
   const company = await getCompanyData();
 
-  if (!company) {
+  if (!company || company instanceof NextResponse) {
     return NextResponse.json({ message: 'Company not found', integration_status: 'disconnected' }, { status: 400 });
   }
 
   try {
-    const accountToken = company?.merge_account_token;
+
+    const accountToken = company.merge_account_token;
+
     console.log('accountToken', accountToken);
 
     if (!accountToken) {
