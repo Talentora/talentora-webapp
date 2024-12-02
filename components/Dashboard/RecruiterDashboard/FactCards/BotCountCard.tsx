@@ -15,7 +15,7 @@ const BotCountCard = () => {
 
   return (
     
-    <Card className="border bg-foreground p-5 border-gray-300 rounded-lg shadow-sm">
+    <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-[#5650F0]/50 bg-card">
       <CardHeader className="flex flex-row justify-between space-y-0 pb-2 gap-2">
         <CardTitle className="text-sm font-medium">
           Talentora Bots Configured by your Company

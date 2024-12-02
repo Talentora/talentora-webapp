@@ -64,8 +64,8 @@ export default function RecruiterDashboard() {
           </div>
 
           <div className="flex flex-row gap-6">
-          <Card className="border border-border  rounded-lg p-4 bg-foreground">
-              <CardTitle>Applications Over Time</CardTitle>
+          <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-[#5650F0]/50 bg-card">
+          <CardTitle>Applications Over Time</CardTitle>
               <CardContent>
                 <ApplicationsGraph 
                 applicants={applicants} 
