@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server';
 type Recruiter = Tables<'recruiters'>;
 type Company = Tables<'companies'>;
 type Bot = Tables<'bots'>;
+type AI_Summary = Tables<'AI_summary'>;
 // CRUD operations for the company table
 
 /**
@@ -844,4 +845,52 @@ export const getJob = async (jobId: string): Promise<any | null> => {
     .eq('merge_id', jobId)
     .single();
   return data || null;
+};
+
+export const getAISummaryId = async (
+  applicantId: string,
+  jobId: string
+): Promise<string | null> => {
+  try {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from('applications')
+      .select('AI_summary') // Only fetch AI_summary field
+      .eq('applicant_id', applicantId)
+      .eq('job_id', jobId)
+      .single(); // Fetches a single row
+      
+    if (error) {
+      console.error('Error fetching AI Summary ID:', error.message);
+      return null;
+    }
+        return data?.AI_summary || null;
+      } catch (err) {
+        console.error('Unexpected error fetching AI Summary ID:', err);
+        return null;
+      }
+    };
+
+
+
+export const getEvaluation = async (AISummaryId: string): Promise<AI_Summary | null> => {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('AI_summary')
+      .select('*')
+      .eq('id', AISummaryId)
+      .single(); // Fetches a single row
+
+    if (error) {
+      console.error('Error fetching AI summary:', error.message);
+      return null;
+    }
+
+    return data as AI_Summary; // Type assertion to match the AI_Summary structure
+  } catch (err) {
+    console.error('Unexpected error fetching AI summary:', err);
+    return null;
+  }
 };
