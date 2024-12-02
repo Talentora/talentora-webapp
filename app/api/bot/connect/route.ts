@@ -140,8 +140,8 @@ export async function POST(request: NextRequest) {
       ]
     };
 
-    // const baseUrl = "https://api.daily.co/v1/bots/start";
-    const baseUrl = "https://localhost:8000/ws"
+    const baseUrl = "https://api.daily.co/v1/bots/start";
+    // const baseUrl = "https://localhost:8000/ws"
 
     const response = await fetch(baseUrl, {
       method: "POST",
