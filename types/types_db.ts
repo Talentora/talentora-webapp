@@ -1,3 +1,5 @@
+import { StringDecoder } from "string_decoder"
+
 export type Json =
   | string
   | number
@@ -36,38 +38,29 @@ export type Database = {
     Tables: {
       AI_summary: {
         Row: {
-          application_id: string | null
+          id: string
           created_at: string
           emotion_eval: Json | null
-          id: string
           interview_summary: Json | null
           text_eval: Json | null
+          mp4_url: string
         }
         Insert: {
-          application_id?: string | null
+          id?: string
           created_at?: string
           emotion_eval?: Json | null
-          id?: string
           interview_summary?: Json | null
           text_eval?: Json | null
+          mp4_url?: string
         }
         Update: {
-          application_id?: string | null
+          id?: string
           created_at?: string
           emotion_eval?: Json | null
-          id?: string
           interview_summary?: Json | null
           text_eval?: Json | null
+          mp4_url?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "AI_summary_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: false
-            referencedRelation: "applications"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       applicants: {
         Row: {
