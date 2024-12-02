@@ -14,8 +14,43 @@ const TRIAL_PERIOD_DAYS = 0;
 // as it has admin privileges and overwrites RLS policies!
 const supabaseAdmin = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY || ''
 );
+
+const inviteCandidateAdmin = async (name: string, email: string) => {
+  try {
+    const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, 
+      { data: { role: 'candidate', full_name: name, candidate_id: null } }
+    );
+
+    if (error) {
+      console.error('Error inviting candidate:', error);
+      console.error('Data sent:', { user_metadata: { role: 'candidate', full_name: name } });
+      return { data: null, error: error };
+    }
+
+    return { data, error: null };
+  } catch (err) {
+    console.error('Unexpected error inviting candidate:', err);
+    return { 
+      data: null, 
+      error: err instanceof Error ? err.message : 'An unexpected error occurred'
+    };
+  }
+};
+
+
+const inviteRecruiterAdmin = async (name: string, email: string) => {
+  const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+    data: { role: 'recruiter', full_name: name, candidate_id: null }
+  });
+  return { data, error };
+};
+
+const listUsersAdmin = async () => {
+  const { data, error } = await supabaseAdmin.auth.admin.listUsers();
+  return { data, error };
+};
 
 const upsertProductRecord = async (product: Stripe.Product) => {
   const productData: Product = {
@@ -290,11 +325,16 @@ const manageSubscriptionStatusChange = async (
     );
 };
 
+
+
 export {
   upsertProductRecord,
   upsertPriceRecord,
   deleteProductRecord,
   deletePriceRecord,
   createOrRetrieveCustomer,
-  manageSubscriptionStatusChange
+  manageSubscriptionStatusChange,
+  inviteCandidateAdmin,
+  inviteRecruiterAdmin,
+  listUsersAdmin
 };

@@ -19,11 +19,11 @@ export default function TranscriptPanel({ transcript }: TranscriptPanelProps) {
   }, [transcript]);
 
   return (
-    <div className="bg-white rounded-lg shadow-lg flex flex-col h-full overflow-y-auto">
+    <div className="bg-white rounded-lg shadow-lg flex w-full flex-col">
       <h3 className="p-4 text-lg font-semibold text-gray-800 border-b">
         Transcript
       </h3>
-      <div className="h-full overflow-y-auto" ref={scrollRef}>
+      <div className="overflow-hidden" ref={scrollRef}>
       {/* <ScrollArea ref={scrollRef} > */}
         <div className="space-y-4 p-4">
           {transcript.map((entry, index, arr) => {

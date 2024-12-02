@@ -11,6 +11,7 @@ import NameForm from '@/components/AccountForms/NameForm';
 import CompanyForm from '@/components/AccountForms/CompanyForm';
 import Link from 'next/link';
 import InvitePage from '@/components/Invite';
+import { TeamMembersStep } from '@/components/CompanyOnboarding/steps/TeamMemberStep';
 
 type Recruiter = Tables<'recruiters'>;
 type Company = Tables<'companies'>;
@@ -87,7 +88,8 @@ export default function SettingsPage() {
           <TabsContent value="team">
             <Card>
               <CardHeader className="pb-4">
-                <InvitePage jobs={[]} />
+                {/* <InvitePage jobs={[]} /> */}
+                <TeamMembersStep onCompletion={() => {}} />
               </CardHeader>
               <CardContent>
               </CardContent>

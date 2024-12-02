@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -22,6 +21,7 @@ import {
 import { ApplicantCandidate } from '@/types/merge';
 import React, { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from '@/components/ui/select';
+import { useMemo } from 'react';
 
 interface ApplicationsGraphProps {
   applicants?: ApplicantCandidate[];
@@ -70,7 +70,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
 
     // Fill bins with data
     applicants.forEach(applicant => {
-      const createdAt = new Date(applicant.application.created_at);
+      const createdAt = new Date(applicant.created_at);
       if (createdAt >= startDate && createdAt <= now) {
         // Find the appropriate bin
         const binDate = new Date(createdAt);

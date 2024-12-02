@@ -23,7 +23,7 @@ interface SetupFlags {
   isReady: "yes" | "no" | "almost";
 }
 
-export default function JobConfig({ jobId, applicants }: { jobId: string, applicants: ApplicantCandidate[] }) {
+export default function JobConfig({ jobId, applicants, isLoading }: { jobId: string, applicants: ApplicantCandidate[], isLoading: boolean }) {
   const [loading, setLoading] = useState(true);
   const [interviewConfig, setInterviewConfig] = useState<InterviewConfig | null>(null);
   const [botInfo, setBotInfo] = useState<Bot | null>(null);

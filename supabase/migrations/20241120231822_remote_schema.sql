@@ -6,25 +6,15 @@ drop policy "Allow recruiters to modify company_context" on "public"."company_co
 
 drop policy "Edit job config" on "public"."job_interview_config";
 
-alter table "public"."applicants" drop constraint "applicants_harvest_applicants_key";
 
 alter table "public"."applications" drop constraint "applications_pkey";
 
 alter table "public"."jobs" drop constraint "jobs_pkey";
 
-drop index if exists "public"."applicants_harvest_applicants_key";
 
 drop index if exists "public"."applications_pkey";
 
 drop index if exists "public"."jobs_pkey";
-
-alter table "public"."applicants" drop column "harvest_applicants";
-
-alter table "public"."applicants" add column "merge_applicant_id" uuid;
-
-alter table "public"."applications" add column "id" uuid not null default gen_random_uuid();
-
-alter table "public"."jobs" add column "id" uuid not null default gen_random_uuid();
 
 alter table "public"."jobs" alter column "merge_id" drop default;
 
