@@ -140,7 +140,10 @@ export async function POST(request: NextRequest) {
       ]
     };
 
-    const response = await fetch("https://api.daily.co/v1/bots/start", {
+    // const baseUrl = "https://api.daily.co/v1/bots/start";
+    const baseUrl = "https://localhost:8000/ws"
+
+    const response = await fetch(baseUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
