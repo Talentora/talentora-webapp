@@ -58,13 +58,13 @@ export const TeamMembersStep = ({
     try {
       for (const recruiter of selectedTeamMembers) {
         const result = await inviteRecruiter(recruiter.name, recruiter.email);
-        if (!result.success) {
-          throw new Error(`Failed to invite ${recruiter.email}`);
+        if (result.error) {
+          throw new Error(`Failed to invite ${recruiter.email}: ${result.error}`);
         }
       }
 
       toast({
-        title: 'Invites Sent!',
+        title: 'Invites Sent!', 
         description: 'Team members have been invited successfully.',
         duration: 5000
       });

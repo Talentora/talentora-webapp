@@ -20,7 +20,7 @@ const supabaseAdmin = createClient<Database>(
 const inviteCandidateAdmin = async (name: string, email: string) => {
   try {
     const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, 
-      { user_metadata: { role: 'candidate', full_name: name } }
+      { data: { role: 'candidate', full_name: name, candidate_id: null } }
     );
 
     if (error) {
