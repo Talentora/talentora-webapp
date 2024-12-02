@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import Footer from '@/components/Layout/Footer';
 import Navbar from '@/components/Layout/Navbar';
 import Sidebar from '@/components/Layout/Sidebar';
 import { Toaster } from '@/components/Toasts/toaster';
@@ -26,13 +25,12 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     data: { user }
   } = await supabase.auth.getUser();
 
-  const isSidebarVisible = user !== null; // Determine if the sidebar should be visible
+  const role = user?.user_metadata?.role;
+  const isSidebarVisible = role === 'recruiter'; // Determine if the sidebar should be visible
 
   return (
     <html lang="en">
-      <head>
-        <Script src="*" crossOrigin="anonymous" />
-      </head>
+    
       <body className="w-full bg-gradient-to-br from-purple-500/[0.1] via-white to-pink-500/[0.1] p-0">
         <NextTopLoader />
 

@@ -1,8 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { TransportState, VoiceEvent, Transcript } from 'realtime-ai';
-import { useVoiceClient, useVoiceClientEvent } from 'realtime-ai-react';
+import React, { useState, useEffect } from 'react';
+import {
+  useRTVIClient,
+  useRTVIClientTransportState,
+} from 'realtime-ai-react';
+import { usePermissions } from '@daily-co/daily-react';
 
 import InterviewHeader from './InterviewHeader';
 import AIInterviewer from './AIInterviewer';
@@ -11,112 +14,94 @@ import TranscriptPanel from './TranscriptPanel';
 import ControlPanel from './ControlPanel';
 import { Job as MergeJob } from '@/types/merge';
 import { Tables } from '@/types/types_db';
+import { RTVIClient } from 'realtime-ai';
+
 type Company = Tables<'companies'>;
 
-interface VoiceInterviewSessionProps {
-  state: TransportState;
+interface VideoInterviewSessionProps {
   onLeave: () => void;
   startAudioOff?: boolean;
   job: MergeJob;
   company: Company;
+  transcript: { role: 'bot' | 'user'; text: string }[];
 }
 
-export default function VoiceInterviewSession({
-  state,
+export default function VideoInterviewSession({
   onLeave,
   startAudioOff = false,
   job,
-  company
-}: VoiceInterviewSessionProps) {
-  const voiceClient = useVoiceClient()!;
-  const [hasStarted, setHasStarted] = useState<boolean>(false);
-  const [muted, setMuted] = useState(startAudioOff);
+  company,
+  transcript,
+}: VideoInterviewSessionProps) {
+  const voiceClient: RTVIClient = useRTVIClient()!;
+  const transportState = useRTVIClientTransportState();
+  const [isMuted, setMuted] = useState(startAudioOff);
   const [isCameraOn, setIsCameraOn] = useState(true);
-  const [isAudioEnabled, setIsAudioEnabled] = useState(!startAudioOff);
-  const [transcript, setTranscript] = useState<
-    { speaker: string; text: string }[]
-  >([]);
 
-  const handleBotStoppedSpeaking = useCallback(() => {
-    if (!hasStarted) {
-      setHasStarted(true);
+
+  // Initialize devices when component mounts
+  useEffect(() => {
+    if (transportState === 'connected') {
+      // Set initial states based on startAudioOff prop
+      voiceClient.enableMic(!startAudioOff);
+      voiceClient.enableCam(true);
+      setMuted(startAudioOff);
+      setIsCameraOn(true);
     }
-  }, [hasStarted]);
-
-  useVoiceClientEvent(VoiceEvent.BotStoppedSpeaking, handleBotStoppedSpeaking);
+  }, [transportState, startAudioOff, voiceClient]);
 
   useEffect(() => {
-    setHasStarted(false);
-  }, []);
-
-  useEffect(() => {
-    if (hasStarted && !startAudioOff) {
-      voiceClient.enableMic(true);
-    }
-  }, [voiceClient, startAudioOff, hasStarted]);
-
-  useEffect(() => {
-    if (state === 'error') {
+    if (transportState === 'error') {
       onLeave();
     }
-  }, [state, onLeave]);
+  }, [transportState, onLeave]);
 
   const handleMicToggle = () => {
-    voiceClient.enableMic(!muted);
-    setMuted(!muted);
+    const newMutedState = !isMuted;
+    voiceClient.enableMic(!newMutedState);
+    setMuted(newMutedState);
   };
 
   const handleCameraToggle = () => {
-    voiceClient.enableCam(!isCameraOn);
-    setIsCameraOn(!isCameraOn);
+    const newCameraState = !isCameraOn;
+    voiceClient.enableCam(newCameraState);
+    setIsCameraOn(newCameraState);
   };
-
-  const handleAudioToggle = () => {
-    setIsAudioEnabled(!isAudioEnabled);
-    // Implement audio toggle logic here
-  };
-
-  const handleBotTranscript = useCallback((text: string) => {
-    setTranscript((prev) => [...prev, { speaker: 'AI', text: text.trim() }]);
-  }, []);
-
-  const handleUserTranscript = useCallback((data: Transcript) => {
-    setTranscript((prev) => [
-      ...prev,
-      { speaker: 'You', text: data.text.trim() }
-    ]);
-  }, []);
-
-  useVoiceClientEvent(VoiceEvent.BotTranscript, handleBotTranscript);
-  useVoiceClientEvent(VoiceEvent.UserTranscript, handleUserTranscript);
 
   return (
-    <div className="flex flex-col h-screen">
-      <InterviewHeader job={job} company={company} />
+    <div className="flex flex-col h-screen w-screen">
+      <div className="basis-1/6">
+        <InterviewHeader job={job} company={company} />
+        
+      </div>
 
-      <main className="flex-grow grid h-1/2 grid-cols-3 gap-4 p-4">
-        <div className=" h-full col-span-1 flex justify-between flex-col gap-1">
-          <div className="h-1/2">
-            <AIInterviewer isReady={state === 'ready'} />
+      <main className="flex basis-1/3 gap-4 p-4 m-5">
+        {/* Sidebar */}
+        <div className="flex-col h-full w-1/3 gap-2">
+          <div className="flex-1">
+            <AIInterviewer isReady={transportState === 'ready'} />
           </div>
-          <div className="h-1/2">
+          <div className="flex basis-1/2 w-full overflow-y-auto">
             <TranscriptPanel transcript={transcript} />
           </div>
         </div>
-        <div className="col-span-2 h-full">
-          <CandidateVideo isCameraOn={isCameraOn} />
+        {/* Main Content */}
+        <div className="w-2/3 h-full">
+          <CandidateVideo isCameraOn={isCameraOn && voiceClient.isCamEnabled} />
         </div>
       </main>
 
-      <ControlPanel
-        isMuted={muted}
-        isCameraOn={isCameraOn}
-        isAudioEnabled={isAudioEnabled}
-        onMicToggle={handleMicToggle}
-        onCameraToggle={handleCameraToggle}
-        onAudioToggle={handleAudioToggle}
-        onLeave={onLeave}
-      />
+      <footer className="basis-1/6">
+        <ControlPanel
+          // isMuted={isMuted || !voiceClient.isMicEnabled}
+          isMuted={isMuted}
+          isCameraOn={isCameraOn}
+          // isCameraOn={isCameraOn && voiceClient.isCamEnabled}
+          onMicToggle={handleMicToggle}
+          onCameraToggle={handleCameraToggle}
+          onLeave={onLeave}
+        />
+      </footer>
     </div>
   );
 }

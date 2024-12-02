@@ -77,8 +77,13 @@ export default function ApplicantActions({
   const resumeAttachmentId =
     ApplicantCandidate?.candidate?.attachments?.[0]; // Assume it's an attachment ID.
 
+  const jobId = ApplicantCandidate?.job?.id || '';
+
   async function onScheduleAIInterview() {
-    if (!firstName || !emailAddress || !candidateId) {
+    const name = `${firstName} ${lastName}`.trim();
+
+    if (!name || !emailAddress || !candidateId) {
+
       toast({
         title: 'Error',
         description: 'Name, email address, and candidate ID are required',
@@ -88,12 +93,20 @@ export default function ApplicantActions({
     }
 
     try {
-      const { data, error } = await inviteCandidate(firstName, emailAddress, candidateId);
+      console.log(`Inviting candidate ${name}: ${emailAddress}`);
+
+      const { data, error } = await inviteCandidate(
+        name,
+        emailAddress,
+        jobId
+      );
+      console.log('Response:', { data, error });
+
       if (error) {
         toast({
           title: 'Failed to invite candidate',
-          description: error.message || 'An error occurred',
-          variant: 'destructive',
+          description: error || 'An error occurred',
+          variant: 'destructive'
         });
         return;
       }

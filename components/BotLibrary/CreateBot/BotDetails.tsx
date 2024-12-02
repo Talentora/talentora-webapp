@@ -28,10 +28,11 @@ export function BotDetails({ newBot, setNewBot, onNext }: BotDetailsProps) {
     <div>
       <form className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="name">Bot Name</Label>
+          <Label htmlFor="name">Ora Scout Name</Label>
           <Input
             id="name"
             value={newBot.name}
+            placeholder="e.g. Bob"
             onChange={(e) => setNewBot({ ...newBot, name: e.target.value })}
             required
           />
@@ -41,6 +42,7 @@ export function BotDetails({ newBot, setNewBot, onNext }: BotDetailsProps) {
           <Label htmlFor="role">Role</Label>
           <Input
             id="role"
+            placeholder="e.g Technical Recruiter"
             value={newBot.role}
             onChange={(e) => setNewBot({ ...newBot, role: e.target.value })}
             required
@@ -51,12 +53,13 @@ export function BotDetails({ newBot, setNewBot, onNext }: BotDetailsProps) {
           <Label htmlFor="description">Description</Label>
           <Input
             id="description"
+            placeholder="e.g. I am a technical recruiter..."
             value={newBot.description}
             onChange={(e) => setNewBot({ ...newBot, description: e.target.value })}
             required
           />
         </div>
-
+    
         <div className="space-y-2">
           <Label htmlFor="icon">Icon</Label>
           <Select

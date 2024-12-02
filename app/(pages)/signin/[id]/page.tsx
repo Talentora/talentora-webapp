@@ -71,7 +71,7 @@ export default async function SignInPage({
     <div className="flex w-full flex-col min-h-screen">
       <div className="flex justify-center flex-1">
         <div className="flex flex-col justify-between max-w-lg p-3 m-auto w-80">
-          <div className="flex justify-center pb-6">
+          <div style={{"height":"80%", "display": "flex", "alignItems":"center"}} className="flex justify-center pb-6">
             <Logo width="30px" height="30px" />
           </div>
           <Card shadow className="w-full max-w-lg">
@@ -118,14 +118,6 @@ export default async function SignInPage({
                   role={role || 'applicant'}
                 />
               )}
-              {viewProp !== 'update_password' &&
-                viewProp !== 'signup' &&
-                allowOauth && (
-                  <>
-                    <Separator text="Third-party sign-in" />
-                    <OauthSignIn />
-                  </>
-                )}
             </CardContent>
           </Card>
         </div>

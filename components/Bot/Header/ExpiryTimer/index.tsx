@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Timer } from 'lucide-react';
-import { VoiceEvent } from 'realtime-ai';
+import { RTVIEvent } from 'realtime-ai';
 import { useVoiceClient, useVoiceClientEvent } from 'realtime-ai-react';
 
 import {
@@ -16,12 +16,12 @@ const ExpiryTimer: React.FC = () => {
   const [time, setTime] = useState({ minutes: 0, seconds: 0 });
 
   useVoiceClientEvent(
-    VoiceEvent.Connected,
+    RTVIEvent.Connected,
     useCallback(() => setExp(voiceClient?.transportExpiry), [voiceClient])
   );
 
   useVoiceClientEvent(
-    VoiceEvent.Disconnected,
+    RTVIEvent.Disconnected,
     useCallback(() => {
       setExp(undefined);
       setTime({ minutes: 0, seconds: 0 });

@@ -1,10 +1,13 @@
 'use server';
 import { Tables } from '@/types/types_db';
 import { createClient } from '@/utils/supabase/server';
+import { BotWithJobs } from '@/types/custom';
 type Recruiter = Tables<'recruiters'>;
 type Company = Tables<'companies'>;
 type Bot = Tables<'bots'>;
 type AI_Summary = Tables<'AI_summary'>;
+import { inviteRecruiterAdmin, inviteCandidateAdmin, listUsersAdmin } from '@/utils/supabase/admin';
+
 // CRUD operations for the company table
 
 /**
@@ -169,52 +172,145 @@ export const getProducts = async () => {
   return products;
 };
 
-export async function inviteRecruiter(name: string | null, email: string) {
-  const supabase = createClient();
-
+export async function inviteRecruiter(
+  name: string,
+  email: string
+): Promise<{ data?: any; error?: string | null }> {
   try {
-    const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
-      data: {
-        role: 'recruiter', // You can change this to the appropriate role
-        full_name: name || undefined
-      }
-    });
-    if (error) {
-      console.error('Error inviting user:', error);
-      return { success: false, error };
+    // Check if user already exists in auth.users
+    const supabase = createClient();
+    const { data: existingUser, error: userCheckError } = await listUsersAdmin();
+    const userExists = existingUser?.users?.some(user => user.email === email);
+
+    if (userCheckError) {
+      console.error('Error checking existing user:', userCheckError);
+      return {
+        data: null,
+        error: 'Failed to check if user exists'
+      };
     }
-    return { success: true, data };
-  } catch (err) {
-    console.error('Error inviting user:', err);
-    return { success: false, error: err };
+
+    if (userExists) {
+      return {
+        data: null,
+        error: 'User with this email already exists'
+      };
+    }
+
+    const {data: recruiter, error} = await inviteRecruiterAdmin(name, email);
+
+    // Return early if invitation failed
+    if (!recruiter) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : error || 'Failed to invite recruiter'
+      };
+    }
+
+    console.log('recruiter', recruiter);
+
+    const recruiterId = recruiter?.user?.id;
+
+    if (!recruiterId) {
+      return {
+        data: null,
+        error: 'Failed to get recruiter ID'
+      };
+    }
+
+    return {
+      data: recruiter,
+      error: null
+    };
+
+  } catch (error) {
+    console.error('Error inviting recruiter:', error);
+    return {
+      data: null,
+      error: error instanceof Error ? error.message : 'Failed to invite recruiter'
+    };
   }
 }
 
+
 export async function inviteCandidate(
   name: string,
-  emailAddress: string,
-  candidate_id: string
-): Promise<{ data?: any; error?: any }> {
+  email: string,
+  job_id: string
+): Promise<{ data?: any; error?: string | null }> {
   try {
+    // Check if user already exists in auth.users
     const supabase = createClient();
+    const { data: existingUser, error: userCheckError } = await listUsersAdmin();
+    const userExists = existingUser?.users?.some(user => user.email === email);
 
-    const { data, error } = await supabase.auth.admin.inviteUserByEmail(
-      emailAddress,
-      {
-        data: {
-          role: 'candidate', // You can change this to the appropriate role
-          full_name: name,
-          candidate_id: candidate_id
-        }
-      }
-    );
-    // Return a plain object
+    if (userCheckError) {
+      console.error('Error checking existing user:', userCheckError);
+      return {
+        data: null,
+        error: 'Failed to check if user exists'
+      };
+    }
+
+    if (userExists) {
+      return {
+        data: null,
+        error: 'User with this email already exists'
+      };
+    }
+
+
+    const {data: candidate, error} = await inviteCandidateAdmin(name, email);
+    
+    // Return early if invitation failed
+    if (!candidate) {
+      return {
+          data: null,
+          error: error instanceof Error ? error.message : error || 'Failed to invite candidate'
+        };
+    }
+
+    console.log('candidate', candidate);
+
+    const candidateId = candidate?.user?.id;
+    // console.log('candidateId', candidateId);
+
+    if (!candidateId) {
+      return {
+        data: null,
+        error: 'Failed to get candidate ID'
+      };
+    }
+
+    // Create application record linking the job and new user
+    const { data: application, error: applicationError } = await supabase
+      .from('applications')
+      .insert({
+        applicant_id: candidateId,
+        job_id: job_id,
+        // status: 'pending'  
+      })
+      .select()
+      .single();
+
+    if (applicationError) {
+      console.error('Error creating application:', applicationError);
+      return {
+        data: null,
+        error: applicationError.message
+      };
+    }
+
     return {
-      data,
-      error
+      data: {
+        candidate: candidate,
+        application: application
+      },
+      error: null
     };
+
   } catch (err) {
-    console.error('Error inviting candidate:', err);
+    console.error('Error in inviteCandidate:', err);
     return {
       data: null,
       error: err instanceof Error ? err.message : 'Unknown error occurred'
@@ -341,16 +437,15 @@ export const deleteBot = async (id: number) => {
  * @returns An array of bot data.
  * @throws Error if the fetch operation fails.
  */
-export const getBots = async (): Promise<Bot[] | null> => {
-  const supabase = createClient();
+export const getBots = async (): Promise<BotWithJobs[] | null> => {
+  try {
+    const botsWithJobIds = await getBotsWithJobIds();
+    return botsWithJobIds;
 
-  const { data, error } = await supabase.from('bots').select('*');
-
-  if (error) {
-    throw new Error(`Failed to fetch bots: ${error.message}`);
+  } catch (error) {
+    console.error('Failed to fetch bots:', error);
+    return null;
   }
-
-  return data || null;
 };
 
 /**
@@ -649,7 +744,6 @@ export const getCompanyContext = async (id: string): Promise<any | null> => {
       console.error('Error fetching company context:', error);
       return null;
     }
-    console.log('companyContext', companyContext);
     return companyContext;
   } catch (err) {
     console.error('Unexpected error fetching company context:', err);
@@ -823,6 +917,8 @@ export const getJobInterviewConfig = async (
       .eq('job_id', jobId)
       .single();
 
+    console.log("interviewConfig",interviewConfig)
+
     if (error) {
       console.error('Error fetching interview config:', error);
       return null;
@@ -846,6 +942,7 @@ export const getJob = async (jobId: string): Promise<any | null> => {
     .single();
   return data || null;
 };
+
 
 export const getAISummaryId = async (
   applicantId: string,
@@ -894,3 +991,171 @@ export const getEvaluation = async (AISummaryId: string): Promise<AI_Summary | n
     return null;
   }
 };
+
+/**
+ * Gets the account token for a company associated with an application through its job.
+ * 
+ * @param applicationId - The ID of the application
+ * @returns The account token string or null if not found
+ */
+export const getAccountTokenFromApplication = async (
+  applicationId: string
+): Promise<{token: string | null,company: any | null}> => {
+  try {
+    const supabase = createClient();
+    
+    // Join applications -> jobs -> companies to get the account token
+    // First get the application to get the job_id
+    const { data: applicationData, error: applicationError } = await supabase
+      .from('applications')
+      .select('job_id')
+      .eq('id', applicationId)
+      .single();
+
+    if (applicationError) {
+      console.error('Error fetching application:', applicationError);
+      return {token: null, company: null};
+    }
+
+    // Then get the job to get the company_id
+    const { data: jobData, error: jobError } = await supabase
+      .from('jobs')
+      .select('company_id, merge_id')
+      .eq('merge_id', applicationData.job_id)
+      .single();
+
+      
+    if (jobError) {
+      console.error('Error fetching job:', jobError);
+      return {token: null, company: null};
+    }
+
+    // Finally get the company details
+    const { data: companyData, error: companyError } = await supabase
+      .from('companies')
+      .select('id, name, merge_account_token')
+      .eq('id', jobData?.company_id || '')
+      .single();
+
+
+    if (companyError) {
+      console.error('Error fetching company:', companyError);
+      return {token: null, company: null};
+    }
+
+    const account_token = companyData.merge_account_token
+    return {token: account_token, company: companyData};
+
+  } catch (err) {
+    console.error('Unexpected error fetching account token:', err);
+    return {token: null, company: null};
+  }
+};
+
+
+
+
+/**
+ * Fetches an application by its ID.
+ *
+ * @param applicationId - The ID of the application to fetch.
+ * @returns The application data or null if not found.
+ */
+export const getApplication = async (applicationId: string): Promise<Tables<'applications'> | null> => {
+  try {
+    const supabase = createClient();
+    const { data: application, error } = await supabase
+      .from('applications')
+      .select('*')
+      .eq('id', applicationId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching application:', error);
+      return null;
+    }
+
+    return application;
+  } catch (err) {
+    console.error('Unexpected error fetching application:', err);
+    return null;
+  }
+};
+
+
+/**
+ * Creates a new AI summary record for an application.
+ *
+ * @param applicationId - The ID of the application to create summary for
+ * @param recordingId - The ID of the recording to associate with the summary
+ * @returns The created AI summary record or null if creation failed
+ */
+export const createAISummary = async (
+  applicationId: string,
+  recordingId: string
+): Promise<Tables<'AI_summary'> | null> => {
+  try {
+    const supabase = createClient();
+    const { data: aiSummary, error } = await supabase
+      .from('AI_summary')
+      .insert([{
+        application_id: applicationId,
+        recording_id: recordingId,
+      }])
+      .select()
+      .single();
+
+    console.log("aiSummary", aiSummary)
+
+    if (error) {
+      console.error('Error creating AI summary:', error);
+      return null;
+    }
+
+    return aiSummary;
+  } catch (err) {
+    console.error('Unexpected error creating AI summary:', err);
+    return null;
+  }
+};
+
+/**
+ * Fetches all bots along with their associated job interview configurations.
+ * 
+ * This function queries the 'bots' table to retrieve all bots and their corresponding
+ * job interview configurations. It filters out configurations where the bot_id does not match
+ * the current bot's id. The results are ordered by the bot's creation date in descending order.
+ * 
+ * @returns A promise that resolves to an array of BotWithJobs objects or throws an error if the query fails.
+ */
+export const getBotsWithJobIds = async (): Promise<BotWithJobs[]> => {
+  const supabase = createClient();
+
+  // Query to fetch all bots with their job_interview_configs where bot_id is not null
+  const { data: botsWithJobs, error } = await supabase
+    .from('bots')
+    .select(`
+      *,
+      job_interview_config!left (
+        job_id,
+        bot_id
+      )
+    `)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching bots with jobs:', error);
+    throw error;
+  }
+
+  // Process the fetched bots to filter out job_interview_configs where bot_id doesn't match the current bot
+  const processedBots = botsWithJobs?.map(bot => ({
+    ...bot,
+    job_interview_config: bot.job_interview_config?.filter(
+      config => config.bot_id === bot.id && config.bot_id !== null
+    ) as { job_id: string; bot_id: number }[]
+  })) || [];
+
+  return processedBots;
+};
+

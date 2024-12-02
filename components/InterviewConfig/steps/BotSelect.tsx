@@ -32,7 +32,7 @@ import { useToast } from '@/components/Toasts/use-toast';
 const BotSelect = ({ onCompletion }: BotSelectProps) => {
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
   const { toast } = useToast();
-  const { bots, loading, error } = useBots();
+  const { bots, loading } = useBots();
   const pathname = window.location.pathname;
   const mergedId = pathname.split('/')[2]; // Extract ID from /jobs/{id}/settings
 
@@ -47,10 +47,9 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
       </div>
     );
 
-  if (error) return <div>Error loading bots: {error}</div>;
 
   async function updateJobConfig(botId: string) {
-    await updateJobInterviewConfig(mergedId, {
+    const { data, error } = await updateJobInterviewConfig(mergedId, {
       bot_id: Number(botId),
       interview_name: null,
       type: null,
