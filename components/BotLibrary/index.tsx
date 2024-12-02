@@ -89,10 +89,10 @@ export default function BotLibrary({ bots: initialBots }: { bots: BotWithJobs[] 
         <Tabs defaultValue="active" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="active">
-              Active Bots ({activeBots.length})
+              Active Scouts ({activeBots.length})
             </TabsTrigger>
             <TabsTrigger value="inactive">
-              Inactive Bots ({inactiveBots.length})
+              Inactive Scouts ({inactiveBots.length})
             </TabsTrigger>
           </TabsList>
 
@@ -127,7 +127,7 @@ export default function BotLibrary({ bots: initialBots }: { bots: BotWithJobs[] 
               ))}
               {inactiveBots.length === 0 && (
                 <div className="col-span-full flex flex-col items-center justify-center p-6">
-                  <p className="text-lg font-semibold mb-2">No inactive bots</p>
+                  <p className="text-lg font-semibold mb-2">No inactive Scouts</p>
                   <p className="text-gray-500">All your bots are currently active</p>
                 </div>
               )}
