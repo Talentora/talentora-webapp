@@ -3,6 +3,7 @@ import { getUser } from '@/utils/supabase/queries';
 import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
 
+
 export async function GET(request: NextRequest) {
   async function getCompanyData() {
     const user = await getUser();
@@ -33,7 +34,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+
     const accountToken = company.merge_account_token;
+
     console.log('accountToken', accountToken);
 
     if (!accountToken) {
