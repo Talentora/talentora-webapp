@@ -34,6 +34,7 @@ const InviteApplicants = ({ jobId, applicants }: InviteApplicantsProps) => {
         name, email, candidate_id);
       if (error) {
         toast({ variant: 'destructive', title: 'Error', description: error });
+
       } else {
         toast({ variant: 'default', title: 'Success', description: `Invite sent to ${name} (${email})` });
       }
