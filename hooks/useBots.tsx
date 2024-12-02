@@ -1,23 +1,21 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { Tables } from '@/types/types_db';
-
-type Bot = Tables<'bots'>;
+import { getBots } from '@/utils/supabase/queries';
+import { BotWithJobs } from '@/types/custom';
 
 export const useBots = () => {
-  const [bots, setBots] = useState<Bot[]>([]);
+  const [bots, setBots] = useState<BotWithJobs[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
+  console.log("loading",loading)
   useEffect(() => {
     const fetchBots = async () => {
-      const supabase = createClient();
-      const { data, error } = await supabase.from('bots').select('*');
+      const data = await getBots();
 
-      if (error) {
-        setError(error.message);
-      } else {
+      if (data) {
         setBots(data);
+        setLoading(false);
+        return;
       }
       setLoading(false);
     };
@@ -25,5 +23,5 @@ export const useBots = () => {
     fetchBots();
   }, []);
 
-  return { bots, loading, error };
+  return { bots, loading };
 };
