@@ -1,13 +1,10 @@
 'use client';
 import { useEffect, useState, useMemo } from 'react';
-import { useApplications } from '@/utils/api/applications';
-import type { EnrichedApplication } from '@/utils/api/applications';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function ApplicationDetails({ id }: { id: string }) {
-  const { getEnrichedApplication } = useApplications();
-  const [data, setData] = useState<EnrichedApplication | null>(null);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -15,7 +12,11 @@ export function ApplicationDetails({ id }: { id: string }) {
     async function loadData() {
       try {
         setLoading(true);
-        const enrichedData = await getEnrichedApplication(id);
+        const response = await fetch(`/api/applications/${id}`);
+        if (!response.ok) {
+          throw new Error('Failed to load application');
+        }
+        const enrichedData = await response.json();
         setData(enrichedData);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to load application'));
@@ -25,7 +26,7 @@ export function ApplicationDetails({ id }: { id: string }) {
     }
 
     loadData();
-  }, [id, getEnrichedApplication]);
+  }, [id]);
 
   const candidateName = useMemo(() => {
     if (!data?.candidate) return '';
@@ -86,4 +87,4 @@ const ApplicationSkeleton = () => (
       <Skeleton className="h-4 w-1/2" />
     </CardContent>
   </Card>
-); 
+);

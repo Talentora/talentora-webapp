@@ -10,7 +10,7 @@ export async function getMergeHeaders(
   userId?: string,
   includeContentType = false
 ): Promise<MergeHeaders> {
-  const accountToken = await getMergeApiKey(userId);
+  const accountToken = await getMergeApiKey();
   const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
 
   if (!apiKey || !accountToken) {
