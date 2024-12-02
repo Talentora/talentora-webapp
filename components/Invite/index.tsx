@@ -21,6 +21,7 @@ import {
 // import { inviteRecruiter } from '@/utils/supabase/queries';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Job } from '@/types/merge';
+import { inviteRecruiter } from '@/utils/supabase/queries';
 
 interface InvitePageProps {
   jobs: Job[];
@@ -63,9 +64,9 @@ export default function InvitePage({ jobs }: InvitePageProps) {
 
     try {
       for (const email of validEmails) {
-        const response = await inviteRecruiter("", email);
+        const {data, error} = await inviteRecruiter("", email);
 
-        if (!response.data) {
+        if (!data) {
           throw new Error(`Failed to send invitation to ${email}`);
         }
 
