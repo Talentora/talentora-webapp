@@ -22,7 +22,8 @@ export default function Navlinks() {
   const router = useRouter();
 
   const links = [
-    { href: '/about', label: 'About' },
+    // { href: '/about', label: 'About' },
+    // { href: '/pricing', label: 'Pricing' },
     { href: '/dashboard', label: 'Dashboard', requiresAuth: true }
   ];
 

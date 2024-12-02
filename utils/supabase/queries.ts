@@ -170,10 +170,70 @@ export const getProducts = async () => {
   return products;
 };
 
+export async function inviteRecruiter(
+  name: string,
+  email: string
+): Promise<{ data?: any; error?: string | null }> {
+  try {
+    // Check if user already exists in auth.users
+    const supabase = createClient();
+    const { data: existingUser, error: userCheckError } = await listUsersAdmin();
+    const userExists = existingUser?.users?.some(user => user.email === email);
+
+    if (userCheckError) {
+      console.error('Error checking existing user:', userCheckError);
+      return {
+        data: null,
+        error: 'Failed to check if user exists'
+      };
+    }
+
+    if (userExists) {
+      return {
+        data: null,
+        error: 'User with this email already exists'
+      };
+    }
+
+    const {data: recruiter, error} = await inviteRecruiterAdmin(name, email);
+
+    // Return early if invitation failed
+    if (!recruiter) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : error || 'Failed to invite recruiter'
+      };
+    }
+
+    console.log('recruiter', recruiter);
+
+    const recruiterId = recruiter?.user?.id;
+
+    if (!recruiterId) {
+      return {
+        data: null,
+        error: 'Failed to get recruiter ID'
+      };
+    }
+
+    return {
+      data: recruiter,
+      error: null
+    };
+
+  } catch (error) {
+    console.error('Error inviting recruiter:', error);
+    return {
+      data: null,
+      error: error instanceof Error ? error.message : 'Failed to invite recruiter'
+    };
+  }
+}
+
+
 export async function inviteCandidate(
   name: string,
   email: string,
-  candidate_id: string,
   job_id: string
 ): Promise<{ data?: any; error?: string | null }> {
   try {
@@ -198,13 +258,13 @@ export async function inviteCandidate(
     }
 
 
-    const candidate = await inviteCandidateAdmin(name, email);
+    const {data: candidate, error} = await inviteCandidateAdmin(name, email);
     
     // Return early if invitation failed
     if (!candidate) {
       return {
           data: null,
-          error: candidate.error instanceof Error ? candidate.error.message : candidate.error || 'Failed to invite candidate'
+          error: error instanceof Error ? error.message : error || 'Failed to invite candidate'
         };
     }
 
@@ -241,7 +301,7 @@ export async function inviteCandidate(
 
     return {
       data: {
-        candidate: candidate.data,
+        candidate: candidate,
         application: application
       },
       error: null

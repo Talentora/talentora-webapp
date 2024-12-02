@@ -48,7 +48,6 @@ export default function ApplicantActions({
       const { data, error } = await inviteCandidate(
         name,
         emailAddress,
-        candidateId,
         jobId
       );
       console.log('Response:', { data, error });

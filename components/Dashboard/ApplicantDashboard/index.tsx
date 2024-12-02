@@ -16,6 +16,7 @@ import {
 import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
 import { useUser } from '@/hooks/useUser'
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function JobPortal() {
   const router = useRouter()
@@ -34,11 +35,32 @@ export default function JobPortal() {
     )
   }
 
-
   if (isLoading) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <Loader2 className="animate-spin h-10 w-10" />
+      <div className="min-h-screen">
+        <header className=" text-primary py-8 px-6">
+          <div className="container mx-auto">
+            <h1 className="text-3xl font-bold mb-2">Applicant Dashboard</h1>
+            <p className="text-lg opacity-90">
+              Welcome, {user?.user_metadata?.full_name || user?.email}
+            </p>
+          </div>
+        </header>
+
+        <main className="container px-4">
+          <div className="grid gap-6 md:grid-cols-2 px-10 ">
+            <Card className="border bg-foreground p-5 border-border shadow-sm relative">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold">Loading...</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 gap-4">
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-8 w-24" />
+              </CardContent>
+            </Card>
+          </div>
+        </main>
       </div>
     )
   }
@@ -120,8 +142,7 @@ export default function JobPortal() {
                 </CardHeader>
                 <CardContent>
                   <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-                    <CircleDot className="h-4 w-4 text-blue-500" />
-                    {application.status}
+                    Application Status: <strong>{application.status}</strong>
                   </div>
                   <div className="flex gap-3">
                     <Button variant="outline">Practice</Button>

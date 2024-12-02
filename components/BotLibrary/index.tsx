@@ -61,7 +61,7 @@ export default function BotLibrary({ bots: initialBots }: { bots: BotWithJobs[] 
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">AI Interviewer Bot Gallery</h1>
+      <h1 className="text-3xl font-bold mb-6">Interviewer Gallery</h1>
 
       <div className="mb-6">
         <div className="flex flex-row justify-between gap-10 mb-4">
