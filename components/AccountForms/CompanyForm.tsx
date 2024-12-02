@@ -29,7 +29,7 @@ const CompanyForm = () => {
   if (!company) return null;
   else {
     return (
-    <Card className="my-8 bg-card text-card-foreground">
+    <Card className="my-8 text-card-foreground">
       <CardHeader>
         <CardTitle className="text-primary">Company Information</CardTitle>
         <CardDescription className="text-muted-foreground">

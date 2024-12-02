@@ -192,11 +192,11 @@ const CreateBot = ({
       <Dialog open={isOpen} onOpenChange={handleOpenChange}>
         <DialogContent className="space-y-4">
           <DialogHeader>
-            <DialogTitle>Edit Bot</DialogTitle>
+            <DialogTitle>Edit <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">Ora</span> Scout</DialogTitle>
           </DialogHeader>
           <Tabs defaultValue="bot-details" value={activeTab} onValueChange={setActiveTab}>
             <TabsList>
-              <TabsTrigger value="bot-details">Bot Details</TabsTrigger>
+              <TabsTrigger value="bot-details"><span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">Ora</span> Scout Details</TabsTrigger>
               <TabsTrigger value="voice-emotion">Voice and Emotion</TabsTrigger>
               <TabsTrigger value="prompting">Prompting</TabsTrigger>
             </TabsList>
@@ -259,16 +259,16 @@ const CreateBot = ({
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button className="w-full bg-primary-dark" onClick={() => setIsOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" /> Create New Bot
+          <Plus className="mr-2 h-4 w-4" /> Create New Ora Scout
         </Button>
       </DialogTrigger>
       <DialogContent className="space-y-4">
         <DialogHeader>
-          <DialogTitle>Create New Bot</DialogTitle>
+          <DialogTitle>Create New <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">Ora</span> Scout</DialogTitle>
         </DialogHeader>
         <Tabs defaultValue="bot-details" value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
-            <TabsTrigger value="bot-details">Bot Details</TabsTrigger>
+            <TabsTrigger value="bot-details">Ora Scout Details</TabsTrigger>
             <TabsTrigger value="voice-emotion">Voice and Emotion</TabsTrigger>
             <TabsTrigger value="prompting">Prompting</TabsTrigger>
           </TabsList>
@@ -316,7 +316,7 @@ const CreateBot = ({
                   Back
                 </Button>
                 <Button type="submit">
-                  Create Bot
+                  Create <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">Ora</span> Scout
                 </Button>
               </div>
             </form>
