@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Download, ThumbsDown, ThumbsUp } from 'lucide-react';
@@ -6,38 +7,87 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { ApplicantCandidate } from '@/types/merge';
 import { inviteCandidate } from '@/utils/supabase/queries';
-import { useToast } from '@/components/Toasts/use-toast'; // Assuming this hook is available for toast notifications
+import { useToast } from '@/components/Toasts/use-toast';
+
+// Function to fetch the resume URL from the backend API route
+const fetchAttachmentDetails = async (attachmentId: string): Promise<string | null> => {
+  try {
+    const response = await fetch(`/api/merge/resume?attachmentId=${attachmentId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch attachment details');
+    }
+    const data: { file_url?: string } = await response.json();
+    return data.file_url || null;
+  } catch (error) {
+    console.error('Error fetching attachment details:', error);
+    return null;
+  }
+};
+
+// Component for fetching and displaying attachment details
+const AttachmentFetcher: React.FC<{ attachmentId: string }> = ({ attachmentId }) => {
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const url = await fetchAttachmentDetails(attachmentId);
+        if (url) {
+          setFileUrl(url);
+        } else {
+          setError('Resume URL not found');
+        }
+      } catch (err) {
+        setError('An error occurred while fetching the attachment');
+      }
+    };
+
+    fetchData();
+  }, [attachmentId]);
+
+  return (
+    <div>
+      {error ? (
+        <div className="text-red-500">{error}</div>
+      ) : fileUrl ? (
+        <iframe src={fileUrl} title="Resume" className="w-full h-96" />
+      ) : (
+        <div>Loading resume...</div>
+      )}
+    </div>
+  );
+};
+
 export default function ApplicantActions({
-  ApplicantCandidate
+  ApplicantCandidate,
 }: {
   ApplicantCandidate: ApplicantCandidate;
 }) {
-  const resumeUrl =
-    // ApplicantCandidate.candidate.attachments?.find(
-    //   (attachment) => attachment. === 'resume'
-    // )?.url ||
-    'No resume available';
-
-  const { toast } = useToast(); // Using the hook to add toast notifications
+  const { toast } = useToast();
   const firstName = ApplicantCandidate?.candidate?.first_name || '';
   const lastName = ApplicantCandidate?.candidate?.last_name || '';
   const candidateId = ApplicantCandidate?.candidate?.id || '';
   const emailAddress =
     ApplicantCandidate?.candidate?.email_addresses?.[0]?.value || '';
+  const resumeAttachmentId =
+    ApplicantCandidate?.candidate?.attachments?.[0]; // Assume it's an attachment ID.
+
   const jobId = ApplicantCandidate?.job?.id || '';
 
   async function onScheduleAIInterview() {
     const name = `${firstName} ${lastName}`.trim();
 
     if (!name || !emailAddress || !candidateId) {
+
       toast({
         title: 'Error',
         description: 'Name, email address, and candidate ID are required',
-        variant: 'destructive'
+        variant: 'destructive',
       });
       return;
     }
@@ -60,18 +110,17 @@ export default function ApplicantActions({
         });
         return;
       }
-
       toast({
         title: 'Success',
         description: 'Candidate invited successfully',
-        variant: 'default'
+        variant: 'default',
       });
     } catch (err) {
       console.error('Error inviting candidate:', err);
       toast({
         title: 'Error',
         description: 'Failed to invite candidate',
-        variant: 'destructive'
+        variant: 'destructive',
       });
     }
   }
@@ -79,7 +128,7 @@ export default function ApplicantActions({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-red-500">Actions (update)</CardTitle>
+        <CardTitle className="text-red-500">Actions (Updated)</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <Button className="w-full" onClick={onScheduleAIInterview}>
@@ -109,8 +158,8 @@ export default function ApplicantActions({
             <DialogHeader>
               <DialogTitle>Resume</DialogTitle>
             </DialogHeader>
-            {resumeUrl ? (
-              <iframe src={resumeUrl} title="Resume" className="w-full h-96" />
+            {resumeAttachmentId ? (
+              <AttachmentFetcher attachmentId={resumeAttachmentId} />
             ) : (
               <div>No resume available</div>
             )}
