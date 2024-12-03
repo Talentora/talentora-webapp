@@ -47,7 +47,7 @@ const ApplicantCountCard = ({ factWindow }: { factWindow: number }) => {
   factWindowDaysAgo.setDate(factWindowDaysAgo.getDate() - factWindow);
 
   const lastFactWindowDaysApplicants = applicants.filter((applicant) => {
-    const appliedDate = new Date(applicant.applied_at);
+    const appliedDate = new Date(applicant.application.applied_at);
     return appliedDate >= factWindowDaysAgo;
   }).length;
 

@@ -154,19 +154,19 @@ const CreateBot = ({
     }
   };
   // emotion is a Json object
-  const emotion = newBot.emotion as { [key: string]: number };
+  // const emotion = newBot.emotion as { [key: string]: number };
   const voice = newBot.voice as { [key: string]: string };
 
   const handleListen = async () => {
     try {
-      const emotions = {
-        speed: emotion.speed,
-        anger: emotion.anger,
-        curiosity: emotion.curiosity,
-        positivity: emotion.positivity,
-        sadness: emotion.sadness,
-        surprise: emotion.surprise,
-      };
+      // const emotions = {
+      //   speed: emotion.speed,
+      //   anger: emotion.anger,
+      //   curiosity: emotion.curiosity,
+      //   positivity: emotion.positivity,
+      //   sadness: emotion.sadness,
+      //   surprise: emotion.surprise,
+      // };
       const response = await tts.buffer({
         model_id: "sonic-english",
         voice: {
@@ -174,7 +174,7 @@ const CreateBot = ({
           id: voice?.id // Changed from voiceId to voice?.id
         },
         transcript: speakText,
-        emotions: emotions,
+        // emotions: emotions,
       } as StreamRequest);
       await tts.play();
     } catch (error) {
