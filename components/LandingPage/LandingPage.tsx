@@ -5,7 +5,7 @@ import Image2 from './Icons/Image2';
 import Image3 from './Icons/Image3';
 import Image4 from './Icons/Image4';
 import Image5 from './Icons/Image5';
-import Image6 from './Icons/image6';
+import Image6 from './Icons/Image6';
 import Image7 from './Icons/Image7';
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
@@ -111,6 +111,9 @@ export default function LandingPage() {
             <p className="text-lg text-black mb-8 max-w-lg mx-auto">
             Talentora's cutting-edge AI technology uses conversational AI assessments to Hire Smarter, Faster, Better. 
             </p>
+            <div className="my-8">
+              <Image4 className="w-15 my-4 mx-auto" />
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 justify-center px-4 md:px-16">
               <div className="p-6 text-center flex flex-col justify-between max-w-xs mx-auto border border-[#32BBCDB2] rounded-3xl h-[400px]">
