@@ -3,10 +3,8 @@ import { ArrowRight } from 'lucide-react';
 import Image1 from './Icons/Image1';
 import Image2 from './Icons/Image2';
 import Image3 from './Icons/Image3';
-import Image4 from './Icons/Image4';
-import Image5 from './Icons/Image5';
-import Image6 from './Icons/Image6';
-import Image7 from './Icons/Image7';
+import Image4 from './Images/Image4.jpg';
+
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 
@@ -14,37 +12,75 @@ import { Button } from '@/components/ui/button';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-['F5F6FA']">
-      <main>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white">
+      <main className="container px-4 mx-auto">
 
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white">
-          <main className="container px-4 mx-auto">
-            <div className="grid lg:grid-cols-2 gap-12 items-center py-16">
-              <div className="space-y-8">
-                <h1 className="text-5xl font-bold leading-tight tracking-tighter lg:text-6xl">
-                  Find the perfect candidates faster and{" "}
-                  <span className="text-purple-400">smarter</span>
-                </h1>
-                <p className="text-xl text-gray-600 max-w-[600px]">
-                  Streamline your first-round hiring process with our conversational AI
-                  assessments. Find the perfect candidates faster and smarter.
-                </p>
-                <div className="flex flex-wrap gap-4">
-                  <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
-                    Pricing
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-purple-600 text-purple-600 hover:bg-purple-50"
+        <div className="grid lg:grid-cols-2 gap-12 items-center py-16">
+          <div className="space-y-8">
+            <h1 className="text-5xl font-bold leading-tight tracking-tighter lg:text-6xl">
+              Find the perfect candidates faster and{" "}
+              <span className="text-purple-400">smarter</span>
+            </h1>
+            <p className="text-xl text-gray-600 max-w-[600px]">
+              Streamline your first-round hiring process with our conversational AI
+              assessments. Find the perfect candidates faster and smarter.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
+                Pricing
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-purple-600 text-purple-600 hover:bg-purple-50"
+              >
+                Request Live Demo →
+              </Button>
+            </div>
+          </div>
+          <div className="relative space-y-6">
+            <Card className="p-4 bg-white/80 backdrop-blur shadow-lg max-w-md ml-auto">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    Request Live Demo →
-                  </Button>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
                 </div>
+                <h3 className="text-lg font-semibold">Customize Your Interview</h3>
               </div>
-              <div className="relative space-y-6">
-                <Card className="p-4 bg-white/80 backdrop-blur shadow-lg max-w-md ml-auto">
-                  <div className="flex items-center gap-3 mb-4">
+              <Input
+                type="text"
+                placeholder="Search..."
+                className="w-full bg-white"
+              />
+            </Card>
+            <div className="grid grid-cols-2 gap-6">
+              <img
+                src='./Images/Image4.jpg'
+                alt="Interview process"
+                className="rounded-2xl shadow-lg"
+                style={{ width: '100%', height: 'auto' }}
+              />
+              <div className="space-y-4">
+                <Image
+                  src="/Image5.jpg"
+                  alt="Team collaboration"
+                  width={300}
+                  height={300}
+                  className="rounded-2xl shadow-lg"
+                />
+                <Card className="p-4 bg-white/80 backdrop-blur">
+                  <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                       <svg
                         className="w-6 h-6 text-purple-600"
@@ -56,47 +92,16 @@ export default function LandingPage() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
                         />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-semibold">Customize Your Interview</h3>
+                    <h3 className="text-lg font-semibold">Invite Candidates</h3>
                   </div>
-                  <Input
-                    type="text"
-                    placeholder="Search..."
-                    className="w-full bg-white"
-                  />
                 </Card>
-                <div className="grid grid-cols-2 gap-6">
-                  <Image6 />
-                  <div className="space-y-4">
-                    <Image7 />
-                    <Card className="p-4 bg-white/80 backdrop-blur">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                          <svg
-                            className="w-6 h-6 text-purple-600"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                            />
-                          </svg>
-                        </div>
-                        <h3 className="text-lg font-semibold">Invite Candidates</h3>
-                      </div>
-                    </Card>
-                  </div>
-                </div>
               </div>
             </div>
-          </main>
+          </div>
         </div>
 
         <section className="container mx-auto px-4 py-16">
@@ -111,9 +116,7 @@ export default function LandingPage() {
             <p className="text-lg text-black mb-8 max-w-lg mx-auto">
             Talentora's cutting-edge AI technology uses conversational AI assessments to Hire Smarter, Faster, Better. 
             </p>
-            <div className="my-8">
-              <Image4 className="w-15 my-4 mx-auto" />
-            </div>
+            
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 justify-center px-4 md:px-16">
               <div className="p-6 text-center flex flex-col justify-between max-w-xs mx-auto border border-[#32BBCDB2] rounded-3xl h-[400px]">
