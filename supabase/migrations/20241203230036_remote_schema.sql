@@ -228,12 +228,13 @@ CREATE TABLE IF NOT EXISTS "public"."bots" (
     "id" bigint NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "name" "text",
-    "voice_id" "text",
+    "voice" "jsonb",
     "description" "text",
     "prompt" "text",
     "company_id" "uuid",
     "icon" "text",
-    "role" "text"
+    "role" "text",
+    "emotion" "jsonb"
 );
 
 
