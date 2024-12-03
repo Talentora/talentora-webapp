@@ -68,13 +68,15 @@ const Page = () => {
       <div className="h-screen">
         {/* Sidebar */}
         <div className="bg-gradient-to-b from-primary-dark to-primary-dark p-4 w-50 h-full">
-          <nav className="space-y-2 mt-20 flex flex-col justify-between h-[calc(100vh-8rem)]">
+          <nav className="space-y-2 flex flex-col justify-between h-[calc(100vh-8rem)]">
+           
+           
             <div className="flex flex-col">
-            <Link href="/" className="mr-6 flex flex-row items-center gap-2" aria-label="Logo">
+            <Link href="/" className="flex flex-row items-center gap-2" aria-label="Logo">
               <Logo className="h-10 w-10" />
               <h1 className="text-foreground text-2xl font-bold">
                 Talent
-                <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">
+                <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent [text-shadow:_0_0_1px_rgba(255,255,255,0.1)]">
                   ora
                 </span>
               </h1>
@@ -119,19 +121,21 @@ const Page = () => {
               <span>Settings</span>
             </Link>
             </div>
-            <div className="mt-auto items-center justify-center relative" ref={userMenuRef}>
+
+
+            <div className="items-center justify-center relative" ref={userMenuRef}>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 aria-label="User menu"
-                className="relative z-0 text-white hover:bg-accent hover:text-gray-900 px-4 py-2 rounded w-full flex items-center justify-start"
+                className="relative z-0 text-white hover:bg-accent hover:text-gray-900 px-4 rounded w-full flex items-center justify-start"
               >
                 <User className="h-5 w-5 mr-2" />
                 <span>Profile</span>
               </Button>
               {isUserMenuOpen && (
-                <div className="absolute bottom-full left-0 mb-2 w-48 bg-background border border-border rounded-md shadow-lg p-2 z-10">
+                <div className="absolute bottom-full left-0 w-48 bg-background border border-border rounded-md shadow-lg p-2 z-10">
                   <div className="px-4 py-2">
                     <p className="text-sm font-medium text-muted-foreground">Signed in as</p>
                     <p className="text-sm font-bold truncate">{user?.user_metadata.full_name || user?.email}</p>
