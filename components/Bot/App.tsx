@@ -40,7 +40,6 @@ type TranscriptData = {
 
 
 // import { TranscriptData } from 'realtime-ai';
-import { createAISummary } from '@/utils/supabase/queries';
 import { useRouter } from 'next/navigation';
 const status_text = {
   idle: "Initializing...",
