@@ -115,7 +115,7 @@ export default function ApplicantSummary({ ApplicantCandidate }: ApplicantSummar
         <div className="mb-4">
           <h3 className="text-lg font-semibold">Preferred Qualification Scores</h3>
           <ul className="list-disc ml-5">
-            {text_eval.pref_qual_scores.map((score, index) => (
+            {text_eval.pref_qual_scores.map((score:any, index:any) => (
               <li key={index}>{score}</li>
             ))}
           </ul>

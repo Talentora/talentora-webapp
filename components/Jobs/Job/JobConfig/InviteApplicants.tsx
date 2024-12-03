@@ -105,7 +105,7 @@ const InviteApplicants = ({ jobId, applicants }: InviteApplicantsProps) => {
                 </TableHeader>
                 <TableBody>
                   {paginatedApplicants.map((applicant) => (
-                    <TableRow key={applicant.id}>
+                    <TableRow key={applicant.application.id}>
                       <TableCell>{applicant.candidate.first_name + ' ' + applicant.candidate.last_name}</TableCell>
                       <TableCell>{applicant.candidate.email_addresses[0].value}</TableCell>
                       <TableCell>
@@ -114,7 +114,7 @@ const InviteApplicants = ({ jobId, applicants }: InviteApplicantsProps) => {
                           checked={selectedApplicants.includes(applicant)}
                           onChange={() => {
                             if (selectedApplicants.includes(applicant)) {
-                              setSelectedApplicants(selectedApplicants.filter((a) => a.id !== applicant.id));
+                              setSelectedApplicants(selectedApplicants.filter((a) => a.application.id !== applicant.application.id));
                             } else {
                               setSelectedApplicants([...selectedApplicants, applicant]);
                             }
