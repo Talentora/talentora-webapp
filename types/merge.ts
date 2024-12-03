@@ -175,14 +175,15 @@ type Recruiter = {
 };
 
 // ApplicantCandidate type
-export type ApplicantCandidate = Application & {
+// export type ApplicantCandidate = Application & {
+export type ApplicantCandidate = {
+  application: Application;
   candidate: Candidate;
   job: Job;
   interviewStages: JobInterviewStage;
-  application: Application;
 };
 
 export type Job = SimpleJob & { departments: Department[]; offices: Office[] };
 
 // export types
-export type { Application, Candidate, JobInterviewStage, Recruiter, Activity, User };
+export type { Application, Candidate, JobInterviewStage, Recruiter };

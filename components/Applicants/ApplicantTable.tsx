@@ -51,7 +51,7 @@ export default function ApplicantTable({
         <TableBody>
           {applicants.map((ApplicantCandidate: ApplicantCandidate) => (
             <TableRow
-              key={ApplicantCandidate.id}
+              key={ApplicantCandidate.application.id}
               onClick={() => handleSelectApplicant(ApplicantCandidate)}
               className="cursor-pointer bg-foreground"
             >

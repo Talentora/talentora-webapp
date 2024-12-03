@@ -47,14 +47,14 @@ const ApplicantCountCard = ({ factWindow }: { factWindow: number }) => {
   factWindowDaysAgo.setDate(factWindowDaysAgo.getDate() - factWindow);
 
   const lastFactWindowDaysApplicants = applicants.filter((applicant) => {
-    const appliedDate = new Date(applicant.applied_at);
+    const appliedDate = new Date(applicant.application.applied_at);
     return appliedDate >= factWindowDaysAgo;
   }).length;
 
   const percentageChange = 0; // Since we're only looking at the last fact window days, there's no previous period to compare to.
 
   return (
-    <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-[#5650F0]/50 bg-card">
+    <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-primary-dark/50 bg-card">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">
           Total Applicants This Month

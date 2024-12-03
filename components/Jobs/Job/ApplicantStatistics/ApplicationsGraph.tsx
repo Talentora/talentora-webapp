@@ -70,7 +70,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
 
     // Fill bins with data
     applicants.forEach(applicant => {
-      const createdAt = new Date(applicant.created_at);
+      const createdAt = new Date(applicant.application.applied_at);
       if (createdAt >= startDate && createdAt <= now) {
         // Find the appropriate bin
         const binDate = new Date(createdAt);
@@ -103,6 +103,8 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
 
     return Object.values(bins).sort((a, b) => a.date.localeCompare(b.date));
   }, [applicants, timeRange, interval]);
+
+  console.log("chartData", chartData);
 
   const chartConfig = React.useMemo(() => {
     const config: ChartConfig = {};
