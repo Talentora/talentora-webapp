@@ -56,8 +56,7 @@ export default function App({ bot, jobInterviewConfig, companyContext, job, comp
       const recordingId = ev.recordingId;
       console.log("Recording started with ID:", recordingId);
 
-      if (!recordingId) return;
-      createAISummary(applicationId, recordingId);
+      
     },
     onRecordingError: (ev) => {
       console.error("Recording error:", ev);

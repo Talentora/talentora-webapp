@@ -1084,42 +1084,6 @@ export const getApplication = async (applicationId: string): Promise<Tables<'app
 
 
 /**
- * Creates a new AI summary record for an application.
- *
- * @param applicationId - The ID of the application to create summary for
- * @param recordingId - The ID of the recording to associate with the summary
- * @returns The created AI summary record or null if creation failed
- */
-export const createAISummary = async (
-  applicationId: string,
-  recordingId: string
-): Promise<Tables<'AI_summary'> | null> => {
-  try {
-    const supabase = createClient();
-    const { data: aiSummary, error } = await supabase
-      .from('AI_summary')
-      .insert([{
-        application_id: applicationId,
-        recording_id: recordingId,
-      }])
-      .select()
-      .single();
-
-    console.log("aiSummary", aiSummary)
-
-    if (error) {
-      console.error('Error creating AI summary:', error);
-      return null;
-    }
-
-    return aiSummary;
-  } catch (err) {
-    console.error('Unexpected error creating AI summary:', err);
-    return null;
-  }
-};
-
-/**
  * Fetches all bots along with their associated job interview configurations.
  * 
  * This function queries the 'bots' table to retrieve all bots and their corresponding
