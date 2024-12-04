@@ -99,34 +99,37 @@ export type Database = {
           company_id: string | null
           created_at: string
           description: string | null
+          emotion: Json | null
           icon: string | null
           id: number
           name: string | null
           prompt: string | null
           role: string | null
-          voice_id: string | null
+          voice: Json | null
         }
         Insert: {
           company_id?: string | null
           created_at?: string
           description?: string | null
+          emotion?: Json | null
           icon?: string | null
           id?: number
           name?: string | null
           prompt?: string | null
           role?: string | null
-          voice_id?: string | null
+          voice?: Json | null
         }
         Update: {
           company_id?: string | null
           created_at?: string
           description?: string | null
+          emotion?: Json | null
           icon?: string | null
           id?: number
           name?: string | null
           prompt?: string | null
           role?: string | null
-          voice_id?: string | null
+          voice?: Json | null
         }
         Relationships: [
           {

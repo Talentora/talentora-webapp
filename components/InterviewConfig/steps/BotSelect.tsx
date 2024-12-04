@@ -28,17 +28,78 @@ import { useBots } from '@/hooks/useBots';
 import CreateBot from '@/components/BotLibrary/CreateBot';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
+import { getBots } from '@/utils/supabase/queries';
+import { createClient } from '@/utils/supabase/client';
 
 const BotSelect = ({ onCompletion }: BotSelectProps) => {
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
+  const [isSaved, setIsSaved] = useState(false);
   const { toast } = useToast();
-  const { bots, loading } = useBots();
+  const [bots, setBots] = useState<Bot[]>([]);
+  const [loading, setLoading] = useState(true);
   const pathname = window.location.pathname;
-  const mergedId = pathname.split('/')[2]; // Extract ID from /jobs/{id}/settings
+  const mergedId = pathname.split('/')[2];
 
   useEffect(() => {
-    onCompletion(!!selectedBot);
-  }, [selectedBot, onCompletion]);
+    const fetchInitialData = async () => {
+      try {
+        // Fetch bots
+        const botsData = await getBots();
+        setBots(botsData || []);
+
+        // Fetch existing configuration
+        const supabase = createClient();
+        const { data: config, error } = await supabase
+          .from('job_interview_config')
+          .select('bot_id')
+          .eq('job_id', mergedId)
+          .single();
+
+        if (error) throw error;
+
+        // If there's a configured bot, set it as selected
+        if (config?.bot_id) {
+          const existingBot = botsData?.find(bot => bot.id === config.bot_id);
+          if (existingBot) {
+            setSelectedBot(existingBot);
+            setIsSaved(true);
+            onCompletion(true);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching initial data:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load existing configuration.',
+          variant: 'destructive'
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, [mergedId, onCompletion]);
+
+  const handleBotSelection = (value: string | null) => {
+    if (!value) {
+      setSelectedBot(null);
+      setIsSaved(false);
+      onCompletion(false);
+      return;
+    }
+    
+    const bot = bots.find((b) => b.id.toString() === value);
+    setSelectedBot(bot || null);
+    setIsSaved(false);
+    onCompletion(false);
+  };
+
+  const clearSelection = () => {
+    setSelectedBot(null);
+    setIsSaved(false);
+    onCompletion(false);
+  };
 
   if (loading)
     return (
@@ -46,7 +107,6 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
         <Loader2 className="animate-spin" />
       </div>
     );
-
 
   async function updateJobConfig(botId: string) {
     const { data, error } = await updateJobInterviewConfig(mergedId, {
@@ -62,12 +122,15 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
         description: 'Failed to update interview bot. Please try again.',
         variant: 'destructive'
       });
+      setIsSaved(false);
+      onCompletion(false);
     } else {
       toast({
         title: 'Success',
         description: 'Interview bot updated successfully.',
         variant: 'default'
       });
+      setIsSaved(true);
       onCompletion(true);
     }
   }
@@ -75,16 +138,26 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="bot-select">Select Interviewer Bot</Label>
-        <Select
-          value={selectedBot?.id?.toString() || ''}
-          onValueChange={(value) => {
-            const bot = bots.find((b) => b.id.toString() === value);
-            setSelectedBot(bot || null);
-          }}
-        >
-          {bots.length > 0 ? (
-            <>
+        <div className="flex justify-between items-center">
+          <Label htmlFor="bot-select">Select Interviewer Bot</Label>
+          {selectedBot && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={clearSelection}
+              className="text-gray-500 hover:text-red-500"
+            >
+              Clear Selection
+            </Button>
+          )}
+        </div>
+      
+        {bots.length > 0 ? (
+          <>
+            <Select
+              value={selectedBot?.id?.toString() || ''}
+              onValueChange={handleBotSelection}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Choose an interviewer bot" />
               </SelectTrigger>
@@ -92,7 +165,6 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
                 {bots.map((bot) => (
                   <SelectItem key={bot.id} value={bot.id.toString()}>
                     <div className="flex items-center gap-2 ">
-                      {/* {bot.icon} */}
                       <Bot />
                       <div>
                         <div>{bot.name}</div>
@@ -102,17 +174,21 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
                   </SelectItem>
                 ))}
               </SelectContent>
-            </>
-          ) : (
-            <CreateBot />
-          )}
-        </Select>
+            </Select>
+          </>
+        ) : (
+          <div className="flex flex-col justify-center items-center">
+            <h1 className="text-2xl font-semibold">No Ora Scouts found</h1>
+            <Link href="/bots">
+              <Button>Create your first Ora Scout</Button>
+            </Link>
+          </div>
+        )}
       </div>
 
       {selectedBot && (
         <div className="p-4 border rounded-lg relative">
           <div className="flex items-center gap-4 mb-4">
-            {/* {selectedBot.icon} */}
             <Bot />
             <div>
               <h3 className="font-semibold">{selectedBot.name}</h3>
@@ -137,7 +213,7 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
           onClick={() => updateJobConfig(selectedBot?.id?.toString() || '')}
           disabled={!selectedBot}
         >
-          Save Bot Selection
+          {isSaved ? 'Bot Saved' : 'Save Bot Selection'}
         </Button>
       </div>
     </div>
