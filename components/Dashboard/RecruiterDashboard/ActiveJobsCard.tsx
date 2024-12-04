@@ -6,23 +6,7 @@ import { Job } from '@/types/merge';
 import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
 
-export default function ActiveJobsCard() {
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      const jobsResponse = await fetch(`/api/jobs`);
-      if (jobsResponse.ok) {
-        const jobsData = await jobsResponse.json();
-        setJobs(jobsData);
-      }
-      setIsLoading(false);
-    };
-
-    fetchData();
-  }, []);
+export default function ActiveJobsCard({ jobs, isLoading }: { jobs: Job[], isLoading: boolean  }) {
 
   return (
     <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-primary-dark/50 bg-card">
