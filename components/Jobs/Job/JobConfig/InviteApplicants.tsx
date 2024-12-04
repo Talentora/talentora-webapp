@@ -6,19 +6,30 @@ import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components
 import { Input } from '@/components/ui/input';
 import { inviteCandidate } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
-import { ApplicantCandidate } from '@/types/merge';
+import { ApplicantCandidate, Job } from '@/types/merge';
 import { Sparkles, Search, Loader2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tables } from '@/types/types_db';
+
+type CombinedJob = {
+  mergeJob: Job;
+  supabaseJob?: Tables<'jobs'>;
+};
 
 interface InviteApplicantsProps {
-  jobId: string;
+  jobs?: CombinedJob[];
+  singleJobFlag?: boolean;
   applicants: ApplicantCandidate[];
 }
 
-const InviteApplicants = ({ jobId, applicants }: InviteApplicantsProps) => {
+const InviteApplicants = ({ jobs, singleJobFlag, applicants }: InviteApplicantsProps) => {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [selectedApplicants, setSelectedApplicants] = useState<ApplicantCandidate[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isInviting, setIsInviting] = useState(false);
+  const [selectedJobId, setSelectedJobId] = useState<string>(
+    singleJobFlag && jobs && jobs.length > 0 ? jobs[0].mergeJob.id : ''
+  );
   const { toast } = useToast();
 
   const filteredApplicants = applicants.filter(applicant => 
@@ -36,12 +47,21 @@ const InviteApplicants = ({ jobId, applicants }: InviteApplicantsProps) => {
   };
 
   const handleInvite = async () => {
+    if (!selectedJobId) {
+      toast({
+        title: 'Error',
+        description: 'Please select a job first',
+        variant: 'destructive'
+      });
+      return;
+    }
+
     setIsInviting(true);
     try {
       for (const applicant of selectedApplicants) {
         const name = `${applicant.candidate.first_name} ${applicant.candidate.last_name}`;
         const email = applicant.candidate.email_addresses[0].value;
-        const { error } = await inviteCandidate(name, email, applicant.candidate.id);
+        const { error } = await inviteCandidate(name, email, selectedJobId);
         
         if (error) {
           toast({
@@ -116,6 +136,8 @@ const InviteApplicants = ({ jobId, applicants }: InviteApplicantsProps) => {
               </DialogHeader>
 
               <div className="space-y-4">
+                
+
                 <div className="flex items-center gap-4">
                   <div className="relative flex-1">
                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
@@ -136,6 +158,25 @@ const InviteApplicants = ({ jobId, applicants }: InviteApplicantsProps) => {
                       : 'Select All'}
                   </Button>
                 </div>
+
+                {!singleJobFlag && jobs && jobs.length > 0 && (
+                  <Select value={selectedJobId} onValueChange={setSelectedJobId}>
+                    <SelectTrigger className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 hover:border-blue-300 transition-all duration-300">
+                      <SelectValue placeholder="Select a job to invite candidates" className="text-blue-700 font-medium" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border-2 border-blue-200 shadow-lg">
+                      {jobs.map((job) => (
+                        <SelectItem 
+                          key={job.mergeJob.id} 
+                          value={job.mergeJob.id}
+                          className="hover:bg-blue-50 cursor-pointer py-2 px-4"
+                        >
+                          {job.mergeJob.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
 
                 <div className="border rounded-lg max-h-[400px] overflow-y-auto">
                   <Table>

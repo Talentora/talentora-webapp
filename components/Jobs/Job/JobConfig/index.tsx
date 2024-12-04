@@ -11,9 +11,16 @@ import { DialogHeader, DialogTitle, DialogDescription, DialogContent, Dialog } f
 import InterviewQuestions from './InterviewQuestions';
 import AssessmentCount from './AssessmentCount';
 import InviteApplicants from './InviteApplicants';
-import { ApplicantCandidate } from '@/types/merge';
+import { ApplicantCandidate, Job } from '@/types/merge';
+import { createClient } from '@/utils/supabase/client';
+
 type InterviewConfig = Tables<'job_interview_config'>;
 type Bot = Tables<'bots'>;
+
+type CombinedJob = {
+  mergeJob: Job;
+  supabaseJob?: Tables<'jobs'>;
+};
 
 interface SetupFlags {
   hasBotId: boolean;
@@ -36,6 +43,7 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
     hasDuration: false,
     isReady: "no"
   });
+  const [combinedJob, setCombinedJob] = useState<CombinedJob | null>(null);
 
   const updateSetupFlags = useCallback((config: InterviewConfig | null) => {
     if (!config) {
@@ -91,6 +99,34 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
 
     fetchData();
   }, [jobId, updateSetupFlags]);
+
+  useEffect(() => {
+    const fetchJobData = async () => {
+      try {
+        const supabase = createClient();
+        
+        // Fetch Merge job data
+        const jobResponse = await fetch(`/api/jobs/${jobId}`);
+        const mergeJob = await jobResponse.json();
+
+        // Fetch Supabase job data
+        const { data: supabaseJob } = await supabase
+          .from('jobs')
+          .select('*')
+          .eq('merge_id', jobId)
+          .single();
+
+        setCombinedJob({
+          mergeJob,
+          supabaseJob: supabaseJob || undefined
+        });
+      } catch (error) {
+        console.error('Error fetching job data:', error);
+      }
+    };
+
+    fetchJobData();
+  }, [jobId]);
 
   return (
     <>
@@ -154,7 +190,8 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
             </div>
             <div className="flex flex-col col-span-1">
               <InviteApplicants 
-                jobId={jobId}
+                jobs={combinedJob ? [combinedJob] : []}
+                singleJobFlag={true}
                 applicants={applicants}
               />
             </div>
