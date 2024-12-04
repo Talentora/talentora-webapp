@@ -29,6 +29,7 @@ import CreateBot from '@/components/BotLibrary/CreateBot';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 import { getBots } from '@/utils/supabase/queries';
+import { createClient } from '@/utils/supabase/client';
 
 const BotSelect = ({ onCompletion }: BotSelectProps) => {
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
@@ -40,13 +41,45 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
   const mergedId = pathname.split('/')[2];
 
   useEffect(() => {
-    const fetchBots = async () => {
-      const data = await getBots();
-      setBots(data || []);
-      setLoading(false);
+    const fetchInitialData = async () => {
+      try {
+        // Fetch bots
+        const botsData = await getBots();
+        setBots(botsData || []);
+
+        // Fetch existing configuration
+        const supabase = createClient();
+        const { data: config, error } = await supabase
+          .from('job_interview_config')
+          .select('bot_id')
+          .eq('job_id', mergedId)
+          .single();
+
+        if (error) throw error;
+
+        // If there's a configured bot, set it as selected
+        if (config?.bot_id) {
+          const existingBot = botsData?.find(bot => bot.id === config.bot_id);
+          if (existingBot) {
+            setSelectedBot(existingBot);
+            setIsSaved(true);
+            onCompletion(true);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching initial data:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load existing configuration.',
+          variant: 'destructive'
+        });
+      } finally {
+        setLoading(false);
+      }
     };
-    fetchBots();
-  }, []);
+
+    fetchInitialData();
+  }, [mergedId, onCompletion]);
 
   const handleBotSelection = (value: string | null) => {
     if (!value) {

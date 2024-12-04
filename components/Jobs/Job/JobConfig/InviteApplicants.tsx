@@ -2,11 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { DialogHeader, DialogTitle, DialogDescription, DialogContent, Dialog } from '@/components/ui/dialog';
-import { Table, TableHeader, TableBody, TableCell, TableRow, TableFooter } from '@/components/ui/table';
-import { Input } from '@/components/ui/input'; // Added for search functionality
+import { Table, TableHeader, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
 import { inviteCandidate } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 import { ApplicantCandidate } from '@/types/merge';
+import { Sparkles, Search, Loader2 } from 'lucide-react';
+
 interface InviteApplicantsProps {
   jobId: string;
   applicants: ApplicantCandidate[];
@@ -15,129 +17,200 @@ interface InviteApplicantsProps {
 const InviteApplicants = ({ jobId, applicants }: InviteApplicantsProps) => {
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [selectedApplicants, setSelectedApplicants] = useState<ApplicantCandidate[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState(''); // Added for search functionality
-  const applicantsPerPage = 25;
-  const { toast } = useToast(); // Assuming useToast is imported and available
-
-
-  const handleInvite = () => {
-    // TO DO: implement invite logic
-    console.log('Invite applicants:', selectedApplicants);
-    
-
-    selectedApplicants.forEach(async (applicant) => {
-      const name = applicant.candidate.first_name + ' ' + applicant.candidate.last_name;
-      const email = applicant.candidate.email_addresses[0].value;
-      const candidate_id = applicant.candidate.id;
-      const {data, error} = await inviteCandidate(
-        name, email, candidate_id);
-      if (error) {
-        toast({ variant: 'destructive', title: 'Error', description: error });
-
-      } else {
-        toast({ variant: 'default', title: 'Success', description: `Invite sent to ${name} (${email})` });
-      }
-    });
-  };
-
-  const handleInviteAll = () => {
-    setSelectedApplicants(applicants);
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  }; // Added for search functionality
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isInviting, setIsInviting] = useState(false);
+  const { toast } = useToast();
 
   const filteredApplicants = applicants.filter(applicant => 
-    applicant.candidate.first_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    applicant.candidate.last_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    applicant.candidate.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    applicant.candidate.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     applicant.candidate.email_addresses[0].value.toLowerCase().includes(searchTerm.toLowerCase())
-  ); // Added for search functionality
+  );
 
-  const paginatedApplicants = filteredApplicants.slice((currentPage - 1) * applicantsPerPage, currentPage * applicantsPerPage);
+  const handleSelectAll = () => {
+    if (selectedApplicants.length === filteredApplicants.length) {
+      setSelectedApplicants([]);
+    } else {
+      setSelectedApplicants(filteredApplicants);
+    }
+  };
+
+  const handleInvite = async () => {
+    setIsInviting(true);
+    try {
+      for (const applicant of selectedApplicants) {
+        const name = `${applicant.candidate.first_name} ${applicant.candidate.last_name}`;
+        const email = applicant.candidate.email_addresses[0].value;
+        const { error } = await inviteCandidate(name, email, applicant.candidate.id);
+        
+        if (error) {
+          toast({
+            title: 'Error',
+            description: `Failed to invite ${name}`,
+            variant: 'destructive'
+          });
+        } else {
+          toast({
+            title: 'Success',
+            description: `Invited ${name}`,
+            variant: 'default'
+          });
+        }
+      }
+      setShowInviteDialog(false);
+      setSelectedApplicants([]);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to send invites',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsInviting(false);
+    }
+  };
 
   return (
     <div className="flex-1">
-      <Card className="p-5 bg-foreground border border-border shadow-3xl h-full">
+      <Card className="p-5 bg-foreground border border-border shadow-3xl h-full relative overflow-hidden hover:shadow-lg transition-shadow duration-300">
+        {/* Sparkle decorations */}
+        <div className="absolute top-3 right-3 animate-[spin_3s_linear_infinite]">
+          <Sparkles className="h-6 w-6 text-yellow-400 animate-pulse" />
+        </div>
+        
         <CardHeader>
           <div className="flex items-center justify-between gap-5">
-            <CardTitle className="text-xl font-semibold">Invite Applicants</CardTitle>
+            <div className="flex items-center gap-3 group">
+              <CardTitle className="text-xl font-semibold group-hover:text-blue-600 transition-colors">
+                Invite Applicants
+              </CardTitle>
+              <Sparkles className="h-5 w-5 text-yellow-400 animate-pulse" />
+            </div>
           </div>
         </CardHeader>
+
         <CardContent className="flex-1">
+          <div className="flex flex-col items-center gap-4">
+            <p className="text-gray-600 text-center font-medium">
+              Start interviewing candidates with AI-powered assessments
+            </p>
+            <Button 
+              onClick={() => setShowInviteDialog(true)} 
+              className="mt-4 w-1/2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 
+              hover:to-blue-700 transition-all duration-300 transform hover:scale-105 
+              hover:shadow-lg relative group"
+            >
+              <span className="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-orange-300 
+              opacity-20 group-hover:opacity-30 blur transition-all duration-300"></span>
+              <span className="relative">Invite Candidates</span>
+            </Button>
+          </div>
+
           <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
-            <DialogHeader>
-              <DialogDescription>Select applicants to invite for an interview.</DialogDescription>
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle>Select Candidates to Invite</DialogTitle>
+                <DialogDescription>
+                  Choose the candidates you'd like to invite for an AI interview
+                </DialogDescription>
+              </DialogHeader>
 
-              <Button onClick={() => setShowInviteDialog(true)} className="mt-4 w-1/4">Invite</Button>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                    <Input
+                      placeholder="Search candidates..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-8"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleSelectAll}
+                    variant="outline"
+                    className="whitespace-nowrap"
+                  >
+                    {selectedApplicants.length === filteredApplicants.length
+                      ? 'Deselect All'
+                      : 'Select All'}
+                  </Button>
+                </div>
 
-            </DialogHeader>
-            <DialogContent>
-              <div className="flex flex-col justify-between m-4 gap-5">
-                <DialogTitle>Invite Applicants</DialogTitle>
-                <div className="flex flex-col gap-4">
-                  <DialogDescription>Select applicants to invite for an interview.</DialogDescription>
-                  <div className="mb-4 flex flex-row justify-between items-center gap-5">
-                <Input 
-                  placeholder="Search applicants..." 
-                  value={searchTerm} 
-                  onChange={handleSearch} 
-                  className="w-full"
-                  
-                /> {/* Added for search functionality */}
-                <Button onClick={handleInviteAll} className="w-1/4">Select All</Button>
-              </div>
+                <div className="border rounded-lg max-h-[400px] overflow-y-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableCell className="w-[50px]">Select</TableCell>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Email</TableCell>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredApplicants.map((applicant) => (
+                        <TableRow 
+                          key={applicant.application.id}
+                          className="hover:bg-gray-50 cursor-pointer"
+                          onClick={() => {
+                            setSelectedApplicants(prev =>
+                              prev.includes(applicant)
+                                ? prev.filter(a => a !== applicant)
+                                : [...prev, applicant]
+                            );
+                          }}
+                        >
+                          <TableCell>
+                            <input
+                              type="checkbox"
+                              checked={selectedApplicants.includes(applicant)}
+                              onChange={() => {}} // Handle change through row click
+                              className="rounded border-gray-300 text-blue-600 
+                              shadow-sm focus:border-blue-300 focus:ring 
+                              focus:ring-blue-200 focus:ring-opacity-50"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            {applicant.candidate.first_name} {applicant.candidate.last_name}
+                          </TableCell>
+                          <TableCell>{applicant.candidate.email_addresses[0].value}</TableCell>
+                        </TableRow>
+                      ))}
+                      {filteredApplicants.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={3} className="text-center py-8 text-gray-500">
+                            No candidates found
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                <div className="flex justify-between items-center pt-4">
+                  <p className="text-sm text-gray-600">
+                    {selectedApplicants.length} candidate{selectedApplicants.length !== 1 ? 's' : ''} selected
+                  </p>
+                  <div className="flex gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowInviteDialog(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleInvite}
+                      disabled={selectedApplicants.length === 0 || isInviting}
+                      className="bg-blue-600 hover:bg-blue-700 text-white min-w-[100px]"
+                    >
+                      {isInviting ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        `Invite (${selectedApplicants.length})`
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
-             
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Email</TableCell>
-                    <TableCell>Select</TableCell>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginatedApplicants.map((applicant) => (
-                    <TableRow key={applicant.application.id}>
-                      <TableCell>{applicant.candidate.first_name + ' ' + applicant.candidate.last_name}</TableCell>
-                      <TableCell>{applicant.candidate.email_addresses[0].value}</TableCell>
-                      <TableCell>
-                        <input
-                          type="checkbox"
-                          checked={selectedApplicants.includes(applicant)}
-                          onChange={() => {
-                            if (selectedApplicants.includes(applicant)) {
-                              setSelectedApplicants(selectedApplicants.filter((a) => a.application.id !== applicant.application.id));
-                            } else {
-                              setSelectedApplicants([...selectedApplicants, applicant]);
-                            }
-                          }}
-                        />
-                      
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                 
-                </TableBody>
-                {filteredApplicants.length > applicantsPerPage && (
-                  <TableFooter>
-                    <div className="flex flex-row justify-between items-center mt-2">
-                      <Button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Previous</Button>
-                      <span className="mx-1">{currentPage} of {Math.ceil(filteredApplicants.length / applicantsPerPage)}</span> {/* Updated to use filteredApplicants */}
-                      <Button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === Math.ceil(filteredApplicants.length / applicantsPerPage)}>Next</Button> {/* Updated to use filteredApplicants */}
-                    </div>
-                  </TableFooter>
-                )}
-              </Table>
-              
-              <Button onClick={handleInvite} disabled={selectedApplicants.length === 0}>Invite Selected</Button>
             </DialogContent>
           </Dialog>
         </CardContent>
@@ -147,4 +220,3 @@ const InviteApplicants = ({ jobId, applicants }: InviteApplicantsProps) => {
 };
 
 export default InviteApplicants;
-
