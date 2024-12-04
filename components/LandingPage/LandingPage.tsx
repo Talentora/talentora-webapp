@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import Image1 from './Icons/Image1';
 import Image2 from './Icons/Image2';
 import Image3 from './Icons/Image3';
-import Image4 from './Images/Image4.jpg';
+import Image4 from '@components/public/Images/Image4.jpg';
 
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
@@ -72,8 +72,8 @@ export default function LandingPage() {
                 style={{ width: '100%', height: 'auto' }}
               />
               <div className="space-y-4">
-                <Image
-                  src="/Image5.jpg"
+                <img
+                  src='./Images/Image5.jpg'
                   alt="Team collaboration"
                   width={300}
                   height={300}
