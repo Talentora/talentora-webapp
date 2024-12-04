@@ -46,8 +46,14 @@ export function JobRow({ job }: { job: EnrichedJob }) {
         })}
       </TableCell>
       <TableCell className="text-center">
-        <Badge variant={job.isConfigured ? 'success' : 'failure'}>
-          {job.isConfigured ? 'Yes' : 'No'}
+        <Badge 
+          variant={isReady === "yes" ? "success" : isReady === "almost" ? "warning" : "failure"}
+          className={`${
+            isReady === "yes" ? "bg-green-700" : 
+            isReady === "almost" ? "bg-orange-700" : "bg-red-700"
+          }`}
+        >
+          {isReady === "yes" ? "Ready" : isReady === "almost" ? "Almost Ready" : "Setup Required"}
         </Badge>
       </TableCell>
       <TableCell className="text-center">
