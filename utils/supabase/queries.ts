@@ -253,28 +253,24 @@ export async function inviteCandidate(
     }
 
     if (userExists) {
-      return {
-        data: null,
-        error: 'User with this email already exists'
-      };
+      console.log('User with this email already exists');
+      // return {
+      //   data: null,
+      //   error: 'User with this email already exists'
+      // };
     }
 
 
     const {data: candidate, error} = await inviteCandidateAdmin(name, email);
     
     // Return early if invitation failed
-    if (!candidate) {
-      return {
-          data: null,
-          error: error instanceof Error ? error.message : error || 'Failed to invite candidate'
-        };
+    if (error) {
+      console.error('Error inviting candidate:', error);
     }
 
     console.log('candidate', candidate);
 
     const candidateId = candidate?.user?.id;
-    console.log('candidate', candidate);
-    // console.log('candidateId', candidateId);
 
     if (!candidateId) {
       return {
@@ -284,16 +280,45 @@ export async function inviteCandidate(
     }
 
     console.log('candidateId', candidateId);
-    console.log('job_id', job_id);
+    console.log('merge job id', job_id);
 
     // Create application record linking the job and new user
+    // First check if job exists
+    const { data: jobExists, error: jobCheckError } = await supabase
+      .from('jobs')
+      .select('merge_id')
+      .eq('merge_id', job_id)
+      .single();
+
+    if (jobCheckError || !jobExists) {
+      return {
+        data: null,
+        error: 'Invalid job ID - job does not exist'
+      };
+    }
+
+    // Get the job id from merge_id
+    const { data: job, error: jobIdError } = await supabase
+      .from('jobs')
+      .select('id')
+      .eq('merge_id', job_id)
+      .single();
+
+    if (jobIdError || !job) {
+      return {
+        data: null,
+        error: 'Failed to get job ID'
+      };
+    }
+
+    console.log('supabase job id', job.id);
+
     const { data: application, error: applicationError } = await supabase
       .from('applications')
       .insert({
         applicant_id: candidateId,
-        job_id: job_id,
-
-        // status: 'pending'  
+        // job_id: job.id // this is the supabase job id, not the merge job id
+        job_id: job_id // this is the merge job id
       })
       .select()
       .single();
