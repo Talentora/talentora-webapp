@@ -73,6 +73,7 @@ export default function RecruiterDashboard() {
               <SearchBar
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
+                applicants={applicants}
               />
               <Button className="bg-primary-dark text-white" onClick={() => setInviteModalOpen(true)}>
                 Invite Candidates
