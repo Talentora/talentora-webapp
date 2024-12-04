@@ -137,7 +137,10 @@ export async function POST(request: NextRequest) {
             }
           ]
         }
-      ]
+      ],
+      recording_settings: {
+        type: "cloud"
+      }
     };
 
     const baseUrl = "https://api.daily.co/v1/bots/start";
