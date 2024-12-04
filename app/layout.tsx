@@ -11,7 +11,7 @@ import { createClient } from '@/utils/supabase/server';
 import Script from 'next/script';
 
 const title = 'Talentora';
-const description = 'Brought to you by Vercel, Stripe, and Supabase.';
+const description = 'Talentora is a platform for creating and managing AI-powered interviews.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(getURL()),
@@ -45,7 +45,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               isSidebarVisible ? ' ml-64' : ' w-full' // Added margin-left when sidebar is visible
             }`}
           >
-            {!isSidebarVisible && <Navbar />}
+            {/* {!isSidebarVisible && <Navbar />} */}
+            <Navbar />
             <Suspense fallback={<Loading />}>{children}</Suspense>
           </main>
         </div>

@@ -28,16 +28,30 @@ import { useBots } from '@/hooks/useBots';
 import CreateBot from '@/components/BotLibrary/CreateBot';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
-
+import { getBots } from '@/utils/supabase/queries';
 const BotSelect = ({ onCompletion }: BotSelectProps) => {
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
   const { toast } = useToast();
-  const { bots, loading } = useBots();
+
+  const [bots, setBots] = useState<Bot[]>([]);
+  const [loading, setLoading] = useState(true);
+  // const { bots, loading } = useBots();
   const pathname = window.location.pathname;
   const mergedId = pathname.split('/')[2]; // Extract ID from /jobs/{id}/settings
 
   useEffect(() => {
-    onCompletion(!!selectedBot);
+    const fetchBots = async () => {
+      const data = await getBots();
+      setBots(data || []);
+      setLoading(false);
+    };
+    fetchBots();
+  }, []);
+
+  useEffect(() => {
+    console.log("selectedBot changed:", selectedBot);
+    const isComplete = selectedBot !== null;
+    onCompletion(isComplete);
   }, [selectedBot, onCompletion]);
 
   if (loading)
@@ -76,15 +90,16 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
     <div className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="bot-select">Select Interviewer Bot</Label>
-        <Select
+      
+          {bots.length > 0 ? (
+            <>
+              <Select
           value={selectedBot?.id?.toString() || ''}
           onValueChange={(value) => {
             const bot = bots.find((b) => b.id.toString() === value);
             setSelectedBot(bot || null);
-          }}
-        >
-          {bots.length > 0 ? (
-            <>
+              }}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Choose an interviewer bot" />
               </SelectTrigger>
@@ -102,11 +117,25 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
                   </SelectItem>
                 ))}
               </SelectContent>
+              </Select>
+
             </>
           ) : (
-            <CreateBot />
+            <div className="flex flex-col justify-center items-center">
+              <h1 className="text-2xl font-semibold">No Ora Scouts found</h1>
+              {/* <CreateBot
+                onBotCreated={(bot) => {
+                  setSelectedBot(bot);
+                }}
+                isEdit={false}
+                onClose={() => {}}
+                onBotUpdated={(bot) => {}}
+              /> */}
+              <Link href="/bots">
+                <Button>Create your first Ora Scout</Button>
+              </Link>
+            </div>
           )}
-        </Select>
       </div>
 
       {selectedBot && (
