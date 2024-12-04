@@ -50,7 +50,9 @@ export const StartingStep: React.FC<{
           }
         }
 
-        onCompletion(true);
+        if (state.loading) {
+          onCompletion(true);
+        }
       } catch (error) {
         setState({ loading: false, error: (error as Error).message });
         return;
@@ -60,7 +62,7 @@ export const StartingStep: React.FC<{
     };
 
     checkAndCreateJob();
-  }, [recruiter, job, mergeJobId, onCompletion]);
+  }, [recruiter, job, mergeJobId, onCompletion, state.loading]);
 
   if (state.loading) {
     return (

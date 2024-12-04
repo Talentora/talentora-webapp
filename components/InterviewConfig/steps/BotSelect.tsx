@@ -29,15 +29,15 @@ import CreateBot from '@/components/BotLibrary/CreateBot';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 import { getBots } from '@/utils/supabase/queries';
+
 const BotSelect = ({ onCompletion }: BotSelectProps) => {
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
+  const [isSaved, setIsSaved] = useState(false);
   const { toast } = useToast();
-
   const [bots, setBots] = useState<Bot[]>([]);
   const [loading, setLoading] = useState(true);
-  // const { bots, loading } = useBots();
   const pathname = window.location.pathname;
-  const mergedId = pathname.split('/')[2]; // Extract ID from /jobs/{id}/settings
+  const mergedId = pathname.split('/')[2];
 
   useEffect(() => {
     const fetchBots = async () => {
@@ -48,11 +48,25 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
     fetchBots();
   }, []);
 
-  useEffect(() => {
-    console.log("selectedBot changed:", selectedBot);
-    const isComplete = selectedBot !== null;
-    onCompletion(isComplete);
-  }, [selectedBot, onCompletion]);
+  const handleBotSelection = (value: string | null) => {
+    if (!value) {
+      setSelectedBot(null);
+      setIsSaved(false);
+      onCompletion(false);
+      return;
+    }
+    
+    const bot = bots.find((b) => b.id.toString() === value);
+    setSelectedBot(bot || null);
+    setIsSaved(false);
+    onCompletion(false);
+  };
+
+  const clearSelection = () => {
+    setSelectedBot(null);
+    setIsSaved(false);
+    onCompletion(false);
+  };
 
   if (loading)
     return (
@@ -60,7 +74,6 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
         <Loader2 className="animate-spin" />
       </div>
     );
-
 
   async function updateJobConfig(botId: string) {
     const { data, error } = await updateJobInterviewConfig(mergedId, {
@@ -76,12 +89,15 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
         description: 'Failed to update interview bot. Please try again.',
         variant: 'destructive'
       });
+      setIsSaved(false);
+      onCompletion(false);
     } else {
       toast({
         title: 'Success',
         description: 'Interview bot updated successfully.',
         variant: 'default'
       });
+      setIsSaved(true);
       onCompletion(true);
     }
   }
@@ -89,16 +105,25 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="bot-select">Select Interviewer Bot</Label>
+        <div className="flex justify-between items-center">
+          <Label htmlFor="bot-select">Select Interviewer Bot</Label>
+          {selectedBot && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={clearSelection}
+              className="text-gray-500 hover:text-red-500"
+            >
+              Clear Selection
+            </Button>
+          )}
+        </div>
       
-          {bots.length > 0 ? (
-            <>
-              <Select
-          value={selectedBot?.id?.toString() || ''}
-          onValueChange={(value) => {
-            const bot = bots.find((b) => b.id.toString() === value);
-            setSelectedBot(bot || null);
-              }}
+        {bots.length > 0 ? (
+          <>
+            <Select
+              value={selectedBot?.id?.toString() || ''}
+              onValueChange={handleBotSelection}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Choose an interviewer bot" />
@@ -107,7 +132,6 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
                 {bots.map((bot) => (
                   <SelectItem key={bot.id} value={bot.id.toString()}>
                     <div className="flex items-center gap-2 ">
-                      {/* {bot.icon} */}
                       <Bot />
                       <div>
                         <div>{bot.name}</div>
@@ -117,31 +141,21 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
                   </SelectItem>
                 ))}
               </SelectContent>
-              </Select>
-
-            </>
-          ) : (
-            <div className="flex flex-col justify-center items-center">
-              <h1 className="text-2xl font-semibold">No Ora Scouts found</h1>
-              {/* <CreateBot
-                onBotCreated={(bot) => {
-                  setSelectedBot(bot);
-                }}
-                isEdit={false}
-                onClose={() => {}}
-                onBotUpdated={(bot) => {}}
-              /> */}
-              <Link href="/bots">
-                <Button>Create your first Ora Scout</Button>
-              </Link>
-            </div>
-          )}
+            </Select>
+          </>
+        ) : (
+          <div className="flex flex-col justify-center items-center">
+            <h1 className="text-2xl font-semibold">No Ora Scouts found</h1>
+            <Link href="/bots">
+              <Button>Create your first Ora Scout</Button>
+            </Link>
+          </div>
+        )}
       </div>
 
       {selectedBot && (
         <div className="p-4 border rounded-lg relative">
           <div className="flex items-center gap-4 mb-4">
-            {/* {selectedBot.icon} */}
             <Bot />
             <div>
               <h3 className="font-semibold">{selectedBot.name}</h3>
@@ -166,7 +180,7 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
           onClick={() => updateJobConfig(selectedBot?.id?.toString() || '')}
           disabled={!selectedBot}
         >
-          Save Bot Selection
+          {isSaved ? 'Bot Saved' : 'Save Bot Selection'}
         </Button>
       </div>
     </div>
