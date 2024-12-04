@@ -10,8 +10,9 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { ApplicantCandidate } from '@/types/merge';
-import { inviteCandidate } from '@/utils/supabase/queries';
+import { inviteCandidate, getJobInterviewConfig } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 // Function to fetch the resume URL from the backend API route
 const fetchAttachmentDetails = async (attachmentId: string): Promise<string | null> => {
@@ -69,6 +70,7 @@ export default function ApplicantActions({
   ApplicantCandidate: ApplicantCandidate;
 }) {
   const { toast } = useToast();
+  const [isInterviewReady, setIsInterviewReady] = useState(false);
   const firstName = ApplicantCandidate?.candidate?.first_name || '';
   const lastName = ApplicantCandidate?.candidate?.last_name || '';
   const candidateId = ApplicantCandidate?.candidate?.id || '';
@@ -79,11 +81,23 @@ export default function ApplicantActions({
 
   const jobId = ApplicantCandidate?.job?.id || '';
 
+  useEffect(() => {
+    const checkInterviewConfig = async () => {
+      if (!jobId) return;
+      
+      const config = await getJobInterviewConfig(jobId);
+      const isReady = !!(config?.bot_id && config?.interview_questions && 
+                        config?.interview_name && config?.duration);
+      setIsInterviewReady(isReady);
+    };
+
+    checkInterviewConfig();
+  }, [jobId]);
+
   async function onScheduleAIInterview() {
     const name = `${firstName} ${lastName}`.trim();
 
     if (!name || !emailAddress || !candidateId) {
-
       toast({
         title: 'Error',
         description: 'Name, email address, and candidate ID are required',
@@ -131,9 +145,26 @@ export default function ApplicantActions({
         <CardTitle className="text-red-500">Actions (Updated)</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Button className="w-full" onClick={onScheduleAIInterview}>
-          Schedule AI Interview
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Button 
+                  className="w-full" 
+                  onClick={onScheduleAIInterview}
+                  disabled={!isInterviewReady}
+                >
+                  Schedule AI Interview
+                </Button>
+              </div>
+            </TooltipTrigger>
+            {!isInterviewReady && (
+              <TooltipContent className="text-sm bg-red-500 text-white p-2 rounded-md">
+                <p >Please complete the interview configuration in job settings before inviting candidates</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
         <Button className="w-full" variant="outline">
           Send Message
         </Button>

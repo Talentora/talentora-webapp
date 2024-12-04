@@ -128,7 +128,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
       {!hideHeader && (
         <CardHeader>
           <CardTitle>Applicants Over Time</CardTitle>
-          <CardDescription>Stacked Bar Chart</CardDescription>
+          {/* <CardDescription>Stacked Bar Chart</CardDescription> */}
           <div className="flex justify-between items-center">
             <SelectGroup className="flex flex-row gap-2 items-center">
               <SelectLabel>Time Range:</SelectLabel>

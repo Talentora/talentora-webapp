@@ -11,9 +11,16 @@ import { DialogHeader, DialogTitle, DialogDescription, DialogContent, Dialog } f
 import InterviewQuestions from './InterviewQuestions';
 import AssessmentCount from './AssessmentCount';
 import InviteApplicants from './InviteApplicants';
-import { ApplicantCandidate } from '@/types/merge';
+import { ApplicantCandidate, Job } from '@/types/merge';
+import { createClient } from '@/utils/supabase/client';
+
 type InterviewConfig = Tables<'job_interview_config'>;
 type Bot = Tables<'bots'>;
+
+type CombinedJob = {
+  mergeJob: Job;
+  supabaseJob?: Tables<'jobs'>;
+};
 
 interface SetupFlags {
   hasBotId: boolean;
@@ -28,6 +35,7 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
   const [interviewConfig, setInterviewConfig] = useState<InterviewConfig | null>(null);
   const [botInfo, setBotInfo] = useState<Bot | null>(null);
   const [showSetupDialog, setShowSetupDialog] = useState(false);
+  const [needsConfiguration, setNeedsConfiguration] = useState(false);
   const [setupFlags, setSetupFlags] = useState<SetupFlags>({
     hasBotId: false,
     hasQuestions: false,
@@ -35,6 +43,7 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
     hasDuration: false,
     isReady: "no"
   });
+  const [combinedJob, setCombinedJob] = useState<CombinedJob | null>(null);
 
   const updateSetupFlags = useCallback((config: InterviewConfig | null) => {
     if (!config) {
@@ -75,11 +84,14 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
         if (config?.bot_id) {
           const botData = await getBotById(String(config.bot_id));
           setBotInfo(botData);
+          setNeedsConfiguration(false);
         } else {
+          setNeedsConfiguration(true);
           setShowSetupDialog(true);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
+        setNeedsConfiguration(true);
       } finally {
         setLoading(false);
       }
@@ -88,52 +100,104 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
     fetchData();
   }, [jobId, updateSetupFlags]);
 
+  useEffect(() => {
+    const fetchJobData = async () => {
+      try {
+        const supabase = createClient();
+        
+        // Fetch Merge job data
+        const jobResponse = await fetch(`/api/jobs/${jobId}`);
+        const mergeJob = await jobResponse.json();
+
+        // Fetch Supabase job data
+        const { data: supabaseJob } = await supabase
+          .from('jobs')
+          .select('*')
+          .eq('merge_id', jobId)
+          .single();
+
+        setCombinedJob({
+          mergeJob,
+          supabaseJob: supabaseJob || undefined
+        });
+      } catch (error) {
+        console.error('Error fetching job data:', error);
+      }
+    };
+
+    fetchJobData();
+  }, [jobId]);
+
   return (
     <>
-      <div className="grid grid-cols-2 gap-4 h-full">
-        <InterviewSettings 
-          loading={loading} 
-          interviewConfig={interviewConfig} 
-          setShowSetupDialog={setShowSetupDialog} 
-          jobId={jobId} 
-        />
-        <InterviewBot 
-          loading={loading} 
-          botInfo={botInfo} 
-          jobId={jobId} 
-          interviewConfig={interviewConfig} 
-        />
-        <InterviewStatus 
-          loading={loading} 
-          interviewConfig={interviewConfig} 
-          botInfo={botInfo}
-          setupFlags={setupFlags}
-        />
-        <InterviewQuestions 
-          loading={loading} 
-          interviewConfig={interviewConfig} 
-          jobId={jobId}
-        />
+      <div>
+        {needsConfiguration && (
+          <div className="mb-6 p-4 border rounded-lg bg-yellow-50 border-yellow-200">
+            <div className="flex flex-col space-y-3">
+              <h3 className="text-lg font-semibold text-yellow-800">
+                Interview Configuration Required
+              </h3>
+              <p className="text-yellow-700">
+                You haven't configured the AI interview settings for this job yet. Configure your interview settings to start interviewing candidates.
+              </p>
+              <Button
+                asChild
+                className="w-fit"
+              >
+                <Link href={`/jobs/${jobId}/settings`}>
+                  Configure Interview Settings
+                </Link>
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className={`${needsConfiguration ? 'opacity-50 pointer-events-none filter blur-sm' : ''}`}>
+        <div className="grid grid-cols-2 gap-4 h-full">
+          <InterviewSettings 
+            loading={loading} 
+            interviewConfig={interviewConfig} 
+            setShowSetupDialog={setShowSetupDialog} 
+            jobId={jobId} 
+          />
+          <InterviewBot 
+            loading={loading} 
+            botInfo={botInfo} 
+            jobId={jobId} 
+            interviewConfig={interviewConfig} 
+          />
+          <InterviewStatus 
+            loading={loading} 
+            interviewConfig={interviewConfig} 
+            botInfo={botInfo}
+            setupFlags={setupFlags}
+          />
+          <InterviewQuestions 
+            loading={loading} 
+            interviewConfig={interviewConfig} 
+            jobId={jobId}
+          />
         </div>
         {setupFlags.isReady === "yes" && (
-          <div className="gap-5 grid grid-cols-2">
+          <div className="gap-5 grid grid-cols-2 mt-4">
             <div className="flex flex-col col-span-1">
-            <AssessmentCount 
-              loading={loading} 
-              interviewConfig={interviewConfig} 
-              jobId={jobId}
-
-            />
+              <AssessmentCount 
+                loading={loading} 
+                interviewConfig={interviewConfig} 
+                jobId={jobId}
+              />
             </div>
             <div className="flex flex-col col-span-1">
               <InviteApplicants 
-                jobId={jobId}
-              applicants={applicants}
+                jobs={combinedJob ? [combinedJob] : []}
+                singleJobFlag={true}
+                applicants={applicants}
               />
             </div>
           </div>
         )}
-      
+      </div>
 
       <Dialog open={showSetupDialog} onOpenChange={setShowSetupDialog}>
         <DialogContent>

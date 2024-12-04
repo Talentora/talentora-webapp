@@ -18,13 +18,7 @@ const Page = () => {
 
   return (
     <div>
-      {/* <JobSettings onConfigureInterview={() => setShowConfig(true)} />
 
-      <Dialog open={showConfig} onOpenChange={setShowConfig}>
-        <DialogContent className="w-[1200px] max-w-[90vw] max-h-[90vh] overflow-y-auto">
-          <InterviewConfig />
-        </DialogContent>
-      </Dialog> */}
       <InterviewConfig jobId={jobId} />
     </div>
   );

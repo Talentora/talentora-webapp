@@ -54,8 +54,6 @@ export default function App({ bot, jobInterviewConfig, companyContext, job, comp
     onRecordingStarted: (ev) => {
       const recordingId = ev.recordingId;
       console.log("Recording started with ID:", recordingId);
-
-      
     },
     onRecordingError: (ev) => {
       console.error("Recording error:", ev);
@@ -114,11 +112,9 @@ export default function App({ bot, jobInterviewConfig, companyContext, job, comp
 
     // Join the session
     try {
-        await voiceClient.connect();
-        await voiceClient.enableCam(true);
-        await voiceClient.enableMic(true);
-        
+        await voiceClient.connect();  
         // Update the useRecording hook to capture the recording ID
+        console.log("Starting Recording");
         const recording = startRecording();
         console.log("Recording", recording);
     } catch (e) {
