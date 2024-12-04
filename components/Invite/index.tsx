@@ -22,12 +22,14 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Job } from '@/types/merge';
 import { inviteRecruiter } from '@/utils/supabase/queries';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface InvitePageProps {
   jobs: Job[];
+  isLoading: boolean;
 }
 
-export default function InvitePage({ jobs }: InvitePageProps) {
+export default function InvitePage({ jobs, isLoading }: InvitePageProps) {
   const [emails, setEmails] = useState('');
   const [selectedJob, setSelectedJob] = useState('');
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -98,18 +100,22 @@ export default function InvitePage({ jobs }: InvitePageProps) {
             >
               Select Job
             </label>
-            <Select onValueChange={setSelectedJob} value={selectedJob}>
-              <SelectTrigger id="job-select">
-                <SelectValue placeholder="Select a job" />
-              </SelectTrigger>
-              <SelectContent>
-                {jobs.map((job) => (
-                  <SelectItem key={job.id} value={String(job.id)}>
-                    {job.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {isLoading ? (
+              <Skeleton className="h-10 w-full rounded-md" />
+            ) : (
+              <Select onValueChange={setSelectedJob} value={selectedJob}>
+                <SelectTrigger id="job-select">
+                  <SelectValue placeholder="Select a job" />
+                </SelectTrigger>
+                <SelectContent>
+                  {jobs.map((job) => (
+                    <SelectItem key={job.id} value={String(job.id)}>
+                      {job.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
           <div className="space-y-2">
             <label
@@ -128,7 +134,7 @@ export default function InvitePage({ jobs }: InvitePageProps) {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col items-start gap-4">
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full" disabled={isLoading}>
             Send Invitations
           </Button>
         </CardFooter>
