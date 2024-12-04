@@ -25,7 +25,6 @@ export default function ApplicantTable({
 }: ApplicantTableProps) {
   const [selectedApplicant, setSelectedApplicant] =
     useState<ApplicantCandidate | null>(null);
-  const [isPortalOpen, setIsPortalOpen] = useState(false);
   const router = useRouter();
 
   const handleSelectApplicant = (applicant: ApplicantCandidate) => {
@@ -81,15 +80,7 @@ export default function ApplicantTable({
           ))}
         </TableBody>
       </Table>
-      {!disablePortal && (
-        <Dialog open={isPortalOpen} onOpenChange={setIsPortalOpen}>
-          <DialogContent className="max-w-6xl h-[80vh] overflow-y-auto">
-            {selectedApplicant && (
-              <ApplicantPortal ApplicantCandidate={selectedApplicant} />
-            )}
-          </DialogContent>
-        </Dialog>
-      )}
+     
     </div>
   );
 }
