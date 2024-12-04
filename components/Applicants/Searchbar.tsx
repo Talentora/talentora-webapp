@@ -1,6 +1,6 @@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
+import { Loader2, Search } from 'lucide-react';
 import { ApplicantCandidate } from '@/types/merge';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -89,7 +89,10 @@ export default function SearchBar({
               className={`p-3 cursor-pointer transition-colors ${
                 index === selectedIndex ? 'bg-gray-50' : 'hover:bg-gray-50'
               }`}
-              onClick={() => handleSelectApplicant(applicant)}
+              onClick={() => {
+                handleSelectApplicant(applicant);
+               
+              }}
               onMouseEnter={() => setSelectedIndex(index)}
             >
               <div className="flex flex-col gap-1">

@@ -189,7 +189,7 @@ export default function JobListPage() {
   }, [jobs]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto py-8">
       <Dialog open={showConfigDialog} onOpenChange={setShowConfigDialog}>
         <DialogContent>
           <DialogHeader>
@@ -211,10 +211,10 @@ export default function JobListPage() {
       ) : ( */}
         <>
           <h1 className="text-3xl font-bold m-2 text-primary-dark">Jobs</h1>
-          <div className="flex justify-between flex-col bg-foreground border border-muted p-4 shadow-lg">
+          <div className="flex justify-between flex-col bg-foreground border border-muted p-4 m-5 shadow-lg">
             <div className='flex flex-row gap-2 justify-between'>
               <JobFilters onFilterChange={handleFilterChange} initialFilters={filters} departments={uniqueDepartments} />
-              <SearchFilter onSearch={handleSearch} searchTerm={searchTerm} />
+              <SearchFilter jobs={jobs} onSearch={handleSearch} searchTerm={searchTerm} />
             </div>
             <JobTable
               jobs={paginatedJobs}

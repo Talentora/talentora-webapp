@@ -35,14 +35,14 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
         <div className="flex">
           {isSidebarVisible && (
-            <aside className="bg-gray-100 fixed h-full">
+            <aside className=" fixed h-full">
               <Sidebar />
             </aside>
           )}
           <main
             id="skip"
             className={`flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]${
-              isSidebarVisible ? ' ml-64' : ' w-full' // Added margin-left when sidebar is visible
+              isSidebarVisible ? ' ml-64' : ' w-full' 
             }`}
           >
             {/* {!isSidebarVisible && <Navbar />} */}

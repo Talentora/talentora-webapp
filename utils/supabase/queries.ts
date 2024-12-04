@@ -273,6 +273,7 @@ export async function inviteCandidate(
     console.log('candidate', candidate);
 
     const candidateId = candidate?.user?.id;
+    console.log('candidate', candidate);
     // console.log('candidateId', candidateId);
 
     if (!candidateId) {
@@ -282,12 +283,16 @@ export async function inviteCandidate(
       };
     }
 
+    console.log('candidateId', candidateId);
+    console.log('job_id', job_id);
+
     // Create application record linking the job and new user
     const { data: application, error: applicationError } = await supabase
       .from('applications')
       .insert({
         applicant_id: candidateId,
         job_id: job_id,
+
         // status: 'pending'  
       })
       .select()
