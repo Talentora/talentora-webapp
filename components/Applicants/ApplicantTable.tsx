@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Table,
   TableBody,
@@ -25,12 +26,10 @@ export default function ApplicantTable({
   const [selectedApplicant, setSelectedApplicant] =
     useState<ApplicantCandidate | null>(null);
   const [isPortalOpen, setIsPortalOpen] = useState(false);
+  const router = useRouter();
 
   const handleSelectApplicant = (applicant: ApplicantCandidate) => {
-    if (!disablePortal) {
-      setSelectedApplicant(applicant);
-      setIsPortalOpen(true);
-    }
+    router.push(`/applicants/${applicant.application.id}`);
   };
 
   return (
@@ -69,7 +68,15 @@ export default function ApplicantTable({
                 {ApplicantCandidate.interviewStages.name ||
                   'No interview stage specified'}
               </TableCell>
-              <TableCell className="underline">View Report</TableCell>
+              <TableCell 
+                className="underline"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSelectApplicant(ApplicantCandidate);
+                }}
+              >
+                View Report
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

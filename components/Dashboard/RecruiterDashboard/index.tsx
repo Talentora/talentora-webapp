@@ -87,7 +87,7 @@ export default function RecruiterDashboard() {
             </div>
             {/* <h1 className="text-lg font-medium">{factWindow} Day Facts</h1> */}
             <div className="flex flex-row gap-6">
-              <ApplicantCountCard factWindow={factWindow} />
+              <ApplicantCountCard factWindow={factWindow} isLoading={applicantsLoading} applicants={applicants} />
               <InvitedCandidatesCard factWindow={factWindow} />
               <CompletedAssessmentsCard factWindow={factWindow} />
               <BotCountCard />

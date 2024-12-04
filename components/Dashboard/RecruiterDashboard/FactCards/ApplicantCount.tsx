@@ -5,23 +5,23 @@ import { useState, useEffect } from 'react';
 import { ApplicantCandidate } from '@/types/merge';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const ApplicantCountCard = ({ factWindow }: { factWindow: number }) => {
-  const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+const ApplicantCountCard = ({ factWindow,isLoading ,applicants}: { factWindow: number, isLoading: boolean, applicants: ApplicantCandidate[] }) => {
+  // const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
+  // const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const applicationsResponse = await fetch(`/api/applications`);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const applicationsResponse = await fetch(`/api/applications`);
 
-      if (applicationsResponse.ok) {
-        const applicantsData = await applicationsResponse.json();
-        setApplicants(applicantsData);
-      }
-      setIsLoading(false);
-    };
+  //     if (applicationsResponse.ok) {
+  //       const applicantsData = await applicationsResponse.json();
+  //       setApplicants(applicantsData);
+  //     }
+  //     setIsLoading(false);
+  //   };
 
-    fetchData();
-  }, [factWindow]);
+  //   fetchData();
+  // }, [factWindow]);
 
   if (isLoading) {
     return (

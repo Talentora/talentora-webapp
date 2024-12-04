@@ -5,26 +5,26 @@ import { Skeleton } from '@/components/ui/skeleton';
 export function JobRowSkeleton() {
   return (
     <TableRow>
-      <TableCell>
-        <Skeleton className="h-4 w-[200px]" />
+      <TableCell className="w-[14%]">
+        <Skeleton className="h-4 w-[90%]" />
       </TableCell>
-      <TableCell>
-        <Skeleton className="h-5 w-[80px] rounded-full" />
+      <TableCell className="w-[14%]">
+        <Skeleton className="h-5 w-[85%] rounded-full" />
       </TableCell>
-      <TableCell>
-        <Skeleton className="h-4 w-[100px]" />
+      <TableCell className="w-[14%]">
+        <Skeleton className="h-4 w-[80%]" />
       </TableCell>
-      <TableCell>
-        <Skeleton className="h-5 w-[60px] rounded-full" />
+      <TableCell className="w-[14%]">
+        <Skeleton className="h-5 w-[75%] rounded-full" />
       </TableCell>
-      <TableCell>
-        <Skeleton className="h-4 w-[150px]" />
+      <TableCell className="w-[14%]">
+        <Skeleton className="h-4 w-[85%]" />
       </TableCell>
-      <TableCell>
-        <Skeleton className="h-4 w-[150px]" />
+      <TableCell className="w-[14%]">
+        <Skeleton className="h-4 w-[85%]" />
       </TableCell>
-      <TableCell>
-        <Skeleton className="h-9 w-[100px] rounded-md" />
+      <TableCell className="w-[14%]">
+        <Skeleton className="h-9 w-[80%] rounded-md" />
       </TableCell>
     </TableRow>
   );
