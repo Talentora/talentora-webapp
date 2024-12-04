@@ -12,56 +12,68 @@ export const StartingStep: React.FC<{
   const { recruiter } = useRecruiter();
   const mergeJobId = job?.id;
 
+  const [state, setState] = useState<{ loading: boolean; error: string | null }>({
+    loading: true,
+    error: null,
+  });
+
   useEffect(() => {
     if (!job) return;
 
-    const doesJobExist = async (jobId: string) => {
-      const supabase = createClient();
-      const { data: existingJob } = await supabase
-        .from('jobs')
-        .select()
-        .eq('merge_id', Number(jobId))
-        .single();
-
-      return !!existingJob;
-    };
-
-    const createJob = async (jobId: string, companyId: string) => {
-      const supabase = createClient();
-      const { data: newJob, error: jobError } = await supabase
-        .from('jobs')
-        .insert({
-          merge_id: jobId, // Keep as string since it's a UUID
-          company_id: companyId, // Already a UUID string
-        })
-        .select()
-        .single();
-
-      if (jobError) {
-        throw new Error('Error creating job: ' + jobError.message);
-      }
-
-      onCompletion(true);
-
-      return newJob;
-    };
-
     const checkAndCreateJob = async () => {
-      const jobExists = await doesJobExist(mergeJobId || '');
+      const supabase = createClient();
 
-      if (!jobExists && recruiter?.company_id && mergeJobId) {
-        console.log('creating job');
-        const newJob = await createJob(mergeJobId, recruiter.company_id);
-        console.log('newJob', newJob);
+      try {
+        const { data: existingJob, error: fetchError } = await supabase
+          .from('jobs')
+          .select()
+          .eq('merge_id', mergeJobId)
+          .single();
+
+        if (fetchError) {
+          console.error('Fetch error:', fetchError);
+          setState({ loading: false, error: 'Error fetching job, proceeding to create a new job.' });
+        }
+
+        if (!existingJob && recruiter?.company_id) {
+          const { data: newJob, error: jobError } = await supabase
+            .from('jobs')
+            .insert({
+              merge_id: mergeJobId,
+              company_id: recruiter.company_id,
+            })
+            .select()
+            .single();
+
+          if (jobError) {
+            throw new Error('Error creating job: ' + jobError.message);
+          }
+        }
+
+        onCompletion(true);
+      } catch (error) {
+        setState({ loading: false, error: (error as Error).message });
+        return;
       }
+
+      setState({ loading: false, error: null });
     };
 
     checkAndCreateJob();
   }, [recruiter, job, mergeJobId, onCompletion]);
-  if (!job) {
+
+  if (state.loading) {
     return (
       <div className="flex items-center justify-center">
         <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
+  }
+
+  if (state.error) {
+    return (
+      <div className="flex items-center justify-center text-red-500">
+        {state.error}
       </div>
     );
   }
