@@ -167,53 +167,53 @@ export default function LandingPage() {
         </section>
 
         <section className="py-24 bg-gradient-to-br from-purple-50 to-white">
-          <div className="container px-4 mx-auto">
-            <div className="text-center mb-20">
-              <h2 className="text-5xl font-bold mb-6">
-                Intelligent Hiring Made Easy
-                <div className="w-32 h-1 bg-purple-600 mx-auto mt-4" />
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Talentora's cutting-edge AI technology uses conversational AI
-                assessments to Hire Smarter, Faster, Better.
-              </p>
-            </div>
-            
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6 text-center mx-auto max-w-xl">
-                <h3 className="text-4xl font-bold text-left">
-                  Simplify Hiring with AI Precision
-                </h3>
-                <p className="text-xl text-left text-gray-600">
-                  Reduce time-to-hire by up to 50% with our efficient AI-driven screening process.
-                </p>
-              </div>
-                <div className="flex justify-center items-center">
-                <Image1 className="w-full" />
-                </div>
-            </div>
-          </div>
-        </section>
+  <div className="container px-4 mx-auto">
+    <div className="text-center mb-20">
+      <h2 className="text-5xl font-bold mb-6">
+      Intelligent Hiring Made Easy
+      <div className="w-32 h-1 bg-purple-600 mx-auto mt-4" />
+      </h2>
+      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+      Talentora's cutting-edge AI technology uses conversational AI assessments to Hire Smarter, Faster, Better.
+      </p>
+    </div>
 
-        <section className="py-24">
-      <div className="container px-4 mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="relative order-2 lg:order-1">
-            <Image3 className="w-full" />
-          </div>
-          <div className="space-y-6 order-1 lg:order-2">
-            <h2 className="text-4xl font-bold leading-tight">
-              Build Your Winning Team with Talentora
-            </h2>
-            <p className="text-xl text-gray-600">
-              Talentora's conversational AI transforms how you screen, evaluate, and hire. Save
-              time, reduce bias, and make smarter decisions with our intelligent hiring
-              solutions—designed to match top talent with top opportunities.
-            </p>
-          </div>
-        </div>
+    <div className="h-20"></div> {/* Blank space added here */}
+
+    <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="space-y-6">
+      <h3 className="text-4xl font-bold text-left">
+        Simplify Hiring with AI Precision
+      </h3>
+      <p className="text-xl text-left text-gray-600">
+        Reduce time-to-hire by up to 50% with our efficient AI-driven screening process.
+      </p>
       </div>
-    </section>
+      <div className="flex justify-center items-center">
+        <Image1 />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section className="py-24">
+  <div className="container px-4 mx-auto">
+    <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="flex justify-center order-2 lg:order-1">
+        <Image3 />
+      </div>
+      <div className="space-y-6 order-1 lg:order-2">
+        <h3 className="text-4xl font-bold leading-tight">
+          Build Your Winning Team with Talentora
+        </h3>
+        <p className="text-xl text-gray-600">
+          Talentora's conversational AI transforms how you screen, evaluate, and hire. Save time, reduce bias, and make smarter decisions with our intelligent hiring solutions—designed to match top talent with top opportunities.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
 
       </main>
     </div>
