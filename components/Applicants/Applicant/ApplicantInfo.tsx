@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { CalendarDays, Mail, Phone } from 'lucide-react';
+import { CalendarDays, Link, Mail, Phone } from 'lucide-react';
 import ApplicantCandidateStatus from '@/components/Applicants/Applicant/ApplicantStatus';
 
 interface ApplicantInfoProps {
@@ -40,7 +40,11 @@ export default function ApplicantInfo({
         </Avatar>
         <div>
           <CardTitle>{candidateName}</CardTitle>
-          <CardDescription>{jobName}</CardDescription>
+          <CardDescription>
+            <Link href={`/jobs/${ApplicantCandidate.job.id}`} className="hover:underline">
+              {jobName}
+            </Link>
+          </CardDescription>
         </div>
       </CardHeader>
       <CardContent>
