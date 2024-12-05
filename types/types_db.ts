@@ -11,27 +11,44 @@ export type Database = {
     Tables: {
       AI_summary: {
         Row: {
+          application_id: string | null
           created_at: string
           emotion_eval: Json | null
           id: string
           interview_summary: Json | null
+          recording_id: string | null
+          room_name: string | null
           text_eval: Json | null
         }
         Insert: {
+          application_id?: string | null
           created_at?: string
           emotion_eval?: Json | null
           id?: string
           interview_summary?: Json | null
+          recording_id?: string | null
+          room_name?: string | null
           text_eval?: Json | null
         }
         Update: {
+          application_id?: string | null
           created_at?: string
           emotion_eval?: Json | null
           id?: string
           interview_summary?: Json | null
+          recording_id?: string | null
+          room_name?: string | null
           text_eval?: Json | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "AI_summary_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       applicants: {
         Row: {
@@ -50,34 +67,24 @@ export type Database = {
       }
       applications: {
         Row: {
-          AI_summary: string | null
           applicant_id: string
           created_at: string
           id: string
           job_id: string
         }
         Insert: {
-          AI_summary?: string | null
           applicant_id: string
           created_at?: string
           id?: string
           job_id: string
         }
         Update: {
-          AI_summary?: string | null
           applicant_id?: string
           created_at?: string
           id?: string
           job_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "applications_AI_summary_fkey"
-            columns: ["AI_summary"]
-            isOneToOne: false
-            referencedRelation: "AI_summary"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "applications_applicant_id_fkey"
             columns: ["applicant_id"]
