@@ -7,7 +7,7 @@ type Company = Tables<'companies'>;
 type Bot = Tables<'bots'>;
 type AI_Summary = Tables<'AI_summary'>;
 import { inviteRecruiterAdmin, inviteCandidateAdmin, listUsersAdmin } from '@/utils/supabase/admin';
-
+import { useCompany } from '@/hooks/useCompany';
 // CRUD operations for the company table
 
 /**
@@ -181,6 +181,9 @@ export async function inviteRecruiter(
     const supabase = createClient();
     const { data: existingUser, error: userCheckError } = await listUsersAdmin();
     const userExists = existingUser?.users?.some(user => user.email === email);
+    
+
+
 
     if (userCheckError) {
       console.error('Error checking existing user:', userCheckError);
@@ -197,19 +200,30 @@ export async function inviteRecruiter(
       };
     }
 
-    const {data: recruiter, error} = await inviteRecruiterAdmin(name, email);
+    const user = await getUser();
+    const recruiter = await getRecruiter(user?.id ?? '');
+    const company = await getCompany(recruiter?.company_id ?? '');
 
+    console.log('company', company);
+
+    if (!company) {
+      return {
+        data: null,
+        error: 'Recruiter does not have a company'
+      };
+    }
+
+    const {data, error} = await inviteRecruiterAdmin(name, email, company?.id ?? '');
+    console.log('data', data);
     // Return early if invitation failed
-    if (!recruiter) {
+    if (!data) {
       return {
         data: null,
         error: error instanceof Error ? error.message : error || 'Failed to invite recruiter'
       };
     }
 
-    console.log('recruiter', recruiter);
-
-    const recruiterId = recruiter?.user?.id;
+    const recruiterId = data?.user?.id;
 
     if (!recruiterId) {
       return {
