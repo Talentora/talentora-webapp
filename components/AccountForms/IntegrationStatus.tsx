@@ -134,31 +134,39 @@ const IntegrationStatusSkeleton = () => (
   <Card className="my-8 text-card-foreground">
     <CardHeader>
       <CardTitle className="text-primary">Integration Status</CardTitle>
-      <CardDescription className="text-muted-foreground">
-        View your ATS integration status and details
+      <CardDescription className="text-muted-foreground bg-secondary/50 p-4 rounded-lg">
+        We partner with Merge.dev to provide seamless integration with your existing ATS systems.
+        Merge's unified API allows us to connect with 30+ ATS providers including Greenhouse, Lever, and Workday.
       </CardDescription>
     </CardHeader>
     <CardContent>
-      <div className="flex flex-row items-center space-x-4 pb-4">
-        <div>
-          <h2 className="text-2xl font-bold text-primary">
-            <Skeleton className="w-48 h-8" />
-          </h2>
-          <Skeleton className="w-24 h-6 mt-1" />
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <h3 className="font-semibold text-sm text-muted-foreground">
-            Status
-          </h3>
-          <Skeleton className="w-32 h-6 mt-1" />
-        </div>
-        <div>
-          <h3 className="font-semibold text-sm text-muted-foreground">
-            Category
-          </h3>
-          <Skeleton className="w-32 h-6 mt-1" />
+      <div className="flex flex-col space-y-6">
+        <div className="p-6 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-primary">
+                <Skeleton className="w-48 h-8" />
+              </h2>
+              <Skeleton className="w-24 h-6 mt-2" />
+            </div>
+            <Skeleton className="w-48 h-10" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-8 mt-6">
+            {[
+              'Integration Status',
+              'Category',
+              'Account Type',
+              'Integration Provider'
+            ].map((label) => (
+              <div key={label} className="space-y-2">
+                <h3 className="font-semibold text-sm text-muted-foreground">
+                  {label}
+                </h3>
+                <Skeleton className="w-32 h-7" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </CardContent>

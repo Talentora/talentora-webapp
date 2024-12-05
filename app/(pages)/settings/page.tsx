@@ -51,7 +51,7 @@ export default function SettingsPage() {
               value="integrations" 
               className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
-              Integrations
+              Integration Status
             </TabsTrigger>
           </TabsList>
           
