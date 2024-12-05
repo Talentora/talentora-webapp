@@ -1,1 +1,1 @@
-declare module 'realtime-ai-react';
+// declare module 'realtime-ai-react';
