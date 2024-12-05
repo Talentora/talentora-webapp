@@ -25,7 +25,12 @@ SET row_security = off;
 INSERT INTO "auth"."audit_log_entries" ("instance_id", "id", "payload", "created_at", "ip_address") VALUES
 	('00000000-0000-0000-0000-000000000000', '1ab3ca67-30f3-4658-8eeb-be53d2c43fdb', '{"action":"user_signedup","actor_id":"32ea934d-72ab-45c3-99ad-fb95800eec8f","actor_name":"Ben Gardiner","actor_username":"bengard@bu.edu","actor_via_sso":false,"log_type":"team","traits":{"provider":"email"}}', '2024-12-05 19:15:17.619277+00', ''),
 	('00000000-0000-0000-0000-000000000000', '01e1edb3-93d6-4d30-8545-1762bbdbd3bb', '{"action":"login","actor_id":"32ea934d-72ab-45c3-99ad-fb95800eec8f","actor_name":"Ben Gardiner","actor_username":"bengard@bu.edu","actor_via_sso":false,"log_type":"account","traits":{"provider":"email"}}', '2024-12-05 19:15:17.629446+00', ''),
-	('00000000-0000-0000-0000-000000000000', '0676acf0-5baa-4f34-bbd8-995886df835d', '{"action":"user_invited","actor_id":"00000000-0000-0000-0000-000000000000","actor_username":"service_role","actor_via_sso":false,"log_type":"team","traits":{"user_email":"bengardiner18@gmail.com","user_id":"807d07d8-3569-4142-90a6-5a36bca95b65"}}', '2024-12-05 19:37:18.63978+00', '');
+	('00000000-0000-0000-0000-000000000000', '0676acf0-5baa-4f34-bbd8-995886df835d', '{"action":"user_invited","actor_id":"00000000-0000-0000-0000-000000000000","actor_username":"service_role","actor_via_sso":false,"log_type":"team","traits":{"user_email":"bengardiner18@gmail.com","user_id":"807d07d8-3569-4142-90a6-5a36bca95b65"}}', '2024-12-05 19:37:18.63978+00', ''),
+	('00000000-0000-0000-0000-000000000000', '03927698-c952-4cd8-9fd4-b4e0bfa50c00', '{"action":"login","actor_id":"32ea934d-72ab-45c3-99ad-fb95800eec8f","actor_name":"Ben Gardiner","actor_username":"bengard@bu.edu","actor_via_sso":false,"log_type":"account","traits":{"provider":"email"}}', '2024-12-05 21:33:52.411423+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'f360ef6c-82d7-42dd-aff1-62ff0486e447', '{"action":"user_invited","actor_id":"00000000-0000-0000-0000-000000000000","actor_username":"service_role","actor_via_sso":false,"log_type":"team","traits":{"user_email":"lyoon02@bu.edu","user_id":"a5675bf4-8ca5-4c2e-a4d2-9098be4735d8"}}', '2024-12-05 21:34:11.883237+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'c04c797e-eb88-4e05-abf4-a83a6854b7df', '{"action":"user_invited","actor_id":"00000000-0000-0000-0000-000000000000","actor_username":"service_role","actor_via_sso":false,"log_type":"team","traits":{"user_email":"lyoon02@bu.edu","user_id":"f845c4d2-dbfe-4a23-bf6e-3e4a200f8754"}}', '2024-12-05 21:43:23.893704+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'dbe201cf-a724-4797-a1ae-7460c21037d5', '{"action":"user_invited","actor_id":"00000000-0000-0000-0000-000000000000","actor_username":"service_role","actor_via_sso":false,"log_type":"team","traits":{"user_email":"lyoon02@bu.edu","user_id":"1b54b515-7165-4fdc-a7d1-209515928331"}}', '2024-12-05 21:49:34.372259+00', ''),
+	('00000000-0000-0000-0000-000000000000', 'a0060ed1-aad7-432e-b338-8ee1619ea568', '{"action":"user_invited","actor_id":"00000000-0000-0000-0000-000000000000","actor_username":"service_role","actor_via_sso":false,"log_type":"team","traits":{"user_email":"lyoon02@bu.edu","user_id":"57f5e265-1b4a-4136-9332-16ee490f5aa4"}}', '2024-12-05 22:00:39.942067+00', '');
 
 
 --
@@ -39,8 +44,9 @@ INSERT INTO "auth"."audit_log_entries" ("instance_id", "id", "payload", "created
 --
 
 INSERT INTO "auth"."users" ("instance_id", "id", "aud", "role", "email", "encrypted_password", "email_confirmed_at", "invited_at", "confirmation_token", "confirmation_sent_at", "recovery_token", "recovery_sent_at", "email_change_token_new", "email_change", "email_change_sent_at", "last_sign_in_at", "raw_app_meta_data", "raw_user_meta_data", "is_super_admin", "created_at", "updated_at", "phone", "phone_confirmed_at", "phone_change", "phone_change_token", "phone_change_sent_at", "email_change_token_current", "email_change_confirm_status", "banned_until", "reauthentication_token", "reauthentication_sent_at", "is_sso_user", "deleted_at", "is_anonymous") VALUES
-	('00000000-0000-0000-0000-000000000000', '32ea934d-72ab-45c3-99ad-fb95800eec8f', 'authenticated', 'authenticated', 'bengard@bu.edu', '$2a$10$gDFfQAIeF7axAD6Q3GjRe.oiS6aRASd3F6nsaGeECWGKD2Nz5/iTm', '2024-12-05 19:15:17.622514+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-12-05 19:15:17.62989+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "32ea934d-72ab-45c3-99ad-fb95800eec8f", "role": "recruiter", "email": "bengard@bu.edu", "full_name": "Ben Gardiner", "email_verified": false, "phone_verified": false}', NULL, '2024-12-05 19:15:17.594372+00', '2024-12-05 19:15:17.63949+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
-	('00000000-0000-0000-0000-000000000000', '807d07d8-3569-4142-90a6-5a36bca95b65', 'authenticated', 'authenticated', 'bengardiner18@gmail.com', '', NULL, '2024-12-05 19:37:18.642084+00', '349a60c75eab6367520d11a54199032a79b84c13a28f9cb73647dfbd', '2024-12-05 19:37:18.642084+00', '', NULL, '', '', NULL, NULL, '{"provider": "email", "providers": ["email"]}', '{"role": "applicant", "full_name": "Ben Gardiner"}', NULL, '2024-12-05 19:37:18.622746+00', '2024-12-05 19:37:18.683916+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false);
+	('00000000-0000-0000-0000-000000000000', '807d07d8-3569-4142-90a6-5a36bca95b65', 'authenticated', 'authenticated', 'bengardiner18@gmail.com', '', NULL, '2024-12-05 19:37:18.642084+00', '349a60c75eab6367520d11a54199032a79b84c13a28f9cb73647dfbd', '2024-12-05 19:37:18.642084+00', '', NULL, '', '', NULL, NULL, '{"provider": "email", "providers": ["email"]}', '{"role": "applicant", "full_name": "Ben Gardiner"}', NULL, '2024-12-05 19:37:18.622746+00', '2024-12-05 19:37:18.683916+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
+	('00000000-0000-0000-0000-000000000000', '32ea934d-72ab-45c3-99ad-fb95800eec8f', 'authenticated', 'authenticated', 'bengard@bu.edu', '$2a$10$gDFfQAIeF7axAD6Q3GjRe.oiS6aRASd3F6nsaGeECWGKD2Nz5/iTm', '2024-12-05 19:15:17.622514+00', NULL, '', NULL, '', NULL, '', '', NULL, '2024-12-05 21:33:52.414316+00', '{"provider": "email", "providers": ["email"]}', '{"sub": "32ea934d-72ab-45c3-99ad-fb95800eec8f", "role": "recruiter", "email": "bengard@bu.edu", "full_name": "Ben Gardiner", "email_verified": false, "phone_verified": false}', NULL, '2024-12-05 19:15:17.594372+00', '2024-12-05 21:33:52.421394+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
+	('00000000-0000-0000-0000-000000000000', '57f5e265-1b4a-4136-9332-16ee490f5aa4', 'authenticated', 'authenticated', 'lyoon02@bu.edu', '', NULL, '2024-12-05 22:00:39.942556+00', '9509d1165bec5060e68afa7c20475eec2b1d2a74bec608e892611c02', '2024-12-05 22:00:39.942556+00', '', NULL, '', '', NULL, NULL, '{"provider": "email", "providers": ["email"]}', '{"role": "recruiter", "full_name": "Lucas Yoon", "company_id": "e2ad1e02-09d5-48ed-ad1d-3e6d358f0675"}', NULL, '2024-12-05 22:00:39.938215+00', '2024-12-05 22:00:39.947834+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false);
 
 
 --
@@ -49,7 +55,8 @@ INSERT INTO "auth"."users" ("instance_id", "id", "aud", "role", "email", "encryp
 
 INSERT INTO "auth"."identities" ("provider_id", "user_id", "identity_data", "provider", "last_sign_in_at", "created_at", "updated_at", "id") VALUES
 	('32ea934d-72ab-45c3-99ad-fb95800eec8f', '32ea934d-72ab-45c3-99ad-fb95800eec8f', '{"sub": "32ea934d-72ab-45c3-99ad-fb95800eec8f", "role": "recruiter", "email": "bengard@bu.edu", "full_name": "Ben Gardiner", "email_verified": false, "phone_verified": false}', 'email', '2024-12-05 19:15:17.612652+00', '2024-12-05 19:15:17.612682+00', '2024-12-05 19:15:17.612682+00', '6145d734-8818-4a51-9de9-db481abf642d'),
-	('807d07d8-3569-4142-90a6-5a36bca95b65', '807d07d8-3569-4142-90a6-5a36bca95b65', '{"sub": "807d07d8-3569-4142-90a6-5a36bca95b65", "email": "bengardiner18@gmail.com", "email_verified": false, "phone_verified": false}', 'email', '2024-12-05 19:37:18.634378+00', '2024-12-05 19:37:18.634409+00', '2024-12-05 19:37:18.634409+00', '7d176737-af0a-4498-9838-bcb351dc2437');
+	('807d07d8-3569-4142-90a6-5a36bca95b65', '807d07d8-3569-4142-90a6-5a36bca95b65', '{"sub": "807d07d8-3569-4142-90a6-5a36bca95b65", "email": "bengardiner18@gmail.com", "email_verified": false, "phone_verified": false}', 'email', '2024-12-05 19:37:18.634378+00', '2024-12-05 19:37:18.634409+00', '2024-12-05 19:37:18.634409+00', '7d176737-af0a-4498-9838-bcb351dc2437'),
+	('57f5e265-1b4a-4136-9332-16ee490f5aa4', '57f5e265-1b4a-4136-9332-16ee490f5aa4', '{"sub": "57f5e265-1b4a-4136-9332-16ee490f5aa4", "email": "lyoon02@bu.edu", "email_verified": false, "phone_verified": false}', 'email', '2024-12-05 22:00:39.941433+00', '2024-12-05 22:00:39.941468+00', '2024-12-05 22:00:39.941468+00', '318994ae-569c-49c6-a50f-d29640a40abb');
 
 
 --
@@ -63,7 +70,8 @@ INSERT INTO "auth"."identities" ("provider_id", "user_id", "identity_data", "pro
 --
 
 INSERT INTO "auth"."sessions" ("id", "user_id", "created_at", "updated_at", "factor_id", "aal", "not_after", "refreshed_at", "user_agent", "ip", "tag") VALUES
-	('d1c9a24f-cec3-4961-8982-4ff0c717727b', '32ea934d-72ab-45c3-99ad-fb95800eec8f', '2024-12-05 19:15:17.630154+00', '2024-12-05 19:15:17.630154+00', NULL, 'aal1', NULL, NULL, 'node', '192.168.65.1', NULL);
+	('d1c9a24f-cec3-4961-8982-4ff0c717727b', '32ea934d-72ab-45c3-99ad-fb95800eec8f', '2024-12-05 19:15:17.630154+00', '2024-12-05 19:15:17.630154+00', NULL, 'aal1', NULL, NULL, 'node', '192.168.65.1', NULL),
+	('8bdc1350-fcb4-45b0-abf8-9032129c7d2f', '32ea934d-72ab-45c3-99ad-fb95800eec8f', '2024-12-05 21:33:52.414403+00', '2024-12-05 21:33:52.414403+00', NULL, 'aal1', NULL, NULL, 'node', '192.168.65.1', NULL);
 
 
 --
@@ -71,7 +79,8 @@ INSERT INTO "auth"."sessions" ("id", "user_id", "created_at", "updated_at", "fac
 --
 
 INSERT INTO "auth"."mfa_amr_claims" ("session_id", "created_at", "updated_at", "authentication_method", "id") VALUES
-	('d1c9a24f-cec3-4961-8982-4ff0c717727b', '2024-12-05 19:15:17.640049+00', '2024-12-05 19:15:17.640049+00', 'password', '3d1aa96d-6828-4915-b426-c51f63b4bd54');
+	('d1c9a24f-cec3-4961-8982-4ff0c717727b', '2024-12-05 19:15:17.640049+00', '2024-12-05 19:15:17.640049+00', 'password', '3d1aa96d-6828-4915-b426-c51f63b4bd54'),
+	('8bdc1350-fcb4-45b0-abf8-9032129c7d2f', '2024-12-05 21:33:52.42219+00', '2024-12-05 21:33:52.42219+00', 'password', 'b8ab1f29-6957-4be8-8597-052be28a2997');
 
 
 --
@@ -91,7 +100,8 @@ INSERT INTO "auth"."mfa_amr_claims" ("session_id", "created_at", "updated_at", "
 --
 
 INSERT INTO "auth"."one_time_tokens" ("id", "user_id", "token_type", "token_hash", "relates_to", "created_at", "updated_at") VALUES
-	('5f58029f-8f45-42df-bc87-e7b2d750ea8a', '807d07d8-3569-4142-90a6-5a36bca95b65', 'confirmation_token', '349a60c75eab6367520d11a54199032a79b84c13a28f9cb73647dfbd', 'bengardiner18@gmail.com', '2024-12-05 19:37:18.691094', '2024-12-05 19:37:18.691094');
+	('5f58029f-8f45-42df-bc87-e7b2d750ea8a', '807d07d8-3569-4142-90a6-5a36bca95b65', 'confirmation_token', '349a60c75eab6367520d11a54199032a79b84c13a28f9cb73647dfbd', 'bengardiner18@gmail.com', '2024-12-05 19:37:18.691094', '2024-12-05 19:37:18.691094'),
+	('4c9bc82b-e968-476a-98c9-df8ce83556be', '57f5e265-1b4a-4136-9332-16ee490f5aa4', 'confirmation_token', '9509d1165bec5060e68afa7c20475eec2b1d2a74bec608e892611c02', 'lyoon02@bu.edu', '2024-12-05 22:00:39.948685', '2024-12-05 22:00:39.948685');
 
 
 --
@@ -99,7 +109,8 @@ INSERT INTO "auth"."one_time_tokens" ("id", "user_id", "token_type", "token_hash
 --
 
 INSERT INTO "auth"."refresh_tokens" ("instance_id", "id", "token", "user_id", "revoked", "created_at", "updated_at", "parent", "session_id") VALUES
-	('00000000-0000-0000-0000-000000000000', 1, 'jON6gxkjAZWirCAHjkbQ0g', '32ea934d-72ab-45c3-99ad-fb95800eec8f', false, '2024-12-05 19:15:17.634013+00', '2024-12-05 19:15:17.634013+00', NULL, 'd1c9a24f-cec3-4961-8982-4ff0c717727b');
+	('00000000-0000-0000-0000-000000000000', 1, 'jON6gxkjAZWirCAHjkbQ0g', '32ea934d-72ab-45c3-99ad-fb95800eec8f', false, '2024-12-05 19:15:17.634013+00', '2024-12-05 19:15:17.634013+00', NULL, 'd1c9a24f-cec3-4961-8982-4ff0c717727b'),
+	('00000000-0000-0000-0000-000000000000', 2, 'SNNW3LPVpATRsaseNlUKIg', '32ea934d-72ab-45c3-99ad-fb95800eec8f', false, '2024-12-05 21:33:52.418916+00', '2024-12-05 21:33:52.418916+00', NULL, '8bdc1350-fcb4-45b0-abf8-9032129c7d2f');
 
 
 --
@@ -223,7 +234,8 @@ INSERT INTO "public"."job_interview_config" ("job_id", "created_at", "interview_
 --
 
 INSERT INTO "public"."recruiters" ("id", "avatar_url", "billing_address", "payment_method", "company_id", "harvest_recruiters") VALUES
-	('32ea934d-72ab-45c3-99ad-fb95800eec8f', NULL, NULL, NULL, 'e2ad1e02-09d5-48ed-ad1d-3e6d358f0675', NULL);
+	('32ea934d-72ab-45c3-99ad-fb95800eec8f', NULL, NULL, NULL, 'e2ad1e02-09d5-48ed-ad1d-3e6d358f0675', NULL),
+	('57f5e265-1b4a-4136-9332-16ee490f5aa4', NULL, NULL, NULL, 'e2ad1e02-09d5-48ed-ad1d-3e6d358f0675', NULL);
 
 
 --
@@ -266,7 +278,7 @@ INSERT INTO "public"."recruiters" ("id", "avatar_url", "billing_address", "payme
 -- Name: refresh_tokens_id_seq; Type: SEQUENCE SET; Schema: auth; Owner: supabase_auth_admin
 --
 
-SELECT pg_catalog.setval('"auth"."refresh_tokens_id_seq"', 1, true);
+SELECT pg_catalog.setval('"auth"."refresh_tokens_id_seq"', 2, true);
 
 
 --
