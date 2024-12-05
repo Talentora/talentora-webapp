@@ -138,7 +138,11 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <div className="flex justify-between items-center">
+       
+      
+        {bots.length > 0 ? (
+          <>
+           <div className="flex justify-between items-center">
           <Label htmlFor="bot-select">Select Interviewer Bot</Label>
           {selectedBot && (
             <Button 
@@ -149,13 +153,10 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
             >
               Clear Selection
             </Button>
-          )}
-        </div>
-      
-        {bots.length > 0 ? (
-          <>
-            <Select
-              value={selectedBot?.id?.toString() || ''}
+            )}
+          </div>
+          <Select
+            value={selectedBot?.id?.toString() || ''}
               onValueChange={handleBotSelection}
             >
               <SelectTrigger>
@@ -179,7 +180,7 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
         ) : (
           <div className="flex flex-col justify-center items-center">
             <h1 className="text-2xl font-semibold">No Ora Scouts found</h1>
-            <Link href="/bots">
+            <Link href="/bot">
               <Button>Create your first Ora Scout</Button>
             </Link>
           </div>
