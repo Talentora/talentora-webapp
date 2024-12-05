@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CircleDot } from 'lucide-react'
+import { Badge, CircleDot } from 'lucide-react'
 import { Info } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useApplicant } from '@/hooks/useApplicant'
@@ -142,13 +142,17 @@ export default function JobPortal() {
                 </CardHeader>
                 <CardContent>
                   <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-                    Application Status: <strong>{application.status}</strong>
+                    Application Status: 
+                    <span className={application.status === 'complete' ? 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium' : 'bg-red-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium'}>
+                      {application.status}
+                    </span>
                   </div>
                   <div className="flex gap-3">
                     <Button variant="outline">Practice</Button>
                     <Link href={`/assessment/${application.application_data.id}`}>
                       <Button 
                         className="bg-[#6366f1] hover:bg-[#5558e6]"
+                        disabled={application.status === 'complete'}
                       >
                         Start Interview
                       </Button>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
+import { createClient } from '@/utils/supabase/server'
 export async function POST(request: NextRequest) {
   try {
     // Authentication check (implement your own auth logic)
@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
           model: "claude-3-5-sonnet-20241022"
         }
       },
+      
       services: {
         stt: "deepgram",
         tts: "cartesia",
@@ -140,11 +141,11 @@ export async function POST(request: NextRequest) {
       ],
       recording_settings: {
         type: "cloud"
-      }
+      },
+     
     };
 
     const baseUrl = "https://api.daily.co/v1/bots/start";
-    // const baseUrl = "https://localhost:8000/ws"
 
     const response = await fetch(baseUrl, {
       method: "POST",
@@ -161,6 +162,18 @@ export async function POST(request: NextRequest) {
     }
 
     const botData = await response.json();
+    const roomUrl = botData.room_url;
+    const roomName = roomUrl.split('/').pop();
+
+    console.log("Room URL:", roomUrl);
+    console.log("Room name:", roomName);
+
+    const aiSummaryResponse = await createAISummaryRecord(roomName, application.id);
+    console.log("AI summary response:", aiSummaryResponse);
+    // await updateApplicationWithAISummaryId(application.id, aiSummaryResponse.id);
+
+
+
     return NextResponse.json(botData);
   } catch (error) {
     console.error("Error starting bot:", error);
@@ -175,4 +188,54 @@ export async function POST(request: NextRequest) {
 async function checkAuthentication(request: NextRequest): Promise<boolean> {
   // Implement your authentication logic here
   return true;
+}
+
+
+
+async function createAISummaryRecord(roomName: string, applicationId: string) {
+  const supabase = createClient();
+  
+  try {
+    const { data, error } = await supabase
+      .from('AI_summary')
+      .insert({
+        room_name: roomName,
+        created_at: new Date().toISOString(),
+        application_id: applicationId
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Failed to create AI summary record:", error);
+      throw error;
+    }
+
+    console.log("AI summary record created:", data);
+    return data;
+  } catch (error) {
+    console.error("Error in createAISummaryRecord:", error);
+    throw error;
+  }
+}
+
+async function updateApplicationWithAISummaryId(applicationId: string, aiSummaryId: string) {
+  console.log("Updating application with AI summary ID:", aiSummaryId);
+
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('applications')
+    .update({ AI_summary: aiSummaryId })
+    .eq('id', applicationId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Failed to update application with AI summary ID:", error);
+  }
+
+  console.log("Application updated with AI summary ID:", data);
+
+  return data;
 }

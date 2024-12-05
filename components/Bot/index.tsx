@@ -78,6 +78,20 @@ export default function Bot(botProps: BotProps) {
     }
 
     const dailyTransport = new DailyTransport();
+    
+    // const callObject = dailyTransport.
+    
+    // callObject?.setMeetingSessionData({
+    //   data: {
+    //     jobId: mergeJob.id,
+    //     jobName: mergeJob.name,
+    //     jobDescription: mergeJob.description,
+    //     companyId: company.id,
+    //     companyName: company.name,
+    //     applicationId: application.id,
+    //     assessmentStartTime: new Date().toISOString()
+    //   }
+    // }, 'shallow-merge');
   
     const rtviClient = new RTVIClient({
       transport: dailyTransport as any,
@@ -101,6 +115,8 @@ export default function Bot(botProps: BotProps) {
       enableCam: true,
       
     });
+
+
 
     const llmHelper = new LLMHelper({});
     rtviClient.registerHelper("llm", llmHelper);
@@ -158,6 +174,9 @@ export default function Bot(botProps: BotProps) {
       // Greet the user when the bot joins
       
     });
+
+    
+     
   
   }, [ botProps, isUserReady, showSplash]);
 
@@ -172,9 +191,9 @@ export default function Bot(botProps: BotProps) {
   }
 
   return (
-    <RTVIClientProvider client={voiceClientRef.current!}>
-      <App {...botProps} transcript={transcript} />
-      <RTVIClientAudio />
-    </RTVIClientProvider>
+      <RTVIClientProvider client={voiceClientRef.current!}>
+        <App {...botProps} transcript={transcript} />
+        <RTVIClientAudio />
+      </RTVIClientProvider>
   );
 }
