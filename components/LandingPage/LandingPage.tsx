@@ -64,14 +64,14 @@ export default function LandingPage() {
             </Card>
             <div className="grid grid-cols-2 gap-6">
               <img
-                src='./Images/Image4.jpg'
+                src='/Images/Image4.jpg'
                 alt="Interview process"
                 className="rounded-2xl shadow-lg"
                 style={{ width: '100%', height: 'auto' }}
               />
               <div className="space-y-4">
                 <img
-                  src='./Images/Image5.jpg'
+                  src='/Images/Image5.jpg'
                   alt="Team collaboration"
                   width={300}
                   height={300}
@@ -110,19 +110,27 @@ export default function LandingPage() {
             </h2>
           </div>
 
-          <div className="text-center mt-10">
+            <div className="text-center mt-10">
             <p className="text-lg text-black mb-8 max-w-lg mx-auto">
             Talentora's cutting-edge AI technology uses conversational AI assessments to Hire Smarter, Faster, Better. 
             </p>
-            
-
+            <div className="flex justify-center">
+              <img
+              src='/Images/Image6.png'
+              alt="Team collaboration"
+              width={900}
+              height={900}
+              className=""
+              />
+            </div>
+            <div className="h-10"></div> {/* Blank space added here */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 justify-center px-4 md:px-16">
               <div className="p-6 text-center flex flex-col justify-between max-w-xs mx-auto border border-[#32BBCDB2] rounded-3xl h-[400px]">
-                <h3 className="text-xl font-semibold mb-4 text-black">
-                  AI-Powered Matching
-                </h3>
+              <h3 className="text-xl font-semibold mb-4 text-black">
+                AI-Powered Matching
+              </h3>
 
-                <Image1 />
+              <Image1 />
 
                 <p className="text-black mt-auto">
                   Our advanced algorithms find the best candidates based on
