@@ -1,63 +1,54 @@
-// import {
-//   Chart as ChartJS,
-//   RadialLinearScale,
-//   PointElement,
-//   LineElement,
-//   Filler,
-//   Tooltip,
-//   Legend
-// } from 'chart.js';
-// import { Radar } from 'react-chartjs-2';
+import React from "react";
+import { Radar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
-// // Register ChartJS components
-// ChartJS.register(
-//   RadialLinearScale,
-//   PointElement,
-//   LineElement,
-//   Filler,
-//   Tooltip,
-//   Legend
-// );
+// Register ChartJS components
+ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
-// interface RadarChartProps {
-//   labels: string[];
-//   datasets: {
-//     label: string;
-//     data: number[];
-//     backgroundColor?: string;
-//     borderColor?: string;
-//     borderWidth?: number;
-//   }[];
-// }
+const RadarChart = () => {
+  const data = {
+    labels: ["Skill 1", "Skill 2", "Skill 3", "Skill 4", "Skill 5"],
+    datasets: [
+      {
+        label: "Skill Analysis",
+        data: [65, 59, 90, 81, 56],
+        backgroundColor: "rgba(54, 162, 235, 0.2)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        borderWidth: 2,
+      },
+    ],
+  };
 
-// export default function RadarChart({ labels, datasets }: RadarChartProps) {
-//   const data = {
-//     labels,
-//     datasets: datasets.map((dataset) => ({
-//       ...dataset,
-//       backgroundColor: dataset.backgroundColor || 'rgba(255, 99, 132, 0.2)',
-//       borderColor: dataset.borderColor || 'rgba(255, 99, 132, 1)',
-//       borderWidth: dataset.borderWidth || 1
-//     }))
-//   };
+  const options = {
+    scales: {
+      r: {
+        ticks: {
+          display: false,
+          beginAtZero: true,
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
+  };
 
-//   const options = {
-//     scales: {
-//       r: {
-//         beginAtZero: true,
-//         min: 0,
-//         max: 100, // Adjust this based on your data range
-//         ticks: {
-//           stepSize: 20
-//         }
-//       }
-//     },
-//     plugins: {
-//       legend: {
-//         display: false
-//       }
-//     }
-//   };
+  return (
+    <div>
+      <h2 style={{ textAlign: "center" }}>Skill Analysis</h2>
+      <Radar data={data} options={options} />
+    </div>
+  );
+};
 
-//   return <Radar data={data} options={options} />;
-// }
+export default RadarChart;
