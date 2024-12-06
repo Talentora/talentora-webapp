@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from '@/utils/supabase/server'
+
 import type { Tables } from '@/types/types_db';
-
-
 
 export async function POST(request: NextRequest) {
 
@@ -223,25 +222,3 @@ async function createAISummaryRecord(roomName: string, applicationId: string) {
     throw error;
   }
 }
-
-// async function updateApplicationWithAISummaryId(applicationId: string, aiSummaryId: string) {
-//   console.log("Updating application with AI summary ID:", aiSummaryId);
-//   type AI_summary = Tables<'AI_summary'>;
-
-//   const supabase = createClient();
-
-//   const { data, error } = await supabase
-//     .from('AI_Summary')
-//     .update({ application: aiSummaryId })
-//     .eq('id', applicationId)
-//     .select()
-//     .single();
-
-//   if (error) {
-//     console.error("Failed to update application with AI summary ID:", error);
-//   }
-
-//   console.log("Application updated with AI summary ID:", data);
-
-//   return data;
-// }
