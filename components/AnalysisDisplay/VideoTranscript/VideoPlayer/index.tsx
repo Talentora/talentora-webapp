@@ -16,8 +16,8 @@ export default function VideoPlayer({ recording }: VideoPlayerProps) {
   const [duration, setDuration] = useState(0)
   const [playbackRate, setPlaybackRate] = useState(1)
   const videoRef = useRef<HTMLVideoElement>(null)
-
-
+  const [videoUrl, setVideoUrl] = useState<string | null>(null)
+  console.log("recording", recording)
 
   // Construct S3 URL using recording data
 
@@ -26,6 +26,17 @@ export default function VideoPlayer({ recording }: VideoPlayerProps) {
       setDuration(videoRef.current.duration)
     }
   }, [videoRef])
+
+  useEffect(() => {
+    if (recording) {
+      const fetchRecordingDownload = async () => {
+        const response = await fetch(`/api/bot/recordings/${recording.id}/access-link`);
+        const data = await response.json();
+        setVideoUrl(data.download_link);
+      };
+      fetchRecordingDownload();
+    }
+  }, [recording]);
 
   const togglePlay = () => {
     if (videoRef.current) {
@@ -65,12 +76,11 @@ export default function VideoPlayer({ recording }: VideoPlayerProps) {
     }
   }
 
-  if (!recording) {
+  if (!recording || !videoUrl) {
     return <div>Recording not found</div>;
   }
 
-  const videoUrl = `https://rec.daily.co/v1/${recording.s3key}.mp4?t=${recording.share_token}`;
-
+  console.log("videoUrl", videoUrl)
 
   return (
     <div className="space-y-4">
