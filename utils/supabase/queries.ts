@@ -1,5 +1,5 @@
 'use server';
-import { Tables } from '@/types/types_db';
+import { Tables , Json} from '@/types/types_db';
 import { createClient } from '@/utils/supabase/server';
 import { BotWithJobs } from '@/types/custom';
 type Recruiter = Tables<'recruiters'>;
@@ -1018,6 +1018,27 @@ export const getEvaluation = async (AISummaryId: string): Promise<AI_Summary | n
     return data as AI_Summary; // Type assertion to match the AI_Summary structure
   } catch (err) {
     console.error('Unexpected error fetching AI summary:', err);
+    return null;
+  }
+};
+
+export const getAllEvaluation = async (AISummaryId: string): Promise<Json[] | null> => {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('AI_summary')
+      .select('text_eval')
+      .eq('id', AISummaryId);
+
+    if (error) {
+      console.error('Error fetching AI summaries:', error.message);
+      return null;
+    }
+
+    // Return only the text_eval column data as an array of Json type
+    return data?.map((item) => item.text_eval) || null;
+  } catch (err) {
+    console.error('Unexpected error fetching AI summaries:', err);
     return null;
   }
 };
