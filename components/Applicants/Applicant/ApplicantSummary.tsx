@@ -16,6 +16,7 @@ import {
 // Register ChartJS components
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
+
 interface ApplicantSummaryProps {
   ApplicantCandidate: ApplicantCandidate;
 }
@@ -33,7 +34,8 @@ export default function ApplicantSummary({ ApplicantCandidate }: ApplicantSummar
           return;
         }
         // Fetch AISummaryId
-        const AISummaryId = await getAISummaryId(candidate.id, job.id);
+        // const AISummaryId = await getAISummaryId(candidate.id, job.id);
+        const AISummaryId = "";
         if (!AISummaryId) {
           console.error("No AI Summary ID found for given Candidate and Job");
           return;

@@ -53,7 +53,10 @@ const useApplications = (applicantId: string | undefined) => {
       try {
         const { data, error } = await supabase
           .from('applications')
-          .select('*')
+          .select(`
+            *,
+            AI_summary:AI_summary(*)
+          `)
           .eq('applicant_id', applicantId);
 
         if (error) throw error;
@@ -105,6 +108,8 @@ export const fetchApplicationData = async (applicationId: string, token: string)
 type EnrichedApplication = MergeJob & {
   company: Tables<'companies'> | null;
   application_data: Tables<'applications'>;
+  ai_summary: Tables<'AI_summary'> | null;
+  status: 'complete' | 'incomplete';
 }
 
 // Main hook that combines all the data
@@ -125,19 +130,33 @@ export const useApplicant = () => {
         const tokens: {[key: string]: string | null} = {};
         const enriched: EnrichedApplication[] = [];
 
-        for (const application of applications as Tables<'applications'>[]) {
-          const {token,company} = await getAccountTokenFromApplication(application.id);
-          console.log("token",token)
-          console.log("company",company)
+        for (const application of applications) {
+          const {token, company} = await getAccountTokenFromApplication(application.id);
           tokens[application.id] = token;
+
+          // Check if there's an AI summary
+          const aiSummary = (application as any).ai_summaries?.[0] || null;
+          const status = aiSummary ? 'complete' : 'incomplete';
 
           if (token) {
             const jobDetails = await fetchJobDetails(application.job_id, token);
             if (jobDetails) {
-              enriched.push({...jobDetails, company, application_data: application});
+              enriched.push({
+                ...jobDetails, 
+                company, 
+                application_data: application,
+                ai_summary: aiSummary,
+                status
+              });
             }
           } else {
-            enriched.push({...application as unknown as MergeJob, company, application_data: application});
+            enriched.push({
+              ...application as unknown as MergeJob, 
+              company, 
+              application_data: application,
+              ai_summary: aiSummary,
+              status
+            });
           }
         }
 
