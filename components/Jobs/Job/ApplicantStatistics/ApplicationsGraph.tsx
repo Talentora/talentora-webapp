@@ -70,7 +70,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
 
     // Fill bins with data
     applicants.forEach(applicant => {
-      const createdAt = new Date(applicant.created_at);
+      const createdAt = new Date(applicant.application.applied_at);
       if (createdAt >= startDate && createdAt <= now) {
         // Find the appropriate bin
         const binDate = new Date(createdAt);
@@ -104,6 +104,8 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
     return Object.values(bins).sort((a, b) => a.date.localeCompare(b.date));
   }, [applicants, timeRange, interval]);
 
+  console.log("chartData", chartData);
+
   const chartConfig = React.useMemo(() => {
     const config: ChartConfig = {};
     applicants.forEach(applicant => {
@@ -126,7 +128,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
       {!hideHeader && (
         <CardHeader>
           <CardTitle>Applicants Over Time</CardTitle>
-          <CardDescription>Stacked Bar Chart</CardDescription>
+          {/* <CardDescription>Stacked Bar Chart</CardDescription> */}
           <div className="flex justify-between items-center">
             <SelectGroup className="flex flex-row gap-2 items-center">
               <SelectLabel>Time Range:</SelectLabel>

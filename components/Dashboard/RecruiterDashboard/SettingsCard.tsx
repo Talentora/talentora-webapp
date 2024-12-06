@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 const SettingsCard = () => {
   return (
     <div>
-    <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-[#5650F0]/50 bg-card">
+    <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-primary-dark/50 bg-card">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Settings</CardTitle>
           <Link href="/settings">

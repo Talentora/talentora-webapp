@@ -11,7 +11,7 @@ import { createClient } from '@/utils/supabase/server';
 import Script from 'next/script';
 
 const title = 'Talentora';
-const description = 'Brought to you by Vercel, Stripe, and Supabase.';
+const description = 'Talentora is a platform for creating and managing AI-powered interviews.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(getURL()),
@@ -30,22 +30,22 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   return (
     <html lang="en">
-    
       <body className="w-full bg-gradient-to-br from-purple-500/[0.1] via-white to-pink-500/[0.1] p-0">
         <NextTopLoader />
 
         <div className="flex">
           {isSidebarVisible && (
-            <aside className="w-1/7 bg-gray-100">
+            <aside className=" fixed h-full">
               <Sidebar />
             </aside>
           )}
           <main
             id="skip"
             className={`flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]${
-              isSidebarVisible ? '' : ' w-full' // Apply full width if sidebar is hidden
+              isSidebarVisible ? ' ml-64' : ' w-full' 
             }`}
           >
+            {/* {!isSidebarVisible && <Navbar />} */}
             <Navbar />
             <Suspense fallback={<Loading />}>{children}</Suspense>
           </main>

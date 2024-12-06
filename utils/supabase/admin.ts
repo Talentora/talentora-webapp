@@ -19,8 +19,28 @@ const supabaseAdmin = createClient<Database>(
 
 const inviteCandidateAdmin = async (name: string, email: string) => {
   try {
+    // First check if user exists
+    const { data: existingUsers, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+    
+    if (listError) {
+      console.error('Error checking existing users:', listError);
+      return { data: null, error: listError };
+    }
+
+    const existingUser = existingUsers.users.find(user => user.email === email);
+
+    if (existingUser) {
+      console.log('User already exists:', existingUser);
+      // User exists, return success with existing user data
+      return { 
+        data: { user: existingUser }, 
+        error: null 
+      };
+    }
+
+    // User doesn't exist, invite them
     const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, 
-      { data: { role: 'candidate', full_name: name, candidate_id: null } }
+      { data: { role: 'applicant', full_name: name } }
     );
 
     if (error) {
@@ -40,10 +60,17 @@ const inviteCandidateAdmin = async (name: string, email: string) => {
 };
 
 
-const inviteRecruiterAdmin = async (name: string, email: string) => {
+const inviteRecruiterAdmin = async (name: string, email: string, company_id: string) => {
+  console.log('inviting recruiter', name, email, company_id);
   const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-    data: { role: 'recruiter', full_name: name, candidate_id: null }
+    data: { 
+      role: 'recruiter', 
+      full_name: name, 
+      company_id: company_id 
+    }
   });
+
+  console.log('invite recruiter data', data);
   return { data, error };
 };
 

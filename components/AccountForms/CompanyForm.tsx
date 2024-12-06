@@ -110,7 +110,7 @@ const CompanyForm = () => {
 
 // CompanyFormSkeleton component to display while loading
 const CompanyFormSkeleton = () => (
-  <Card className="my-8 bg-card text-card-foreground">
+  <Card className="my-8  text-card-foreground">
     <CardHeader>
       <CardTitle className="text-primary">Company Information</CardTitle>
       <CardDescription className="text-muted-foreground">

@@ -5,7 +5,9 @@ import { BotWithJobs } from '@/types/custom';
 type Recruiter = Tables<'recruiters'>;
 type Company = Tables<'companies'>;
 type Bot = Tables<'bots'>;
+type AI_Summary = Tables<'AI_summary'>;
 import { inviteRecruiterAdmin, inviteCandidateAdmin, listUsersAdmin } from '@/utils/supabase/admin';
+import { useCompany } from '@/hooks/useCompany';
 // CRUD operations for the company table
 
 /**
@@ -179,6 +181,9 @@ export async function inviteRecruiter(
     const supabase = createClient();
     const { data: existingUser, error: userCheckError } = await listUsersAdmin();
     const userExists = existingUser?.users?.some(user => user.email === email);
+    
+
+
 
     if (userCheckError) {
       console.error('Error checking existing user:', userCheckError);
@@ -195,19 +200,30 @@ export async function inviteRecruiter(
       };
     }
 
-    const {data: recruiter, error} = await inviteRecruiterAdmin(name, email);
+    const user = await getUser();
+    const recruiter = await getRecruiter(user?.id ?? '');
+    const company = await getCompany(recruiter?.company_id ?? '');
 
+    console.log('company', company);
+
+    if (!company) {
+      return {
+        data: null,
+        error: 'Recruiter does not have a company'
+      };
+    }
+
+    const {data, error} = await inviteRecruiterAdmin(name, email, company?.id ?? '');
+    console.log('data', data);
     // Return early if invitation failed
-    if (!recruiter) {
+    if (!data) {
       return {
         data: null,
         error: error instanceof Error ? error.message : error || 'Failed to invite recruiter'
       };
     }
 
-    console.log('recruiter', recruiter);
-
-    const recruiterId = recruiter?.user?.id;
+    const recruiterId = data?.user?.id;
 
     if (!recruiterId) {
       return {
@@ -251,27 +267,24 @@ export async function inviteCandidate(
     }
 
     if (userExists) {
-      return {
-        data: null,
-        error: 'User with this email already exists'
-      };
+      console.log('User with this email already exists');
+      // return {
+      //   data: null,
+      //   error: 'User with this email already exists'
+      // };
     }
 
 
     const {data: candidate, error} = await inviteCandidateAdmin(name, email);
     
     // Return early if invitation failed
-    if (!candidate) {
-      return {
-          data: null,
-          error: error instanceof Error ? error.message : error || 'Failed to invite candidate'
-        };
+    if (error) {
+      console.error('Error inviting candidate:', error);
     }
 
     console.log('candidate', candidate);
 
     const candidateId = candidate?.user?.id;
-    // console.log('candidateId', candidateId);
 
     if (!candidateId) {
       return {
@@ -280,13 +293,46 @@ export async function inviteCandidate(
       };
     }
 
+    console.log('candidateId', candidateId);
+    console.log('merge job id', job_id);
+
     // Create application record linking the job and new user
+    // First check if job exists
+    const { data: jobExists, error: jobCheckError } = await supabase
+      .from('jobs')
+      .select('merge_id')
+      .eq('merge_id', job_id)
+      .single();
+
+    if (jobCheckError || !jobExists) {
+      return {
+        data: null,
+        error: 'Invalid job ID - job does not exist'
+      };
+    }
+
+    // Get the job id from merge_id
+    const { data: job, error: jobIdError } = await supabase
+      .from('jobs')
+      .select('id')
+      .eq('merge_id', job_id)
+      .single();
+
+    if (jobIdError || !job) {
+      return {
+        data: null,
+        error: 'Failed to get job ID'
+      };
+    }
+
+    console.log('supabase job id', job.id);
+
     const { data: application, error: applicationError } = await supabase
       .from('applications')
       .insert({
         applicant_id: candidateId,
-        job_id: job_id,
-        // status: 'pending'  
+        // job_id: job.id // this is the supabase job id, not the merge job id
+        job_id: job_id // this is the merge job id
       })
       .select()
       .single();
@@ -942,6 +988,54 @@ export const getJob = async (jobId: string): Promise<any | null> => {
 };
 
 
+// export const getAISummaryId = async (
+//   applicantId: string,
+//   jobId: string
+// ): Promise<string | null> => {
+//   try {
+//     const supabase = createClient();
+
+//     const { data, error } = await supabase
+//       .from('applications')
+//       .select('AI_summary') // Only fetch AI_summary field
+//       .eq('applicant_id', applicantId)
+//       .eq('job_id', jobId)
+//       .single(); // Fetches a single row
+      
+//     if (error) {
+//       console.error('Error fetching AI Summary ID:', error.message);
+//       return null;
+//     }
+//         return data?.AI_summary || null;
+//       } catch (err) {
+//         console.error('Unexpected error fetching AI Summary ID:', err);
+//         return null;
+//       }
+//     };
+
+
+
+export const getEvaluation = async (AISummaryId: string): Promise<AI_Summary | null> => {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('AI_summary')
+      .select('*')
+      .eq('id', AISummaryId)
+      .single(); // Fetches a single row
+
+    if (error) {
+      console.error('Error fetching AI summary:', error.message);
+      return null;
+    }
+
+    return data as AI_Summary; // Type assertion to match the AI_Summary structure
+  } catch (err) {
+    console.error('Unexpected error fetching AI summary:', err);
+    return null;
+  }
+};
+
 /**
  * Gets the account token for a company associated with an application through its job.
  * 
@@ -1034,42 +1128,6 @@ export const getApplication = async (applicationId: string): Promise<Tables<'app
 
 
 /**
- * Creates a new AI summary record for an application.
- *
- * @param applicationId - The ID of the application to create summary for
- * @param recordingId - The ID of the recording to associate with the summary
- * @returns The created AI summary record or null if creation failed
- */
-export const createAISummary = async (
-  applicationId: string,
-  recordingId: string
-): Promise<Tables<'AI_summary'> | null> => {
-  try {
-    const supabase = createClient();
-    const { data: aiSummary, error } = await supabase
-      .from('AI_summary')
-      .insert([{
-        application_id: applicationId,
-        recording_id: recordingId,
-      }])
-      .select()
-      .single();
-
-    console.log("aiSummary", aiSummary)
-
-    if (error) {
-      console.error('Error creating AI summary:', error);
-      return null;
-    }
-
-    return aiSummary;
-  } catch (err) {
-    console.error('Unexpected error creating AI summary:', err);
-    return null;
-  }
-};
-
-/**
  * Fetches all bots along with their associated job interview configurations.
  * 
  * This function queries the 'bots' table to retrieve all bots and their corresponding
@@ -1108,3 +1166,4 @@ export const getBotsWithJobIds = async (): Promise<BotWithJobs[]> => {
 
   return processedBots;
 };
+

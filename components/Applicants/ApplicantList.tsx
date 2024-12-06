@@ -47,7 +47,11 @@ export default function ApplicantList() {
       </header>
       <main className="flex-1 p-4 lg:p-6">
         <div className="space-y-4">
-          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <SearchBar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            applicants={ApplicantCandidates}
+          />
           {isLoading ? (
             <div className="flex justify-center items-center h-full">
               <Loader2 className="animate-spin" />

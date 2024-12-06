@@ -88,21 +88,6 @@ export function useJob(jobId: string) {
     };
   }, [jobId, fetchJob, fetchApplicants]);
 
-  // Add timeout to prevent infinite loading
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (jobLoading || applicantsLoading) {
-        setJobLoading(false);
-        setApplicantsLoading(false);
-        if (!error) {
-          setError('Request timed out');
-        }
-      }
-    }, 10000); // 10 second timeout
-
-    return () => clearTimeout(timeout);
-  }, [jobLoading, applicantsLoading, error]);
-
   return useMemo(() => ({
     job,
     applicants,

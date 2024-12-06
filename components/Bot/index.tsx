@@ -57,31 +57,19 @@ export default function Bot(botProps: BotProps) {
 
   const { job, company, jobInterviewConfig, application, mergeJob, bot, companyContext} = botProps;
 
-  const voice: voice = bot.voice as voice;
+  const voice = bot.voice;
   const description = bot.description;
   const prompts = bot.prompt;
-  const emotion: {
-    anger: number;
-    speed: number;
-    sadness: number;
-    surprise: number;
-    curiosity: number;
-    positivity: number;
-  } = bot.emotion as {
-    anger: number;
-    speed: number;
-    sadness: number;
-    surprise: number;
-    curiosity: number;
-    positivity: number;
-  } || { // Provide a default value to avoid null assignment
+  const emotion = bot.emotion;
+  const defaultEmotion = {
     anger: 0,
-    speed: 0,
+    speed: 0, 
     sadness: 0,
     surprise: 0,
     curiosity: 0,
-    positivity: 0,
+    positivity: 0
   };
+  // const emotion = bot.emotion ? bot.emotion as typeof defaultEmotion : defaultEmotion;
 
 
   useEffect(() => {
@@ -90,6 +78,20 @@ export default function Bot(botProps: BotProps) {
     }
 
     const dailyTransport = new DailyTransport();
+    
+    // const callObject = dailyTransport.
+    
+    // callObject?.setMeetingSessionData({
+    //   data: {
+    //     jobId: mergeJob.id,
+    //     jobName: mergeJob.name,
+    //     jobDescription: mergeJob.description,
+    //     companyId: company.id,
+    //     companyName: company.name,
+    //     applicationId: application.id,
+    //     assessmentStartTime: new Date().toISOString()
+    //   }
+    // }, 'shallow-merge');
   
     const rtviClient = new RTVIClient({
       transport: dailyTransport as any,
@@ -103,7 +105,8 @@ export default function Bot(botProps: BotProps) {
             jobInterviewConfig: jobInterviewConfig,
             application: application,
             bot: bot,
-            companyContext: companyContext
+            companyContext: companyContext,
+            emotion: emotion
           }
         }
       },
@@ -112,6 +115,8 @@ export default function Bot(botProps: BotProps) {
       enableCam: true,
       
     });
+
+
 
     const llmHelper = new LLMHelper({});
     rtviClient.registerHelper("llm", llmHelper);
@@ -169,6 +174,9 @@ export default function Bot(botProps: BotProps) {
       // Greet the user when the bot joins
       
     });
+
+    
+     
   
   }, [ botProps, isUserReady, showSplash]);
 
@@ -183,9 +191,9 @@ export default function Bot(botProps: BotProps) {
   }
 
   return (
-    <RTVIClientProvider client={voiceClientRef.current!}>
-      <App {...botProps} transcript={transcript} />
-      <RTVIClientAudio />
-    </RTVIClientProvider>
+      <RTVIClientProvider client={voiceClientRef.current!}>
+        <App {...botProps} transcript={transcript} />
+        <RTVIClientAudio />
+      </RTVIClientProvider>
   );
 }
