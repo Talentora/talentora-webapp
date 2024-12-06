@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from '@/utils/supabase/server'
 import type { Tables } from '@/types/types_db';
 
-type AI_summary = Tables<'AI_summary'>;
 
 
 export async function POST(request: NextRequest) {
+
   try {
     // Authentication check (implement your own auth logic)
     const isAuthenticated = await checkAuthentication(request);
@@ -224,23 +224,24 @@ async function createAISummaryRecord(roomName: string, applicationId: string) {
   }
 }
 
-async function updateApplicationWithAISummaryId(applicationId: string, aiSummaryId: string) {
-  console.log("Updating application with AI summary ID:", aiSummaryId);
+// async function updateApplicationWithAISummaryId(applicationId: string, aiSummaryId: string) {
+//   console.log("Updating application with AI summary ID:", aiSummaryId);
+//   type AI_summary = Tables<'AI_summary'>;
 
-  const supabase = createClient();
+//   const supabase = createClient();
 
-  const { data, error } = await supabase
-    .from('applications')
-    .update({ AI_summary: aiSummaryId })
-    .eq('id', applicationId)
-    .select()
-    .single();
+//   const { data, error } = await supabase
+//     .from('AI_Summary')
+//     .update({ application: aiSummaryId })
+//     .eq('id', applicationId)
+//     .select()
+//     .single();
 
-  if (error) {
-    console.error("Failed to update application with AI summary ID:", error);
-  }
+//   if (error) {
+//     console.error("Failed to update application with AI summary ID:", error);
+//   }
 
-  console.log("Application updated with AI summary ID:", data);
+//   console.log("Application updated with AI summary ID:", data);
 
-  return data;
-}
+//   return data;
+// }
