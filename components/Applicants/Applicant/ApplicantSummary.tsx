@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ApplicantCandidate } from '@/types/merge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getAISummaryId,getEvaluation } from '@/utils/supabase/queries';
+import { getEvaluation } from '@/utils/supabase/queries';
 
 interface ApplicantSummaryProps {
   ApplicantCandidate: ApplicantCandidate;
@@ -26,7 +26,8 @@ export default function ApplicantSummary({ ApplicantCandidate }: ApplicantSummar
           return;
         }
         // Fetch AISummaryId
-        const AISummaryId = await getAISummaryId(candidate.id, job.id);
+        // const AISummaryId = await getAISummaryId(candidate.id, job.id);
+        const AISummaryId = "";
         if (!AISummaryId) {
           console.error('No AI Summary ID found for given Candidate and Job');
           return;
