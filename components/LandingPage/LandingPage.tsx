@@ -27,13 +27,16 @@ export default function LandingPage() {
               <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
                 Pricing
               </Button>
-              <Button
+                <Button
                 size="lg"
                 variant="outline"
-                className="border-purple-600 text-purple-600 hover:bg-purple-50"
-              >
-                Request Live Demo →
-              </Button>
+                className="border-purple-600 text-purple-600 hover:bg-purple-50 group"
+                >
+                Request Live Demo
+                <span className="inline-block transition-transform transform group-hover:translate-x-2 ml-2">
+                  →
+                </span>
+                </Button>
             </div>
           </div>
           <div className="relative space-y-6">
