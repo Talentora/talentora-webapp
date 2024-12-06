@@ -5,13 +5,16 @@ import ApplicantSummary from '@/components/Applicants/Applicant/ApplicantSummary
 import InterviewResponses from '@/components/Applicants/Applicant/InterviewResponses';
 import ApplicantCandidateStatus from '@/components/Applicants/Applicant/ApplicantStatus';
 import ApplicantActions from '@/components/Applicants/Applicant/ApplicantActions';
-
+import { AI_summary_applicant } from '@/app/(pages)/applicants/[id]/page';
+import AnalysisDisplay from '@/components/AnalysisDisplay';
 interface ApplicantPortalProps {
   ApplicantCandidate: ApplicantCandidate;
+  aiSummary: AI_summary_applicant | null;
 }
 
 export default function ApplicantPortal({
-  ApplicantCandidate
+  ApplicantCandidate,
+  aiSummary
 }: ApplicantPortalProps) {
   return (
     <div className="space-y-4">
@@ -19,8 +22,8 @@ export default function ApplicantPortal({
         <div className="flex-1 space-y-6">
           <div>
             <ApplicantInfo ApplicantCandidate={ApplicantCandidate} />
-            {<ApplicantSummary ApplicantCandidate={ApplicantCandidate} />}
-            <InterviewResponses />
+            {/* <InterviewResponses /> */}
+            {aiSummary ? <AnalysisDisplay aiSummary={aiSummary} /> : null}
           </div>
         </div>
         <div className="w-full lg:w-64 space-y-6">
