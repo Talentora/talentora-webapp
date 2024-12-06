@@ -32,7 +32,7 @@ export interface Recording {
 }
 
 export default function VideoTranscript({ aiSummary }: VideoTranscriptProps) {
-  const summary: string = aiSummary.interview_summary?.content || ""
+  const summary: string = (aiSummary.interview_summary as any)?.content || "Missing Summary"
 
 const [recording, setRecording] = useState<Recording | null>(null)
 useEffect(() => {
