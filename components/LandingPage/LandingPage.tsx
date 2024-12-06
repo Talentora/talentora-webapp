@@ -121,9 +121,9 @@ export default function LandingPage() {
           />
         </div>
         <div className="space-y-4">
-          <h2 className="text-3xl font-bold tracking-tight">Section Title</h2>
+          <h2 className="text-3xl font-bold tracking-tight">About Talentora</h2>
           <p className="text-lg text-muted-foreground">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          Talentora's cutting-edge AI technology uses conversational AI assessments to Hire Smarter, Faster, Better. 
           </p>
           <ul className="space-y-2">
             <li className="flex items-center">
@@ -141,7 +141,7 @@ export default function LandingPage() {
               >
                 <polyline points="20 6 9 17 4 12" />
               </svg>
-              Feature point 1
+              Conversational AI Assessments
             </li>
             <li className="flex items-center">
               <svg
@@ -158,7 +158,7 @@ export default function LandingPage() {
               >
                 <polyline points="20 6 9 17 4 12" />
               </svg>
-              Feature point 2
+              Sentiment Analysis
             </li>
             <li className="flex items-center">
               <svg
@@ -175,7 +175,7 @@ export default function LandingPage() {
               >
                 <polyline points="20 6 9 17 4 12" />
               </svg>
-              Feature point 3
+              AI-Powered Matching
             </li>
           </ul>
         </div>
@@ -305,7 +305,7 @@ export default function LandingPage() {
       </div>
       <div className="space-y-6 order-1 lg:order-2">
         <h3 className="text-4xl font-bold leading-tight">
-          Build Your Winning Team with Talentora
+          Build Your Dream Team with Talentora
         </h3>
         <p className="text-xl text-gray-600">
           Talentora's conversational AI transforms how you screen, evaluate, and hire. Save time, reduce bias, and make smarter decisions with our intelligent hiring solutions—designed to match top talent with top opportunities.
