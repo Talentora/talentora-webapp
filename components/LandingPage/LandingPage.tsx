@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white">
+    <div className="min-h-screen  to-white">
       <main className="container px-4 mx-auto">
 
         <div className="grid lg:grid-cols-2 gap-12 items-center py-16">
@@ -106,6 +106,100 @@ export default function LandingPage() {
         </div>
 
         <section className="container mx-auto px-4 py-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div className="relative aspect-[4/3] w-full">
+          <Image
+            src="/placeholder.svg?height=600&width=800"
+            alt="Descriptive alt text"
+            fill
+            className="object-cover rounded-lg"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            priority
+          />
+        </div>
+        <div className="space-y-4">
+          <h2 className="text-3xl font-bold tracking-tight">Section Title</h2>
+          <p className="text-lg text-muted-foreground">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </p>
+          <ul className="space-y-2">
+            <li className="flex items-center">
+              <svg
+                className="mr-2 h-4 w-4 text-primary"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              Feature point 1
+            </li>
+            <li className="flex items-center">
+              <svg
+                className="mr-2 h-4 w-4 text-primary"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              Feature point 2
+            </li>
+            <li className="flex items-center">
+              <svg
+                className="mr-2 h-4 w-4 text-primary"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              Feature point 3
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+        <section className="container mx-auto px-4 py-16">
+
+        <div className="text-center">
+            <h2 className="text-3xl md:text-5xl font-semibold mb-2 text-black relative inline-block">
+              Connect with your ATS
+              <span className="block w-16 h-1 bg-gradient-to-r from-[#FB7B54] to-[#FF45C7] absolute left-0 mt-2"></span>
+            </h2>
+
+            <div className="h-20"></div> {/* Blank space added here */}
+
+            <div className="flex justify-center">
+              <img
+              src='/Images/Image6.png'
+              alt="Team collaboration"
+              width={900}
+              height={900}
+              className=""
+              />
+            </div>
+          </div>
+          <div className='h-20'></div>
           <div className="text-center">
             <h2 className="text-3xl md:text-5xl font-semibold mb-2 text-black relative inline-block">
               Streamline your hiring now
@@ -117,15 +211,7 @@ export default function LandingPage() {
             <p className="text-lg text-black mb-8 max-w-lg mx-auto">
             Talentora's cutting-edge AI technology uses conversational AI assessments to Hire Smarter, Faster, Better. 
             </p>
-            <div className="flex justify-center">
-              <img
-              src='/Images/Image6.png'
-              alt="Team collaboration"
-              width={900}
-              height={900}
-              className=""
-              />
-            </div>
+            
             <div className="h-10"></div> {/* Blank space added here */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 justify-center px-4 md:px-16">
               <div className="p-6 text-center flex flex-col justify-between max-w-xs mx-auto border border-[#32BBCDB2] rounded-3xl h-[400px]">
