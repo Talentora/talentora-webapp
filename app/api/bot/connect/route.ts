@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from '@/utils/supabase/server'
+import type { Tables } from '@/types/types_db';
+
+type AI_summary = Tables<'AI_summary'>;
+
+
 export async function POST(request: NextRequest) {
   try {
     // Authentication check (implement your own auth logic)
