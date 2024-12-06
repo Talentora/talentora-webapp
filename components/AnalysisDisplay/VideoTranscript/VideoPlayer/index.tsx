@@ -77,7 +77,7 @@ export default function VideoPlayer({ recording }: VideoPlayerProps) {
   }
 
   if (!recording || !videoUrl) {
-    return <div>Recording not found</div>;
+    return <video controls className="w-full h-full rounded-lg"><source src="" type="video/mp4" />Recording not found</video>;
   }
 
   console.log("videoUrl", videoUrl)

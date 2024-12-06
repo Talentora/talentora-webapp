@@ -25,7 +25,7 @@ export const TeamMembersStep = ({
   useEffect(() => {
     async function fetchRecruiters() {
       try {
-        const response = await fetch('/api/recruiters');
+        const response = await fetch('/api/merge/recruiters');
         if (!response.ok) {
           throw new Error('Failed to fetch recruiters');
         }
