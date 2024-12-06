@@ -12,6 +12,8 @@ import CompanyForm from '@/components/AccountForms/CompanyForm';
 import Link from 'next/link';
 import InvitePage from '@/components/Invite';
 import { TeamMembersStep } from '@/components/CompanyOnboarding/steps/TeamMemberStep';
+import IntegrationStatus from '@/components/AccountForms/IntegrationStatus';
+
 
 type Recruiter = Tables<'recruiters'>;
 type Company = Tables<'companies'>;
@@ -38,6 +40,13 @@ export default function SettingsPage() {
               value="billing" 
               className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
+              Integration
+            </TabsTrigger>
+            <TabsTrigger 
+              value="integration" 
+              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
+            >
+
               Billing
             </TabsTrigger>
             <TabsTrigger 
@@ -45,6 +54,12 @@ export default function SettingsPage() {
               className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
               Team
+            </TabsTrigger>
+            <TabsTrigger 
+              value="integrations" 
+              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
+            >
+              Integration Status
             </TabsTrigger>
           </TabsList>
           
@@ -73,6 +88,21 @@ export default function SettingsPage() {
             </Card>
           </TabsContent>
           
+          <TabsContent value="integration">
+            <Card>
+              <CardContent className="space-y-3">
+                <CompanyForm />
+                <div className="mt-4">
+                  <h2 className="text-lg font-bold mb-2">Company Onboarding</h2>
+                  <Link href="/settings/onboarding">
+                    <Button size="sm">Get your company setup</Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+
           <TabsContent value="billing">
             <Card>
               <CardHeader className="pb-4">
@@ -85,15 +115,19 @@ export default function SettingsPage() {
             </Card>
           </TabsContent>
 
+
           <TabsContent value="team">
             <Card>
               <CardHeader className="pb-4">
-                {/* <InvitePage jobs={[]} /> */}
-                <TeamMembersStep onCompletion={() => {}} />
+                <InvitePage jobs={[]} />
               </CardHeader>
               <CardContent>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="integrations">
+            <IntegrationStatus />
           </TabsContent>
         </Tabs>
       </div>
