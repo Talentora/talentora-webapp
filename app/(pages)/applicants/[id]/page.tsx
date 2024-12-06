@@ -5,6 +5,18 @@ import ApplicantPortal from '@/components/Applicants/Applicant/ApplicantPortal';
 import { ApplicantCandidate } from '@/types/merge';
 import { ArrowLeft } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import {Tables} from "@/types/types_db";
+import { createClient } from '@/utils/supabase/client';
+
+type AI_summary = Tables<'AI_summary'>;
+type Applications = Tables<'applications'>;
+type Applicants = Tables<'applicants'>;
+
+export type AI_summary_applicant = AI_summary & {
+  applications: Applications & {
+    applicants: Applicants;
+  };
+};
 
 export default function ApplicantPage({
   params
@@ -13,9 +25,10 @@ export default function ApplicantPage({
 }) {
   const [applicantCandidate, setApplicantCandidate] = useState<ApplicantCandidate | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [aiSummary, setAiSummary] = useState<AI_summary_applicant | null>(null);
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchMergeData() {
       try {
         const response = await fetch(`/api/applications/${params.id}`);
         if (!response.ok) {
@@ -29,7 +42,33 @@ export default function ApplicantPage({
       }
     }
 
-    fetchData();
+    async function fetchDBData() {
+      const supabase = createClient();
+      const {data, error} = await supabase
+        .from('AI_summary')
+        .select(`
+          *,
+          applications!inner (
+            *,
+            applicants!inner (
+              id,
+              merge_applicant_id
+            )
+          )
+        `)
+        .eq('applications.applicants.merge_applicant_id', params.id)
+        .single()
+      if (error) {
+        console.error('Error fetching AI summary:', error);
+        setError('Failed to load applicant data');
+      }
+      if (data) {
+        setAiSummary(data);
+      }
+    }
+
+    fetchMergeData();
+    fetchDBData();
   }, [params.id]);
 
   if (error) {
@@ -61,7 +100,7 @@ export default function ApplicantPage({
           </div>
         </div>
       ) : (
-        <ApplicantPortal ApplicantCandidate={applicantCandidate} />
+        <ApplicantPortal ApplicantCandidate={applicantCandidate} aiSummary={aiSummary} />
       )}
     </div>
   );

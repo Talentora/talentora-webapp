@@ -16,12 +16,13 @@ import {
 // Register ChartJS components
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
-
+import { AI_summary_applicant } from "@/app/(pages)/applicants/[id]/page";
 interface ApplicantSummaryProps {
   ApplicantCandidate: ApplicantCandidate;
+  aiSummary: AI_summary_applicant;
 }
 
-export default function ApplicantSummary({ ApplicantCandidate }: ApplicantSummaryProps) {
+export default function ApplicantSummary({ ApplicantCandidate, aiSummary }: ApplicantSummaryProps) {
   const [evaluationData, setEvaluationData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
