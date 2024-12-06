@@ -3,6 +3,9 @@ import { ArrowRight } from 'lucide-react';
 import Image1 from './Icons/Image1';
 import Image2 from './Icons/Image2';
 import Image3 from './Icons/Image3';
+import Image8 from './Icons/Image8';
+import Image9 from './Icons/Image9';
+import Image10 from './Icons/Image10';
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 
@@ -188,15 +191,16 @@ export default function LandingPage() {
             </h2>
 
             <div className="h-20"></div> {/* Blank space added here */}
-
-            <div className="flex justify-center">
-              <img
-              src='/Images/Image6.png'
-              alt="Team collaboration"
-              width={900}
-              height={900}
-              className=""
-              />
+            <div className="flex justify-center space-x-24"> {/* Increased space between images */}
+              <div className="w-32 h-20 md:w-40 md:h-40"> {/* Increased image size */}
+              <Image8 />
+              </div>
+              <div className="w-32 h-20 md:w-40 md:h-40"> {/* Increased image size */}
+              <Image9 />
+              </div>
+              <div className="w-32 h-20 md:w-40 md:h-40"> {/* Increased image size */}
+              <Image10 />
+              </div>
             </div>
           </div>
           <div className='h-20'></div>
