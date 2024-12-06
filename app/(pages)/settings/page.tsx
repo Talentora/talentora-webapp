@@ -11,6 +11,9 @@ import NameForm from '@/components/AccountForms/NameForm';
 import CompanyForm from '@/components/AccountForms/CompanyForm';
 import Link from 'next/link';
 import InvitePage from '@/components/Invite';
+import { TeamMembersStep } from '@/components/CompanyOnboarding/steps/TeamMemberStep';
+import IntegrationStatus from '@/components/AccountForms/IntegrationStatus';
+
 
 type Recruiter = Tables<'recruiters'>;
 type Company = Tables<'companies'>;
@@ -51,6 +54,12 @@ export default function SettingsPage() {
               className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
               Team
+            </TabsTrigger>
+            <TabsTrigger 
+              value="integrations" 
+              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
+            >
+              Integration Status
             </TabsTrigger>
           </TabsList>
           
@@ -115,6 +124,10 @@ export default function SettingsPage() {
               <CardContent>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="integrations">
+            <IntegrationStatus />
           </TabsContent>
         </Tabs>
       </div>

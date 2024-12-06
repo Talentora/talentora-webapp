@@ -41,6 +41,8 @@ export type Database = {
           emotion_eval: Json | null
           id: string
           interview_summary: Json | null
+          recording_id: string | null
+          room_name: string | null
           text_eval: Json | null
         }
         Insert: {
@@ -49,6 +51,8 @@ export type Database = {
           emotion_eval?: Json | null
           id?: string
           interview_summary?: Json | null
+          recording_id?: string | null
+          room_name?: string | null
           text_eval?: Json | null
         }
         Update: {
@@ -57,6 +61,8 @@ export type Database = {
           emotion_eval?: Json | null
           id?: string
           interview_summary?: Json | null
+          recording_id?: string | null
+          room_name?: string | null
           text_eval?: Json | null
         }
         Relationships: [
@@ -86,34 +92,24 @@ export type Database = {
       }
       applications: {
         Row: {
-          AI_summary: string | null
           applicant_id: string
           created_at: string
           id: string
           job_id: string
         }
         Insert: {
-          AI_summary?: string | null
           applicant_id: string
           created_at?: string
           id?: string
           job_id: string
         }
         Update: {
-          AI_summary?: string | null
           applicant_id?: string
           created_at?: string
           id?: string
           job_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "applications_AI_summary_fkey"
-            columns: ["AI_summary"]
-            isOneToOne: false
-            referencedRelation: "AI_summary"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "applications_applicant_id_fkey"
             columns: ["applicant_id"]
@@ -182,9 +178,10 @@ export type Database = {
           billing_address: string | null
           company_context: string | null
           description: string | null
+          email_extension: string | null
           id: string
-          industry: string
-          location: string
+          industry: string | null
+          location: string | null
           merge_account_token: string | null
           name: string
           payment_method: string | null
@@ -195,9 +192,10 @@ export type Database = {
           billing_address?: string | null
           company_context?: string | null
           description?: string | null
+          email_extension?: string | null
           id?: string
-          industry: string
-          location: string
+          industry?: string | null
+          location?: string | null
           merge_account_token?: string | null
           name: string
           payment_method?: string | null
@@ -208,9 +206,10 @@ export type Database = {
           billing_address?: string | null
           company_context?: string | null
           description?: string | null
+          email_extension?: string | null
           id?: string
-          industry?: string
-          location?: string
+          industry?: string | null
+          location?: string | null
           merge_account_token?: string | null
           name?: string
           payment_method?: string | null
@@ -288,15 +287,7 @@ export type Database = {
           id?: string
           stripe_customer_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "customers_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       job_interview_config: {
         Row: {
@@ -308,6 +299,8 @@ export type Database = {
           interview_name: string | null
           interview_questions: Json | null
           job_id: string
+          min_qual: Json[] | null
+          preferred_qual: Json[] | null
           type: string | null
         }
         Insert: {
@@ -319,6 +312,8 @@ export type Database = {
           interview_name?: string | null
           interview_questions?: Json | null
           job_id?: string
+          min_qual?: Json[] | null
+          preferred_qual?: Json[] | null
           type?: string | null
         }
         Update: {
@@ -330,6 +325,8 @@ export type Database = {
           interview_name?: string | null
           interview_questions?: Json | null
           job_id?: string
+          min_qual?: Json[] | null
+          preferred_qual?: Json[] | null
           type?: string | null
         }
         Relationships: [
@@ -559,13 +556,6 @@ export type Database = {
             columns: ["price_id"]
             isOneToOne: false
             referencedRelation: "prices"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]

@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/card';
 import { CalendarDays, Mail, Phone } from 'lucide-react';
 import ApplicantCandidateStatus from '@/components/Applicants/Applicant/ApplicantStatus';
-
+import Link from 'next/link';
 interface ApplicantInfoProps {
   ApplicantCandidate: ApplicantCandidate;
 }
@@ -25,7 +25,7 @@ export default function ApplicantInfo({
   const phoneNumber =
     ApplicantCandidate.candidate.phone_numbers?.[0]?.value || 'No phone number';
   const jobName = ApplicantCandidate.job.name || 'No job specified';
-
+  const appliedAt = ApplicantCandidate.application.applied_at ? new Date(ApplicantCandidate.application.applied_at).toLocaleDateString() : 'Unknown date';
   return (
     <Card>
       <CardHeader className="flex flex-row items-center gap-4">
@@ -40,7 +40,11 @@ export default function ApplicantInfo({
         </Avatar>
         <div>
           <CardTitle>{candidateName}</CardTitle>
-          <CardDescription>{jobName}</CardDescription>
+          <CardDescription>
+            <Link href={`/jobs/${ApplicantCandidate.job.id}`} className="hover:underline">
+              {jobName}
+            </Link>
+          </CardDescription>
         </div>
       </CardHeader>
       <CardContent>
@@ -57,9 +61,7 @@ export default function ApplicantInfo({
             <CalendarDays className="w-4 h-4" />
             <span className="text-sm">
               Applied on{' '}
-              {ApplicantCandidate.applied_at
-                ? new Date(ApplicantCandidate.applied_at).toLocaleDateString()
-                : 'Unknown date'}
+              {appliedAt}
             </span>
           </div>
           <div className="flex items-center">
