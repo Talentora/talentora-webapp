@@ -267,7 +267,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="py-24 bg-gradient-to-br from-purple-50 to-white">
+        <section className="py-24">
   <div className="container px-4 mx-auto">
     <div className="text-center mb-20">
       <h2 className="text-5xl font-bold mb-6">
