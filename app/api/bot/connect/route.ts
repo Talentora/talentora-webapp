@@ -218,24 +218,3 @@ async function createAISummaryRecord(roomName: string, applicationId: string) {
     throw error;
   }
 }
-
-async function updateApplicationWithAISummaryId(applicationId: string, aiSummaryId: string) {
-  console.log("Updating application with AI summary ID:", aiSummaryId);
-
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from('applications')
-    .update({ AI_summary: aiSummaryId })
-    .eq('id', applicationId)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Failed to update application with AI summary ID:", error);
-  }
-
-  console.log("Application updated with AI summary ID:", data);
-
-  return data;
-}
