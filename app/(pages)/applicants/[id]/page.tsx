@@ -12,11 +12,31 @@ type AI_summary = Tables<'AI_summary'>;
 type Applications = Tables<'applications'>;
 type Applicants = Tables<'applicants'>;
 
-export type AI_summary_applicant = AI_summary & {
-  applications: Applications & {
-    applicants: Applicants;
-  };
-};
+export interface AI_summary_applicant {
+    emotion_eval: {
+        timeline: {
+            face: Array<{
+                time: number;
+                emotions: Record<string, number>;
+            }>;
+        };
+        averages: {
+            face: {
+                emotions: Record<string, number>;
+                aggregate_score: number;
+            };
+            prosody: {
+                emotions: Record<string, number>;
+                aggregate_score: number;
+            };
+            language: {
+                emotions: Record<string, number>;
+                aggregate_score: number;
+            };
+        };
+    };
+    // ... other properties
+}
 
 export default function ApplicantPage({
   params

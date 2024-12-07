@@ -15,7 +15,7 @@ const mockTranscript = [
 ]
 
 interface VideoTranscriptProps {
-    aiSummary: AI_summary_applicant
+    aiSummary: AI_summary_applicant | null;
 }
 
 export interface Recording {
@@ -32,7 +32,7 @@ export interface Recording {
 }
 
 export default function VideoTranscript({ aiSummary }: VideoTranscriptProps) {
-  const summary: string = (aiSummary.interview_summary as any)?.content || "Missing Summary"
+  const summary: string = (aiSummary?.interview_summary as any)?.content || "Missing Summary"
 
 const [recording, setRecording] = useState<Recording | null>(null)
 useEffect(() => {

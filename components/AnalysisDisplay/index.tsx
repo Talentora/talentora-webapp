@@ -5,7 +5,7 @@ import EmotionalAnalysis from "./EmotionalAnalysis";
 import LexicalAnalysis from "./LexicalAnalysis";
 import AssessmentScores from "./AssessmentScores";
 interface AnalysisDisplayProps {
-    aiSummary: AI_summary_applicant;
+    aiSummary: AI_summary_applicant | null;
 }
 
 const Page = ({ aiSummary }: AnalysisDisplayProps) => {

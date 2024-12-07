@@ -1,7 +1,7 @@
 import { AI_summary_applicant } from "@/app/(pages)/applicants/[id]/page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 interface AssessmentScoresProps {
-    scores: AI_summary_applicant;
+    scores: AI_summary_applicant | null;
 }
 
 const Page = ({ scores }: AssessmentScoresProps) => {
