@@ -12,7 +12,7 @@ const Page = ({ analysis }: EmotionalAnalysisProps) => {
     const emotionalAnalysis = analysis?.emotion_eval;
 
     return (
-        <div className="p-4 border border-gray-300">
+        <div >
             <Card>
                 <CardHeader>
                     <CardTitle>Emotional Analysis</CardTitle>
