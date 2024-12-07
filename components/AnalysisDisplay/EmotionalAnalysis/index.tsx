@@ -1,6 +1,6 @@
 import { AI_summary_applicant } from "@/app/(pages)/applicants/[id]/page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Graph1 from "./Graph1";
+import TimelineGraph from "./TimelineGraph";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EmotionAverages from "./EmotionAverages";
 
@@ -27,7 +27,7 @@ const Page = ({ analysis }: EmotionalAnalysisProps) => {
                         </TabsList>
                         
                         <TabsContent value="timeline">
-                            <Graph1 timeline={emotionalAnalysis?.timeline} />
+                            <TimelineGraph timeline={emotionalAnalysis?.timeline} />
                         </TabsContent>
                         
                         <TabsContent value="averages">

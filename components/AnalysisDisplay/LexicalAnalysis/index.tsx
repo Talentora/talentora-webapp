@@ -6,10 +6,10 @@ interface LexicalAnalysisProps {
 
 const Page = ({ analysis }: LexicalAnalysisProps) => {
     return (
-        <div className="p-4 border border-gray-300">
+        <div className="border border-gray-300">
             <Card>
                 <CardHeader>
-                    <CardTitle>Assessment Scores</CardTitle>
+                    <CardTitle>Lexical Analysis</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4">
                     <p>Boiler plate text goes here</p>

@@ -30,15 +30,23 @@ export interface Recording {
   mtgSessionId: string
   isVttEnabled: boolean
 }
-
 export default function VideoTranscript({ aiSummary }: VideoTranscriptProps) {
-  const summary: string = (aiSummary?.interview_summary as any)?.content || "Missing Summary"
+  // Extend AI_summary_applicant type locally to include optional fields
+  type ExtendedSummary = AI_summary_applicant & {
+    interview_summary?: {
+      content: string;
+    };
+    recording_id?: string;
+  };
 
-const [recording, setRecording] = useState<Recording | null>(null)
+  const typedSummary = aiSummary as ExtendedSummary;
+  const summary = typedSummary?.interview_summary?.content || "Missing Summary";
+  const recordingId = typedSummary?.recording_id;
+  const [recording, setRecording] = useState<Recording | null>(null);
 useEffect(() => {
   const getRecording = async () => {
     try {
-      const response = await fetch(`/api/bot/recordings/${aiSummary.recording_id}`);
+      const response = await fetch(`/api/bot/recordings/${recordingId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch transcript');
       }
