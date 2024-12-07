@@ -8,7 +8,6 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { CalendarDays, Mail, Phone } from 'lucide-react';
-import ApplicantCandidateStatus from '@/components/Applicants/Applicant/ApplicantStatus';
 import Link from 'next/link';
 interface ApplicantInfoProps {
   ApplicantCandidate: ApplicantCandidate;
