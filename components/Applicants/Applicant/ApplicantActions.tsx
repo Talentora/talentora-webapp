@@ -1,208 +1,213 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Download, ThumbsDown, ThumbsUp } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { ApplicantCandidate } from '@/types/merge';
-import { inviteCandidate, getJobInterviewConfig } from '@/utils/supabase/queries';
-import { useToast } from '@/components/Toasts/use-toast';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+'use client';
 
-// Function to fetch the resume URL from the backend API route
-const fetchAttachmentDetails = async (attachmentId: string): Promise<string | null> => {
-  try {
-    const response = await fetch(`/api/merge/resume?attachmentId=${attachmentId}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch attachment details');
-    }
-    const data: { file_url?: string } = await response.json();
-    return data.file_url || null;
-  } catch (error) {
-    console.error('Error fetching attachment details:', error);
-    return null;
-  }
-};
+import { Button } from "@/components/ui/button";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { CalendarClock, Loader2 } from "lucide-react";
+import { format } from "date-fns";
+import { getJobInterviewConfig } from "@/utils/supabase/queries";
 
-// Component for fetching and displaying attachment details
-const AttachmentFetcher: React.FC<{ attachmentId: string }> = ({ attachmentId }) => {
-  const [fileUrl, setFileUrl] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const url = await fetchAttachmentDetails(attachmentId);
-        if (url) {
-          setFileUrl(url);
-        } else {
-          setError('Resume URL not found');
-        }
-      } catch (err) {
-        setError('An error occurred while fetching the attachment');
-      }
-    };
-
-    fetchData();
-  }, [attachmentId]);
-
-  return (
-    <div className="w-full h-[80vh]">
-      {error ? (
-        <div className="text-red-500">{error}</div>
-      ) : fileUrl ? (
-        <object
-          data={fileUrl}
-          type="application/pdf"
-          className="w-full h-full"
-        >
-          <p>Unable to display PDF. <a href={fileUrl} target="_blank" rel="noopener noreferrer">Open in new tab</a></p>
-        </object>
-      ) : (
-        <div>Loading resume...</div>
-      )}
-    </div>
-  );
-};
-
-export default function ApplicantActions({
-  ApplicantCandidate,
-}: {
-  ApplicantCandidate: ApplicantCandidate;
-}) {
-  const { toast } = useToast();
-  const [isInterviewReady, setIsInterviewReady] = useState(false);
-  const firstName = ApplicantCandidate?.candidate?.first_name || '';
-  const lastName = ApplicantCandidate?.candidate?.last_name || '';
-  const candidateId = ApplicantCandidate?.candidate?.id || '';
-  const emailAddress =
-    ApplicantCandidate?.candidate?.email_addresses?.[0]?.value || '';
-  const resumeAttachmentId =
-    ApplicantCandidate?.candidate?.attachments?.[0]; // Assume it's an attachment ID.
-
-  const jobId = ApplicantCandidate?.job?.id || '';
-
-  useEffect(() => {
-    const checkInterviewConfig = async () => {
-      if (!jobId) return;
-      
-      const config = await getJobInterviewConfig(jobId);
-      const isReady = !!(config?.bot_id && config?.interview_questions && 
-                        config?.interview_name && config?.duration);
-      setIsInterviewReady(isReady);
-    };
-
-    checkInterviewConfig();
-  }, [jobId]);
-
-  async function onScheduleAIInterview() {
-    const name = `${firstName} ${lastName}`.trim();
-
-    if (!name || !emailAddress || !candidateId) {
-      toast({
-        title: 'Error',
-        description: 'Name, email address, and candidate ID are required',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    try {
-      console.log(`Inviting candidate ${name}: ${emailAddress}`);
-
-      const { data, error } = await inviteCandidate(
-        name,
-        emailAddress,
-        jobId
-      );
-      console.log('Response:', { data, error });
-
-      if (error) {
-        toast({
-          title: 'Failed to invite candidate',
-          description: error || 'An error occurred',
-          variant: 'destructive'
-        });
-        return;
-      }
-      toast({
-        title: 'Success',
-        description: 'Candidate invited successfully',
-        variant: 'default',
-      });
-    } catch (err) {
-      console.error('Error inviting candidate:', err);
-      toast({
-        title: 'Error',
-        description: 'Failed to invite candidate',
-        variant: 'destructive',
-      });
-    }
-  }
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-red-500">Actions (Updated)</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <Button 
-                  className="w-full" 
-                  onClick={onScheduleAIInterview}
-                  disabled={!isInterviewReady}
-                >
-                  Schedule AI Interview
-                </Button>
-              </div>
-            </TooltipTrigger>
-            {!isInterviewReady && (
-              <TooltipContent className="text-sm bg-red-500 text-white p-2 rounded-md">
-                <p >Please complete the interview configuration in job settings before inviting candidates</p>
-              </TooltipContent>
-            )}
-          </Tooltip>
-        </TooltipProvider>
-        <Button className="w-full" variant="outline">
-          Send Message
-        </Button>
-        <div className="flex gap-2">
-          <Button className="flex-1" size="icon" variant="outline">
-            <ThumbsUp className="w-4 h-4" />
-            <span className="sr-only">Approve</span>
-          </Button>
-          <Button className="flex-1" size="icon" variant="outline">
-            <ThumbsDown className="w-4 h-4" />
-            <span className="sr-only">Reject</span>
-          </Button>
-        </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="w-full max-w-md mx-auto" variant="outline">
-              <Download className="w-4 h-4 mr-2" />
-              View Resume
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl">
-            <DialogHeader>
-              <DialogTitle>Resume</DialogTitle>
-            </DialogHeader>
-            {resumeAttachmentId ? (
-              <AttachmentFetcher attachmentId={resumeAttachmentId} />
-            ) : (
-              <div>No resume available</div>
-            )}
-          </DialogContent>
-        </Dialog>
-      </CardContent>
-    </Card>
-  );
+interface ApplicantActionsProps {
+    jobId: string;
+    applicantId: string;
 }
+
+interface InterviewStatus {
+    isInvited: boolean;
+    inviteDate?: string;
+    isCompleted: boolean;
+    applicationId?: string;
+}
+
+interface SetupFlags {
+    hasBotId: boolean;
+    hasQuestions: boolean;
+    hasInterviewName: boolean;
+    hasDuration: boolean;
+    isReady: "yes" | "no" | "almost";
+}
+
+const ApplicantActions = ({ jobId, applicantId }: ApplicantActionsProps) => {
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+    const [interviewStatus, setInterviewStatus] = useState<InterviewStatus | null>(null);
+    const [setupFlags, setSetupFlags] = useState<SetupFlags>({
+        hasBotId: false,
+        hasQuestions: false,
+        hasInterviewName: false,
+        hasDuration: false,
+        isReady: "no"
+    });
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const checkJobSetup = async () => {
+            try {
+                const config = await getJobInterviewConfig(jobId);
+                
+                if (!config) {
+                    setSetupFlags({
+                        hasBotId: false,
+                        hasQuestions: false,
+                        hasInterviewName: false,
+                        hasDuration: false,
+                        isReady: "no"
+                    });
+                    return;
+                }
+
+                const hasBotId = !!config.bot_id;
+                const hasQuestions = !!config.interview_questions;
+                const hasInterviewName = !!config.interview_name;
+                const hasDuration = !!config.duration;
+
+                const isReady = (hasBotId && hasQuestions && hasInterviewName && hasDuration) ? "yes" : 
+                               (!hasBotId && !hasQuestions && !hasInterviewName && !hasDuration) ? "no" : "almost";
+
+                setSetupFlags({
+                    hasBotId,
+                    hasQuestions,
+                    hasInterviewName,
+                    hasDuration,
+                    isReady
+                });
+            } catch (error) {
+                console.error('Error checking job setup:', error);
+                setError('Error checking job configuration');
+            }
+        };
+
+        const checkInterviewStatus = async () => {
+            const supabase = createClient();
+            
+            // Check if applicant has been invited
+            const { data: applicationData, error: applicationError } = await supabase
+                .from('applications')
+                .select('id, created_at')
+                .eq('job_id', jobId)
+                .eq('applicant_id', applicantId)
+                .single();
+
+            if (applicationError && applicationError.code !== 'PGRST116') {
+                setError('Error checking application status');
+                return;
+            }
+
+            if (!applicationData) {
+                setInterviewStatus({ isInvited: false, isCompleted: false });
+                return;
+            }
+
+            // Check if interview is completed
+            const { data: aiSummaryData, error: aiSummaryError } = await supabase
+                .from('AI_summary')
+                .select('id')
+                .eq('application_id', applicationData.id)
+                .single();
+
+            if (aiSummaryError && aiSummaryError.code !== 'PGRST116') {
+                setError('Error checking interview completion status');
+                return;
+            }
+
+            setInterviewStatus({
+                isInvited: true,
+                inviteDate: applicationData.created_at,
+                isCompleted: !!aiSummaryData,
+                applicationId: applicationData.id
+            });
+        };
+
+        checkJobSetup();
+        checkInterviewStatus();
+    }, [jobId, applicantId]);
+
+    const handleInvite = async () => {
+        setLoading(true);
+        try {
+            const supabase = createClient();
+            const { data, error } = await supabase
+                .from('applications')
+                .insert([
+                    { job_id: jobId, applicant_id: applicantId }
+                ])
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            setInterviewStatus({
+                isInvited: true,
+                inviteDate: data.created_at,
+                isCompleted: false,
+                applicationId: data.id
+            });
+
+            router.refresh();
+        } catch (error) {
+            console.error('Error inviting applicant:', error);
+            setError('Failed to invite applicant');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (error) {
+        return (
+            <Button variant="destructive" disabled>
+                Error: {error}
+            </Button>
+        );
+    }
+
+    // State 1: Job not setup or not ready
+    if (setupFlags.isReady !== "yes") {
+        return (
+            <Button disabled className="w-full">
+                <CalendarClock className="mr-2 h-4 w-4" />
+                {setupFlags.isReady === "almost" ? "Complete Job Setup First" : "Setup Job Interview First"}
+            </Button>
+        );
+    }
+
+    // Loading state
+    if (loading) {
+        return (
+            <Button disabled className="w-full">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Sending Invite...
+            </Button>
+        );
+    }
+
+    // State 2: Ready to invite
+    if (!interviewStatus?.isInvited) {
+        return (
+            <Button onClick={handleInvite} className="w-full">
+                <CalendarClock className="mr-2 h-4 w-4" />
+                Schedule AI Interview
+            </Button>
+        );
+    }
+
+    // State 3: Already invited
+    return (
+        <div className="w-full space-y-2">
+            <Button 
+                variant="outline" 
+                className="w-full" 
+                disabled
+            >
+                <CalendarClock className="mr-2 h-4 w-4" />
+                {interviewStatus.isCompleted ? 'Interview Completed' : 'Interview Scheduled'}
+            </Button>
+            <div className="text-sm text-muted-foreground text-center">
+                Invited on {format(new Date(interviewStatus.inviteDate!), 'MMM d, yyyy')}
+                {interviewStatus.isCompleted && ' • Completed'}
+            </div>
+        </div>
+    );
+};
+
+export default ApplicantActions;

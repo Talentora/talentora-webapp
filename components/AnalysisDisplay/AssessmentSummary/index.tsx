@@ -5,16 +5,35 @@ interface AssessmentSummaryProps {
 }
 
 const Page = ({ summary }: AssessmentSummaryProps) => {
-    return (
-        <div className="p-4 border border-gray-300">
+    if (!summary) {
+        return (
             <Card>
-        <CardHeader>
-            <CardTitle>Assessment Scores</CardTitle>
-        </CardHeader>
-        <CardContent className="p-4">
-            <p>Boiler plate text goes here</p>
-        </CardContent>
-    </Card>
+                <CardHeader>
+                    <CardTitle>Assessment Summary</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div>No summary available</div>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    return (
+        <div className="p-4">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Assessment Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="p-4">
+                    <div className="space-y-4">
+                        <p className="text-gray-700">{summary.text_eval.explanation}</p>
+                        <div className="flex items-center gap-2">
+                            <span className="font-medium">Overall Score:</span>
+                            <span>{summary.text_eval.overall_score}/100</span>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     )
 }
