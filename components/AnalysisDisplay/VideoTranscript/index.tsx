@@ -55,7 +55,7 @@ useEffect(() => {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8">AI Recruiter Interview Results</h1>
+      <h1 className="text-3xl font-bold mb-8">Rewatch the Interview</h1>
       <div className="flex flex-col gap-4">
         <div className="flex-1">
           <VideoPlayer recording={recording} />

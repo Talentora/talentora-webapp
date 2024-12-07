@@ -60,7 +60,7 @@ export default function ApplicantPage({
         .single()
       if (error) {
         console.error('Error fetching AI summary:', error);
-        setError('Failed to load applicant data');
+        setError('Failed to load applicant data from the database');
       }
       if (data) {
         setAiSummary(data);
