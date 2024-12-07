@@ -33,7 +33,7 @@ const EmotionAverages = ({ averages }: EmotionAveragesProps) => {
                 <Card key={title}>
                     <CardContent className="p-6">
                         <div className="flex flex-col md:flex-row items-center gap-6">
-                            <div className="w-full md:w-[400px] h-[300px]">
+                            <div className="w-full md:w-1/3 h-[30vh]">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <RadarChart data={getTopEmotions(data.emotions)}>
                                         <PolarGrid />
