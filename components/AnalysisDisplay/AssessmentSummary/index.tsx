@@ -1,7 +1,7 @@
 import { AI_summary_applicant } from "@/app/(pages)/applicants/[id]/page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 interface AssessmentSummaryProps {
-    summary: AI_summary_applicant
+    summary: AI_summary_applicant | null;
 }
 
 const Page = ({ summary }: AssessmentSummaryProps) => {
