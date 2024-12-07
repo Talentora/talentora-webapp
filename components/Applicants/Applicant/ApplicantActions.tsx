@@ -52,11 +52,17 @@ const AttachmentFetcher: React.FC<{ attachmentId: string }> = ({ attachmentId })
   }, [attachmentId]);
 
   return (
-    <div>
+    <div className="w-full h-[80vh]">
       {error ? (
         <div className="text-red-500">{error}</div>
       ) : fileUrl ? (
-        <iframe src={fileUrl} title="Resume" className="w-full h-96" />
+        <object
+          data={fileUrl}
+          type="application/pdf"
+          className="w-full h-full"
+        >
+          <p>Unable to display PDF. <a href={fileUrl} target="_blank" rel="noopener noreferrer">Open in new tab</a></p>
+        </object>
       ) : (
         <div>Loading resume...</div>
       )}
@@ -185,7 +191,7 @@ export default function ApplicantActions({
               View Resume
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-4xl">
             <DialogHeader>
               <DialogTitle>Resume</DialogTitle>
             </DialogHeader>

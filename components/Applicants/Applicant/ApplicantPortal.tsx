@@ -23,7 +23,18 @@ export default function ApplicantPortal({
           <div>
             <ApplicantInfo ApplicantCandidate={ApplicantCandidate} />
             {/* <InterviewResponses /> */}
-            {aiSummary ? <AnalysisDisplay aiSummary={aiSummary} /> : null}
+            {aiSummary ? (
+              <AnalysisDisplay aiSummary={aiSummary} />
+            ) : (
+              <>
+                <div className="alert alert-warning">
+                  This applicant hasn't completed their AI assessment yet.
+                </div>
+                <div className="filter blur-sm">
+                  <AnalysisDisplay aiSummary={null} />
+                </div>
+              </>
+            )}
           </div>
         </div>
         <div className="w-full lg:w-64 space-y-6">
