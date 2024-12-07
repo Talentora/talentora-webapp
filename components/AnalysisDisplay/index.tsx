@@ -12,8 +12,10 @@ interface AnalysisDisplayProps {
 const Page = ({ aiSummary }: AnalysisDisplayProps) => {
     return (
         <div className="flex flex-col gap-4">
-            <AssessmentScores scores={aiSummary} />
-            <AssessmentSummary summary={aiSummary} />
+            <div className="grid grid-cols-2 gap-4">
+                <AssessmentSummary summary={aiSummary} />
+                <AssessmentScores scores={aiSummary} />
+            </div>
             <EmotionalAnalysis analysis={aiSummary} />
             <NewLexicalAnalysis summary={aiSummary} />
             <LexicalAnalysis analysis={aiSummary} />

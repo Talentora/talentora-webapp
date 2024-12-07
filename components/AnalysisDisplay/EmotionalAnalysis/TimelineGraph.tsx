@@ -44,7 +44,7 @@ const Page = ({ timeline }: { timeline: any }) => {
     }, {} as any);
 
     return (
-        <div className="w-full h-[400px]">
+        <div className="w-full">
             <ChartContainer config={config}>
                 <LineChart data={data}>
                     <XAxis 
