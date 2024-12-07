@@ -1,11 +1,17 @@
 import { AI_summary_applicant } from "@/app/(pages)/applicants/[id]/page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+interface TextEvaluation {
+    explanation: string;
+    overall_score: number;
+}
+
 interface AssessmentSummaryProps {
-    summary: AI_summary_applicant | null;
+    summary: (AI_summary_applicant & { text_eval?: TextEvaluation }) | null;
 }
 
 const Page = ({ summary }: AssessmentSummaryProps) => {
-    if (!summary) {
+    if (!summary || !summary.text_eval) {
         return (
             <Card>
                 <CardHeader>
@@ -19,10 +25,10 @@ const Page = ({ summary }: AssessmentSummaryProps) => {
     }
 
     return (
-        <div className="p-4">
+        <div >
             <Card>
                 <CardHeader>
-                    <CardTitle>Assessment Summary</CardTitle>
+                    <CardTitle>Lexical Analysis</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4">
                     <div className="space-y-4">
