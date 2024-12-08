@@ -1,3 +1,5 @@
+'use client'
+
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import Image1 from './Icons/Image1';
@@ -6,10 +8,56 @@ import Image3 from './Icons/Image3';
 import Image8 from './Icons/Image8';
 import Image9 from './Icons/Image9';
 import Image10 from './Icons/Image10';
+import Image11 from './Icons/Image11';
+import Image12 from './Icons/Image12';
+import Image13 from './Icons/Image13';
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
+
+const ImageShuffler = () => {
+  const images = [
+    { component: Image8, id: 1 },
+    { component: Image9, id: 2 },
+    { component: Image10, id: 3 },
+    { component: Image11, id: 4 },
+    { component: Image12, id: 5 },
+    { component: Image13, id: 6 }
+  ];
+
+  const [displayedImages, setDisplayedImages] = useState(images.slice(0, 3));
+
+  useEffect(() => {
+    const shuffleInterval = setInterval(() => {
+      const shuffledImages = [...images].sort(() => Math.random() - 0.5);
+      setDisplayedImages(shuffledImages.slice(0, 3));
+    }, 3000); // Shuffle every 3 seconds
+
+    return () => clearInterval(shuffleInterval);
+  }, []);
+
+  return (
+    <div className="flex justify-center space-x-24">
+      <AnimatePresence mode='wait'>
+        {displayedImages.map((image) => (
+          <motion.div
+            key={image.id}
+            className="w-32 h-20 md:w-40 md:h-40"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+          >
+            <image.component />
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 export default function LandingPage() {
   return (
@@ -189,19 +237,8 @@ export default function LandingPage() {
               Connect with your ATS
               <span className="block w-16 h-1 bg-gradient-to-r from-[#FB7B54] to-[#FF45C7] absolute left-0 mt-2"></span>
             </h2>
-
-            <div className="h-20"></div> {/* Blank space added here */}
-            <div className="flex justify-center space-x-24"> {/* Increased space between images */}
-              <div className="w-32 h-20 md:w-40 md:h-40"> {/* Increased image size */}
-              <Image8 />
-              </div>
-              <div className="w-32 h-20 md:w-40 md:h-40"> {/* Increased image size */}
-              <Image9 />
-              </div>
-              <div className="w-32 h-20 md:w-40 md:h-40"> {/* Increased image size */}
-              <Image10 />
-              </div>
-            </div>
+            <div className="h-20"></div>
+            <ImageShuffler />
           </div>
           <div className='h-20'></div>
           <div className="text-center">
