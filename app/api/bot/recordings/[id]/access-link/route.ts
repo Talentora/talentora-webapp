@@ -7,7 +7,8 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 
   try {
-    const response = await fetch(`https://api.daily.co/v1/recordings/${id}/access-link?valid_for_secs=${validForSecs}`, {
+    // const response = await fetch(`https://api.daily.co/v1/recordings/${id}/access-link?valid_for_secs=${validForSecs}`, {
+    const response = await fetch(`https://api.daily.co/v1/recordings/${id}/access-link`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

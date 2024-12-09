@@ -1,6 +1,9 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { Button } from "@/components/ui/button"
+import { Slider } from "@/components/ui/slider"
+import { Play, Pause, RotateCcw, FastForward } from 'lucide-react'
 import { Recording } from "../index";
 
 interface VideoPlayerProps {
@@ -8,13 +11,9 @@ interface VideoPlayerProps {
 }
 
 export default function VideoPlayer({ recording }: VideoPlayerProps) {
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [playbackRate, setPlaybackRate] = useState(1)
+
   const videoRef = useRef<HTMLVideoElement>(null)
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
-
-  // Construct S3 URL using recording data
-
 
 
   useEffect(() => {
@@ -29,9 +28,14 @@ export default function VideoPlayer({ recording }: VideoPlayerProps) {
   }, [recording]);
 
 
+
+
+
   if (!recording || !videoUrl) {
     return <video controls className="w-full h-full rounded-lg"><source src="" type="video/mp4" />Recording not found</video>;
   }
+
+  console.log("videoUrl", videoUrl)
 
   return (
     <div className="space-y-4">
@@ -45,7 +49,7 @@ export default function VideoPlayer({ recording }: VideoPlayerProps) {
           preload="metadata"
         />
       </div>
-     
+    
     </div>
   )
 }

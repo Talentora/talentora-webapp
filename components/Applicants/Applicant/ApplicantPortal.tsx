@@ -3,17 +3,41 @@ import ApplicantInfo from '@/components/Applicants/Applicant/ApplicantInfo';
 import ApplicantActions from '@/components/Applicants/Applicant/ApplicantActions';
 import { portalProps } from '@/app/(pages)/applicants/[id]/page';
 import AnalysisDisplay from '@/components/AnalysisDisplay';
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ApplicantPortalProps {
   portalProps: portalProps;
 }
 
+const ApplicantInfoSkeleton = () => (
+  <div className="space-y-4">
+    <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex-1">
+        <Skeleton className="h-[200px] w-full" />
+      </div>
+      <div className="w-64">
+        <Skeleton className="h-[200px] w-full" />
+      </div>
+    </div>
+  </div>
+);
+
+const PlaceholderAnalysis = () => (
+  <div className="flex flex-col gap-4">
+    <div className="grid grid-cols-2 gap-4">
+      <Skeleton className="h-48 w-full" />
+      <Skeleton className="h-48 w-full" />
+    </div>
+    <Skeleton className="h-64 w-full" />
+    <Skeleton className="h-64 w-full" />
+    <Skeleton className="h-64 w-full" />
+    <Skeleton className="h-96 w-full" />
+  </div>
+);
+
 export default function ApplicantPortal({
   portalProps
 }: ApplicantPortalProps) {
-
-  console.log("portalProps", portalProps);
-
   const {mergeApplicant, AI_summary, application, job_interview_config} = portalProps;
 
   if (!mergeApplicant) {
@@ -32,15 +56,12 @@ export default function ApplicantPortal({
                 </div>
               </div>
             </div>
-            <div className="filter blur-sm opacity-50">
-              <ApplicantInfo ApplicantCandidate={null} />
-            </div>
+            <ApplicantInfoSkeleton />
           </div>
         </div>
       </div>
     );
   }
-
 
   return (
     <div className="space-y-4">
@@ -52,9 +73,7 @@ export default function ApplicantPortal({
                 <ApplicantInfo ApplicantCandidate={mergeApplicant} />
               </div>
               <div className="w-64">
-                <ApplicantActions 
-                  portalProps={portalProps}
-                />
+                <ApplicantActions portalProps={portalProps} />
               </div>
             </div>
 
@@ -75,19 +94,8 @@ export default function ApplicantPortal({
                         </div>
                       </div>
                     </div>
-                   <div className="filter blur-sm opacity-50">
-                   <div className="flex flex-col gap-4">
-                     <div className="grid grid-cols-2 gap-4">
-                       <div className="rounded-lg bg-gray-200 h-48" /> {/* Assessment Summary */}
-                       <div className="rounded-lg bg-gray-200 h-48" /> {/* Assessment Scores */}
-                     </div>
-                     <div className="rounded-lg bg-gray-200 h-64" /> {/* Emotional Analysis */}
-                     <div className="rounded-lg bg-gray-200 h-64" /> {/* New Lexical Analysis */}
-                     <div className="rounded-lg bg-gray-200 h-64" /> {/* Lexical Analysis */}
-                     <div className="rounded-lg bg-gray-200 h-96" /> {/* Video Transcript */}
-                   </div>
-                 </div>
-                 </div>
+                    <PlaceholderAnalysis />
+                  </div>
                 ) : (
                   <div className="rounded-lg bg-accent/10 border border-accent/20 p-4 mb-4">
                     <div className="flex items-center space-x-3">
@@ -101,7 +109,6 @@ export default function ApplicantPortal({
                     </div>
                   </div>
                 )}
-               
               </>
             )}
           </div>
