@@ -8,15 +8,17 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { CalendarDays, Mail, Phone } from 'lucide-react';
-import ApplicantCandidateStatus from '@/components/Applicants/Applicant/ApplicantStatus';
 import Link from 'next/link';
 interface ApplicantInfoProps {
-  ApplicantCandidate: ApplicantCandidate;
+  ApplicantCandidate: ApplicantCandidate | null;
 }
 
 export default function ApplicantInfo({
   ApplicantCandidate
 }: ApplicantInfoProps) {
+  if (!ApplicantCandidate) {
+    return null;
+  }
   const candidateName = `${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`;
   const avatarUrl = '/placeholder-avatar.jpg';
   const email =
@@ -25,7 +27,7 @@ export default function ApplicantInfo({
   const phoneNumber =
     ApplicantCandidate.candidate.phone_numbers?.[0]?.value || 'No phone number';
   const jobName = ApplicantCandidate.job.name || 'No job specified';
-  const appliedAt = ApplicantCandidate.application.applied_at ? new Date(ApplicantCandidate.application.applied_at).toLocaleDateString() : 'Unknown date';
+  const appliedAt = ApplicantCandidate.application.created_at ? new Date(ApplicantCandidate.application.created_at).toLocaleDateString() : 'Unknown date';
   return (
     <Card>
       <CardHeader className="flex flex-row items-center gap-4">
@@ -48,7 +50,7 @@ export default function ApplicantInfo({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4" />
             <span className="text-sm">{email}</span>

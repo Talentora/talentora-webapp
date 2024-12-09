@@ -1,18 +1,41 @@
-import { AI_summary_applicant } from "@/app/(pages)/applicants/[id]/page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { portalProps } from "@/app/(pages)/applicants/[id]/page";
+import { AISummaryApplicant } from "@/types/analysis";
 interface AssessmentScoresProps {
-    scores: AI_summary_applicant;
+    aiSummary: portalProps['AI_summary'] | null;
 }
 
-const Page = ({ scores }: AssessmentScoresProps) => {
+interface OverallSummary {
+    score: number;
+    summary: string;
+}
+
+const Page = ({ aiSummary }: AssessmentScoresProps) => {
+    const typedSummary = aiSummary as unknown as AISummaryApplicant;
+    const overallSummary = typedSummary?.overall_summary as unknown as OverallSummary;
+    const overallScore = overallSummary?.score;
+
+
     return (
-        <div className="p-4 border border-gray-300">
+        <div>
             <Card>
-                <CardHeader>
-                    <CardTitle>Assessment Scores</CardTitle>
+                <CardHeader className="text-center">
+                    <CardTitle>Overall Score</CardTitle>
                 </CardHeader>
-                <CardContent className="p-4">
-                    <p>Boiler plate text goes here</p>
+                <CardContent className="p-8 flex justify-center items-center">
+                    <div 
+                        className="w-32 h-32 rounded-full flex items-center justify-center"
+                        style={{
+                            background: overallScore < 50 
+                                ? 'rgb(255, 0, 0)' // Red for scores below 50
+                                : `hsl(${(overallScore - 50) * 2.4}, 100%, 45%)`, // Gradient from red (0) through yellow (60) to green (120)
+                            boxShadow: '0 0 20px rgba(0,0,0,0.1)'
+                        }}
+                    >
+                        <div className="text-5xl font-bold text-white">
+                            {overallScore}%
+                        </div>
+                    </div>
                 </CardContent>
             </Card>
         </div>
