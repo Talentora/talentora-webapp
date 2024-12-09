@@ -17,7 +17,6 @@ export default function VideoPlayer({ recording }: VideoPlayerProps) {
   const [playbackRate, setPlaybackRate] = useState(1)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
-  console.log("recording", recording)
 
   // Construct S3 URL using recording data
 

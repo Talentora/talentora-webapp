@@ -20,7 +20,7 @@ export async function GET(
     });
 
     if (!response.ok) {
-      console.error('Failed to fetch transcript', response.status);
+      console.error('Failed to fetch transcript', response.status, response.statusText);
       return new Response(`Failed to fetch transcript: ${response.status}`, {
         status: response.status
       });
