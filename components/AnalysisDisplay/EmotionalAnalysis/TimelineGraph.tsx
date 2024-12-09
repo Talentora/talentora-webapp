@@ -25,13 +25,33 @@ const Page = ({ timeline }: { timeline: any }) => {
         if (!timeline?.face) return [];
         
         const topEmotions = getTopEmotions();
-        return timeline.face.map((frame: any) => ({
+        const windowSizeFactor = 0.01;
+        const windowSize = Math.max(1, Math.floor(timeline.face.length * windowSizeFactor)); // Use 5% of total data points for window size
+        
+        // First get raw data points
+        const rawData = timeline.face.map((frame: any) => ({
             time: frame.time,
             ...topEmotions.reduce((acc: any, emotion: string) => {
                 acc[emotion] = frame.emotions[emotion];
                 return acc;
             }, {})
         }));
+
+        // Then apply moving average
+        return rawData.map((frame: { time: number; [key: string]: number }, i: number) => {
+            const smoothedFrame: { time: number; [key: string]: number } = { time: frame.time };
+            
+            // For each emotion, calculate moving average
+            topEmotions.forEach(emotion => {
+                const start = Math.max(0, i - Math.floor(windowSize/2));
+                const end = Math.min(rawData.length, i + Math.floor(windowSize/2) + 1);
+                const window = rawData.slice(start, end);
+                const sum = window.reduce((acc: number, f: { [key: string]: number }) => acc + f[emotion], 0);
+                smoothedFrame[emotion] = sum / window.length;
+            });
+
+            return smoothedFrame;
+        });
     };
 
     const data = formatData();
