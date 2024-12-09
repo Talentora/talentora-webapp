@@ -1,15 +1,16 @@
-import { AI_summary_applicant } from "@/app/(pages)/applicants/[id]/page";
+import { AISummaryApplicant } from "@/types/analysis";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import TimelineGraph from "./TimelineGraph";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EmotionAverages from "./EmotionAverages";
-
+import { portalProps } from "@/app/(pages)/applicants/[id]/page";
 interface EmotionalAnalysisProps {
-    analysis: AI_summary_applicant | null;
+    aiSummary: portalProps['AI_summary'] | null;
 }
 
-const Page = ({ analysis }: EmotionalAnalysisProps) => {
-    const emotionalAnalysis = analysis?.emotion_eval;
+const Page = ({ aiSummary }: EmotionalAnalysisProps) => {
+    const typedSummary = aiSummary as unknown as AISummaryApplicant;
+    const emotionalAnalysis = typedSummary?.emotion_eval;
 
     return (
         <div >

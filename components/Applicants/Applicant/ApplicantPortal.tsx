@@ -59,7 +59,7 @@ export default function ApplicantPortal({
             </div>
 
             {AI_summary ? (
-              <AnalysisDisplay aiSummary={AI_summary} />
+              <AnalysisDisplay portalProps={portalProps} />
             ) : (
               <>
                 {application ? (

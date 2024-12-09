@@ -1,10 +1,12 @@
-import { AI_summary_applicant } from "@/app/(pages)/applicants/[id]/page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { portalProps } from "@/app/(pages)/applicants/[id]/page";
+import { AISummaryApplicant } from "@/types/analysis";
 interface AssessmentScoresProps {
-    scores: AI_summary_applicant | null;
+    aiSummary: portalProps['AI_summary'] | null;
 }
 
-const Page = ({ scores }: AssessmentScoresProps) => {
+const Page = ({ aiSummary }: AssessmentScoresProps) => {
+    const typedSummary = aiSummary as unknown as AISummaryApplicant;
     // Sample data
     const sampleScores = {
         technicalSkills: 85,

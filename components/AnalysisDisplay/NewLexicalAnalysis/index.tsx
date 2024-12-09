@@ -1,30 +1,27 @@
-import { AI_summary_applicant } from "@/app/(pages)/applicants/[id]/page";
+import { AISummaryApplicant } from "@/types/analysis";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-interface TextEvaluation {
-    explanation: string;
-    overall_score: number;
-}
-
+import { portalProps } from "@/app/(pages)/applicants/[id]/page";
 interface AssessmentSummaryProps {
-    summary: (AI_summary_applicant & { text_eval?: TextEvaluation }) | null;
+    aiSummary: portalProps['AI_summary'] | null;
 }
 
-const Page = ({ summary }: AssessmentSummaryProps) => {
+const Page = ({ aiSummary }: AssessmentSummaryProps) => {
+    const typedSummary = aiSummary as unknown as AISummaryApplicant;
+    const textEval = typedSummary?.text_eval;
     return (
         <Card>
             <CardHeader>
                 <CardTitle>Lexical Analysis</CardTitle>
             </CardHeader>
-            <CardContent className={summary?.text_eval ? 'p-4' : ''}>
-                {!summary?.text_eval ? (
+            <CardContent className={textEval ? 'p-4' : ''}>
+                {!textEval ? (
                     <div>No summary available</div>
                 ) : (
                     <div className="space-y-4">
-                        <p className="text-gray-700">{summary.text_eval.explanation}</p>
+                        <p className="text-gray-700">{textEval.explanation}</p>
                         <div className="flex items-center gap-2">
                             <span className="font-medium">Overall Score:</span>
-                            <span>{summary.text_eval.overall_score}/100</span>
+                            <span>{textEval.overall_score}/100</span>
                         </div>
                     </div>
                 )}
