@@ -4,16 +4,6 @@ import { TranscriptViewer } from './TranscriptScroller'
 import { AISummaryApplicant } from "@/types/analysis";
 import { useState, useEffect } from "react";
 import { portalProps } from "@/app/(pages)/applicants/[id]/page";
-// Mock data for demonstration
-const mockSummary = "The candidate demonstrated strong problem-solving skills and excellent communication. They have a solid understanding of web development technologies and showed enthusiasm for learning new skills."
-
-const mockTranscript = [
-  { speaker: "AI Interviewer", text: "Hello! Can you tell me about your experience with React?" },
-  { speaker: "Candidate", text: "I've been working with React for about 3 years now. I've built several large-scale applications using React, Redux for state management, and various testing frameworks like Jest and React Testing Library." },
-  { speaker: "AI Interviewer", text: "That's great! Can you describe a challenging problem you've solved using React?" },
-  { speaker: "Candidate", text: "One challenging problem I faced was optimizing the performance of a complex dashboard with real-time data updates..." },
-  // Add more entries as needed
-]
 
 interface VideoTranscriptProps {
     aiSummary: portalProps['AI_summary'] | null;
@@ -31,40 +21,57 @@ export interface Recording {
   mtgSessionId: string
   isVttEnabled: boolean
 }
+
 export default function VideoTranscript({ aiSummary }: VideoTranscriptProps) {
-  
   const typedSummary = aiSummary as AISummaryApplicant;
   const transcriptSumamry = typedSummary.transcript_summary;
   const transcriptId = typedSummary.batch_processor_transcript_id;
 
-  const [transcript, setTranscript] = useState<string | null>(null);
-
-  
+  const [transcript, setTranscript] = useState<{speaker: string, text: string}[]>([]);
   const recordingId = typedSummary?.recording_id;
   const [recording, setRecording] = useState<Recording | null>(null);
-useEffect(() => {
-  const getRecording = async () => {
-    try {
-      const response = await fetch(`/api/bot/recordings/${recordingId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch transcript');
+
+  useEffect(() => {
+    const getRecording = async () => {
+      try {
+        const response = await fetch(`/api/bot/recordings/${recordingId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch transcript');
+        }
+        const data = await response.json();
+        setRecording(data);
+      } catch (error) {
+        console.error('Error fetching transcript:', error);
       }
-      const data = await response.json();
-      // Assuming the API returns a list of transcript entries
-      setRecording(data);
-    } catch (error) {
-      console.error('Error fetching transcript:', error);
+    };
+
+    const getTranscript = async () => {
+      try {
+        const response = await fetch(`/api/bot/transcripts/${transcriptId}`);
+        const data = await response.text();
+        
+        // Parse the transcript text into structured format
+        const lines = data.split('\n').filter(line => line.trim());
+        const parsedTranscript = lines.map(line => {
+          const [speaker, ...textParts] = line.split(':');
+          const text = textParts.join(':').trim();
+          
+          return { speaker, text };
+        });
+
+        setTranscript(parsedTranscript as {speaker: string, text: string}[]);
+      } catch (error) {
+        console.error('Error fetching transcript:', error);
+      }
+    };
+
+    if (recordingId) {
+      getRecording();
     }
-  };
-
-  const getTranscript = async () => {
-    const response = await fetch(`/api/bot/transcripts/${transcriptId}`);
-    const data = await response.json();
-    setTranscript(data);
-  }
-
-  getRecording();
-}, [aiSummary])
+    if (transcriptId) {
+      getTranscript();
+    }
+  }, [aiSummary, recordingId, transcriptId]);
 
   return (
     <div className="container mx-auto py-8">
@@ -79,11 +86,10 @@ useEffect(() => {
           </div>
           <div className="flex-1">
             <h2 className="text-2xl font-semibold mb-4">Interview Transcript</h2>
-            <TranscriptViewer transcript={mockTranscript} />
+            <TranscriptViewer transcript={transcript} />
           </div>
         </div>
       </div>
     </div>
   )
 }
-
