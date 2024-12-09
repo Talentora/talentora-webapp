@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Info } from "lucide-react"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
+import { Sparkles } from "lucide-react"
 interface InterviewSummaryProps {
   summary: string
 }
@@ -21,8 +22,16 @@ export function InterviewSummary({ summary }: InterviewSummaryProps) {
           </Tooltip>
         </TooltipProvider> */}
       </CardHeader>
-      <CardContent>
-        <p>{summary}</p>
+      <CardContent className="space-y-4">
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          <Sparkles className="w-4 h-4" />
+          <span>AI Generated Summary</span>
+        </div>
+        <div className="prose prose-sm max-w-none">
+          <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+            {summary}
+          </p>
+        </div>
       </CardContent>
     </Card>
   )

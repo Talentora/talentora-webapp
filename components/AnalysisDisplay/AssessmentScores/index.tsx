@@ -5,40 +5,35 @@ interface AssessmentScoresProps {
     aiSummary: portalProps['AI_summary'] | null;
 }
 
+interface OverallSummary {
+    score: number;
+    summary: string;
+}
+
 const Page = ({ aiSummary }: AssessmentScoresProps) => {
     const typedSummary = aiSummary as unknown as AISummaryApplicant;
-    // Sample data
-    const sampleScores = {
-        technicalSkills: 85,
-        communication: 92,
-        problemSolving: 88
-    };
+    const overallSummary = typedSummary?.overall_summary as unknown as OverallSummary;
+    const overallScore = overallSummary?.score;
+
 
     return (
-        <div >
+        <div>
             <Card>
                 <CardHeader className="text-center">
-                    <CardTitle>Assessment Scores</CardTitle>
+                    <CardTitle>Overall Score</CardTitle>
                 </CardHeader>
-                <CardContent className="p-4">
-                    <div className="grid grid-cols-1 gap-4">
-                        <div className="flex justify-evenly items-center">
-                            <p className="text-gray-600">Technical Skills</p>
-                            <div className="text-4xl font-bold text-blue-600">
-                                {sampleScores.technicalSkills}%
-                            </div>
-                        </div>
-                        <div className="flex justify-evenly items-center">
-                            <p className="text-gray-600">Communication</p>
-                            <div className="text-4xl font-bold text-green-600">
-                                {sampleScores.communication}%
-                            </div>
-                        </div>
-                        <div className="flex justify-evenly items-center">
-                            <p className="text-gray-600">Problem Solving</p>
-                            <div className="text-4xl font-bold text-purple-600">
-                                {sampleScores.problemSolving}%
-                            </div>
+                <CardContent className="p-8 flex justify-center items-center">
+                    <div 
+                        className="w-32 h-32 rounded-full flex items-center justify-center"
+                        style={{
+                            background: overallScore < 50 
+                                ? 'rgb(255, 0, 0)' // Red for scores below 50
+                                : `hsl(${(overallScore - 50) * 2.4}, 100%, 45%)`, // Gradient from red (0) through yellow (60) to green (120)
+                            boxShadow: '0 0 20px rgba(0,0,0,0.1)'
+                        }}
+                    >
+                        <div className="text-5xl font-bold text-white">
+                            {overallScore}%
                         </div>
                     </div>
                 </CardContent>

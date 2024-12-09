@@ -25,11 +25,12 @@ export interface Recording {
 export default function VideoTranscript({ aiSummary }: VideoTranscriptProps) {
   const typedSummary = aiSummary as AISummaryApplicant;
   const transcriptSumamry = typedSummary.transcript_summary;
-  const transcriptId = typedSummary.batch_processor_transcript_id;
+  const transcriptId = typedSummary["batch-processor_transcript_id"];
 
   const [transcript, setTranscript] = useState<{speaker: string, text: string}[]>([]);
   const recordingId = typedSummary?.recording_id;
   const [recording, setRecording] = useState<Recording | null>(null);
+  console.log("transcript", transcript)
 
   useEffect(() => {
     const getRecording = async () => {
@@ -47,17 +48,30 @@ export default function VideoTranscript({ aiSummary }: VideoTranscriptProps) {
 
     const getTranscript = async () => {
       try {
-        const response = await fetch(`/api/bot/transcripts/${transcriptId}`);
+        const response = await fetch(`/api/bot/transcription/${transcriptId}`, {
+          headers: {
+            'x-transcript-format': 'txt'
+          }
+        });
         const data = await response.text();
         
         // Parse the transcript text into structured format
-        const lines = data.split('\n').filter(line => line.trim());
-        const parsedTranscript = lines.map(line => {
-          const [speaker, ...textParts] = line.split(':');
-          const text = textParts.join(':').trim();
+        // Split on "Speaker" to handle multi-line text properly
+        const segments = data.split(/(?=Speaker \d+:)/).filter(segment => segment.trim());
+        
+        const parsedTranscript = segments.map(segment => {
+          // Extract speaker and remaining text
+          const speakerMatch = segment.match(/^Speaker (\d+):/);
+          if (!speakerMatch) return null;
           
-          return { speaker, text };
-        });
+          // Remove speaker prefix and trim the text
+          const text = segment.replace(/^Speaker \d+:/, '').trim();
+          
+          return {
+            speaker: `Speaker ${speakerMatch[1]}`,
+            text
+          };
+        }).filter(entry => entry !== null);
 
         setTranscript(parsedTranscript as {speaker: string, text: string}[]);
       } catch (error) {
@@ -68,6 +82,8 @@ export default function VideoTranscript({ aiSummary }: VideoTranscriptProps) {
     if (recordingId) {
       getRecording();
     }
+
+    console.log('transcriptId', transcriptId)
     if (transcriptId) {
       getTranscript();
     }
@@ -85,7 +101,7 @@ export default function VideoTranscript({ aiSummary }: VideoTranscriptProps) {
             <InterviewSummary summary={transcriptSumamry || ""} />
           </div>
           <div className="flex-1">
-            <h2 className="text-2xl font-semibold mb-4">Interview Transcript</h2>
+            <h2 className="text-2xl font-semibold">Interview Transcript</h2>
             <TranscriptViewer transcript={transcript} />
           </div>
         </div>

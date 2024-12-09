@@ -30,10 +30,7 @@ const Page = ({ aiSummary }: AssessmentSummaryProps) => {
                     ) : (
                         <div className="space-y-4">
                             <p className="text-gray-700">{overallSummary.explanation}</p>
-                            <div className="flex items-center gap-2">
-                                <span className="font-medium">Overall Score:</span>
-                                <span>{overallSummary.overall_score}/100</span>
-                            </div>
+                         
                         </div>
                     )}
                 </CardContent>
