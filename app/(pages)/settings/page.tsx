@@ -119,7 +119,7 @@ export default function SettingsPage() {
           <TabsContent value="team">
             <Card>
               <CardHeader className="pb-4">
-                <InvitePage jobs={[]} />
+                <InvitePage jobs={[]} isLoading={false} />
               </CardHeader>
               <CardContent>
               </CardContent>
