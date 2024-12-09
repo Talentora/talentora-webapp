@@ -8,87 +8,133 @@ import { Skeleton } from '@/components/ui/skeleton';
 import {Tables} from "@/types/types_db";
 import { createClient } from '@/utils/supabase/client';
 
-type AI_summary = Tables<'AI_summary'>;
-type Applications = Tables<'applications'>;
-type Applicants = Tables<'applicants'>;
+export type portalProps = {
+  AI_summary: Tables<'AI_summary'> | null; 
+  application: Tables<'applications'> | null;
+  job_interview_config: Tables<'job_interview_config'> | null;
+  mergeApplicant: ApplicantCandidate | null;
+}
 
-export interface AI_summary_applicant {
-    emotion_eval: {
-        timeline: {
-            face: Array<{
-                time: number;
-                emotions: Record<string, number>;
-            }>;
+interface emotion_eval {
+    timeline: {
+        face: Array<{
+            time: number;
+            emotions: Record<string, number>;
+        }>;
+    };
+    averages: {
+        face: {
+            emotions: Record<string, number>;
+            aggregate_score: number;
         };
-        averages: {
-            face: {
-                emotions: Record<string, number>;
-                aggregate_score: number;
-            };
-            prosody: {
-                emotions: Record<string, number>;
-                aggregate_score: number;
-            };
-            language: {
-                emotions: Record<string, number>;
-                aggregate_score: number;
-            };
+        prosody: {
+            emotions: Record<string, number>;
+            aggregate_score: number;
+        };
+        language: {
+            emotions: Record<string, number>;
+            aggregate_score: number;
         };
     };
-    // ... other properties
 }
+
+export type ApplicantStatus = 'unable_to_invite' | 'able_to_invite' | 'invited_incomplete' | 'invited_complete';
 
 export default function ApplicantPage({
   params
 }: {
   params: { id: string };
 }) {
-  const [applicantCandidate, setApplicantCandidate] = useState<ApplicantCandidate | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [aiSummary, setAiSummary] = useState<AI_summary_applicant | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [portalProps, setPortalProps] = useState<portalProps>({
+    AI_summary: null,
+    application: null,
+    job_interview_config: null,
+    mergeApplicant: null
+  });
+
+  console.log("portalProps", portalProps);
+
+  const fetchMergeData = async () => {
+    const response = await fetch(`/api/applications/${params.id}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch applicant data');
+    }
+    const data = await response.json();
+    setPortalProps(prev => ({...prev, mergeApplicant: data}));
+    return data;
+  };
+
+  const fetchJobConfig = async (merge_job_id: string) => {
+    const supabase = createClient();
+    const {data: jobConfigData} = await supabase
+      .from('job_interview_config')
+      .select('*')
+      .eq('job_id', merge_job_id)
+      .single();
+
+    setPortalProps(prev => ({...prev, job_interview_config: jobConfigData || null}));
+    return jobConfigData;
+  };
+
+  const fetchApplication = async (merge_applicant_id: string) => {
+    const supabase = createClient();
+    const {data: applicationData} = await supabase
+      .from('applications')
+      .select(`
+        *,
+        applicants(*)
+      `)
+      .eq('applicants.merge_applicant_id', merge_applicant_id)
+      .single();
+
+    setPortalProps(prev => ({...prev, application: applicationData || null}));
+    return applicationData;
+  };
+
+  const fetchAISummary = async (application_id: string) => {
+    const supabase = createClient();
+    const {data: aiSummaryData} = await supabase
+      .from('AI_summary')
+      .select('*')
+      .eq('application_id', application_id)
+      .single();
+
+    setPortalProps(prev => ({...prev, AI_summary: aiSummaryData || null}));
+    return aiSummaryData;
+  };
 
   useEffect(() => {
-    async function fetchMergeData() {
+    const fetchAllData = async () => {
       try {
-        const response = await fetch(`/api/applications/${params.id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch applicant data');
+        // Fetch Merge data first
+        const mergeData = await fetchMergeData();
+        
+        if (!mergeData?.application?.id || !mergeData?.job?.id) {
+          throw new Error('No applicant or job found');
         }
-        const data = await response.json();
-        setApplicantCandidate(data);
+
+        // Fetch remaining data in parallel
+        await Promise.all([
+          fetchJobConfig(mergeData.job.id),
+          fetchApplication(mergeData.application.id).then(appData => {
+            if (appData?.id) {
+              return fetchAISummary(appData.id);
+            }
+          })
+        ]);
+
+
       } catch (err) {
-        console.error('Error fetching application:', err);
-        setError('Failed to load applicant data');
+        console.error('Error fetching data:', err);
+        setError('Failed to load data');
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
-    async function fetchDBData() {
-      const supabase = createClient();
-      const {data, error} = await supabase
-        .from('AI_summary')
-        .select(`
-          *,
-          applications!inner (
-            *,
-            applicants!inner (
-              id,
-              merge_applicant_id
-            )
-          )
-        `)
-        .eq('applications.applicants.merge_applicant_id', params.id)
-        .single()
-      if (error) {
-        console.error('Error fetching AI summary:', error);
-        setError('Failed to load applicant data from the database');
-      }
-      if (data) {
-        setAiSummary(data);
-      }
-    }
-
-    fetchMergeData();
-    fetchDBData();
+    fetchAllData();
   }, [params.id]);
 
   if (error) {
@@ -106,7 +152,7 @@ export default function ApplicantPage({
           Back to Applicants
         </a>
       </div>
-      {!applicantCandidate ? (
+      {loading ? (
         <div className="space-y-4">
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1 space-y-6">
@@ -120,7 +166,7 @@ export default function ApplicantPage({
           </div>
         </div>
       ) : (
-        <ApplicantPortal ApplicantCandidate={applicantCandidate} aiSummary={aiSummary} />
+        <ApplicantPortal portalProps={portalProps} />
       )}
     </div>
   );

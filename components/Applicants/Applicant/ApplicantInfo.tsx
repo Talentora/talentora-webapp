@@ -10,12 +10,15 @@ import {
 import { CalendarDays, Mail, Phone } from 'lucide-react';
 import Link from 'next/link';
 interface ApplicantInfoProps {
-  ApplicantCandidate: ApplicantCandidate;
+  ApplicantCandidate: ApplicantCandidate | null;
 }
 
 export default function ApplicantInfo({
   ApplicantCandidate
 }: ApplicantInfoProps) {
+  if (!ApplicantCandidate) {
+    return null;
+  }
   const candidateName = `${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`;
   const avatarUrl = '/placeholder-avatar.jpg';
   const email =
