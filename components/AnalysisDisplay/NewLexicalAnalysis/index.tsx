@@ -14,7 +14,7 @@ const Page = ({ summary }: AssessmentSummaryProps) => {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Assessment Summary </CardTitle>
+                <CardTitle>Lexical Analysis</CardTitle>
             </CardHeader>
             <CardContent className={summary?.text_eval ? 'p-4' : ''}>
                 {!summary?.text_eval ? (
