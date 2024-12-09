@@ -15,9 +15,13 @@ const Page = ({ portalProps }: AnalysisDisplayProps) => {
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="grid grid-cols-2 gap-4">
-                <AssessmentSummary aiSummary={AI_summary} />
-                <AssessmentScores aiSummary={AI_summary} />
+            <div className="grid grid-cols-4 gap-4">
+                <div className="col-span-3">
+                    <AssessmentSummary aiSummary={AI_summary} />
+                </div>
+                <div className="col-span-1">
+                    <AssessmentScores aiSummary={AI_summary} />
+                </div>
             </div>
             <EmotionalAnalysis aiSummary={AI_summary} />
             <NewLexicalAnalysis aiSummary={AI_summary} />

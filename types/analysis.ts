@@ -36,5 +36,5 @@ export interface AISummaryApplicant {
     room_name?: string | null;
     created_at?: string;
     id?: string;
-    batch_processor_transcript_id?: string | null;
+    "batch-processor_transcript_id"?: string | null;
 }
