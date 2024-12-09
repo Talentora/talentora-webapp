@@ -25,7 +25,7 @@ const Page = ({ portalProps }: AnalysisDisplayProps) => {
             </div>
             <EmotionalAnalysis aiSummary={AI_summary} />
             <NewLexicalAnalysis aiSummary={AI_summary} />
-            <LexicalAnalysis aiSummary={AI_summary} />
+            {/* <LexicalAnalysis aiSummary={AI_summary} /> */}
             <VideoTranscript aiSummary={AI_summary} />
 
         </div>
