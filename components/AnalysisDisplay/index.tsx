@@ -1,24 +1,54 @@
-import { AI_summary_applicant } from "@/app/(pages)/applicants/[id]/page";
+import { portalProps } from "@/app/(pages)/applicants/[id]/page";
 import VideoTranscript from "./VideoTranscript";
-import AssessmentSummary from "./AssessmentSummary";
+import NewLexicalAnalysis from "./NewLexicalAnalysis";
 import EmotionalAnalysis from "./EmotionalAnalysis";
 import LexicalAnalysis from "./LexicalAnalysis";
 import AssessmentScores from "./AssessmentScores";
+import AssessmentSummary from "./AssessmentSummary";
+import { Skeleton } from "@/components/ui/skeleton";
+
 interface AnalysisDisplayProps {
-    aiSummary: AI_summary_applicant;
+    portalProps: portalProps;
 }
 
-const Page = ({ aiSummary }: AnalysisDisplayProps) => {
+const AnalysisSkeleton = () => {
     return (
         <div className="flex flex-col gap-4">
-            <AssessmentScores scores={aiSummary} />
-            <AssessmentSummary summary={aiSummary} />
-            <EmotionalAnalysis analysis={aiSummary} />
-            <LexicalAnalysis analysis={aiSummary} />
-            <VideoTranscript aiSummary={aiSummary} />
-
+            <div className="grid grid-cols-4 gap-4">
+                <div className="col-span-3">
+                    <Skeleton className="h-[200px] w-full" />
+                </div>
+                <div className="col-span-1">
+                    <Skeleton className="h-[200px] w-full" />
+                </div>
+            </div>
+            <Skeleton className="h-[400px] w-full" />
+            <Skeleton className="h-[200px] w-full" />
+            <Skeleton className="h-[600px] w-full" />
         </div>
-    )
-}
+    );
+};
+
+const Page = ({ portalProps }: AnalysisDisplayProps) => {
+    const { AI_summary } = portalProps;
+    
+    if (!AI_summary) return <AnalysisSkeleton />;
+
+    return (
+        <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-4 gap-4">
+                <div className="col-span-3">
+                    <AssessmentSummary aiSummary={AI_summary} />
+                </div>
+                <div className="col-span-1">
+                    <AssessmentScores aiSummary={AI_summary} />
+                </div>
+            </div>
+            <EmotionalAnalysis aiSummary={AI_summary} />
+            <NewLexicalAnalysis aiSummary={AI_summary} />
+            <VideoTranscript aiSummary={AI_summary} />
+        </div>
+    );
+};
 
 export default Page;

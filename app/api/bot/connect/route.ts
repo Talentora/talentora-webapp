@@ -44,6 +44,19 @@ export async function POST(request: NextRequest) {
       },
       config: [
         {
+          service: "daily",
+          options: [
+            {
+              name: "enable_transcription",
+              value: true
+            },
+            {
+              name: "enable_noise_cancellation",
+              value: true
+            },
+          ]
+        },
+        {
           service: "vad",
           options: [
             {
@@ -146,6 +159,7 @@ export async function POST(request: NextRequest) {
       recording_settings: {
         type: "cloud"
       },
+     
      
     };
 

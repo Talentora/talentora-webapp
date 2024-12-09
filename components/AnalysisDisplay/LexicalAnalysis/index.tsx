@@ -1,15 +1,18 @@
-import { AI_summary_applicant } from "@/app/(pages)/applicants/[id]/page";
+import { AISummaryApplicant } from "@/types/analysis";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { portalProps } from "@/app/(pages)/applicants/[id]/page";
 interface LexicalAnalysisProps {
-    analysis: AI_summary_applicant
+    aiSummary: portalProps['AI_summary'] | null;
 }
 
-const Page = ({ analysis }: LexicalAnalysisProps) => {
+const Page = ({ aiSummary }: LexicalAnalysisProps) => {
+    const typedSummary = aiSummary as unknown as AISummaryApplicant;
+    const textEval = typedSummary?.text_eval;
     return (
-        <div className="p-4 border border-gray-300">
+        <div className="border border-gray-300">
             <Card>
                 <CardHeader>
-                    <CardTitle>Assessment Scores</CardTitle>
+                    <CardTitle>Lexical Analysis</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4">
                     <p>Boiler plate text goes here</p>
