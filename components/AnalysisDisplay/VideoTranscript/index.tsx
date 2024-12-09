@@ -1,8 +1,9 @@
 import VideoPlayer from './VideoPlayer'
 import { InterviewSummary } from './TranscriptSummary'
 import { TranscriptViewer } from './TranscriptScroller'
-import { AI_summary_applicant } from "@/app/(pages)/applicants/[id]/page";
+import { AISummaryApplicant } from "@/types/analysis";
 import { useState, useEffect } from "react";
+import { portalProps } from "@/app/(pages)/applicants/[id]/page";
 // Mock data for demonstration
 const mockSummary = "The candidate demonstrated strong problem-solving skills and excellent communication. They have a solid understanding of web development technologies and showed enthusiasm for learning new skills."
 
@@ -15,7 +16,7 @@ const mockTranscript = [
 ]
 
 interface VideoTranscriptProps {
-    aiSummary: AI_summary_applicant | null;
+    aiSummary: portalProps['AI_summary'] | null;
 }
 
 export interface Recording {
@@ -31,16 +32,14 @@ export interface Recording {
   isVttEnabled: boolean
 }
 export default function VideoTranscript({ aiSummary }: VideoTranscriptProps) {
-  // Extend AI_summary_applicant type locally to include optional fields
-  type ExtendedSummary = AI_summary_applicant & {
-    interview_summary?: {
-      content: string;
-    };
-    recording_id?: string;
-  };
+  
+  const typedSummary = aiSummary as AISummaryApplicant;
+  const transcriptSumamry = typedSummary.transcript_summary;
+  const transcriptId = typedSummary.batch_processor_transcript_id;
 
-  const typedSummary = aiSummary as ExtendedSummary;
-  const summary = typedSummary?.interview_summary?.content || "Missing Summary";
+  const [transcript, setTranscript] = useState<string | null>(null);
+
+  
   const recordingId = typedSummary?.recording_id;
   const [recording, setRecording] = useState<Recording | null>(null);
 useEffect(() => {
@@ -58,6 +57,12 @@ useEffect(() => {
     }
   };
 
+  const getTranscript = async () => {
+    const response = await fetch(`/api/bot/transcripts/${transcriptId}`);
+    const data = await response.json();
+    setTranscript(data);
+  }
+
   getRecording();
 }, [aiSummary])
 
@@ -70,7 +75,7 @@ useEffect(() => {
         </div>
         <div className="flex flex-row flex-1 gap-4">
           <div className="flex-1">
-            <InterviewSummary summary={summary} />
+            <InterviewSummary summary={transcriptSumamry || ""} />
           </div>
           <div className="flex-1">
             <h2 className="text-2xl font-semibold mb-4">Interview Transcript</h2>

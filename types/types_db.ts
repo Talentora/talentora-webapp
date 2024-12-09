@@ -12,33 +12,39 @@ export type Database = {
       AI_summary: {
         Row: {
           application_id: string | null
+          "batch-processor_transcript_id": string | null
           created_at: string
           emotion_eval: Json | null
           id: string
-          interview_summary: Json | null
+          overall_summary: Json | null
           recording_id: string | null
           room_name: string | null
           text_eval: Json | null
+          transcript_summary: string | null
         }
         Insert: {
           application_id?: string | null
+          "batch-processor_transcript_id"?: string | null
           created_at?: string
           emotion_eval?: Json | null
           id?: string
-          interview_summary?: Json | null
+          overall_summary?: Json | null
           recording_id?: string | null
           room_name?: string | null
           text_eval?: Json | null
+          transcript_summary?: string | null
         }
         Update: {
           application_id?: string | null
+          "batch-processor_transcript_id"?: string | null
           created_at?: string
           emotion_eval?: Json | null
           id?: string
-          interview_summary?: Json | null
+          overall_summary?: Json | null
           recording_id?: string | null
           room_name?: string | null
           text_eval?: Json | null
+          transcript_summary?: string | null
         }
         Relationships: [
           {
@@ -657,4 +663,3 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
-
