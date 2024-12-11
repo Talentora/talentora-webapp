@@ -44,19 +44,19 @@ export async function POST(request: NextRequest) {
         llm: "anthropic"
       },
       config: [
-        {
-          service: "daily",
-          options: [
-            {
-              name: "enable_transcription",
-              value: true
-            },
-            {
-              name: "enable_noise_cancellation",
-              value: true
-            },
-          ]
-        },
+        // {
+        //   service: "daily",
+        //   options: [
+        //     {
+        //       name: "enable_transcription",
+        //       value: true
+        //     },
+        //     {
+        //       name: "enable_noise_cancellation",
+        //       value: true
+        //     },
+        //   ]
+        // },
         {
           service: "vad",
           options: [
@@ -103,11 +103,15 @@ export async function POST(request: NextRequest) {
                   content: [
                     {
                       type: "text",
+                      text: "Only speak to the candidate, to not speak system messages or break the third wall. Pretend you are a human interviewer."
+                    },
+                    {
+                      type: "text",
                       text: "Conduct this interview professionally and conversationally. Your goal is to assess the candidate's fit for the role by:\n- Listening carefully to each response\n- Asking follow-up questions that reveal deeper insights\n- Maintaining a warm but professional demeanor\n- Being direct and clear in your communication"
                     },
                     {
                       type: "text",
-                      text: `You are ${bot.name}, an interviewer conducting an interview for the ${mergeJob.name} position at ${company.name}. Your aim is to evaluate the candidate's qualifications, experience, and potential cultural fit.`
+                      text: `You are ${bot.name}, an AI interviewer conducting an interview for the ${mergeJob.name} position at ${company.name}. Your aim is to evaluate the candidate's qualifications, experience, and potential cultural fit.`
                     },
                     {
                       type: "text",
@@ -119,7 +123,7 @@ export async function POST(request: NextRequest) {
                     },
                     {
                       type: "text",
-                      text: "Interview Guidelines:\n- If you don't know something or need clarification, ask the candidate\n- Focus on understanding the candidate's skills, and motivations\n- Use the prepared questions as a guide, but be flexible"
+                      text: "Interview Guidelines:\n- Be authentic and present like a human interviewer\n- If you don't know something or need clarification, ask the candidate\n- Focus on understanding the candidate's skills, motivations, and potential\n- Use the prepared questions as a guide, but be flexible\n- Pay attention to not just what is said, but how it is said"
                     },
                     {
                       type: "text",
