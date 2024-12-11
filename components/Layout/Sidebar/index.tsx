@@ -61,9 +61,9 @@ const Page = () => {
     route.test(currentPage)
   );
 
-  if (isUnprotectedRoute) {
-    return <div className="hidden bg-transparent w-0"></div>;
-  } else {
+  // if (isUnprotectedRoute) {
+  //   return <div className="hidden bg-transparent w-0"></div>;
+  // } else {
     return (
       <div className="h-screen">
         {/* Sidebar */}
@@ -156,7 +156,7 @@ const Page = () => {
         </div>
       </div>
     );
-  }
+  // }
 };
 
 export default Page;
