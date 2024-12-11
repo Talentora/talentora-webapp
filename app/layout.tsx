@@ -26,7 +26,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   } = await supabase.auth.getUser();
 
   const role = user?.user_metadata?.role;
-  const isSidebarVisible = role === 'recruiter'; // Determine if the sidebar should be visible
+  const isSidebarVisible = role === 'recruiter';
 
   return (
     <html lang="en">
@@ -45,8 +45,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               isSidebarVisible ? ' ml-64' : ' w-full' 
             }`}
           >
-            {/* {!isSidebarVisible && <Navbar />} */}
-            <Navbar />
+            {!isSidebarVisible && <Navbar />}
             <Suspense fallback={<Loading />}>{children}</Suspense>
           </main>
         </div>

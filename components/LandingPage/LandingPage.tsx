@@ -110,13 +110,13 @@ export default function LandingPage() {
 
         <section className="container mx-auto px-4 py-16">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <div className="relative aspect-[4/3] w-full">
+        <div className="relative aspect-[4/2] w-full">
           <Image
-            src="/placeholder.svg?height=600&width=800"
+            src="/Images/Image7.png"
             alt="Descriptive alt text"
             fill
             className="object-cover rounded-lg"
-            sizes="(max-width: 768px) 100vw, 50vw"
+            // sizes="(max-width: 768px) 100vw, 50vw"
             priority
           />
         </div>

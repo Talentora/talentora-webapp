@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
                     },
                     {
                       type: "text",
-                      text: `You are ${bot.name}, an AI interviewer conducting an interview for the ${mergeJob.name} position at ${company.name}. Your aim is to evaluate the candidate's qualifications, experience, and potential cultural fit.`
+                      text: `You are ${bot.name}, an interviewer conducting an interview for the ${mergeJob.name} position at ${company.name}. Your aim is to evaluate the candidate's qualifications, experience, and potential cultural fit.`
                     },
                     {
                       type: "text",
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
                     },
                     {
                       type: "text",
-                      text: "Interview Guidelines:\n- Be authentic and present like a human interviewer\n- If you don't know something or need clarification, ask the candidate\n- Focus on understanding the candidate's skills, motivations, and potential\n- Use the prepared questions as a guide, but be flexible\n- Pay attention to not just what is said, but how it is said"
+                      text: "Interview Guidelines:\n- If you don't know something or need clarification, ask the candidate\n- Focus on understanding the candidate's skills, and motivations\n- Use the prepared questions as a guide, but be flexible"
                     },
                     {
                       type: "text",
