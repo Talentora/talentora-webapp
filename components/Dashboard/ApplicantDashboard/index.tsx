@@ -148,7 +148,7 @@ export default function JobPortal() {
                     </span>
                   </div>
                   <div className="flex gap-3">
-                    <Button variant="outline">Practice</Button>
+                    {/* <Button variant="outline">Practice</Button> */}
                     <Link href={`/assessment/${application.application_data.id}`}>
                       <Button 
                         className="bg-[#6366f1] hover:bg-[#5558e6]"
