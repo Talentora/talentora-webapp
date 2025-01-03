@@ -1,14 +1,9 @@
 name: 'build-test_Next.js'
 
 on:
-  push:
-    branches:
-      - dev
-      - main
   pull_request:
     branches:
       - main
-      - dev
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -50,6 +45,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       - name: Install dependencies
         run: pnpm i --frozen-lockfile
