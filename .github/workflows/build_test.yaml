@@ -52,20 +52,20 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm i --frozen-lockfile
 
       - name: Run Lint
         run: |
-          npm run lint
-          npm run prettier-fix
+          pnpm run lint
+          pnpm run prettier-fix
         continue-on-error: true
 
       - name: Run Tests
-        run: npm test
+        run: pnpm test
         continue-on-error: true
 
       - name: Build Next.js project
-        run: npm run build
+        run: pnpm run build
 
   generate_types:
     runs-on: ubuntu-latest
