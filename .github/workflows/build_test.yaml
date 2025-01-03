@@ -79,7 +79,7 @@ jobs:
         continue-on-error: true
 
       - name: Build Next.js project
-        run: pnpm run build
+        run: pnpm build
 
 
   generate_types:
