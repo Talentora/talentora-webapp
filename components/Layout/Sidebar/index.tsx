@@ -29,18 +29,19 @@ interface SidebarLinkProps {
   icon: React.ElementType;
   children: React.ReactNode;
   isActive: boolean;
+  isSidebarOpen?: boolean;
 }
 
-const SidebarLink = ({ href, icon: Icon, children, isActive }: SidebarLinkProps) => (
+const SidebarLink = ({ href, icon: Icon, children, isActive, isSidebarOpen }: SidebarLinkProps) => (
   <SidebarMenuItem>
     <SidebarMenuButton
       asChild
       isActive={isActive}
-      className="hover:bg-sidebar-accent/10 transition-colors"
+      className="hover:bg-primary-dark/10 transition-colors"
     >
-      <Link href={href} className="flex items-center gap-3 text-sidebar-foreground">
-        <Icon className="h-5 w-5" />
-        <span className="font-medium">{children}</span>
+      <Link href={href} className="flex items-center gap-3 text-white">
+        <Icon className="h-5 w-5 text-white" />
+        {isSidebarOpen && <span className="font-medium text-white">{children}</span>}
       </Link>
     </SidebarMenuButton>
   </SidebarMenuItem>
@@ -54,7 +55,7 @@ interface SubLinkProps {
 const SubLink = ({ href, children }: SubLinkProps) => (
   <Link 
     href={href} 
-    className="block text-sm text-sidebar-foreground/70 hover:text-sidebar-foreground transition-colors py-1 pl-11"
+    className="block text-sm text-white/70 hover:text-white transition-colors py-1 pl-11"
   >
     {children}
   </Link>
@@ -92,20 +93,20 @@ const Sidebar = () => {
   return (
     <SidebarProvider defaultOpen>
       <SidebarComponent className={cn(
-        "bg-sidebar transition-all duration-300 ease-in-out",
+        "bg-primary-dark transition-all duration-300 ease-in-out",
         isSidebarOpen ? "w-64" : "w-20"
       )}>
-        <SidebarHeader className="border-b border-sidebar-border relative p-4">
+        <SidebarHeader className="relative p-4">
           <Link href="/" className={cn(
             "flex items-center gap-3",
             !isSidebarOpen && "justify-center"
           )} aria-label="Logo">
-            <Logo className="h-8 w-8 text-accent" />
+            <Logo className="h-8 w-8 text-white" />
             {isSidebarOpen && (
-              <h1 className="text-xl font-bold font-poppins">
+              <h1 className="text-xl font-bold font-poppins text-white">
                 Talent
-                <span className="bg-gradient-to-r from-accent to-accent-light bg-clip-text text-transparent">
-                  ora
+                <span className="text-gradient-to-r from-primary to-primary-light">
+                  <span className="text-gradient-to-r from-primary to-primary-light">ora</span>
                 </span>
               </h1>
             )}
@@ -116,10 +117,10 @@ const Sidebar = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute -right-4 top-1/2 -translate-y-1/2 bg-sidebar border border-sidebar-border rounded-full"
+                  className="absolute -right-4 top-1/2 -translate-y-1/2 bg-primary-dark border border-primary-border rounded-full"
                   onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 >
-                  {isSidebarOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  {isSidebarOpen ? <ChevronLeft className="h-5 w-5 text-white" /> : <ChevronRight className="h-5 w-5 text-white" />}
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">
@@ -131,11 +132,11 @@ const Sidebar = () => {
 
         <SidebarContent className="flex-1 p-4">
           <SidebarMenu className="space-y-2">
-            <SidebarLink href="/dashboard" icon={HomeIcon} isActive={pathname === '/dashboard'}>
-              Dashboard
+            <SidebarLink href="/dashboard" icon={HomeIcon} isActive={pathname === '/dashboard'} isSidebarOpen={isSidebarOpen}>
+              <span className="text-white">Dashboard</span>
             </SidebarLink>
-            <SidebarLink href="/jobs" icon={BriefcaseIcon} isActive={pathname === '/jobs'}>
-              All Jobs
+            <SidebarLink href="/jobs" icon={BriefcaseIcon} isActive={pathname === '/jobs'} isSidebarOpen={isSidebarOpen}>
+              <span className="text-white">Jobs</span>
             </SidebarLink>
             {isSidebarOpen && (
               <div className="ml-5 mt-1 space-y-1">
@@ -143,10 +144,10 @@ const Sidebar = () => {
                 <SubLink href="/jobs/product-manager">Product Manager</SubLink>
               </div>
             )}
-            <SidebarLink href="/bot" icon={Sparkles} isActive={pathname === '/bot'}>
+            <SidebarLink href="/bot" icon={Sparkles} isActive={pathname === '/bot'} isSidebarOpen={isSidebarOpen}>
               Ora Scouts
             </SidebarLink>
-            <SidebarLink href="/applicants" icon={Users} isActive={pathname === '/applicants'}>
+            <SidebarLink href="/applicants" icon={Users} isActive={pathname === '/applicants'} isSidebarOpen={isSidebarOpen}>
               Applicants
             </SidebarLink>
             {isSidebarOpen && (
@@ -156,38 +157,38 @@ const Sidebar = () => {
                 <SubLink href="/applicants/mike-jones">Mike Jones - Designer</SubLink>
               </div>
             )}
-            <SidebarLink href="/settings" icon={SettingsIcon} isActive={pathname === '/settings'}>
+            <SidebarLink href="/settings" icon={SettingsIcon} isActive={pathname === '/settings'} isSidebarOpen={isSidebarOpen}>
               Settings
             </SidebarLink>
           </SidebarMenu>
         </SidebarContent>
 
-        <SidebarFooter className="border-t border-sidebar-border p-4">
+        <SidebarFooter className="p-4">
           <div className="relative" ref={userMenuRef}>
             <Button
               variant="ghost"
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent/10"
+              className="w-full justify-start gap-3 text-white hover:bg-primary-dark/10"
             >
               <User className="h-5 w-5" />
               {isSidebarOpen && <span className="font-medium truncate">{user?.user_metadata.full_name || user?.email}</span>}
             </Button>
 
             {isUserMenuOpen && (
-              <div className="absolute bottom-full left-0 mb-2 w-full rounded-lg border border-sidebar-border bg-sidebar p-3 shadow-lg">
+              <div className="absolute bottom-full left-0 mb-2 w-full rounded-lg bg-primary-dark p-3 shadow-lg">
                 <div className="px-2 py-2">
-                  <p className="text-sm font-medium text-sidebar-foreground/60">Signed in as</p>
-                  <p className="text-sm font-bold truncate text-sidebar-foreground">{user?.user_metadata.full_name || user?.email}</p>
-                  <p className="text-xs text-sidebar-foreground/60 capitalize">{user?.user_metadata?.role}</p>
+                  <p className="text-sm font-medium text-white/60">Signed in as</p>
+                  <p className="text-sm font-bold truncate text-white">{user?.user_metadata.full_name || user?.email}</p>
+                  <p className="text-xs text-white/60 capitalize">{user?.user_metadata?.role}</p>
                 </div>
-                <div className="my-2 border-t border-sidebar-border" />
+                <div className="my-2" />
                 <form onSubmit={handleSignOut}>
                   <input type="hidden" name="pathName" value={pathname} />
                   <Button 
                     type="submit" 
                     variant="ghost" 
                     size="sm" 
-                    className="w-full justify-start text-sm text-sidebar-foreground hover:bg-sidebar-accent/10"
+                    className="w-full justify-start text-sm text-white hover:bg-primary-dark/10"
                   >
                     <LogOut className="mr-3 h-4 w-4" />
                     Sign out
