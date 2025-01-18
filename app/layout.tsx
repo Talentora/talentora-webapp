@@ -42,10 +42,10 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <main
             id="skip"
             className={`flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]${
-              isSidebarVisible ? ' ml-64' : ' w-full' 
+              isSidebarVisible ? ' ml-60' : ' w-full' 
             }`}
           >
-            <Navbar visible={isSidebarVisible}/>
+            <Navbar visible={isSidebarVisible} />
             <Suspense fallback={<Loading />}>{children}</Suspense>
           </main>
         </div>

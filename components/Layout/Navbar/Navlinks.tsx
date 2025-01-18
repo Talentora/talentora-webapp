@@ -56,7 +56,7 @@ export default function Navlinks({ visible }: { visible: boolean }) {
       <div className="container px-4 mx-auto">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            {visible && (
+            {!visible && (
             <Link href="/" className="mr-6 flex items-center space-x-2" aria-label="Logo">
               <Logo />
               <h1 className="text-primary text-2xl font-bold">

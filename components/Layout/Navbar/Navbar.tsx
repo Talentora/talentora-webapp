@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 export default function Navbar({ visible }: { visible: boolean }) {
   const [opacity, setOpacity] = useState(1);
 
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -34,7 +35,7 @@ export default function Navbar({ visible }: { visible: boolean }) {
         Skip to content
       </a>
       <div className="max-w-6xl px-6 mx-auto w-full">
-        <Navlinks />
+        <Navlinks visible={visible} />
       </div>
     </nav>
   );

@@ -94,7 +94,7 @@ const Sidebar = () => {
     <SidebarProvider defaultOpen>
       <SidebarComponent className={cn(
         "bg-primary-dark transition-all duration-300 ease-in-out",
-        isSidebarOpen ? "w-64" : "w-20"
+        isSidebarOpen ? "w-50" : "w-20"
       )}>
         <SidebarHeader className="relative p-4">
           <Link href="/" className={cn(
@@ -105,8 +105,8 @@ const Sidebar = () => {
             {isSidebarOpen && (
               <h1 className="text-xl font-bold font-poppins text-white">
                 Talent
-                <span className="text-gradient-to-r from-primary to-primary-light">
-                  <span className="text-gradient-to-r from-primary to-primary-light">ora</span>
+                <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">
+                  ora
                 </span>
               </h1>
             )}
@@ -139,7 +139,7 @@ const Sidebar = () => {
               <span className="text-white">Jobs</span>
             </SidebarLink>
             {isSidebarOpen && (
-              <div className="ml-5 mt-1 space-y-1">
+              <div className="ml-1 mt-1 space-y-1">
                 <SubLink href="/jobs/senior-developer">Senior Developer</SubLink>
                 <SubLink href="/jobs/product-manager">Product Manager</SubLink>
               </div>
@@ -151,10 +151,10 @@ const Sidebar = () => {
               Applicants
             </SidebarLink>
             {isSidebarOpen && (
-              <div className="ml-5 mt-1 space-y-1">
-                <SubLink href="/applicants/john-doe">John Doe - Senior Dev</SubLink>
-                <SubLink href="/applicants/jane-smith">Jane Smith - PM</SubLink>
-                <SubLink href="/applicants/mike-jones">Mike Jones - Designer</SubLink>
+              <div className="ml-1 mt-1 space-y-1">
+                <SubLink href="/applicants/john-doe">John Doe</SubLink>
+                <SubLink href="/applicants/jane-smith">Jane Smith</SubLink>
+                <SubLink href="/applicants/mike-jones">Mike Jones</SubLink>
               </div>
             )}
             <SidebarLink href="/settings" icon={SettingsIcon} isActive={pathname === '/settings'} isSidebarOpen={isSidebarOpen}>
