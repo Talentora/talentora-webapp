@@ -30,7 +30,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   return (
     <html lang="en">
-      <body className="px-20 w-full bg-gradient-to-br from-purple-500/[0.1] via-white to-pink-500/[0.1] p-0">
+      <body className="w-full bg-gradient-to-br from-purple-500/[0.1] via-white to-pink-500/[0.1] p-0">
         <NextTopLoader />
 
         <div className="flex">
@@ -45,7 +45,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               isSidebarVisible ? ' ml-64' : ' w-full' 
             }`}
           >
-            {!isSidebarVisible && <Navbar />}
+            <Navbar visible={isSidebarVisible}/>
             <Suspense fallback={<Loading />}>{children}</Suspense>
           </main>
         </div>

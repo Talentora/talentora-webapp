@@ -2,7 +2,7 @@
 import Navlinks from './Navlinks';
 import { useEffect, useState } from 'react';
 
-export default function Navbar() {
+export default function Navbar({ visible }: { visible: boolean }) {
   const [opacity, setOpacity] = useState(1);
 
   useEffect(() => {

@@ -9,23 +9,27 @@ import Logo from '@/components/ui/icons/Logo';
 import { usePathname, useRouter } from 'next/navigation';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import { Button } from '@/components/ui/button';
-import { User, LogOut } from 'lucide-react';
+import { User, LogOut, BarChart2, Users, FileText, HelpCircle, BookOpen, MessageSquare, Building2, Mail, CreditCard } from 'lucide-react';
 import { useUser } from '@/hooks/useUser';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle
+} from '@/components/ui/navigation-menu';
+import { cn } from '@/utils/cn';
 
 const Loader2 = dynamic(() => import('lucide-react').then(mod => mod.Loader2), { ssr: false });
 
-export default function Navlinks() {
+export default function Navlinks({ visible }: { visible: boolean }) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { user, loading } = useUser();
   const router = useRouter();
-
-  const links = [
-    // { href: '/about', label: 'About' },
-    // { href: '/pricing', label: 'Pricing' },
-    { href: '/dashboard', label: 'Dashboard', requiresAuth: true }
-  ];
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,11 +52,12 @@ export default function Navlinks() {
   }, []);
 
   return (
-    <div className="sticky top-0 z-40 w-full mx-0 ">
-      <div className="container mx-0 px-1">
-        <div className="flex items-center justify-between w-full py-4 ">
+    <div className="sticky top-0 z-40 w-full bg-transparent">
+      <div className="container px-4 mx-auto">
+        <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            <Link href="/" className="mr-6 flex flex-row items-center gap-2" aria-label="Logo">
+            {visible && (
+            <Link href="/" className="mr-6 flex items-center space-x-2" aria-label="Logo">
               <Logo />
               <h1 className="text-primary text-2xl font-bold">
                 Talent
@@ -61,62 +66,124 @@ export default function Navlinks() {
                 </span>
               </h1>
             </Link>
-            <nav className="hidden md:flex space-x-4 text-white">
-              {links.map(
-                (link) =>
-                  (!link.requiresAuth || user) && (
-                    <Link key={link.href} href={link.href} className="text-sm font-medium text-primary hover:text-primary transition-colors">
-                      {link.label}
-                    </Link>
-                  )
-              )}
-            </nav>
+            )}
+
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="bg-transparent">Solutions</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid gap-3 p-6 w-[400px] md:w-[500px] lg:w-[600px] bg-white rounded-lg">
+                      <div className="grid grid-cols-2 gap-4">
+                        <Link href="/features/interviews" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+                          <div className="flex items-center">
+                            <BarChart2 className="h-5 w-5 mr-2 text-purple-600" />
+                            <h3 className="font-medium">AI Interviews</h3>
+                          </div>
+                          <p className="text-sm text-muted-foreground">Automated candidate screening and assessment</p>
+                        </Link>
+                        <Link href="/features/analytics" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+                          <div className="flex items-center">
+                            <Users className="h-5 w-5 mr-2 text-blue-600" />
+                            <h3 className="font-medium">Analytics</h3>
+                          </div>
+                          <p className="text-sm text-muted-foreground">Data-driven hiring insights and metrics</p>
+                        </Link>
+                        <Link href="/features/assessments" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+                          <div className="flex items-center">
+                            <FileText className="h-5 w-5 mr-2 text-green-600" />
+                            <h3 className="font-medium">Assessments</h3>
+                          </div>
+                          <p className="text-sm text-muted-foreground">Standardized skills evaluation</p>
+                        </Link>
+                        <Link href="/features/collaboration" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+                          <div className="flex items-center">
+                            <MessageSquare className="h-5 w-5 mr-2 text-orange-600" />
+                            <h3 className="font-medium">Collaboration</h3>
+                          </div>
+                          <p className="text-sm text-muted-foreground">Team feedback and hiring decisions</p>
+                        </Link>
+                      </div>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="bg-transparent">Resources</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid gap-3 p-6 w-[400px] bg-white rounded-lg">
+                      <Link href="/blog" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+                        <div className="flex items-center">
+                          <BookOpen className="h-5 w-5 mr-2 text-indigo-600" />
+                          <h3 className="font-medium">Blog</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground">Latest insights and updates</p>
+                      </Link>
+                      <Link href="/help" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+                        <div className="flex items-center">
+                          <HelpCircle className="h-5 w-5 mr-2 text-red-600" />
+                          <h3 className="font-medium">Help Center</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground">Guides and documentation</p>
+                      </Link>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="bg-transparent">Company</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid grid-cols-2 gap-3 p-6 w-[400px] bg-white rounded-lg">
+                      <Link href="/about" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+                        <div className="flex items-center">
+                          <Building2 className="h-5 w-5 mr-2 text-purple-600" />
+                          <h3 className="font-medium">About</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground">Learn about our mission and values</p>
+                      </Link>
+                      <Link href="/team" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+                        <div className="flex items-center">
+                          <Users className="h-5 w-5 mr-2 text-blue-600" />
+                          <h3 className="font-medium">Team</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground">Meet the people behind Talentora</p>
+                      </Link>
+                      <Link href="/pricing" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+                        <div className="flex items-center">
+                          <CreditCard className="h-5 w-5 mr-2 text-green-600" />
+                          <h3 className="font-medium">Pricing</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground">View our pricing plans</p>
+                      </Link>
+                      <Link href="/contact" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+                        <div className="flex items-center">
+                          <Mail className="h-5 w-5 mr-2 text-orange-600" />
+                          <h3 className="font-medium">Contact</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground">Get in touch with us</p>
+                      </Link>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
           </div>
 
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
             {loading ? (
               <div className="flex justify-center items-center h-full">
                 <Loader2 className="h-5 w-5 animate-spin" />
               </div>
-            ) : user ? (
-              <div className="relative" ref={userMenuRef}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  aria-label="User menu"
-                  className="relative z-0"
-                >
-                  <User className="h-5 w-5" />
-                </Button>
-                {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-background border border-border rounded-md shadow-lg p-2 z-10">
-                    <div className="px-4 py-2">
-                      <p className="text-sm font-medium text-muted-foreground">Signed in as</p>
-                      <p className="text-sm font-bold truncate">{user.user_metadata.full_name || user.email}</p>
-                      <p className="text-xs text-muted-foreground capitalize">{user.user_metadata?.role}</p>
-                    </div>
-                    <div className="border-t border-border my-2"></div>
-                    <form onSubmit={handleSignOut}>
-                      <input type="hidden" name="pathName" value={pathname} />
-                      <Button type="submit" variant="ghost" className="w-full justify-start text-sm text-primary">
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Sign out
-                      </Button>
-                    </form>
-                  </div>
-                )}
-              </div>
-            ) : (
+            ) : !user ? (
               <div className="flex items-center space-x-2">
                 <Link href="/signin">
-                  <Button className="border border-white text-white bg-accent rounded-full px-8 py-2">Login</Button>
+                  <Button variant="ghost" className="rounded-full px-8">Login</Button>
                 </Link>
                 <Link href="/signup">
-                  <Button className="bg-white border border-grey-200 text-primary-dark hover:bg-gray-200 rounded-full px-8 py-2" variant="ghost" size="sm">Sign Up</Button>
+                  <Button className="rounded-full px-8">Sign Up</Button>
                 </Link>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
