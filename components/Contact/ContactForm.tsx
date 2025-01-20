@@ -1,14 +1,18 @@
 'use client'
 
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { motion } from 'framer-motion'
 import { Mail, Phone, MapPin } from 'lucide-react'
 import { Form, FormControl, FormLabel, FormMessage, FormItem, FormField } from '@/components/ui/form'
 import { Button } from '../ui/button'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Input } from '../ui/input'
+import { useToast } from '@/hooks/use-toast'
 
 const ContactForm = () => {
+  const { toast } = useToast()
+  
   const formSchema = z.object({
     name: z.string().min(2, { message: "Name must be at least 2 characters." }),
     email: z.string().email({ message: "Invalid email address." }),
@@ -27,8 +31,24 @@ const ContactForm = () => {
   })
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    // TODO: Implement form submission logic
-    console.log('Form submitted:', values)
+    try {
+      // TODO: Implement form submission logic
+      console.log('Form submitted:', values)
+      
+      toast({
+        title: "Success!",
+        description: "Your message has been sent successfully.",
+        variant: "default",
+      })
+
+      form.reset()
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "There was a problem sending your message. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
   return (
@@ -48,77 +68,98 @@ const ContactForm = () => {
               <p className="text-gray-600 mb-8">
                 Have questions about our AI-powered recruitment solutions? We'd love to hear from you.
               </p>
+              
+              <div className="bg-white p-6 rounded-lg shadow-sm space-y-4">
+                <div className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-purple-600" />
+                  <div>
+                    <p className="font-medium">Email</p>
+                    <a href="mailto:contact@talentora.ai" className="text-gray-600 hover:text-purple-600">
+                      contact@talentora.ai
+                    </a>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <Phone className="w-5 h-5 text-purple-600" />
+                  <div>
+                    <p className="font-medium">Phone</p>
+                    <a href="tel:+1234567890" className="text-gray-600 hover:text-purple-600">
+                      +1 (234) 567-890
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-purple-600" />
+                  <div>
+                    <p className="font-medium">Location</p>
+                    <p className="text-gray-600">
+                      San Francisco, CA
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div>
-              <Form {...form} onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="name">Name</FormLabel>
-                      <FormControl
-                        id="name"
-                        {...field}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-opacity-50"
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="email">Email</FormLabel>
-                      <FormControl
-                        id="email"
-                        {...field}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-opacity-50"
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="subject"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="subject">Subject</FormLabel>
-                      <FormControl
-                        id="subject"
-                        {...field}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-opacity-50"
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="message"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="message">Message</FormLabel>
-                      <FormControl
-                        id="message"
-                        {...field}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-opacity-50"
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors bg-opacity-50"
-                >
-                  Send Message
-                </Button>
-              </Form>
+            <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="John Doe" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email" 
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="you@example.com" type="email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="subject"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Subject</FormLabel>
+              <FormControl>
+                <Input placeholder="How can we help?" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="message"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Message</FormLabel>
+              <FormControl>
+                <Input placeholder="Your message..." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Send Message</Button>
+      </form>
+    </Form>
             </div>
           </div>
         </motion.div>
@@ -127,4 +168,4 @@ const ContactForm = () => {
   )
 }
 
-export default ContactForm 
+export default ContactForm

@@ -147,7 +147,7 @@ const Sidebar = () => {
                     <Loader2 className="h-4 w-4 animate-spin text-white/70" />
                   </div>
                 ) : (
-                  jobs.map((job) => (
+                  jobs.map((job: any) => (
                     <SubLink key={job.id} href={`/jobs/${job.id}`}>
                       {job.name || 'Untitled Position'}
                     </SubLink>
@@ -168,7 +168,7 @@ const Sidebar = () => {
                     <Loader2 className="h-4 w-4 animate-spin text-white/70" />
                   </div>
                 ) : (
-                  applications.map((app) => (
+                  applications.map((app: any) => (
                     <SubLink key={app.application.id} href={`/applicants/${app.application.id}`}>
                       {app.candidate?.first_name} {app.candidate?.last_name}
                     </SubLink>

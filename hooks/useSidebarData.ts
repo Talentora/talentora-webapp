@@ -1,18 +1,17 @@
 'use client';
 
-import useSWR from 'swr';
+import { useQuery } from '@tanstack/react-query';
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function useSidebarData() {
-  const { data: jobs, error: jobsError, isLoading: jobsLoading } = useSWR('/api/jobs', fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
+  const { data: jobs, error: jobsError, isLoading: jobsLoading } = useQuery({
+    queryKey: ['jobs'],
+    queryFn: () => fetch('/api/jobs').then((res) => res.json())
   });
 
-  const { data: applications, error: applicationsError, isLoading: applicationsLoading } = useSWR('/api/applications', fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false
+  const { data: applications, error: applicationsError, isLoading: applicationsLoading } = useQuery({
+    queryKey: ['applications'],
+    queryFn: () => fetch('/api/applications').then((res) => res.json())
   });
 
   return {
