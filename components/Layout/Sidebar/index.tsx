@@ -67,7 +67,7 @@ const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const { user } = useUser();
+  const { user, company } = useUser();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { jobs, applications, isLoading } = useSidebarData();
@@ -195,27 +195,41 @@ const Sidebar = () => {
 
             {isUserMenuOpen && (
               <div className={cn(
-                "absolute bottom-full mb-2 rounded-lg bg-primary-dark p-3 shadow-lg",
-                isSidebarOpen ? "left-0 w-full" : "left-0 w-64" // Wider menu when sidebar is closed
+                "absolute bottom-full mb-2 rounded-lg bg-foreground p-5 shadow-xl left-0 w-[18rem]",
+                // isSidebarOpen ? "left-0 w-full" : ""
               )}>
-                <div className="px-2 py-2">
-                  <p className="text-sm font-medium text-white/60">Signed in as</p>
-                  <p className="text-sm font-bold truncate text-white">{user?.user_metadata.full_name || user?.email}</p>
-                  <p className="text-xs text-white/60 capitalize">{user?.user_metadata?.role}</p>
+                <div className="space-y-[0.75em]">
+                  <div>
+                    <h4 className="font-medium text-gray-900 text-[1em]">
+                      {user?.user_metadata.full_name || user?.email}
+                    </h4>
+                    <div className="flex items-center gap-[0.5em] mt-[0.25em]">
+                      <span className="inline-flex items-center rounded-full bg-purple-100 px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-purple-800 capitalize">
+                        {user?.user_metadata?.role || 'User'}
+                      </span>
+                      {company?.name && (
+                        <span className="inline-flex items-center rounded-full bg-blue-100 px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-blue-800">
+                          {company.name}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="h-[1px] bg-gray-200" />
+                  
+                  <form onSubmit={handleSignOut}>
+                    <input type="hidden" name="pathName" value={pathname} />
+                    <Button 
+                      type="submit" 
+                      variant="ghost" 
+                      size="sm"
+                      className="w-full justify-start text-[0.875em] text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                    >
+                      <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
+                      Sign out
+                    </Button>
+                  </form>
                 </div>
-                <div className="my-2" />
-                <form onSubmit={handleSignOut}>
-                  <input type="hidden" name="pathName" value={pathname} />
-                  <Button 
-                    type="submit" 
-                    variant="ghost" 
-                    size="sm" 
-                    className="w-full justify-start text-sm text-white hover:bg-primary-dark/10"
-                  >
-                    <LogOut className="mr-3 h-4 w-4" />
-                    Sign out
-                  </Button>
-                </form>
               </div>
             )}
           </div>
