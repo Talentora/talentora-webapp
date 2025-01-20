@@ -9,6 +9,7 @@ import Loading from '@/components/Layout/Loading';
 import NextTopLoader from 'nextjs-toploader';
 import { createClient } from '@/utils/supabase/server';
 import Script from 'next/script';
+import ReactQueryProvider from '@/components/Providers/ReactQueryProvider';
 
 const title = 'Talentora';
 const description = 'Talentora is a platform for creating and managing AI-powered interviews.';
@@ -32,26 +33,27 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     <html lang="en">
       <body className="w-full bg-gradient-to-br from-purple-500/[0.1] via-white to-pink-500/[0.1] p-0">
         <NextTopLoader />
-
-        <div className="flex">
-          {isSidebarVisible && (
-            <aside className=" fixed h-full">
-              <Sidebar />
-            </aside>
-          )}
-          <main
-            id="skip"
-            className={`flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]${
-              isSidebarVisible ? ' ml-64' : ' w-full' 
-            }`}
-          >
-            {!isSidebarVisible && <Navbar />}
-            <Suspense fallback={<Loading />}>{children}</Suspense>
-          </main>
-        </div>
-        <Suspense>
-          <Toaster />
-        </Suspense>
+        <ReactQueryProvider>
+          <div className="flex">
+            {isSidebarVisible && (
+              <aside className="fixed h-full">
+                <Sidebar />
+              </aside>
+            )}
+            <main
+              id="skip"
+              className={`flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]${
+                isSidebarVisible ? ' ml-60' : ' w-full'
+              }`}
+            >
+              <Navbar visible={isSidebarVisible} />
+              <Suspense fallback={<Loading />}>{children}</Suspense>
+            </main>
+          </div>
+          <Suspense>
+            <Toaster />
+          </Suspense>
+        </ReactQueryProvider>
       </body>
     </html>
   );
