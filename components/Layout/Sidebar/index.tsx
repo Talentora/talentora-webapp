@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon } from 'lucide-react';
+import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2 } from 'lucide-react';
 import Logo from '@/components/ui/icons/Logo';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/hooks/useUser';
@@ -23,6 +23,7 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
 import { useTheme } from 'next-themes';
+import { useSidebarData } from '@/hooks/useSidebarData';
 
 interface SidebarLinkProps {
   href: string;
@@ -69,6 +70,7 @@ const Sidebar = () => {
   const { user } = useUser();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const { jobs, applications, isLoading } = useSidebarData();
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -140,8 +142,17 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && (
               <div className="ml-1 mt-1 space-y-1">
-                <SubLink href="/jobs/senior-developer">Senior Developer</SubLink>
-                <SubLink href="/jobs/product-manager">Product Manager</SubLink>
+                {isLoading ? (
+                  <div className="flex items-center justify-center py-2">
+                    <Loader2 className="h-4 w-4 animate-spin text-white/70" />
+                  </div>
+                ) : (
+                  jobs.map((job) => (
+                    <SubLink key={job.id} href={`/jobs/${job.id}`}>
+                      {job.name || 'Untitled Position'}
+                    </SubLink>
+                  ))
+                )}
               </div>
             )}
             <SidebarLink href="/bot" icon={Sparkles} isActive={pathname === '/bot'} isSidebarOpen={isSidebarOpen}>
@@ -152,9 +163,17 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && (
               <div className="ml-1 mt-1 space-y-1">
-                <SubLink href="/applicants/john-doe">John Doe</SubLink>
-                <SubLink href="/applicants/jane-smith">Jane Smith</SubLink>
-                <SubLink href="/applicants/mike-jones">Mike Jones</SubLink>
+                {isLoading ? (
+                  <div className="flex items-center justify-center py-2">
+                    <Loader2 className="h-4 w-4 animate-spin text-white/70" />
+                  </div>
+                ) : (
+                  applications.map((app) => (
+                    <SubLink key={app.application.id} href={`/applicants/${app.application.id}`}>
+                      {app.candidate?.first_name} {app.candidate?.last_name}
+                    </SubLink>
+                  ))
+                )}
               </div>
             )}
             <SidebarLink href="/settings" icon={SettingsIcon} isActive={pathname === '/settings'} isSidebarOpen={isSidebarOpen}>
