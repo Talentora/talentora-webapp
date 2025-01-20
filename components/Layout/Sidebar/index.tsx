@@ -194,7 +194,10 @@ const Sidebar = () => {
             </Button>
 
             {isUserMenuOpen && (
-              <div className="absolute bottom-full left-0 mb-2 w-full rounded-lg bg-primary-dark p-3 shadow-lg">
+              <div className={cn(
+                "absolute bottom-full mb-2 rounded-lg bg-primary-dark p-3 shadow-lg",
+                isSidebarOpen ? "left-0 w-full" : "left-0 w-64" // Wider menu when sidebar is closed
+              )}>
                 <div className="px-2 py-2">
                   <p className="text-sm font-medium text-white/60">Signed in as</p>
                   <p className="text-sm font-bold truncate text-white">{user?.user_metadata.full_name || user?.email}</p>
