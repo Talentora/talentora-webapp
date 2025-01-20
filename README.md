@@ -1,6 +1,6 @@
 # Table of Contents
 
-https://github.com/RoboRecruiter-Organization/roborecruiter-codebase
+https://github.com/Talentora-Organization/Talentora-codebase
 
 - [Getting started (how to test your code on your machine)](#Getting-Started)
 - [MUST READ BEFORE CONTRIBUTING](#MUST-READ)

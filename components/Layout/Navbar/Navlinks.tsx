@@ -75,28 +75,28 @@ export default function Navlinks({ visible }: { visible: boolean }) {
                   <NavigationMenuContent>
                     <div className="grid gap-3 p-6 w-[400px] md:w-[500px] lg:w-[600px] bg-white rounded-lg">
                       <div className="grid grid-cols-2 gap-4">
-                        <Link href="/features/interviews" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+                        <Link href="/product#ai-interviews" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
                           <div className="flex items-center">
                             <BarChart2 className="h-5 w-5 mr-2 text-purple-600" />
                             <h3 className="font-medium">AI Interviews</h3>
                           </div>
                           <p className="text-sm text-muted-foreground">Automated candidate screening and assessment</p>
                         </Link>
-                        <Link href="/features/analytics" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+                        <Link href="/product#analytics" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
                           <div className="flex items-center">
                             <Users className="h-5 w-5 mr-2 text-blue-600" />
                             <h3 className="font-medium">Analytics</h3>
                           </div>
                           <p className="text-sm text-muted-foreground">Data-driven hiring insights and metrics</p>
                         </Link>
-                        <Link href="/features/assessments" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+                        <Link href="/product#assessments" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
                           <div className="flex items-center">
                             <FileText className="h-5 w-5 mr-2 text-green-600" />
                             <h3 className="font-medium">Assessments</h3>
                           </div>
                           <p className="text-sm text-muted-foreground">Standardized skills evaluation</p>
                         </Link>
-                        <Link href="/features/collaboration" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+                        <Link href="/product#collaboration" className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
                           <div className="flex items-center">
                             <MessageSquare className="h-5 w-5 mr-2 text-orange-600" />
                             <h3 className="font-medium">Collaboration</h3>
