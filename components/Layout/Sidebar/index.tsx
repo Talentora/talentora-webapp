@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon } from 'lucide-react';
+import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2 } from 'lucide-react';
+
 import Logo from '@/components/ui/icons/Logo';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/hooks/useUser';
@@ -23,6 +24,7 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
 import { useTheme } from 'next-themes';
+import { useSidebarData } from '@/hooks/useSidebarData';
 
 interface SidebarLinkProps {
   href: string;
@@ -66,9 +68,11 @@ const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const { user } = useUser();
+  const { user, company } = useUser();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const { jobs, applications, isLoading } = useSidebarData();
+
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -140,8 +144,18 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && (
               <div className="ml-1 mt-1 space-y-1">
-                <SubLink href="/jobs/senior-developer">Senior Developer</SubLink>
-                <SubLink href="/jobs/product-manager">Product Manager</SubLink>
+                {isLoading ? (
+                  <div className="flex items-center justify-center py-2">
+                    <Loader2 className="h-4 w-4 animate-spin text-white/70" />
+                  </div>
+                ) : (
+                  jobs.map((job: any) => (
+                    <SubLink key={job.id} href={`/jobs/${job.id}`}>
+                      {job.name || 'Untitled Position'}
+                    </SubLink>
+                  ))
+                )}
+
               </div>
             )}
             <SidebarLink href="/bot" icon={Sparkles} isActive={pathname === '/bot'} isSidebarOpen={isSidebarOpen}>
@@ -152,9 +166,18 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && (
               <div className="ml-1 mt-1 space-y-1">
-                <SubLink href="/applicants/john-doe">John Doe</SubLink>
-                <SubLink href="/applicants/jane-smith">Jane Smith</SubLink>
-                <SubLink href="/applicants/mike-jones">Mike Jones</SubLink>
+                {isLoading ? (
+                  <div className="flex items-center justify-center py-2">
+                    <Loader2 className="h-4 w-4 animate-spin text-white/70" />
+                  </div>
+                ) : (
+                  applications.map((app: any) => (
+                    <SubLink key={app.application.id} href={`/applicants/${app.application.id}`}>
+                      {app.candidate?.first_name} {app.candidate?.last_name}
+                    </SubLink>
+                  ))
+                )}
+
               </div>
             )}
             <SidebarLink href="/settings" icon={SettingsIcon} isActive={pathname === '/settings'} isSidebarOpen={isSidebarOpen}>
@@ -175,25 +198,43 @@ const Sidebar = () => {
             </Button>
 
             {isUserMenuOpen && (
-              <div className="absolute bottom-full left-0 mb-2 w-full rounded-lg bg-primary-dark p-3 shadow-lg">
-                <div className="px-2 py-2">
-                  <p className="text-sm font-medium text-white/60">Signed in as</p>
-                  <p className="text-sm font-bold truncate text-white">{user?.user_metadata.full_name || user?.email}</p>
-                  <p className="text-xs text-white/60 capitalize">{user?.user_metadata?.role}</p>
+              <div className={cn(
+                "absolute bottom-full mb-2 rounded-lg bg-foreground p-5 shadow-xl left-0 w-[18rem]",
+                isSidebarOpen ? "left-0 w-full" : ""
+              )}>
+                <div className="space-y-[0.75em]">
+                  <div>
+                    <h4 className="font-medium text-gray-900 text-[1em]">
+                      {user?.user_metadata.full_name || user?.email}
+                    </h4>
+                    <div className="flex items-center gap-[0.5em] mt-[0.25em]">
+                      <span className="inline-flex items-center rounded-full bg-purple-100 px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-purple-800 capitalize">
+                        {user?.user_metadata?.role || 'User'}
+                      </span>
+                      {company?.name && (
+                        <span className="inline-flex items-center rounded-full bg-blue-100 px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-blue-800">
+                          {company.name}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="h-[1px] bg-gray-200" />
+                  
+                  <form onSubmit={handleSignOut}>
+                    <input type="hidden" name="pathName" value={pathname} />
+                    <Button 
+                      type="submit" 
+                      variant="ghost" 
+                      size="sm"
+                      className="w-full justify-start text-[0.875em] text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                    >
+                      <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
+                      Sign out
+                    </Button>
+                  </form>
                 </div>
-                <div className="my-2" />
-                <form onSubmit={handleSignOut}>
-                  <input type="hidden" name="pathName" value={pathname} />
-                  <Button 
-                    type="submit" 
-                    variant="ghost" 
-                    size="sm" 
-                    className="w-full justify-start text-sm text-white hover:bg-primary-dark/10"
-                  >
-                    <LogOut className="mr-3 h-4 w-4" />
-                    Sign out
-                  </Button>
-                </form>
+
               </div>
             )}
           </div>
