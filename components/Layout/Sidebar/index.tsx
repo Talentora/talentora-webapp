@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2 } from 'lucide-react';
+
 import Logo from '@/components/ui/icons/Logo';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/hooks/useUser';
@@ -71,6 +72,7 @@ const Sidebar = () => {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { jobs, applications, isLoading } = useSidebarData();
+
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -153,6 +155,7 @@ const Sidebar = () => {
                     </SubLink>
                   ))
                 )}
+
               </div>
             )}
             <SidebarLink href="/bot" icon={Sparkles} isActive={pathname === '/bot'} isSidebarOpen={isSidebarOpen}>
@@ -174,6 +177,7 @@ const Sidebar = () => {
                     </SubLink>
                   ))
                 )}
+
               </div>
             )}
             <SidebarLink href="/settings" icon={SettingsIcon} isActive={pathname === '/settings'} isSidebarOpen={isSidebarOpen}>
@@ -230,6 +234,7 @@ const Sidebar = () => {
                     </Button>
                   </form>
                 </div>
+
               </div>
             )}
           </div>
