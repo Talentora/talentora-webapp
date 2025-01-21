@@ -196,7 +196,7 @@ const Sidebar = () => {
             {isUserMenuOpen && (
               <div className={cn(
                 "absolute bottom-full mb-2 rounded-lg bg-foreground p-5 shadow-xl left-0 w-[18rem]",
-                // isSidebarOpen ? "left-0 w-full" : ""
+                isSidebarOpen ? "left-0 w-full" : ""
               )}>
                 <div className="space-y-[0.75em]">
                   <div>
