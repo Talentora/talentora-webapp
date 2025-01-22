@@ -24,45 +24,38 @@ export default function SettingsPage() {
       <div className="p-2">
         <Tabs defaultValue="account" className="w-full">
           <TabsList className="flex w-full bg-transparent rounded-lg">
-            <TabsTrigger 
-              value="account" 
+            <TabsTrigger
+              value="account"
               className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
               Account
             </TabsTrigger>
-            <TabsTrigger 
-              value="company" 
+            <TabsTrigger
+              value="company"
               className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
               Company
             </TabsTrigger>
-            <TabsTrigger 
-              value="billing" 
+            <TabsTrigger
+              value="billing"
               className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
-              Integration
-            </TabsTrigger>
-            <TabsTrigger 
-              value="integration" 
-              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
-            >
-
               Billing
             </TabsTrigger>
-            <TabsTrigger 
-              value="team" 
+            <TabsTrigger
+              value="team"
               className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
               Team
             </TabsTrigger>
-            <TabsTrigger 
-              value="integrations" 
+            <TabsTrigger
+              value="integrations"
               className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
             >
               Integration Status
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="account">
             <Card>
               <CardContent className="space-y-4">
@@ -73,7 +66,7 @@ export default function SettingsPage() {
               </CardContent>
             </Card>
           </TabsContent>
-          
+
           <TabsContent value="company">
             <Card>
               <CardContent className="space-y-3">
@@ -87,8 +80,8 @@ export default function SettingsPage() {
               </CardContent>
             </Card>
           </TabsContent>
-          
-          <TabsContent value="integration">
+
+          {/* <TabsContent value="integration">
             <Card>
               <CardContent className="space-y-3">
                 <CompanyForm />
@@ -100,14 +93,15 @@ export default function SettingsPage() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-
+          </TabsContent> */}
 
           <TabsContent value="billing">
             <Card>
               <CardHeader className="pb-4">
                 <CardTitle className="text-xl">Billing Information</CardTitle>
-                <CardDescription>Manage your subscription and billing details.</CardDescription>
+                <CardDescription>
+                  Manage your subscription and billing details.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <CustomerPortalForm />
@@ -115,14 +109,12 @@ export default function SettingsPage() {
             </Card>
           </TabsContent>
 
-
           <TabsContent value="team">
             <Card>
               <CardHeader className="pb-4">
                 <InvitePage jobs={[]} isLoading={false} />
               </CardHeader>
-              <CardContent>
-              </CardContent>
+              <CardContent></CardContent>
             </Card>
           </TabsContent>
 
