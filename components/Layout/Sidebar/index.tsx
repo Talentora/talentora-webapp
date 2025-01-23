@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2, ChevronDown, ChevronUp, Search } from 'lucide-react';
+import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2, ChevronDown, ChevronUp, Search, CreditCard, Box, Mail, BookOpen, Building2, Phone } from 'lucide-react';
 
 import Logo from '@/components/ui/icons/Logo';
 import { Button } from '@/components/ui/button';
@@ -152,6 +152,11 @@ const Sidebar = () => {
         { type: 'page', name: 'Jobs', href: '/jobs', icon: BriefcaseIcon },
         { type: 'page', name: 'Applicants', href: '/applicants', icon: Users },
         { type: 'page', name: 'Settings', href: '/settings', icon: SettingsIcon },
+        { type: 'page', name: 'Blog', href: '/blog', icon: BookOpen },
+        { type: 'page', name: 'Contact', href: '/contact', icon: Mail },
+        { type: 'page', name: 'Pricing', href: '/pricing', icon: CreditCard },
+        { type: 'page', name: 'Ora Scouts', href: '/scouts', icon: Search },
+        { type: 'page', name: 'Product', href: '/product', icon: Box }
       ]
     },
     {
@@ -199,7 +204,7 @@ const Sidebar = () => {
   }, []);
 
   return (
-    <SidebarProvider defaultOpen>
+    <SidebarProvider defaultOpen className="=">
       <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
         <CommandInput 
           placeholder="Type a command or search..." 
@@ -236,7 +241,7 @@ const Sidebar = () => {
       </CommandDialog>
 
       <SidebarComponent className={cn(
-        "bg-primary-dark transition-all duration-300 ease-in-out",
+        "bg-primary-dark transition-all duration-300 ease-in-out z-50",
         isSidebarOpen ? "w-50" : "w-20"
       )}>
         <SidebarHeader className="relative p-4">
@@ -266,7 +271,7 @@ const Sidebar = () => {
                   {isSidebarOpen ? <ChevronLeft className="h-5 w-5 text-white" /> : <ChevronRight className="h-5 w-5 text-white" />}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="right">
+              <TooltipContent side="right" className="bg-foreground text-primary-dark z-[100]">
                 {isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
               </TooltipContent>
             </Tooltip>
@@ -279,7 +284,7 @@ const Sidebar = () => {
               <Button
                 variant="ghost" 
                 size="icon"
-                className="w-full h-10 flex items-center justify-start text-white hover:bg-white/10"
+                className="w-10 h-10 flex items-center justify-center text-white bg-white/10 hover:bg-white/20 border border-white/20"
                 onClick={() => setIsSearchOpen(true)}
               >
                 <Search className="h-5 w-5" />

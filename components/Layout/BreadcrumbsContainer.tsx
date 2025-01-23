@@ -8,7 +8,7 @@ const BreadcrumbsContainer: React.FC = () => {
   const pathname = usePathname();
 
   // Don't show breadcrumbs on dashboard
-  if (pathname === '/dashboard') {
+  if (pathname === '/dashboard' || pathname === '/' || pathname === '/signin') {
     return null;
   }
 
