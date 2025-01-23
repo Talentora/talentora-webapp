@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import {LogoSection} from '@/components/LandingPage/sections/LogoSection';
 
 interface IntegrationStatusResponse {
   data?: {
@@ -76,13 +77,14 @@ const IntegrationStatus = () => {
                   <Button variant="outline">View Available Integrations</Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl">
-                  <DialogHeader>
+                  {/* <DialogHeader>
                     <DialogTitle>Available ATS Integrations</DialogTitle>
                     <DialogDescription>
                       Connect with any of these popular ATS providers through our Merge.dev integration
                     </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid grid-cols-3 gap-4 py-4">
+                  </DialogHeader> */}
+                  <LogoSection />
+                  {/* <div className="grid grid-cols-3 gap-4 py-4">
                     {[
                       'Greenhouse', 'Lever', 'Workday', 'iCIMS', 'BambooHR',
                       'Jobvite', 'JazzHR', 'Recruitee', 'Pinpoint', 'Sage HR',
@@ -92,7 +94,7 @@ const IntegrationStatus = () => {
                         <span className="font-medium">{provider}</span>
                       </div>
                     ))}
-                  </div>
+                  </div> */}
                 </DialogContent>
               </Dialog>
             </div>
