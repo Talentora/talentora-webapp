@@ -8,17 +8,27 @@ import { type Database } from '@/types/types_db';
 type Recruiter = Database['public']['Tables']['recruiters']['Row'];
 type Company = Database['public']['Tables']['companies']['Row'];
 
+/**
+ * Hook to manage user authentication and related data
+ * @returns {UseUserReturn} Object containing user, recruiter, company data and loading/error states
+ */
 interface UseUserReturn {
+  /** The authenticated Supabase user */
   user: User | null;
-  recruiter: Recruiter | null; 
+  /** Recruiter data if user is a recruiter */
+  recruiter: Recruiter | null;
+  /** Company data if user is associated with a company */ 
   company: Company | null;
+  /** Loading state for any data fetching */
   loading: boolean;
+  /** Any error that occurred during data fetching */
   error: Error | null;
 }
 
 export function useUser(): UseUserReturn {
   const supabase = createClient();
 
+  // Fetch authenticated user data
   const { data: userData, error: userError, isLoading: userLoading } = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
@@ -28,6 +38,7 @@ export function useUser(): UseUserReturn {
     }
   });
 
+  // Fetch recruiter data if user exists
   const { data: recruiterData, error: recruiterError, isLoading: recruiterLoading } = useQuery({
     queryKey: ['recruiter', userData?.id],
     enabled: !!userData?.id,
@@ -43,6 +54,7 @@ export function useUser(): UseUserReturn {
     }
   });
 
+  // Fetch company data if recruiter exists and has company_id
   const { data: companyData, error: companyError, isLoading: companyLoading } = useQuery({
     queryKey: ['company', recruiterData?.company_id],
     enabled: !!recruiterData?.company_id,
@@ -58,7 +70,7 @@ export function useUser(): UseUserReturn {
     }
   });
 
-  // Set up auth state listener
+  // Set up auth state listener to keep data in sync
   useQuery({
     queryKey: ['authListener'],
     queryFn: async () => {
@@ -73,6 +85,7 @@ export function useUser(): UseUserReturn {
     staleTime: Infinity // Prevent unnecessary refetches of the auth listener
   });
 
+  // Combine errors and loading states
   const error = userError || recruiterError || companyError || null;
   const loading = userLoading || recruiterLoading || companyLoading;
 

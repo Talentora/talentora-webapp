@@ -1,7 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useCompany } from '@/hooks/useCompany';
-import { createClient } from '@/utils/supabase/client';
-import { useState, useEffect } from 'react';
+import { useUser } from '@/hooks/useUser';
 import { BotIcon } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component

@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useRecruiter } from '@/hooks/useRecruiter';
 import { createCompany, updateCompany } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 import { ToastAction } from '@/components/Toasts/toast';
-import { useUser } from '@/hooks/useUser';
 import { Loader2 } from 'lucide-react';
-import { useCompany } from '@/hooks/useCompany';
+import { useUser } from '@/hooks/useUser';
 
 /**
  * CompanyInfoStep Component
@@ -22,10 +20,10 @@ import { useCompany } from '@/hooks/useCompany';
 export const CompanyInfoStep: React.FC<{
   onCompletion: (isComplete: boolean) => void;
 }> = ({ onCompletion }) => {
-  const { recruiter, loading } = useRecruiter();
+  const { recruiter, loading } = useUser();
   const hasCompany = recruiter?.company_id ? true : false;
   const { user } = useUser();
-  const { company } = useCompany();
+  const { company } = useUser();
 
   useEffect(() => {
     onCompletion(hasCompany);

@@ -7,7 +7,6 @@ type Company = Tables<'companies'>;
 type Bot = Tables<'bots'>;
 type AI_Summary = Tables<'AI_summary'>;
 import { inviteRecruiterAdmin, inviteCandidateAdmin, listUsersAdmin } from '@/utils/supabase/admin';
-import { useCompany } from '@/hooks/useCompany';
 // CRUD operations for the company table
 
 /**
