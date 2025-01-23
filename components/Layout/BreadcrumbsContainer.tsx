@@ -16,7 +16,7 @@ const BreadcrumbsContainer: React.FC = () => {
   const pathParts = pathname.split('/').filter(Boolean);
   
   const breadcrumbs = [
-    { label: 'Home', href: '/' },
+    { label: 'Home', href: '/dashboard' },
     ...pathParts.map((part, index) => ({
       label: part.charAt(0).toUpperCase() + part.slice(1),
       href: '/' + pathParts.slice(0, index + 1).join('/')
