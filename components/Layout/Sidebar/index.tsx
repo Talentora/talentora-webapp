@@ -155,7 +155,7 @@ const Sidebar = () => {
         { type: 'page', name: 'Blog', href: '/blog', icon: BookOpen },
         { type: 'page', name: 'Contact', href: '/contact', icon: Mail },
         { type: 'page', name: 'Pricing', href: '/pricing', icon: CreditCard },
-        { type: 'page', name: 'Ora Scouts', href: '/scouts', icon: Search },
+        { type: 'page', name: 'Ora Scouts', href: '/bot', icon: Sparkles },
         { type: 'page', name: 'Product', href: '/product', icon: Box }
       ]
     },
@@ -207,17 +207,19 @@ const Sidebar = () => {
     setIsRouteLoading(true);
     console.log('Navigating to:', href);
     try {
-      // Set up route change handler before navigation
-      const handleRouteComplete = () => {
-        setIsRouteLoading(false);
-        setIsSearchOpen(false);
-        // Clean up event listener
-        router.events.off('routeChangeComplete', handleRouteComplete);
-      };
+      // // Set up route change handler before navigation
+      // const handleRouteComplete = () => {
+      //   setIsRouteLoading(false);
+      //   setIsSearchOpen(false);
+      //   // Clean up event listener
+      //   router.events.off('routeChangeComplete', handleRouteComplete);
+      // };
 
-      router.events.on('routeChangeComplete', handleRouteComplete);
+      // router.events.on('routeChangeComplete', handleRouteComplete);
 
       await router.push(href);
+      setIsRouteLoading(false);
+      setIsSearchOpen(false);
     } catch (error) {
       // Reset states if navigation fails
       setIsRouteLoading(false);
