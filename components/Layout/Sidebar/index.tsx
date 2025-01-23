@@ -97,7 +97,7 @@ const Sidebar = () => {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { jobs, applications, isLoading } = useSidebarData();
-
+  const [isSettingsOpen, setIsSettingsOpen] = useState(true);
   useEffect(() => {
     const fetchBots = async () => {
       const botsData = await getBots();
@@ -284,9 +284,36 @@ const Sidebar = () => {
                 )}
               </div>
             )}
-            <SidebarLink href="/settings" icon={SettingsIcon} isActive={pathname === '/settings'} isSidebarOpen={isSidebarOpen}>
+            <SidebarLink 
+              href="/settings" 
+              icon={SettingsIcon} 
+              isActive={pathname.startsWith('/settings')} 
+              isSidebarOpen={isSidebarOpen}
+              hasDropdown={true}
+              isDropdownOpen={isSettingsOpen}
+              onDropdownClick={() => setIsSettingsOpen(!isSettingsOpen)}
+            >
               Settings
             </SidebarLink>
+            {isSidebarOpen && isSettingsOpen && (
+              <div className="ml-1 mt-1 space-y-1 border-l-2 border-white/20 pl-3">
+                <SubLink href="/settings?tab=account">
+                  Account
+                </SubLink>
+                <SubLink href="/settings?tab=company">
+                  Company
+                </SubLink>
+                <SubLink href="/settings?tab=billing">
+                  Billing
+                </SubLink>
+                <SubLink href="/settings?tab=team">
+                  Team
+                </SubLink>
+                <SubLink href="/settings?tab=integrations">
+                  Integration Status
+                </SubLink>
+              </div>
+            )}
           </SidebarMenu>
         </SidebarContent>
 
