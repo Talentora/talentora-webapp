@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2 } from 'lucide-react';
+import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2, ChevronDown, ChevronUp, Search } from 'lucide-react';
 
 import Logo from '@/components/ui/icons/Logo';
 import { Button } from '@/components/ui/button';
@@ -25,6 +25,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { cn } from '@/utils/cn';
 import { useTheme } from 'next-themes';
 import { useSidebarData } from '@/hooks/useSidebarData';
+import { getBots } from '@/utils/supabase/queries';
 
 interface SidebarLinkProps {
   href: string;
@@ -32,20 +33,39 @@ interface SidebarLinkProps {
   children: React.ReactNode;
   isActive: boolean;
   isSidebarOpen?: boolean;
+  hasDropdown?: boolean;
+  isDropdownOpen?: boolean;
+  onDropdownClick?: () => void;
 }
 
-const SidebarLink = ({ href, icon: Icon, children, isActive, isSidebarOpen }: SidebarLinkProps) => (
+const SidebarLink = ({ href, icon: Icon, children, isActive, isSidebarOpen, hasDropdown, isDropdownOpen, onDropdownClick }: SidebarLinkProps) => (
   <SidebarMenuItem>
-    <SidebarMenuButton
-      asChild
-      isActive={isActive}
-      className="hover:bg-primary-dark/10 transition-colors"
-    >
-      <Link href={href} className="flex items-center gap-3 text-white">
-        <Icon className="h-5 w-5 text-white" />
-        {isSidebarOpen && <span className="font-medium text-white">{children}</span>}
-      </Link>
-    </SidebarMenuButton>
+    <div className="flex items-center">
+      <SidebarMenuButton
+        asChild
+        isActive={isActive}
+        className="hover:bg-primary-dark/10 transition-colors flex-1"
+      >
+        <Link href={href} className="flex items-center gap-3 text-white">
+          <Icon className="h-5 w-5 text-white" />
+          {isSidebarOpen && <span className="font-medium text-white">{children}</span>}
+        </Link>
+      </SidebarMenuButton>
+      {hasDropdown && isSidebarOpen && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onDropdownClick}
+          className="ml-2 p-1 hover:bg-primary-dark/10"
+        >
+          {isDropdownOpen ? (
+            <ChevronUp className="h-4 w-4 text-white" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-white" />
+          )}
+        </Button>
+      )}
+    </div>
   </SidebarMenuItem>
 );
 
@@ -66,6 +86,11 @@ const SubLink = ({ href, children }: SubLinkProps) => (
 const Sidebar = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isJobsOpen, setIsJobsOpen] = useState(true);
+  const [isApplicantsOpen, setIsApplicantsOpen] = useState(true);
+  const [isBotsOpen, setIsBotsOpen] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [bots, setBots] = useState<any[]>([]);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { user, company } = useUser();
@@ -73,6 +98,15 @@ const Sidebar = () => {
   const { theme, setTheme } = useTheme();
   const { jobs, applications, isLoading } = useSidebarData();
 
+  useEffect(() => {
+    const fetchBots = async () => {
+      const botsData = await getBots();
+      if (botsData) {
+        setBots(botsData);
+      }
+    };
+    fetchBots();
+  }, []);
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -81,10 +115,28 @@ const Sidebar = () => {
     }
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredJobs = jobs?.filter((job: any) => 
+    job.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredApplications = applications?.filter((app: any) =>
+    `${app.candidate?.first_name} ${app.candidate?.last_name}`
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
+  );
+
+  const filteredBots = bots?.filter((bot: any) =>
+    bot.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
-        setIsUserMenuOpen(false);
+        // setIsUserMenuOpen(false);
       }
     };
 
@@ -134,50 +186,102 @@ const Sidebar = () => {
           </TooltipProvider>
         </SidebarHeader>
 
+        {isSidebarOpen && (
+          <div className="px-4 mb-2">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={handleSearch}
+                className="w-full bg-white/10 text-white placeholder-white/50 rounded-md py-1.5 pl-8 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-white/30"
+              />
+              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
+            </div>
+          </div>
+        )}
+
         <SidebarContent className="flex-1 p-4">
           <SidebarMenu className="space-y-2">
             <SidebarLink href="/dashboard" icon={HomeIcon} isActive={pathname === '/dashboard'} isSidebarOpen={isSidebarOpen}>
               <span className="text-white">Dashboard</span>
             </SidebarLink>
-            <SidebarLink href="/jobs" icon={BriefcaseIcon} isActive={pathname === '/jobs'} isSidebarOpen={isSidebarOpen}>
+            <SidebarLink 
+              href="/jobs" 
+              icon={BriefcaseIcon} 
+              isActive={pathname === '/jobs'} 
+              isSidebarOpen={isSidebarOpen}
+              hasDropdown={true}
+              isDropdownOpen={isJobsOpen}
+              onDropdownClick={() => setIsJobsOpen(!isJobsOpen)}
+            >
               <span className="text-white">Jobs</span>
             </SidebarLink>
-            {isSidebarOpen && (
-              <div className="ml-1 mt-1 space-y-1">
+            {isSidebarOpen && isJobsOpen && (
+              <div className="ml-1 mt-1 space-y-1 border-l-2 border-white/20 pl-3">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
                     <Loader2 className="h-4 w-4 animate-spin text-white/70" />
                   </div>
                 ) : (
-                  jobs.map((job: any) => (
+                  filteredJobs?.map((job: any) => (
                     <SubLink key={job.id} href={`/jobs/${job.id}`}>
                       {job.name || 'Untitled Position'}
                     </SubLink>
                   ))
                 )}
-
               </div>
             )}
-            <SidebarLink href="/bot" icon={Sparkles} isActive={pathname === '/bot'} isSidebarOpen={isSidebarOpen}>
+            <SidebarLink 
+              href="/bot" 
+              icon={Sparkles} 
+              isActive={pathname === '/bot'} 
+              isSidebarOpen={isSidebarOpen}
+              hasDropdown={true}
+              isDropdownOpen={isBotsOpen}
+              onDropdownClick={() => setIsBotsOpen(!isBotsOpen)}
+            >
               Ora Scouts
             </SidebarLink>
-            <SidebarLink href="/applicants" icon={Users} isActive={pathname === '/applicants'} isSidebarOpen={isSidebarOpen}>
-              Applicants
-            </SidebarLink>
-            {isSidebarOpen && (
-              <div className="ml-1 mt-1 space-y-1">
+            {isSidebarOpen && isBotsOpen && (
+              <div className="ml-1 mt-1 space-y-1 border-l-2 border-white/20 pl-3">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
                     <Loader2 className="h-4 w-4 animate-spin text-white/70" />
                   </div>
                 ) : (
-                  applications.map((app: any) => (
+                  filteredBots?.map((bot: any) => (
+                    <SubLink key={bot.id} href={`/bot/${bot.id}`}>
+                      {bot.name || 'Untitled Bot'}
+                    </SubLink>
+                  ))
+                )}
+              </div>
+            )}
+            <SidebarLink 
+              href="/applicants" 
+              icon={Users} 
+              isActive={pathname === '/applicants'} 
+              isSidebarOpen={isSidebarOpen}
+              hasDropdown={true}
+              isDropdownOpen={isApplicantsOpen}
+              onDropdownClick={() => setIsApplicantsOpen(!isApplicantsOpen)}
+            >
+              Applicants
+            </SidebarLink>
+            {isSidebarOpen && isApplicantsOpen && (
+              <div className="ml-1 mt-1 space-y-1 border-l-2 border-white/20 pl-3">
+                {isLoading ? (
+                  <div className="flex items-center justify-center py-2">
+                    <Loader2 className="h-4 w-4 animate-spin text-white/70" />
+                  </div>
+                ) : (
+                  filteredApplications?.map((app: any) => (
                     <SubLink key={app.application.id} href={`/applicants/${app.application.id}`}>
                       {app.candidate?.first_name} {app.candidate?.last_name}
                     </SubLink>
                   ))
                 )}
-
               </div>
             )}
             <SidebarLink href="/settings" icon={SettingsIcon} isActive={pathname === '/settings'} isSidebarOpen={isSidebarOpen}>
@@ -234,11 +338,9 @@ const Sidebar = () => {
                     </Button>
                   </form>
                 </div>
-
               </div>
             )}
           </div>
-       
         </SidebarFooter>
       </SidebarComponent>
     </SidebarProvider>
