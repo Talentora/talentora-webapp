@@ -1,4 +1,4 @@
-import { portalProps } from "@/app/(pages)/applicants/[id]/page";
+import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
 import VideoTranscript from "./VideoTranscript";
 import NewLexicalAnalysis from "./NewLexicalAnalysis";
 import EmotionalAnalysis from "./EmotionalAnalysis";

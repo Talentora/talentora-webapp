@@ -3,7 +3,7 @@ import { InterviewSummary } from './TranscriptSummary'
 import { TranscriptViewer } from './TranscriptScroller'
 import { AISummaryApplicant } from "@/types/analysis";
 import { useState, useEffect } from "react";
-import { portalProps } from "@/app/(pages)/applicants/[id]/page";
+import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface VideoTranscriptProps {
