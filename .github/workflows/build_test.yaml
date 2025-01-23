@@ -1,7 +1,6 @@
 name: 'build-test_Next.js'
 
 on:
-
   push:
     branches:
       - main
