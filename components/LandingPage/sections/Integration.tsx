@@ -4,7 +4,7 @@ import { CheckCircle } from 'lucide-react';
 
 const benefits = [
   "One-click integration with major ATS platforms",
-  "Automated candidate data sync",
+  "Automated candidate data sync", 
   "Custom workflow automation",
   "Real-time analytics dashboard"
 ];
@@ -16,8 +16,8 @@ export function Integration() {
       <div className="relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
-            <div className="inline-flex items-center rounded-full border border-purple-200 bg-purple-50 px-4 py-1.5 text-sm">
-              <span className="text-purple-600 font-medium">Enterprise Ready</span>
+            <div className="inline-flex items-center rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm">
+              <span className="text-accent font-medium">Enterprise Ready</span>
             </div>
             <h2 className="text-4xl font-bold">
               Seamlessly fits into your workflow
@@ -34,17 +34,17 @@ export function Integration() {
               ))}
             </ul>
             <div className="flex items-center gap-4">
-              <Button className="bg-purple-600 hover:bg-purple-700">
+              <Button className="bg-accent hover:bg-accent/90">
                 View Integrations
               </Button>
-              <Button variant="outline" className="border-purple-600 text-purple-600">
+              <Button variant="outline" className="border-accent text-accent hover:bg-accent/5">
                 Schedule Demo
               </Button>
             </div>
           </div>
           <div className="relative">
-            <div className="absolute -inset-4 bg-gradient-to-r from-purple-100/50 to-pink-100/50 rounded-3xl blur-2xl" />
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-purple-100 shadow-2xl">
+            <div className="absolute -inset-4 bg-gradient-to-r from-accent/5 to-pink-100/50 rounded-3xl blur-2xl" />
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-accent/10 shadow-2xl">
               <Image
                 src="/Images/Image7.png"
                 alt="Integration visualization"
@@ -53,11 +53,11 @@ export function Integration() {
                 priority
               />
               {/* Video overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-600/5 to-pink-600/5" />
+              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-pink-600/5" />
             </div>
           </div>
         </div>
       </div>
     </section>
   );
-} 
+}
