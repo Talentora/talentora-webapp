@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Navbar from '@/components/Layout/Navbar';
 import Sidebar from '@/components/Layout/Sidebar';
+import BreadcrumbsContainer from '@/components/Layout/BreadcrumbsContainer';
 import { Toaster } from '@/components/Toasts/toaster';
 import { PropsWithChildren, Suspense } from 'react';
 import { getURL } from '@/utils/helpers';
@@ -47,6 +48,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               }`}
             >
               <Navbar visible={isSidebarVisible} />
+              <BreadcrumbsContainer />
               <Suspense fallback={<Loading />}>{children}</Suspense>
             </main>
           </div>
