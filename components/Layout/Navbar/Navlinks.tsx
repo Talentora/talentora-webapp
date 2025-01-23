@@ -27,8 +27,7 @@ export default function Navlinks({ visible }: { visible: boolean }) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const { user, loading } = useUser();
-
+  const { user, recruiter, loading } = useUser();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -62,6 +61,13 @@ export default function Navlinks({ visible }: { visible: boolean }) {
 
             <NavigationMenu>
               <NavigationMenuList>
+                {user && !recruiter && (
+                  <NavigationMenuItem>
+                    <Link href="/dashboard" className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
+                      Dashboard
+                    </Link>
+                  </NavigationMenuItem>
+                )}
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="bg-transparent">Solutions</NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -175,7 +181,7 @@ export default function Navlinks({ visible }: { visible: boolean }) {
                 </Link>
               </div>
             ) : (
-              <Profile isSidebarOpen={false} />
+              <Profile />
             )}
           </div>
         </div>
