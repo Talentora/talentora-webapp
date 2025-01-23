@@ -26,6 +26,7 @@ import { cn } from '@/utils/cn';
 import { useTheme } from 'next-themes';
 import { useSidebarData } from '@/hooks/useSidebarData';
 import { getBots } from '@/utils/supabase/queries';
+import { Command, CommandInput, CommandList, CommandGroup, CommandItem, CommandDialog } from '@/components/ui/command';
 
 interface SidebarLinkProps {
   href: string;
@@ -83,6 +84,30 @@ const SubLink = ({ href, children }: SubLinkProps) => (
   </Link>
 );
 
+interface Job {
+  id: string;
+  name: string;
+}
+
+interface Candidate {
+  first_name?: string;
+  last_name?: string;
+}
+
+interface Application {
+  id: string;
+}
+
+interface ApplicationWithCandidate {
+  candidate?: Candidate;
+  application: Application;
+}
+
+interface Bot {
+  id: string;
+  name?: string;
+}
+
 const Sidebar = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -90,7 +115,8 @@ const Sidebar = () => {
   const [isApplicantsOpen, setIsApplicantsOpen] = useState(true);
   const [isBotsOpen, setIsBotsOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [bots, setBots] = useState<any[]>([]);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [bots, setBots] = useState<Bot[]>([]);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { user, company } = useUser();
@@ -98,6 +124,7 @@ const Sidebar = () => {
   const { theme, setTheme } = useTheme();
   const { jobs, applications, isLoading } = useSidebarData();
   const [isSettingsOpen, setIsSettingsOpen] = useState(true);
+
   useEffect(() => {
     const fetchBots = async () => {
       const botsData = await getBots();
@@ -108,6 +135,17 @@ const Sidebar = () => {
     fetchBots();
   }, []);
 
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setIsSearchOpen((open) => !open);
+      }
+    };
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
+  }, []);
+
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (getRedirectMethod() === 'client') {
@@ -115,22 +153,46 @@ const Sidebar = () => {
     }
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
+  // Generate search items from all available pages/resources
+  const searchItems = [
+    {
+      group: 'Pages',
+      items: [
+        { type: 'page', name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
+        { type: 'page', name: 'Jobs', href: '/jobs', icon: BriefcaseIcon },
+        { type: 'page', name: 'Applicants', href: '/applicants', icon: Users },
+        { type: 'page', name: 'Settings', href: '/settings', icon: SettingsIcon },
+      ]
+    },
+    {
+      group: 'Suggested',
+      items: [
+        ...(jobs?.map((job: Job) => ({
+          type: 'job', 
+          name: job.name || 'Untitled Position',
+          href: `/jobs/${job.id}`,
+          icon: BriefcaseIcon
+        })) || []),
+        ...(applications?.map((app: ApplicationWithCandidate) => ({
+          type: 'applicant',
+          name: `${app.candidate?.first_name} ${app.candidate?.last_name}`,
+          href: `/applicants/${app.application.id}`,
+          icon: User
+        })) || []),
+        ...(bots?.map((bot: Bot) => ({
+          type: 'bot',
+          name: bot.name || 'Untitled Bot', 
+          href: `/bot/${bot.id}`,
+          icon: Sparkles
+        })) || [])
+      ]
+    }
+  ];
 
-  const filteredJobs = jobs?.filter((job: any) => 
-    job.name?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const filteredApplications = applications?.filter((app: any) =>
-    `${app.candidate?.first_name} ${app.candidate?.last_name}`
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase())
-  );
-
-  const filteredBots = bots?.filter((bot: any) =>
-    bot.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredItems = searchItems.flatMap(group => 
+    group.items.filter(item =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
   );
 
   useEffect(() => {
@@ -148,6 +210,41 @@ const Sidebar = () => {
 
   return (
     <SidebarProvider defaultOpen>
+      <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+        <CommandInput 
+          placeholder="Type a command or search..." 
+          className="border-gray-300 text-gray-900 placeholder:text-gray-500"
+        />
+        <CommandList className="bg-white">
+          {searchItems.map((group) => (
+            <CommandGroup 
+              key={group.group} 
+              heading={group.group}
+              className="text-gray-900 bg-gray-50"
+            >
+              {group.items
+                .filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                .map((item, index) => {
+                  const Icon = item.icon;
+                  return (
+                    <CommandItem
+                      key={index}
+                      onSelect={() => {
+                        router.push(item.href);
+                        setIsSearchOpen(false);
+                      }}
+                      className="hover:bg-gray-100 text-gray-900"
+                    >
+                      <Icon className="mr-2 h-4 w-4 text-gray-600" />
+                      <span className="text-gray-900">{item.name}</span>
+                    </CommandItem>
+                  );
+                })}
+            </CommandGroup>
+          ))}
+        </CommandList>
+      </CommandDialog>
+
       <SidebarComponent className={cn(
         "bg-primary-dark transition-all duration-300 ease-in-out",
         isSidebarOpen ? "w-50" : "w-20"
@@ -186,23 +283,28 @@ const Sidebar = () => {
           </TooltipProvider>
         </SidebarHeader>
 
-        {isSidebarOpen && (
-          <div className="px-4 mb-2">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={handleSearch}
-                className="w-full bg-white/10 text-white placeholder-white/50 rounded-md py-1.5 pl-8 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-white/30"
-              />
-              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
-            </div>
-          </div>
-        )}
-
-        <SidebarContent className="flex-1 p-4">
+        <SidebarContent className="flex-1 p-2">
           <SidebarMenu className="space-y-2">
+            {!isSidebarOpen ? (
+              <Button
+                variant="ghost" 
+                size="icon"
+                className="w-full h-10 flex items-center justify-start text-white hover:bg-white/10"
+                onClick={() => setIsSearchOpen(true)}
+              >
+                <Search className="h-5 w-5" />
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                className="w-full h-10 flex items-center justify-start gap-2 text-white hover:bg-white/10 rounded-lg"
+                onClick={() => setIsSearchOpen(true)}
+              >
+                <Search className="h-5 w-5" />
+                <span>Search (⌘+K)</span>
+              </Button>
+            )}
+
             <SidebarLink href="/dashboard" icon={HomeIcon} isActive={pathname === '/dashboard'} isSidebarOpen={isSidebarOpen}>
               <span className="text-white">Dashboard</span>
             </SidebarLink>
@@ -224,11 +326,13 @@ const Sidebar = () => {
                     <Loader2 className="h-4 w-4 animate-spin text-white/70" />
                   </div>
                 ) : (
-                  filteredJobs?.map((job: any) => (
-                    <SubLink key={job.id} href={`/jobs/${job.id}`}>
-                      {job.name || 'Untitled Position'}
-                    </SubLink>
-                  ))
+                  filteredItems
+                    .filter(item => item.type === 'job')
+                    .map((job, index) => (
+                      <SubLink key={index} href={job.href}>
+                        {job.name}
+                      </SubLink>
+                    ))
                 )}
               </div>
             )}
@@ -250,11 +354,13 @@ const Sidebar = () => {
                     <Loader2 className="h-4 w-4 animate-spin text-white/70" />
                   </div>
                 ) : (
-                  filteredBots?.map((bot: any) => (
-                    <SubLink key={bot.id} href={`/bot/${bot.id}`}>
-                      {bot.name || 'Untitled Bot'}
-                    </SubLink>
-                  ))
+                  filteredItems
+                    .filter(item => item.type === 'bot')
+                    .map((bot, index) => (
+                      <SubLink key={index} href={bot.href}>
+                        {bot.name}
+                      </SubLink>
+                    ))
                 )}
               </div>
             )}
@@ -276,11 +382,13 @@ const Sidebar = () => {
                     <Loader2 className="h-4 w-4 animate-spin text-white/70" />
                   </div>
                 ) : (
-                  filteredApplications?.map((app: any) => (
-                    <SubLink key={app.application.id} href={`/applicants/${app.application.id}`}>
-                      {app.candidate?.first_name} {app.candidate?.last_name}
-                    </SubLink>
-                  ))
+                  filteredItems
+                    .filter(item => item.type === 'applicant')
+                    .map((applicant, index) => (
+                      <SubLink key={index} href={applicant.href}>
+                        {applicant.name}
+                      </SubLink>
+                    ))
                 )}
               </div>
             )}
