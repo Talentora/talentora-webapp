@@ -1,4 +1,5 @@
 type Application = {
+  ai_score: string;
   id: string;
   remote_id: string;
   created_at: string;
@@ -55,6 +56,7 @@ type User = {
 };
 
 type Candidate = {
+  avatar: string;
   id: string;
   remote_id: string;
   first_name: string;

@@ -9,17 +9,17 @@ import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton componen
 export default function ActiveJobsCard({ jobs, isLoading }: { jobs: Job[], isLoading: boolean  }) {
 
   return (
-    <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-primary-dark/50 bg-card">
-      <CardHeader className="flex flex-row justify-between items-center">
-        <Link href="/jobs" className="text-sm text-muted-foreground hover:text-primary">
-        <CardTitle>Active Job Titles</CardTitle>
+    <Card className="p-5 -mt-16 bg-white rounded-2xl border border-input shadow-primary-dark/50 bg-card">
+      <CardHeader className="flex flex-row ">
+        <Link href="/jobs" className="text-lg text-black hover:text-primary">
+        <CardTitle className='text-black text-lg dark:text-white'>Active Job Titles</CardTitle>
         </Link>
       </CardHeader>
       <CardContent>
         {isLoading ? (
           <div className="grid grid-cols-2 gap-4">
             {[1, 2, 3, 4, 5].map((index) => (
-              <div key={index} className="p-4 border border-gray-200 rounded-lg">
+              <div key={index} className="p-4 rounded-lg">
                 <Skeleton className="h-4 w-32 mb-2" />
                 <Skeleton className="h-2 w-24" />
               </div>
@@ -32,7 +32,7 @@ export default function ActiveJobsCard({ jobs, isLoading }: { jobs: Job[], isLoa
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 text-black dark:text-white">
             {jobs
               ?.slice(0, 5)
               .map((job, index) => <JobItem key={index} job={job} />)}
@@ -47,7 +47,7 @@ export default function ActiveJobsCard({ jobs, isLoading }: { jobs: Job[], isLoa
 function JobItem({ job }: { job: Job }) {
   return (
     <Link href={`/jobs/${job.id}`}>
-      <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+      <div className="p-4 border border-input rounded-lg hover:bg-input transition-colors duration-200">
         <h3 className="font-semibold text-sm mb-1 truncate">{job.name}</h3>
         <p className="text-xs text-gray-500 mb-2 truncate">
           {Array.isArray(job.departments)

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import ProgressDots from '@/components/ui/progress-dots';
+
 interface OnboardingNavigationProps {
   step: number;
   totalSteps: number;
@@ -34,9 +35,7 @@ export const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
           </Button>
         )}
       </div>
-      <div className="flex justify-center">
-        <ProgressDots step={step} totalSteps={totalSteps} />
-      </div>
+  
     </div>
   );
 };

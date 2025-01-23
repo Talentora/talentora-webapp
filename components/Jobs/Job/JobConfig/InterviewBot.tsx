@@ -112,11 +112,10 @@ const InterviewBot = ({ loading, botInfo, jobId, interviewConfig }: InterviewBot
 
   return (
     <div className="flex-1">
-      <Card className="p-5 bg-foreground border border-border shadow-3xl h-full">
-        <CardHeader>
+    <Card className="rounded-lg hover:bg-accent/50 transition-colors p-5 bg-white dark:bg-transparent shadow-[0_4px_6px_-1px_rgba(90,79,207,0.3),0_2px_4px_-2px_rgba(90,79,207,0.2)] bg-card hover:shadow-[0_10px_15px_-3px_rgba(90,79,207,0.4),0_4px_6px_-4px_rgba(90,79,207,0.3)] hover:scale-[1.01] transition-transform cursor-pointer border border-border shadow-3xl h-full">
+    <CardHeader>
           <div className="flex items-center justify-between gap-5">
-            <CardTitle className="text-xl font-semibold">Ora Scout</CardTitle>
-            <Bot className="h-6 w-6 text-primary" />
+            <CardTitle className="text-xl font-semibold">Interview Bot</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="flex-1">
@@ -127,7 +126,7 @@ const InterviewBot = ({ loading, botInfo, jobId, interviewConfig }: InterviewBot
           ) : botInfo ? (
             <div className="space-y-4">
               <div
-                className="flex items-center gap-3 cursor-pointer hover:bg-accent/50 p-2 rounded-md"
+                className="flex items-center gap-3 cursor-pointer p-2 rounded-md"
                 onClick={handleOpenDialog}
               >
                 {botInfo.icon && (

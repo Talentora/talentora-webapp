@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export function JobHeaderSkeleton() {
   return (
-    <Card className="w-full max-w-4xl shadow-lg rounded-lg p-4 bg-white">
+    <Card className="w-full rounded-lg p-4 bg-white">
       <CardHeader className="border-b border-gray-200 mb-4">
-        <Skeleton className="h-8 w-1/3 mb-4" />
+        <Skeleton className="h-8 w-full mb-4" />
         <div className="flex flex-row justify-between mb-4">
           <div className="flex items-center space-x-4">
             <Skeleton className="h-4 w-24" />

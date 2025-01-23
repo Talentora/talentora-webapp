@@ -28,16 +28,17 @@ export default function RecentApplicantsCard({ applicants, isLoading }: { applic
   // }, []);
 
   return (
-    <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-primary-dark/50 bg-card">
-      <CardHeader className="pb-2 flex flex-row justify-between">
+    <Card className="p-5 bg-white rounded-2xl bg-card">
+      <CardHeader className="mt-2 pb-2 flex flex-row justify-between">
         <CardTitle>Recent Applicants</CardTitle>
         <Link href="/applicants">
-          <Button
-            className="bg-primary-dark text-white flex items-center "
-            variant="outline"
-          >
-            View All
-          </Button>
+        <Button
+          className="flex items-center bg-white text-black dark:bg-black dark:text-white border border-gray-300 dark:border-gray-700"
+          variant="outline"
+        >
+          View All
+        </Button>
+
         </Link>
       </CardHeader>
       <CardContent className="pt-4">

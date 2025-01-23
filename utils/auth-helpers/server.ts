@@ -269,6 +269,30 @@ export async function signUp(formData: FormData) {
   return redirectPath;
 }
 
+export async function uploadProfilePhoto(photoFile: File) {
+  const supabase = createClient();
+  const user = supabase.auth.user();
+
+  // Check if the user is authenticated
+  if (!user) {
+    throw new Error('User not authenticated');
+  }
+
+  const fileName = `profile_photos/${user.id}/${photoFile.name}`;
+  const { data, error } = await supabase.storage
+    .from('profile-photos') // Specify your bucket name
+    .upload(fileName, photoFile);
+
+  if (error) {
+    return { error, data: null };
+  }
+
+  // You can return the URL or any necessary info after uploading
+  const photoUrl = supabase.storage.from('profile-photos').getPublicUrl(fileName);
+  return { error: null, data: photoUrl };
+}
+
+
 export async function updatePassword(formData: FormData) {
   const password = String(formData.get('password')).trim();
   const passwordConfirm = String(formData.get('passwordConfirm')).trim();
@@ -351,6 +375,7 @@ export async function updateEmail(formData: FormData) {
     );
   }
 }
+
 
 export async function updateName(formData: FormData) {
   // Get form data

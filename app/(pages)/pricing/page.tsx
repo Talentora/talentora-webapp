@@ -47,9 +47,7 @@ export default function PricingPage() {
   return (
     <div>
       <Pricing
-        user={user}
-        products={products ?? []}
-        subscription={subscription as SubscriptionWithProduct | null}
+       
       />
     </div>
   );

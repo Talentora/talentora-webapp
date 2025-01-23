@@ -35,9 +35,9 @@ export default function EmailForm() {
   };
 
   return (
-    <Card className="my-8 text-card-foreground ">
+    <Card className="p-8 pr-8 border border-input my-8 text-card-foreground ">
       <CardHeader>
-        <CardTitle className="text-primary">Your Email</CardTitle>
+        <CardTitle className="text-primary">Private Details</CardTitle>
         <CardDescription className="text-muted-foreground">
           Please enter the email address you want to use to login.
         </CardDescription>

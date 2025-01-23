@@ -8,7 +8,6 @@ import '@/styles/main.css';
 import Loading from '@/components/Layout/Loading';
 import NextTopLoader from 'nextjs-toploader';
 import { createClient } from '@/utils/supabase/server';
-import Script from 'next/script';
 import ReactQueryProvider from '@/components/Providers/ReactQueryProvider';
 
 const title = 'Talentora';
@@ -30,25 +29,30 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   const isSidebarVisible = role === 'recruiter';
 
   return (
-    <html lang="en">
-      <body className="w-full bg-gradient-to-br from-purple-500/[0.1] via-white to-pink-500/[0.1] p-0">
+    <html lang="en" className="light dark:bg-gradient-dark light:bg-gradient-light">
+      <body className="w-full p-0 text-foreground">
         <NextTopLoader />
         <ReactQueryProvider>
-          <div className="flex">
+          <div className="flex relative">
+            {/* Sidebar is moved down so it is not covered by the navbar */}
             {isSidebarVisible && (
-              <aside className="fixed h-full">
+              <aside className="fixed left-0 top-[4rem] h-full z-20">
                 <Sidebar />
               </aside>
             )}
-            <main
-              id="skip"
-              className={`flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]${
-                isSidebarVisible ? ' ml-60' : ' w-full'
-              }`}
-            >
+
+            <div className="flex-1">
+              {/* Navbar stays above the sidebar, not being covered */}
               <Navbar visible={isSidebarVisible} />
-              <Suspense fallback={<Loading />}>{children}</Suspense>
-            </main>
+              <main
+                id="skip"
+                className={`min-h-[calc(100dvh-4rem)] md:min-h-[calc(100dvh-5rem)] ${
+                  isSidebarVisible ? 'ml-80 mr-20' : 'w-full'
+                }`}
+              >
+                <Suspense fallback={<Loading />} >{children}</Suspense>
+              </main>
+            </div>
           </div>
           <Suspense>
             <Toaster />

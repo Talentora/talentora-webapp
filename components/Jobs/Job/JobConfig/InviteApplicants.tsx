@@ -92,8 +92,8 @@ const InviteApplicants = ({ jobs, singleJobFlag, applicants }: InviteApplicantsP
 
   return (
     <div className="flex-1">
-      <Card className="p-5 bg-foreground border border-border shadow-3xl h-full relative overflow-hidden hover:shadow-lg transition-shadow duration-300">
-        {/* Sparkle decorations */}
+    <Card className="rounded-lg hover:bg-accent/50 transition-colors p-5 bg-white dark:bg-transparent shadow-[0_4px_6px_-1px_rgba(90,79,207,0.3),0_2px_4px_-2px_rgba(90,79,207,0.2)] bg-card hover:shadow-[0_10px_15px_-3px_rgba(90,79,207,0.4),0_4px_6px_-4px_rgba(90,79,207,0.3)] hover:scale-[1.01] transition-transform cursor-pointer border border-border shadow-3xl h-full">
+    {/* Sparkle decorations */}
         <div className="absolute top-3 right-3 animate-[spin_3s_linear_infinite]">
           <Sparkles className="h-6 w-6 text-yellow-400 animate-pulse" />
         </div>
@@ -116,11 +116,10 @@ const InviteApplicants = ({ jobs, singleJobFlag, applicants }: InviteApplicantsP
             </p>
             <Button 
               onClick={() => setShowInviteDialog(true)} 
-              className="mt-4 w-1/2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 
-              hover:to-blue-700 transition-all duration-300 transform hover:scale-105 
+              className="mt-4 w-1/2 bg-primary border border-input
               hover:shadow-lg relative group"
             >
-              <span className="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-orange-300 
+              <span className="absolute -inset-1 bg-black
               opacity-20 group-hover:opacity-30 blur transition-all duration-300"></span>
               <span className="relative">Invite Candidates</span>
             </Button>
