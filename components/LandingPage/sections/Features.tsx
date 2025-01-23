@@ -39,9 +39,9 @@ export default function Features() {
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow border border-purple-100"
+              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow border border-accent/20"
             >
-              <feature.icon className="w-12 h-12 text-purple-600 mb-6" />
+              <feature.icon className="w-12 h-12 text-accent mb-6" />
               <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
               <p className="text-gray-600">{feature.description}</p>
             </div>
