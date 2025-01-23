@@ -13,16 +13,20 @@ import Link from 'next/link';
 import InvitePage from '@/components/Invite';
 import { TeamMembersStep } from '@/components/CompanyOnboarding/steps/TeamMemberStep';
 import IntegrationStatus from '@/components/AccountForms/IntegrationStatus';
+import { useSearchParams } from 'next/navigation';
 
 
 type Recruiter = Tables<'recruiters'>;
 type Company = Tables<'companies'>;
 
 export default function SettingsPage() {
+  const searchParams = useSearchParams();
+  const tab = searchParams.get('tab') || 'account';
+
   return (
     <section className="p-6">
       <div className="p-2">
-        <Tabs defaultValue="account" className="w-full">
+        <Tabs defaultValue={tab} className="w-full">
           <TabsList className="flex w-full bg-transparent rounded-lg">
             <TabsTrigger
               value="account"

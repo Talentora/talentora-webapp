@@ -468,13 +468,13 @@ const Sidebar = () => {
                       {user?.user_metadata.full_name || user?.email}
                     </h4>
                     <div className="flex items-center gap-[0.5em] mt-[0.25em]">
-                      <span className="inline-flex items-center rounded-full bg-purple-100 px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-purple-800 capitalize">
+                      <Link href="/settings?tab=account" className="inline-flex items-center rounded-full bg-purple-100 px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-purple-800 capitalize hover:bg-purple-200">
                         {user?.user_metadata?.role || 'User'}
-                      </span>
+                      </Link>
                       {company?.name && (
-                        <span className="inline-flex items-center rounded-full bg-blue-100 px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-blue-800">
+                        <Link href="/settings?tab=company" className="inline-flex items-center rounded-full bg-blue-100 px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-blue-800 hover:bg-blue-200">
                           {company.name}
-                        </span>
+                        </Link>
                       )}
                     </div>
                   </div>
