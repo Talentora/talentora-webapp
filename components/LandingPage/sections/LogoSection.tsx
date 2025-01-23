@@ -14,7 +14,7 @@ const integrations = [
 
 export function LogoSection() {
   return (
-    <section className="w-full px-4 py-8 md:py-16 lg:py-24">
+    <section className="w-full px-4 py-8 md:py-16 lg:py-24" id="ats-integrations">
       <div className="text-center space-y-2 md:space-y-4 mb-8 md:mb-12 lg:mb-16">
         <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold">
           Seamlessly Integrate with Your ATS
