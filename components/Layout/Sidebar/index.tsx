@@ -27,6 +27,7 @@ import { useTheme } from 'next-themes';
 import { useSidebarData } from '@/hooks/useSidebarData';
 import { getBots } from '@/utils/supabase/queries';
 import { Command, CommandInput, CommandList, CommandGroup, CommandItem, CommandDialog } from '@/components/ui/command';
+import { BotWithJobs } from '@/types/custom';
 
 interface SidebarLinkProps {
   href: string;
@@ -116,24 +117,13 @@ const Sidebar = () => {
   const [isBotsOpen, setIsBotsOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [bots, setBots] = useState<Bot[]>([]);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { user, company } = useUser();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const { jobs, applications, isLoading } = useSidebarData();
+  const { jobs, applications, bots, isLoading, isError } = useSidebarData();
   const [isSettingsOpen, setIsSettingsOpen] = useState(true);
-
-  useEffect(() => {
-    const fetchBots = async () => {
-      const botsData = await getBots();
-      if (botsData) {
-        setBots(botsData);
-      }
-    };
-    fetchBots();
-  }, []);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -179,7 +169,7 @@ const Sidebar = () => {
           href: `/applicants/${app.application.id}`,
           icon: User
         })) || []),
-        ...(bots?.map((bot: Bot) => ({
+        ...(bots?.map((bot: BotWithJobs) => ({
           type: 'bot',
           name: bot.name || 'Untitled Bot', 
           href: `/bot/${bot.id}`,
@@ -297,7 +287,7 @@ const Sidebar = () => {
             ) : (
               <Button
                 variant="ghost"
-                className="w-full h-10 flex items-center justify-start gap-2 text-white hover:bg-white/10 rounded-lg"
+                className="w-full h-10 flex items-center justify-start gap-2 text-white bg-white/10 hover:bg-white/20 rounded-lg border border-white/20"
                 onClick={() => setIsSearchOpen(true)}
               >
                 <Search className="h-5 w-5" />
