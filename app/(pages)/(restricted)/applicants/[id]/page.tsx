@@ -143,7 +143,7 @@ export default function ApplicantPage({
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <a 
           href="/applicants"
           className="inline-flex items-center text-primary-dark hover:text-primary transition-colors"
@@ -151,7 +151,7 @@ export default function ApplicantPage({
           <ArrowLeft className="w-5 h-5 mr-2" />
           Back to Applicants
         </a>
-      </div>
+      </div> */}
       {loading ? (
         <div className="space-y-4">
           <div className="flex flex-col lg:flex-row gap-6">
