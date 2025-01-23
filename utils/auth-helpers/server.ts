@@ -152,7 +152,7 @@ export async function signInWithPassword(formData: FormData) {
     );
     redirectPath = `/signin/password_signin?role=${role}`
   } else if (data.user) {
-    cookieStore.set('preferredSignInView', 'password_signin', { path: '/' });
+    cookieStore.set('preferredSignInView', 'password_signin', { path: '/dashboard' });
     redirectPath = getStatusRedirect('/', 'Success!', 'You are now signed in.');
   } else {
     redirectPath = getErrorRedirect(
