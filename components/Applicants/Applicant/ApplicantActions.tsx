@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { CalendarClock, UserPlus } from "lucide-react";
 import { format } from "date-fns";
-import { portalProps } from '@/app/(pages)/applicants/[id]/page';
+import { portalProps } from '@/app/(pages)/(restricted)/applicants/[id]/page';
 import { useEffect, useState } from 'react';
 import { createClient } from "@/utils/supabase/client";
 import {

@@ -1,6 +1,6 @@
 import { AISummaryApplicant } from "@/types/analysis";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { portalProps } from "@/app/(pages)/applicants/[id]/page";
+import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
 interface LexicalAnalysisProps {
     aiSummary: portalProps['AI_summary'] | null;
 }
