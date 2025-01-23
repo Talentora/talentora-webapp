@@ -16,6 +16,7 @@ import IntegrationStatus from '@/components/AccountForms/IntegrationStatus';
 import { useSearchParams } from 'next/navigation';
 
 
+
 type Recruiter = Tables<'recruiters'>;
 type Company = Tables<'companies'>;
 
@@ -27,6 +28,7 @@ export default function SettingsPage() {
     <section className="p-6">
       <div className="p-2">
         <Tabs defaultValue={tab} className="w-full">
+
           <TabsList className="flex w-full bg-transparent rounded-lg">
             <TabsTrigger
               value="account"

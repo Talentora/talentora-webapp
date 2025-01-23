@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2, ChevronDown, ChevronUp, Search, CreditCard, Box, Mail, BookOpen, Building2, Phone } from 'lucide-react';
 import Profile from '@/components/Layout/Profile';
+
 import Logo from '@/components/ui/icons/Logo';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/hooks/useUser';
@@ -129,6 +130,7 @@ const Sidebar = () => {
         e.preventDefault();
         setIsSearchOpen((open) => !open);
 
+
       }
 
     };
@@ -137,6 +139,53 @@ const Sidebar = () => {
   }, []);
 
 
+
+  // Generate search items from all available pages/resources
+  const searchItems = [
+    {
+      group: 'Pages',
+      items: [
+        { type: 'page', name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
+        { type: 'page', name: 'Jobs', href: '/jobs', icon: BriefcaseIcon },
+        { type: 'page', name: 'Applicants', href: '/applicants', icon: Users },
+        { type: 'page', name: 'Settings', href: '/settings', icon: SettingsIcon },
+        { type: 'page', name: 'Blog', href: '/blog', icon: BookOpen },
+        { type: 'page', name: 'Contact', href: '/contact', icon: Mail },
+        { type: 'page', name: 'Pricing', href: '/pricing', icon: CreditCard },
+        { type: 'page', name: 'Ora Scouts', href: '/bot', icon: Sparkles },
+        { type: 'page', name: 'Product', href: '/product', icon: Box }
+      ]
+    },
+    {
+      group: 'Suggested',
+      items: [
+        ...(jobs?.map((job: Job) => ({
+          type: 'job', 
+          name: job.name || 'Untitled Position',
+          href: `/jobs/${job.id}`,
+          icon: BriefcaseIcon
+        })) || []),
+        ...(applications?.map((app: ApplicationWithCandidate) => ({
+          type: 'applicant',
+          name: `${app.candidate?.first_name} ${app.candidate?.last_name}`,
+          href: `/applicants/${app.application.id}`,
+          icon: User
+        })) || []),
+        ...(bots?.map((bot: BotWithJobs) => ({
+          type: 'bot',
+          name: bot.name || 'Untitled Bot', 
+          href: `/bot/${bot.id}`,
+          icon: Sparkles
+        })) || [])
+      ]
+    }
+  ];
+
+  const filteredItems = searchItems.flatMap(group => 
+    group.items.filter(item =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
 
   // Generate search items from all available pages/resources
   const searchItems = [
@@ -445,6 +494,7 @@ const Sidebar = () => {
           
           <Profile />
         </SidebarFooter> */}
+
       </SidebarComponent>
     </SidebarProvider>
   );
