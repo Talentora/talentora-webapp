@@ -1,10 +1,10 @@
 'use server';
 import { Tables , Json} from '@/types/types_db';
 import { createClient } from '@/utils/supabase/server';
-import { BotWithJobs } from '@/types/custom';
+import { ScoutWithJobs } from '@/types/custom';
 type Recruiter = Tables<'recruiters'>;
 type Company = Tables<'companies'>;
-type Bot = Tables<'bots'>;
+type scout = Tables<'bots'>;
 type AI_Summary = Tables<'AI_summary'>;
 import { inviteRecruiterAdmin, inviteCandidateAdmin, listUsersAdmin } from '@/utils/supabase/admin';
 // CRUD operations for the company table
@@ -430,75 +430,75 @@ export const getMergeApiKey = async (): Promise<string | null> => {
 };
 
 /**
- * Creates a new bot in the database.
+ * Creates a new scout in the database.
  *
- * @param botData - The data for the new bot.
- * @returns The created bot data.
+ * @param scoutData - The data for the new scout.
+ * @returns The created scout data.
  * @throws Error if the creation operation fails.
  */
-export const createBot = async (botData: any): Promise<Tables<'bots'>> => {
+export const createscout = async (scoutData: any): Promise<Tables<'bots'>> => {
   const supabase = createClient();
 
   const { data, error } = await supabase
     .from('bots')
-    .insert(botData)
+    .insert(scoutData)
     .select()
     .single();
 
   if (error) {
-    console.error('Failed to create bot:', error);
+    console.error('Failed to create scout:', error);
     throw error;
   }
 
   if (!data) {
-    throw new Error('No data returned from bot creation');
+    throw new Error('No data returned from scout creation');
   }
 
   return data;
 };
 
 /**
- * Deletes a bot from the database.
+ * Deletes a scout from the database.
  *
- * @param id - The ID of the bot to delete.
+ * @param id - The ID of the scout to delete.
  * @throws Error if the deletion operation fails.
  */
-export const deleteBot = async (id: number) => {
+export const deletescout = async (id: number) => {
   const supabase = createClient();
 
-  // Delete the bot
-  const { error: botError } = await supabase.from('bots').delete().eq('id', id);
+  // Delete the scout
+  const { error: scoutError } = await supabase.from('bots').delete().eq('id', id);
 
-  if (botError) {
-    throw new Error(`Failed to delete bot: ${botError.message}`);
+  if (scoutError) {
+    throw new Error(`Failed to delete scout: ${scoutError.message}`);
   }
 };
 
 /**
- * Fetches all bots from the database.
+ * Fetches all scouts from the database.
  *
- * @returns An array of bot data.
+ * @returns An array of scout data.
  * @throws Error if the fetch operation fails.
  */
-export const getBots = async (): Promise<BotWithJobs[] | null> => {
+export const getScouts = async (): Promise<ScoutWithJobs[] | null> => {
   try {
-    const botsWithJobIds = await getBotsWithJobIds();
-    return botsWithJobIds;
+    const scoutsWithJobIds = await getScoutsWithJobIds();
+    return scoutsWithJobIds;
 
   } catch (error) {
-    console.error('Failed to fetch bots:', error);
+    console.error('Failed to fetch scouts:', error);
     return null;
   }
 };
 
 /**
- * Fetches a bot by ID from the database.
+ * Fetches a scout by ID from the database.
  *
- * @param id - The ID of the bot to fetch.
- * @returns The bot data or null if not found.
+ * @param id - The ID of the scout to fetch.
+ * @returns The scout data or null if not found.
  * @throws Error if the fetch operation fails.
  */
-export const getBotById = async (id: string): Promise<Bot | null> => {
+export const getscoutById = async (id: string): Promise<scout | null> => {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -508,41 +508,41 @@ export const getBotById = async (id: string): Promise<Bot | null> => {
     .single();
 
   if (error) {
-    throw new Error(`Failed to fetch bot: ${error.message}`);
+    throw new Error(`Failed to fetch scout: ${error.message}`);
   }
 
   return data || null;
 };
 
 /**
- * Updates a bot in the database.
+ * Updates a scout in the database.
  *
- * @param id - The ID of the bot to update.
- * @param botData - The new data for the bot.
- * @returns The updated bot data.
+ * @param id - The ID of the scout to update.
+ * @param scoutData - The new data for the scout.
+ * @returns The updated scout data.
  * @throws Error if the update operation fails.
  */
-export const updateBot = async (
+export const updateScout = async (
   id: string,
-  botData: any
-): Promise<Bot | null> => {
+  scoutData: any
+): Promise<scout | null> => {
   const supabase = createClient();
 
-  // Filter out undefined/null values from botData
-  const filteredBotData = Object.fromEntries(
-    Object.entries(botData).filter(
+  // Filter out undefined/null values from scoutData
+  const filteredscoutData = Object.fromEntries(
+    Object.entries(scoutData).filter(
       ([_, value]) => value !== null && value !== undefined
     )
   );
 
   const { data, error } = await supabase
     .from('bots')
-    .update(filteredBotData)
+    .update(filteredscoutData)
     .eq('id', id)
     .select();
 
   if (error) {
-    throw new Error(`Failed to update bot: ${error.message}`);
+    throw new Error(`Failed to update scout: ${error.message}`);
   }
 
   return data?.[0] || null;
@@ -877,8 +877,8 @@ export const updateJobInterviewConfig = async (
 
   // If bot_id is provided, ensure it's a number or null
   if ('bot_id' in filteredConfigData) {
-    const botId = filteredConfigData.bot_id;
-    if (botId !== null && typeof botId !== 'number') {
+    const scoutId = filteredConfigData.bot_id;
+    if (scoutId !== null && typeof scoutId !== 'number') {
       throw new Error('bot_id must be a number or null.');
     }
     // Optionally, you can validate that the bot_id exists in the referenced table
@@ -1148,19 +1148,19 @@ export const getApplication = async (applicationId: string): Promise<Tables<'app
 
 
 /**
- * Fetches all bots along with their associated job interview configurations.
+ * Fetches all scouts along with their associated job interview configurations.
  * 
- * This function queries the 'bots' table to retrieve all bots and their corresponding
+ * This function queries the 'scouts' table to retrieve all scouts and their corresponding
  * job interview configurations. It filters out configurations where the bot_id does not match
- * the current bot's id. The results are ordered by the bot's creation date in descending order.
+ * the current scout's id. The results are ordered by the scout's creation date in descending order.
  * 
- * @returns A promise that resolves to an array of BotWithJobs objects or throws an error if the query fails.
+ * @returns A promise that resolves to an array of scoutWithJobs objects or throws an error if the query fails.
  */
-export const getBotsWithJobIds = async (): Promise<BotWithJobs[]> => {
+export const getScoutsWithJobIds = async (): Promise<ScoutWithJobs[]> => {
   const supabase = createClient();
 
-  // Query to fetch all bots with their job_interview_configs where bot_id is not null
-  const { data: botsWithJobs, error } = await supabase
+  // Query to fetch all scouts with their job_interview_configs where bot_id is not null
+  const { data: scoutsWithJobs, error } = await supabase
     .from('bots')
     .select(`
       *,
@@ -1172,18 +1172,18 @@ export const getBotsWithJobIds = async (): Promise<BotWithJobs[]> => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching bots with jobs:', error);
+    console.error('Error fetching scouts with jobs:', error);
     throw error;
   }
 
-  // Process the fetched bots to filter out job_interview_configs where bot_id doesn't match the current bot
-  const processedBots = botsWithJobs?.map(bot => ({
-    ...bot,
-    job_interview_config: bot.job_interview_config?.filter(
-      config => config.bot_id === bot.id && config.bot_id !== null
+  // Process the fetched scouts to filter out job_interview_configs where bot_id doesn't match the current scout
+  const processedscouts = scoutsWithJobs?.map(scout => ({
+    ...scout,
+    job_interview_config: scout.job_interview_config?.filter(
+      config => config.bot_id === scout.id && config.bot_id !== null
     ) as { job_id: string; bot_id: number }[]
   })) || [];
 
-  return processedBots;
+  return processedscouts;
 };
 

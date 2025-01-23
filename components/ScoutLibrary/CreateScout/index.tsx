@@ -13,11 +13,11 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
-import { createBot, updateBot } from '@/utils/supabase/queries';
-import { useCompany } from '@/hooks/useCompany';
+import { createscout, updateScout } from '@/utils/supabase/queries';
+import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/components/Toasts/use-toast';
-import { BotDetails } from './BotDetails';
-import { VoiceEmotions } from './VoiceEmotions';
+import { BotDetails } from '@/components/ScoutLibrary/CreateScout/ScoutDetails';
+import { VoiceEmotions } from '@/components/ScoutLibrary/CreateScout/VoiceEmotions';
 import { Label } from '@/components/ui/label';
 import { Tables } from '@/types/types_db';
 
@@ -29,7 +29,7 @@ interface CreateBotProps {
   onBotUpdated?: (bot: Tables<'bots'>) => void;
 }
 
-const CreateBot = ({ 
+const CreateScout = ({ 
   isEdit, 
   existingBot, 
   onClose,
@@ -57,7 +57,7 @@ const CreateBot = ({
     }
   });
 
-  const { company } = useCompany();
+  const { company } = useUser();
   const { toast } = useToast();
   const apiKey = process.env.NEXT_PUBLIC_CARTESIA_API_KEY;
 
@@ -106,7 +106,7 @@ const CreateBot = ({
     e.preventDefault();
     try {
       if (isEdit && existingBot) {
-        const updatedBot = await updateBot(existingBot.id.toString(), {
+        const updatedBot = await updateScout(existingBot.id.toString(), {
           name: newBot.name,
           role: newBot.role,
           description: newBot.description,
@@ -131,7 +131,7 @@ const CreateBot = ({
           emotion: newBot.emotion
         };
         
-        const createdBot = await createBot(botData);
+        const createdBot = await createscout(botData);
         if (onBotCreated && createdBot) {
           onBotCreated(createdBot);
         }
@@ -327,4 +327,4 @@ const CreateBot = ({
   );
 };
 
-export default CreateBot;
+export default CreateScout;

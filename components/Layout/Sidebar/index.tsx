@@ -26,7 +26,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { cn } from '@/utils/cn';
 import { useSidebarData } from '@/hooks/useSidebarData';
 import { Command, CommandInput, CommandList, CommandGroup, CommandItem, CommandDialog } from '@/components/ui/command';
-import { BotWithJobs } from '@/types/custom';
+import { ScoutWithJobs } from '@/types/custom';
 
 interface SidebarLinkProps {
   href: string;
@@ -103,7 +103,7 @@ interface ApplicationWithCandidate {
   application: Application;
 }
 
-interface Bot {
+interface scout {
   id: string;
   name?: string;
 }
@@ -113,14 +113,14 @@ const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isJobsOpen, setIsJobsOpen] = useState(true);
   const [isApplicantsOpen, setIsApplicantsOpen] = useState(true);
-  const [isBotsOpen, setIsBotsOpen] = useState(true);
+  const [isscoutsOpen, setIsscoutsOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { user, company } = useUser();
   const router = useRouter();
-  const { jobs, applications, bots, isLoading, isError } = useSidebarData();
+  const { jobs, applications, scouts, isLoading, isError } = useSidebarData();
   const [isSettingsOpen, setIsSettingsOpen] = useState(true);
   const [isRouteLoading, setIsRouteLoading] = useState(false);
 
@@ -152,7 +152,7 @@ const Sidebar = () => {
         { type: 'page', name: 'Blog', href: '/blog', icon: BookOpen },
         { type: 'page', name: 'Contact', href: '/contact', icon: Mail },
         { type: 'page', name: 'Pricing', href: '/pricing', icon: CreditCard },
-        { type: 'page', name: 'Ora Scouts', href: '/bot', icon: Sparkles },
+        { type: 'page', name: 'Ora Scouts', href: '/scouts', icon: Sparkles },
         { type: 'page', name: 'Product', href: '/product', icon: Box }
       ]
     },
@@ -171,10 +171,10 @@ const Sidebar = () => {
           href: `/applicants/${app.application.id}`,
           icon: User
         })) || []),
-        ...(bots?.map((bot: BotWithJobs) => ({
-          type: 'bot',
-          name: bot.name || 'Untitled Bot', 
-          href: `/bot/${bot.id}`,
+        ...(scouts?.map((scout: ScoutWithJobs) => ({
+          type: 'scout',
+          name: scout.name || 'Untitled scout', 
+          href: `/scouts/${scout.id}`,
           icon: Sparkles
         })) || [])
       ]
@@ -356,17 +356,17 @@ const Sidebar = () => {
               </div>
             )}
             <SidebarLink 
-              href="/bot" 
+              href="/scouts" 
               icon={Sparkles} 
-              isActive={pathname === '/bot'} 
+              isActive={pathname === '/scouts'} 
               isSidebarOpen={isSidebarOpen}
               hasDropdown={true}
-              isDropdownOpen={isBotsOpen}
-              onDropdownClick={() => setIsBotsOpen(!isBotsOpen)}
+              isDropdownOpen={isscoutsOpen}
+              onDropdownClick={() => setIsscoutsOpen(!isscoutsOpen)}
             >
               Ora Scouts
             </SidebarLink>
-            {isSidebarOpen && isBotsOpen && (
+            {isSidebarOpen && isscoutsOpen && (
               <div className="ml-1 mt-1 space-y-1 border-l-2 border-white/20 pl-3">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
@@ -374,10 +374,10 @@ const Sidebar = () => {
                   </div>
                 ) : (
                   filteredItems
-                    .filter(item => item.type === 'bot')
-                    .map((bot, index) => (
-                      <SubLink key={index} href={bot.href}>
-                        {bot.name}
+                    .filter(item => item.type === 'scout')
+                    .map((scout, index) => (
+                      <SubLink key={index} href={scout.href}>
+                        {scout.name}
                       </SubLink>
                     ))
                 )}

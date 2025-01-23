@@ -25,7 +25,7 @@ interface BotSelectProps {
 import { Tables } from '@/types/types_db';
 type Bot = Tables<'bots'>;
 import { useBots } from '@/hooks/useBots';
-import CreateBot from '@/components/BotLibrary/CreateBot';
+import CreateBot from '@/components/ScoutLibrary/CreateScout';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 import { getBots } from '@/utils/supabase/queries';

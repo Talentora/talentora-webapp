@@ -16,7 +16,7 @@ type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
 
 interface BotProps {
-  bot: Tables<'bots'>;
+  scout: Tables<'bots'>;
   jobInterviewConfig: Tables<'job_interview_config'>;
   companyContext: Tables<'company_context'>;
   job: Job;
