@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2, ChevronDown, ChevronUp, Search, CreditCard, Box, Mail, BookOpen, Building2, Phone } from 'lucide-react';
+import Profile from '@/components/Layout/Profile';
 
 import Logo from '@/components/ui/icons/Logo';
 import { Button } from '@/components/ui/button';
@@ -129,6 +130,7 @@ const Sidebar = () => {
         e.preventDefault();
         setIsSearchOpen((open) => !open);
 
+
       }
 
     };
@@ -136,12 +138,7 @@ const Sidebar = () => {
     return () => document.removeEventListener('keydown', down);
   }, []);
 
-  const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (getRedirectMethod() === 'client') {
-      await handleRequest(e, SignOut, router);
-    }
-  };
+
 
   // Generate search items from all available pages/resources
   const searchItems = [
@@ -183,6 +180,7 @@ const Sidebar = () => {
       ]
     }
   ];
+
 
   const filteredItems = searchItems.flatMap(group => 
     group.items.filter(item =>
@@ -446,58 +444,11 @@ const Sidebar = () => {
           </SidebarMenu>
         </SidebarContent>
 
-        <SidebarFooter className="p-4">
-          <div className="relative" ref={userMenuRef}>
-            <Button
-              variant="ghost"
-              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="w-full justify-start gap-3 text-white hover:bg-primary-dark/10"
-            >
-              <User className="h-5 w-5" />
-              {isSidebarOpen && <span className="font-medium truncate">{user?.user_metadata.full_name || user?.email}</span>}
-            </Button>
+        {/* <SidebarFooter className="p-4">
+          
+          <Profile />
+        </SidebarFooter> */}
 
-            {isUserMenuOpen && (
-              <div className={cn(
-                "absolute bottom-full mb-2 rounded-lg bg-foreground p-5 shadow-xl left-0 w-[18rem]",
-                isSidebarOpen ? "left-0 w-full" : ""
-              )}>
-                <div className="space-y-[0.75em]">
-                  <div>
-                    <h4 className="font-medium text-gray-900 text-[1em]">
-                      {user?.user_metadata.full_name || user?.email}
-                    </h4>
-                    <div className="flex items-center gap-[0.5em] mt-[0.25em]">
-                      <span className="inline-flex items-center rounded-full bg-purple-100 px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-purple-800 capitalize">
-                        {user?.user_metadata?.role || 'User'}
-                      </span>
-                      {company?.name && (
-                        <span className="inline-flex items-center rounded-full bg-blue-100 px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-blue-800">
-                          {company.name}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="h-[1px] bg-gray-200" />
-                  
-                  <form onSubmit={handleSignOut}>
-                    <input type="hidden" name="pathName" value={pathname} />
-                    <Button 
-                      type="submit" 
-                      variant="ghost" 
-                      size="sm"
-                      className="w-full justify-start text-[0.875em] text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                    >
-                      <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
-                      Sign out
-                    </Button>
-                  </form>
-                </div>
-              </div>
-            )}
-          </div>
-        </SidebarFooter>
       </SidebarComponent>
     </SidebarProvider>
   );

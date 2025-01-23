@@ -29,7 +29,7 @@ export async function SignOut(formData: FormData) {
     );
   }
 
-  return '/signin';
+  return '/';
 }
 
 export async function signInWithEmail(formData: FormData) {
@@ -152,8 +152,8 @@ export async function signInWithPassword(formData: FormData) {
     );
     redirectPath = `/signin/password_signin?role=${role}`
   } else if (data.user) {
-    cookieStore.set('preferredSignInView', 'password_signin', { path: '/' });
-    redirectPath = getStatusRedirect('/', 'Success!', 'You are now signed in.');
+    cookieStore.set('preferredSignInView', 'password_signin', { path: '/dashboard' });
+    redirectPath = getStatusRedirect('/dashboard', 'Success!', 'You are now signed in.');
   } else {
     redirectPath = getErrorRedirect(
       '/signin/password_signin',
