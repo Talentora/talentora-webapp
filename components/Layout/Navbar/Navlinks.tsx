@@ -3,14 +3,13 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { SignOut } from '@/utils/auth-helpers/server';
-import { handleRequest } from '@/utils/auth-helpers/client';
 import Logo from '@/components/ui/icons/Logo';
 import { usePathname, useRouter } from 'next/navigation';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import { Button } from '@/components/ui/button';
 import { User, LogOut, BarChart2, Users, FileText, HelpCircle, BookOpen, MessageSquare, Building2, Mail, CreditCard } from 'lucide-react';
 import { useUser } from '@/hooks/useUser';
+import Profile from '@/components/Layout/Profile';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -29,14 +28,7 @@ export default function Navlinks({ visible }: { visible: boolean }) {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { user, loading } = useUser();
-  const router = useRouter();
 
-  const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (getRedirectMethod() === 'client') {
-      await handleRequest(e, SignOut, router);
-    }
-  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -172,13 +164,8 @@ export default function Navlinks({ visible }: { visible: boolean }) {
               </NavigationMenuList>
             </NavigationMenu>
           </div>
-
           <div className="flex items-center space-x-4">
-            {loading ? (
-              <div className="flex justify-center items-center h-full">
-                <Loader2 className="h-5 w-5 animate-spin" />
-              </div>
-            ) : !user ? (
+            {!user ? (
               <div className="flex items-center space-x-2">
                 <Link href="/signin">
                   <Button variant="ghost" className="rounded-full px-8">Login</Button>
@@ -187,7 +174,9 @@ export default function Navlinks({ visible }: { visible: boolean }) {
                   <Button className="rounded-full px-8">Sign Up</Button>
                 </Link>
               </div>
-            ) : null}
+            ) : (
+              <Profile isSidebarOpen={false} />
+            )}
           </div>
         </div>
       </div>
