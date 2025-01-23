@@ -48,7 +48,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               }`}
             >
               <Navbar visible={isSidebarVisible} />
-              <BreadcrumbsContainer />
+              {isSidebarVisible && <BreadcrumbsContainer />}
               <Suspense fallback={<Loading />}>{children}</Suspense>
             </main>
           </div>
