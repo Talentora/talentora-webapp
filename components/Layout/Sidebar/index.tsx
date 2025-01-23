@@ -443,7 +443,7 @@ const Sidebar = () => {
 
         {/* <SidebarFooter className="p-4">
           
-          <Profile isSidebarOpen={isSidebarOpen} />
+          <Profile />
         </SidebarFooter> */}
       </SidebarComponent>
     </SidebarProvider>
