@@ -9,7 +9,6 @@ import '@/styles/main.css';
 import Loading from '@/components/Layout/Loading';
 import NextTopLoader from 'nextjs-toploader';
 import { createClient } from '@/utils/supabase/server';
-import Script from 'next/script';
 import ReactQueryProvider from '@/components/Providers/ReactQueryProvider';
 
 const title = 'Talentora';
@@ -37,7 +36,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         <ReactQueryProvider>
           <div className="flex">
             {isSidebarVisible && (
-              <aside className="fixed h-full">
+              <aside className="fixed h-full z-[100]">
                 <Sidebar />
               </aside>
             )}
