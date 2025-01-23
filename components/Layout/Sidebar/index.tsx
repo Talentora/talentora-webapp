@@ -23,9 +23,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
-import { useTheme } from 'next-themes';
 import { useSidebarData } from '@/hooks/useSidebarData';
-import { getBots } from '@/utils/supabase/queries';
 import { Command, CommandInput, CommandList, CommandGroup, CommandItem, CommandDialog } from '@/components/ui/command';
 import { BotWithJobs } from '@/types/custom';
 
@@ -121,16 +119,18 @@ const Sidebar = () => {
   const pathname = usePathname();
   const { user, company } = useUser();
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
   const { jobs, applications, bots, isLoading, isError } = useSidebarData();
   const [isSettingsOpen, setIsSettingsOpen] = useState(true);
+  const [isRouteLoading, setIsRouteLoading] = useState(false);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setIsSearchOpen((open) => !open);
+
       }
+
     };
     document.addEventListener('keydown', down);
     return () => document.removeEventListener('keydown', down);
@@ -203,6 +203,28 @@ const Sidebar = () => {
     };
   }, []);
 
+  const handleNavigation = async (href: string) => {
+    setIsRouteLoading(true);
+    console.log('Navigating to:', href);
+    try {
+      // Set up route change handler before navigation
+      const handleRouteComplete = () => {
+        setIsRouteLoading(false);
+        setIsSearchOpen(false);
+        // Clean up event listener
+        router.events.off('routeChangeComplete', handleRouteComplete);
+      };
+
+      router.events.on('routeChangeComplete', handleRouteComplete);
+
+      await router.push(href);
+    } catch (error) {
+      // Reset states if navigation fails
+      setIsRouteLoading(false);
+      setIsSearchOpen(false);
+    }
+  };
+
   return (
     <SidebarProvider defaultOpen className="=">
       <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
@@ -224,14 +246,16 @@ const Sidebar = () => {
                   return (
                     <CommandItem
                       key={index}
-                      onSelect={() => {
-                        router.push(item.href);
-                        setIsSearchOpen(false);
-                      }}
-                      className="hover:bg-gray-100 text-gray-900"
+                      onSelect={() => handleNavigation(item.href)}
+                      className="hover:bg-gray-100 text-gray-900 flex items-center justify-between"
                     >
-                      <Icon className="mr-2 h-4 w-4 text-gray-600" />
-                      <span className="text-gray-900">{item.name}</span>
+                      <div className="flex items-center">
+                        <Icon className="mr-2 h-4 w-4 text-gray-600" />
+                        <span className="text-gray-900">{item.name}</span>
+                      </div>
+                      {isRouteLoading && item.href === pathname && (
+                        <Loader2 className="h-4 w-4 animate-spin text-gray-600 ml-2" />
+                      )}
                     </CommandItem>
                   );
                 })}
