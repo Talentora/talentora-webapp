@@ -210,8 +210,8 @@ export default function JobListPage() {
         <Loader2 className="w-10 h-10 animate-spin" />
       ) : ( */}
         <>
-          <h1 className="text-3xl font-bold m-2 text-primary-dark">Jobs</h1>
-          <div className="flex justify-between flex-col bg-foreground border border-muted p-4 m-5 shadow-lg">
+        <h1 className="text-3xl font-bold m-2 text-black dark:text-white text-center">Jobs</h1>
+        <div className="mt-20 rounded-lg flex justify-between flex-col bg-transparent  ">
             <div className='flex flex-row gap-2 justify-between'>
               <JobFilters onFilterChange={handleFilterChange} initialFilters={filters} departments={uniqueDepartments} />
               <SearchFilter jobs={jobs} onSearch={handleSearch} searchTerm={searchTerm} />

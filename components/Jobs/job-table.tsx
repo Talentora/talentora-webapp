@@ -11,6 +11,7 @@ import { JobRow } from './job-row';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-react';
 import { useState } from 'react';
+import { JobsTableSkeleton } from './JobsSkeleton';
 
 type SortField = 'name' | 'status' | 'created_at' | 'opened_at' | 'configured' | 'departments' | 'offices';
 
@@ -21,7 +22,6 @@ interface JobTableProps {
   onSort: (field: SortField) => void;
   loading?: boolean;
 }
-import { JobsTableSkeleton } from './JobsSkeleton';
 
 const ROWS_PER_PAGE = 10;
 
@@ -43,7 +43,7 @@ export function JobTable({
       <Table>
         <TableHeader>
           <TableRow>
-          <TableHead>
+            <TableHead>
               <Button variant="ghost" onClick={() => onSort('name')}>
                 Job Id
                 {sortField === 'name' && <ArrowUpDown className="ml-2 h-4 w-4" />}
@@ -58,23 +58,13 @@ export function JobTable({
             <TableHead>
               <Button variant="ghost" onClick={() => onSort('status')}>
                 Status
-                {sortField === 'status' && (
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-                )}
+                {sortField === 'status' && <ArrowUpDown className="ml-2 h-4 w-4" />}
               </Button>
             </TableHead>
             <TableHead>
               <Button variant="ghost" onClick={() => onSort('created_at')}>
                 Created At
                 {sortField === 'created_at' && (
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-                )}
-              </Button>
-            </TableHead>
-            <TableHead>
-              <Button variant="ghost" onClick={() => onSort('configured')}>
-                AI Bot Configured
-                {sortField === 'configured' && (
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                 )}
               </Button>
@@ -95,6 +85,14 @@ export function JobTable({
                 )}
               </Button>
             </TableHead>
+            <TableHead>
+              <Button variant="ghost" onClick={() => onSort('configured')}>
+                AI Bot Configured
+                {sortField === 'configured' && (
+                  <ArrowUpDown className="ml-2 h-4 w-4" />
+                )}
+              </Button>
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -104,7 +102,7 @@ export function JobTable({
             paginatedJobs.map((job) => <JobRow key={job.id} job={job} />)
           ) : (
             <TableRow>
-              <TableCell colSpan={7} className="text-center">
+              <TableCell colSpan={8} className="text-center">
                 No jobs found.
               </TableCell>
             </TableRow>

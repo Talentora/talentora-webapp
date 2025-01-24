@@ -54,7 +54,7 @@ export function SearchFilter({ jobs, searchTerm, onSearch }: SearchFilterProps) 
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-4">
+      <div className="flex gap-4">
         <Input
           placeholder="Search jobs..."
           value={searchTerm}

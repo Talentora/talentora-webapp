@@ -64,11 +64,14 @@ export default function SettingsPage() {
 
           <TabsContent value="account">
             <Card>
-              <CardContent className="space-y-4">
+              <CardContent className=" p-4 rounded-lg">
                 <div className="grid grid-cols-2 gap-4">
+               
                   <NameForm />
+                  
                   <EmailForm />
                 </div>
+
               </CardContent>
             </Card>
           </TabsContent>
@@ -105,6 +108,8 @@ export default function SettingsPage() {
             <Card>
               <CardHeader className="pb-4">
                 <CardTitle className="text-xl">Billing Information</CardTitle>
+                <CardDescription>Manage your subscription and billing details.</CardDescription>
+                
                 <CardDescription>
                   Manage your subscription and billing details.
                 </CardDescription>

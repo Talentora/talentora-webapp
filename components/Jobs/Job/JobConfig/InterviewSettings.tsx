@@ -36,8 +36,8 @@ const InterviewSettings = ({ loading, interviewConfig, setShowSetupDialog, jobId
 
   return (
     <>
-      <Card className="hover:bg-accent/50 transition-colors cursor-pointer p-5 bg-foreground border border-border shadow-3xl h-full">
-        <Link href={`/jobs/${jobId}/settings`} className="flex-1">
+    <Card className="rounded-lg hover:bg-accent/50 transition-colors p-5 bg-white dark:bg-transparent shadow-[0_4px_6px_-1px_rgba(90,79,207,0.3),0_2px_4px_-2px_rgba(90,79,207,0.2)] bg-card hover:shadow-[0_10px_15px_-3px_rgba(90,79,207,0.4),0_4px_6px_-4px_rgba(90,79,207,0.3)] hover:scale-[1.01] transition-transform cursor-pointer border border-border shadow-3xl h-full">
+    <Link href={`/jobs/${jobId}/settings`} className="flex-1">
           <CardHeader>
             <div className="flex items-center justify-between gap-5">
               <CardTitle className="text-xl font-semibold">Interview Settings</CardTitle>
@@ -62,14 +62,14 @@ const InterviewSettings = ({ loading, interviewConfig, setShowSetupDialog, jobId
                 <Button 
                   onClick={handleEditQuestions}
                   variant="outline"
-                  className="opacity-0 hover:opacity-100 transition-opacity duration-500 ease-in-out"
+                  className="opacity-100 hover:opacity-100 transition-opacity duration-500 ease-in-out"
                 >
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Questions
                 </Button>
                 <Button 
                   onClick={handleEdit}
-                  className="opacity-0 hover:opacity-100 transition-opacity duration-500 ease-in-out"
+                  className="opacity-100 hover:opacity-100 transition-opacity duration-500 ease-in-out"
                 >
                   <Settings className="h-4 w-4 mr-2" />
                   Settings

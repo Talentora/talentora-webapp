@@ -42,22 +42,10 @@ export default function JobPage({
     if (!job) return null;
 
     return (
-      <>
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-800">
-            {job.name}
-          </h1>
-          <Link
-            href="/jobs"
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Jobs
-          </Link>
-        </div>
-        <JobHeader job={job} />
-        <JobConfig  jobId={job.id} applicants={applicants || []} isLoading={applicantsLoading} />
-      </>
+      <div className="flex justify-between items-center">
+
+
+      </div>
     );
   }, [job, jobLoading, applicants]);
 
@@ -74,8 +62,26 @@ export default function JobPage({
 
   return (
     <div className="m-5 space-y-5">
-      {jobDetailsSection}
-      {applicantsSection}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* Left Column */}
+        <div className="md:col-span-2">
+          {jobDetailsSection}
+          {!jobLoading && job && <JobHeader job={job} />}
+                    {applicantsSection}
+
+        </div>
+
+        {/* Right Column */}
+        <div className="space-y-5">
+          {!jobLoading && job && (
+            <JobConfig
+              jobId={job.id}
+              applicants={applicants || []}
+              isLoading={applicantsLoading}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

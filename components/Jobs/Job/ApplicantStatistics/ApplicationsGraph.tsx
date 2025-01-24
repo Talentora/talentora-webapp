@@ -41,6 +41,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
       '6 months': 180,
       '1 year': 365
     }[timeRange] || 90;
+    
 
     const intervalInDays = {
       '1 day': 1,
@@ -48,6 +49,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
       '1 month': 30
     }[interval] || 7;
 
+    
     const startDate = new Date(now.getTime() - (timeRangeInDays * 24 * 60 * 60 * 1000));
     const bins: { [key: string]: { date: string; displayDate: string; [key: string]: number | string } } = {};
 
@@ -116,7 +118,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
         const hue = (lastDigits % 360);
         config[jobId] = {
           label: applicant.job.name || `Job ${jobId}`,
-          color: `hsl(${hue}, 70%, 50%)`,
+          color: `rgba(90,79,207)`,
         };
       }
     });
@@ -124,9 +126,10 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
   }, [applicants]);
 
   return (
-    <Card>
+    <Card className="rounded-lg hover:bg-accent/50 transition-colors p-5 bg-white dark:bg-transparent shadow-[0_4px_6px_-1px_rgba(90,79,207,0.3),0_2px_4px_-2px_rgba(90,79,207,0.2)] bg-card hover:shadow-[0_10px_15px_-3px_rgba(90,79,207,0.4),0_4px_6px_-4px_rgba(90,79,207,0.3)] hover:scale-[1.01] transition-transform cursor-pointer border border-border shadow-3xl h-full">
       {!hideHeader && (
         <CardHeader>
+          
           <CardTitle>Applicants Over Time</CardTitle>
           {/* <CardDescription>Stacked Bar Chart</CardDescription> */}
           <div className="flex justify-between items-center">
@@ -163,7 +166,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
       <CardContent>
         <ChartContainer config={chartConfig}>
           {isLoading ? (
-            <div className="flex justify-center items-center h-full">
+            <div className="ml-2flex justify-center items-center h-full">
               <Skeleton className="h-32 w-full" />
             </div>
           ) : (
