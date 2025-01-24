@@ -5,9 +5,11 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from 
 import { Info } from 'lucide-react';
 import { EnrichedApplication } from '@/hooks/useApplicant';
 import Link from 'next/link';
+
 interface AssessmentCardProps {
   application: EnrichedApplication;
 }
+
 const AssessmentCard = memo<AssessmentCardProps>(({ application }) => {
     // Memoize the formatted date to prevent recalculation
     const formattedDate = useMemo(() => {
@@ -92,5 +94,7 @@ const AssessmentCard = memo<AssessmentCardProps>(({ application }) => {
       </Card>
     );
   });
+
+AssessmentCard.displayName = 'AssessmentCard';
 
 export default AssessmentCard;

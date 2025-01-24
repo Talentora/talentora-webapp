@@ -80,7 +80,7 @@ export default function ScoutLibrary({ scouts: initialscouts }: { scouts: ScoutW
             </div>
           </div>
           <div className="flex flex-row justify-end">
-            <CreateScout onscoutCreated={handlescoutCreated} />
+            <CreateScout onBotCreated={handlescoutCreated} />
           </div>
         </div>
 

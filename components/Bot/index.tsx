@@ -55,12 +55,12 @@ export default function Bot(botProps: BotProps) {
   const router = useRouter();
 
 
-  const { job, company, jobInterviewConfig, application, mergeJob, bot, companyContext} = botProps;
+  const { job, company, jobInterviewConfig, application, mergeJob, scout, companyContext} = botProps;
 
-  const voice = bot.voice;
-  const description = bot.description;
-  const prompts = bot.prompt;
-  const emotion = bot.emotion;
+  const voice = scout.voice;
+  const description = scout.description;
+  const prompts = scout.prompt;
+  const emotion = scout.emotion;
   const defaultEmotion = {
     anger: 0,
     speed: 0, 
@@ -104,7 +104,7 @@ export default function Bot(botProps: BotProps) {
             company: company,
             jobInterviewConfig: jobInterviewConfig,
             application: application,
-            bot: bot,
+            bot: scout,
             companyContext: companyContext,
             emotion: emotion
           }

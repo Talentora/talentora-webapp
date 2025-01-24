@@ -1,6 +1,6 @@
 // components/Jobs/Job/JobConfig.tsx
 import { useEffect, useState, useCallback } from 'react';
-import { getBotById, getJobInterviewConfig } from '@/utils/supabase/queries';
+import { getscoutById, getJobInterviewConfig } from '@/utils/supabase/queries';
 import { Tables } from '@/types/types_db';
 import { Button } from '@/components/ui/button';
 import InterviewSettings from './InterviewSettings';
@@ -82,7 +82,7 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
         updateSetupFlags(config);
         
         if (config?.bot_id) {
-          const botData = await getBotById(String(config.bot_id));
+          const botData = await getscoutById(String(config.bot_id));
           setBotInfo(botData);
           setNeedsConfiguration(false);
         } else {
