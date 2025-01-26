@@ -1,7 +1,7 @@
 import { ApplicantCandidate } from '@/types/merge';
 import ApplicantInfo from '@/components/Applicants/Applicant/ApplicantInfo';
 import ApplicantActions from '@/components/Applicants/Applicant/ApplicantActions';
-import { portalProps } from '@/app/(pages)/applicants/[id]/page';
+import { portalProps } from '@/app/(pages)/(restricted)/applicants/[id]/page';
 import AnalysisDisplay from '@/components/AnalysisDisplay';
 import { Skeleton } from "@/components/ui/skeleton";
 

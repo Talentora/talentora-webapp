@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import TimelineGraph from "./TimelineGraph";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EmotionAverages from "./EmotionAverages";
-import { portalProps } from "@/app/(pages)/applicants/[id]/page";
+import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
 interface EmotionalAnalysisProps {
     aiSummary: portalProps['AI_summary'] | null;
 }

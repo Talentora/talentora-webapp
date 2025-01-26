@@ -1,4 +1,4 @@
-import { portalProps } from "@/app/(pages)/applicants/[id]/page";
+import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AISummaryApplicant, OverallSummary, TextEvaluation, EmotionEvaluation } from "@/types/analysis";
 

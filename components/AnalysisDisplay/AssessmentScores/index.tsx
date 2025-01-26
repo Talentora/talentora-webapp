@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { portalProps } from "@/app/(pages)/applicants/[id]/page";
+import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
 import { AISummaryApplicant } from "@/types/analysis";
 interface AssessmentScoresProps {
     aiSummary: portalProps['AI_summary'] | null;

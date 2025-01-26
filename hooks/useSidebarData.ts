@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-
+import { getBots } from '@/utils/supabase/queries';
 
 export function useSidebarData() {
   const { data: jobs, error: jobsError, isLoading: jobsLoading } = useQuery({
@@ -14,10 +14,18 @@ export function useSidebarData() {
     queryFn: () => fetch('/api/applications').then((res) => res.json())
   });
 
+  const { data: bots, error: botsError, isLoading: botsLoading } = useQuery({
+    queryKey: ['bots'],
+    queryFn: () => getBots()
+  });
+
+  
+
   return {
     jobs: jobs?.slice(0, 3) || [],
     applications: applications?.slice(0, 3) || [],
-    isLoading: jobsLoading || applicationsLoading,
-    isError: jobsError || applicationsError
+    bots: bots || [],
+    isLoading: jobsLoading || applicationsLoading || botsLoading,
+    isError: jobsError || applicationsError || botsError
   };
-} 
+}
