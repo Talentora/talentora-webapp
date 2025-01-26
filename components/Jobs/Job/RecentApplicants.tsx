@@ -20,7 +20,7 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
     <Card>
       <CardHeader>
         <div className="flex justify-between items-center">
-          <CardTitle className="text-xl font-semibold">
+          <CardTitle className="font-semibold">
             Recent Applicants
           </CardTitle>
           <Button variant="outline" size="sm" onClick={toggleVisibility}>
@@ -30,7 +30,7 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
       </CardHeader>
       {visible && (
         <CardContent>
-          <Card className="p-5 bg-foreground border border-border shadow-3xl h-full">
+          <Card className="rounded-lg p-5 bg-transparent border border-border h-full">
             <ApplicationsGraph applicants={applicants} />
             <div className="mt-6">
               <ApplicantTable applicants={applicants} disablePortal={true} />

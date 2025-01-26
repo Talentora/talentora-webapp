@@ -1,0 +1,33 @@
+sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent */
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .sidebar ul li {
+    margin: 15px 0;
+  }
+
+  .sidebar ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    transition: color 0.3s;
+  }
+
+  .sidebar ul li a:hover {
+    color: #00bcd4;
+  }

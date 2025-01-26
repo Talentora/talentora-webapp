@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
@@ -13,12 +12,10 @@ import {
 import { ApplicantCandidate } from '@/types/merge';
 import ApplicantPortal from '@/components/Applicants/Applicant/ApplicantPortal';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-
 interface ApplicantTableProps {
   applicants: ApplicantCandidate[];
   disablePortal?: boolean;
 }
-
 export default function ApplicantTable({
   applicants,
   disablePortal = false
@@ -26,16 +23,14 @@ export default function ApplicantTable({
   const [selectedApplicant, setSelectedApplicant] =
     useState<ApplicantCandidate | null>(null);
   const router = useRouter();
-
   const handleSelectApplicant = (applicant: ApplicantCandidate) => {
     router.push(`/applicants/${applicant.application.id}`);
   };
-
   return (
     <div >
       {/* // <h1 className="text-xl font-semibold">Applicants Table </h1> */}
-      <Table className="border rounded-lg">
-        <TableHeader className="bg-primary-dark text-background rounded-lg">
+      <Table className="bg-transparent border rounded-lg">
+        <TableHeader className="bg-transparent text-background rounded-lg">
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Role</TableHead>
@@ -51,7 +46,7 @@ export default function ApplicantTable({
             <TableRow
               key={ApplicantCandidate.application.id}
               onClick={() => handleSelectApplicant(ApplicantCandidate)}
-              className="cursor-pointer bg-foreground"
+              className="cursor-pointer bg-transparent"
             >
               <TableCell>{`${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`}</TableCell>
               <TableCell>

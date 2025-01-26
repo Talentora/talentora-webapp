@@ -34,9 +34,7 @@ export const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
           </Button>
         )}
       </div>
-      <div className="flex justify-center">
-        <ProgressDots step={step} totalSteps={totalSteps} />
-      </div>
+
     </div>
   );
 };

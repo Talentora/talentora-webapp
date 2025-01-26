@@ -3,6 +3,8 @@ import { EnrichedJob } from './JobList';
 import { Badge } from '@/components/ui/badge';
 import { useRouter } from 'next/navigation';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
+
+
 export function JobRow({ job }: { job: EnrichedJob }) {
   const router = useRouter();
   const { interviewConfig } = job;
@@ -31,30 +33,19 @@ export function JobRow({ job }: { job: EnrichedJob }) {
         </TableCell>
         <TableCell className="text-center">{job.name}</TableCell>
         <TableCell className="text-center">
-          <Badge variant={job.status.toLowerCase() === 'open' ? 'success' : 'secondary'}>
-          {job.status
-            ? job.status.charAt(0).toUpperCase() +
-              job.status.slice(1).toLowerCase()
-            : ''}
-        </Badge>
-      </TableCell>
-      <TableCell className="text-center">
-        {new Date(job.created_at).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric'
-        })}
-      </TableCell>
-      <TableCell className="text-center">
-        <Badge 
-          variant={isReady === "yes" ? "success" : isReady === "almost" ? "warning" : "failure"}
-          className={`${
-            isReady === "yes" ? "bg-green-700" : 
-            isReady === "almost" ? "bg-orange-700" : "bg-red-700"
-          }`}
-        >
-          {isReady === "yes" ? "Ready" : isReady === "almost" ? "Almost Ready" : "Setup Required"}
-        </Badge>
+        {job.offices?.length ? (
+          <div className="flex gap-1 flex-wrap justify-center">
+            {job.offices
+              .filter(Boolean)
+              .map(office => (
+                <Badge key={office.name} variant="secondary">
+                  {office.name}
+                </Badge>
+              ))}
+          </div>
+        ) : (
+          'No office'
+        )}
       </TableCell>
       <TableCell className="text-center">
         {job.departments?.length ? (
@@ -71,21 +62,17 @@ export function JobRow({ job }: { job: EnrichedJob }) {
           'No department'
         )}
       </TableCell>
-      <TableCell className="text-center">
-        {job.offices?.length ? (
-          <div className="flex gap-1 flex-wrap justify-center">
-            {job.offices
-              .filter(Boolean)
-              .map(office => (
-                <Badge key={office.name} variant="secondary">
-                  {office.name}
-                </Badge>
-              ))}
-          </div>
-        ) : (
-          'No office'
-        )}
-      </TableCell>
+      <TableCell className="text-right">
+  <Badge
+    variant={isReady === "yes" ? "success" : isReady === "almost" ? "warning" : "failure"}
+    className={`${
+      isReady === "yes" ? "bg-green-700" : 
+      isReady === "almost" ? "bg-orange-700" : "bg-red-700"
+    } text-md font-normal text-white rounded-full`}
+  >
+    {isReady === "yes" ? "Ready" : isReady === "almost" ? "Almost Ready" : "Set up"}
+  </Badge>
+</TableCell>
     </TableRow>
     </TooltipProvider>
   );

@@ -3,18 +3,20 @@ import * as React from 'react';
 interface ProgressDotsProps {
   step: number;
   totalSteps: number;
+  vertical?: boolean;
 }
 
-const ProgressDots: React.FC<ProgressDotsProps> = ({ step, totalSteps }) => {
-  const steps = Array.from({ length: totalSteps }, (_, i) => i + 1);
-
+const ProgressDots: React.FC<ProgressDotsProps> = ({ step, totalSteps, vertical = true }) => {
   return (
-    <div className="flex gap-2">
-      {steps.map((s) => (
+    <div
+      className={`flex ${vertical ? 'flex-col items-center gap-2' : 'flex-row justify-center gap-3'}`}
+    >
+      {Array.from({ length: totalSteps }, (_, index) => (
         <div
-          key={s}
-          className={`w-2 h-2 rounded-full border border-grey-100 ${
-            s <= step ? 'bg-accent' : 'bg-transparent'
+        key={index}
+        className={`w-3 h-3 rounded-full ${
+          index + 1 <= step ? 'bg-blue-500' : 'bg-gray-300'
+
           }`}
         />
       ))}

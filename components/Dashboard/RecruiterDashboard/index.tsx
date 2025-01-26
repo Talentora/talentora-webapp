@@ -3,10 +3,10 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MessageSquareIcon, UserIcon, UsersIcon, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Job, ApplicantCandidate } from '@/types/merge';
 import ActiveJobsCard from './ActiveJobsCard';
-import RecentApplicantsCard from './RecentApplicantsCard';
+import RecentApplicantsDash from './RecentApplicantsDash';
 import SettingsCard from './SettingsCard';
 import ApplicantCountCard from './FactCards/ApplicantCount';
 import CompletedAssessmentsCard from './FactCards/CompletedAssessments';
@@ -21,8 +21,16 @@ import InviteApplicants from '@/components/Jobs/Job/JobConfig/InviteApplicants';
 import { Tables } from '@/types/types_db';
 import { createClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+
+// Define LoadingSkeleton component
+const LoadingSkeleton = memo(() => (
+  <div className="flex items-center justify-center h-10">
+    <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+  </div>
+));
+
 
 // Fetch functions with proper typing
 const fetchApplications = async (): Promise<ApplicantCandidate[]> => {
@@ -52,7 +60,6 @@ interface CombinedJob {
 
 export default function RecruiterDashboard() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
 
   // Use React Query for data fetching with caching
   const { data: applicants = [], isLoading: applicantsLoading } = useQuery<ApplicantCandidate[]>({
@@ -87,82 +94,54 @@ export default function RecruiterDashboard() {
   const factWindow = 90;
 
   return (
-    <div className="flex w-full">
-      <main className="flex-1 p-8 mb-6">
+    <div className="min-h-screen">
+      <main className="flex-1 mb-3 w-full">
         <div className="flex flex-col gap-6">
-          <h1 className="text-2xl text-primary-dark font-bold">Recruiting Dashboard</h1>
-
           <div className="flex flex-col gap-6">
             <div className="flex flex-row gap-6">
-              {applicantsLoading ? (
-                <Skeleton className="h-10 flex-1" />
-              ) : (
-                <SearchBar
-                  searchTerm={searchTerm}
-                  setSearchTerm={setSearchTerm}
-                  applicants={applicants}
-                />
-              )}
-              <Button 
-                className="bg-primary-dark text-white" 
-                onClick={() => setInviteModalOpen(true)}
-                disabled={jobsLoading || applicantsLoading}
-              >
-                {(jobsLoading || applicantsLoading) ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  'Invite Candidates'
-                )}
-              </Button>
-              {inviteModalOpen && (
-                <Dialog open={inviteModalOpen} onOpenChange={setInviteModalOpen}>
-                  <DialogContent>
-                    <InviteApplicants jobs={combinedJobs} singleJobFlag={false} applicants={applicants} />
-                  </DialogContent>
-                </Dialog>
-              )}
             </div>
-            <div className="flex flex-row gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <ApplicantCountCard 
                 factWindow={factWindow} 
                 isLoading={applicantsLoading} 
                 applicants={applicants} 
               />
-              <InvitedCandidatesCard 
-                factWindow={factWindow}
-              />
-              <CompletedAssessmentsCard 
-                factWindow={factWindow}
-              />
+              <CompletedAssessmentsCard factWindow={factWindow} />
+              <InvitedCandidatesCard factWindow={factWindow}/>
               <BotCountCard />
             </div>
           </div>
 
           <div className="flex flex-row gap-6">
-            <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-[#5650F0]/50 bg-card">
-              <CardTitle>Applications Over Time</CardTitle>
-              <CardContent>
-                <ApplicationsGraph 
-                  applicants={applicants} 
-                  isLoading={applicantsLoading} 
-                  hideHeader={true} 
+          <Card className="border border-input p-5 bg-white rounded-2xl bg-card">
+            <CardTitle className="mt-4 text-xl">Applicant Historical Data</CardTitle>
+            <CardContent className="flex flex-row gap-6">
+              {/* Graph Column */}
+              <div className="flex-1">
+                <ApplicationsGraph
+                  applicants={applicants}
+                  isLoading={applicantsLoading}
+                  hideHeader={true}
                 />
-              </CardContent>
-            </Card>
-            <ActiveJobsCard 
-              jobs={mergeJobs} 
-              isLoading={jobsLoading} 
-            />
-          </div>
+            </div>
+            <div className="flex w-1/3 flex-row gap-3">
+            <RecentApplicantsDash
+                    applicants={applicants}
+                    isLoading={applicantsLoading} jobs={[]}            />
+            </div>
 
-          <div className="flex flex-row gap-6">
-            <RecentApplicantsCard
-              applicants={applicants}
-              isLoading={applicantsLoading}
-            />
-          </div>
 
-          <div className="flex flex-row gap-6">
+
+            </CardContent>
+          </Card>
+        </div>
+
+      {/* Active Jobs Column */}
+      <div className="flex-none ">
+                <ActiveJobsCard jobs={mergeJobs} isLoading={jobsLoading} />
+              </div>
+
+              <div className="flex flex-row gap-6">
             <BotCard />
             <SettingsCard />
           </div>
@@ -171,3 +150,7 @@ export default function RecruiterDashboard() {
     </div>
   );
 }
+
+
+
+         
