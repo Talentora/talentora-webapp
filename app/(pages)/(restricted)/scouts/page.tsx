@@ -2,13 +2,11 @@
 import ScoutLibrary from '@/components/ScoutLibrary';
 import { useScouts } from '@/hooks/useScouts';
 import { ScoutSkeleton } from '@/components/ScoutLibrary/ScoutSkeleton';
-import { ScoutWithJobs } from '@/types/custom';
-import { useState, useEffect } from 'react';
-import { createClient } from '@/utils/supabase/client';
-import { getScoutsWithJobIds } from '@/utils/supabase/queries';
+
 
 export default function Page() {
   const { scouts, loading } = useScouts();
+  console.log(`Fetched ${scouts.length} scouts`);
 
   if (loading) {
     return <ScoutSkeleton />;

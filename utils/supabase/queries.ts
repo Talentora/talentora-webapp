@@ -483,6 +483,7 @@ export const deletescout = async (id: number) => {
 export const getScouts = async (): Promise<ScoutWithJobs[] | null> => {
   try {
     const scoutsWithJobIds = await getScoutsWithJobIds();
+    console.log("scoutsWithJobIds",scoutsWithJobIds);
     return scoutsWithJobIds;
 
   } catch (error) {
