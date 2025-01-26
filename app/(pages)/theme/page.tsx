@@ -5,59 +5,29 @@ import { Card } from "@/components/ui/card";
 const ThemePage = () => {
   const colorSections = [
     {
-      title: "Base Colors",
+      title: "Generic Colors",
       colors: [
-        { name: "Background", class: "bg-background" },
+        { name: "Primary Base", class: "bg-[var(--primary-base)] text-white" },
+        { name: "Primary Dark", class: "bg-[var(--primary-dark)] text-white" },
+        { name: "Secondary Base", class: "bg-[var(--secondary-base)] text-white" },
+        { name: "Secondary Dark", class: "bg-[var(--secondary-dark)] text-white" },
+        { name: "Destructive Base", class: "bg-[var(--destructive-base)] text-white" },
+        { name: "Muted Base", class: "bg-[var(--muted-base)]" },
+        { name: "Accent Base", class: "bg-[var(--accent-base)]" },
+      ]
+    },
+    {
+      title: "Light Theme",
+      colors: [
+        { name: "Background", class: "bg-background text-foreground" },
         { name: "Foreground", class: "bg-foreground text-background" },
         { name: "Border", class: "bg-border" },
         { name: "Input", class: "bg-input" },
-        { name: "Ring", class: "bg-ring text-background" },
+        { name: "Ring", class: "bg-ring text-white" },
+      
       ]
     },
-    {
-      title: "Primary Colors",
-      colors: [
-        { name: "Primary", class: "bg-primary text-primary-foreground" },
-        { name: "Primary Foreground", class: "bg-primary-foreground text-primary" },
-      ]
-    },
-    {
-      title: "Secondary Colors", 
-      colors: [
-        { name: "Secondary", class: "bg-secondary text-secondary-foreground" },
-        { name: "Secondary Foreground", class: "bg-secondary-foreground text-secondary" },
-      ]
-    },
-    {
-      title: "Accent Colors",
-      colors: [
-        { name: "Accent", class: "bg-accent text-accent-foreground" },
-        { name: "Accent Foreground", class: "bg-accent-foreground text-accent" },
-      ]
-    },
-    {
-      title: "Muted Colors",
-      colors: [
-        { name: "Muted", class: "bg-muted text-muted-foreground" },
-        { name: "Muted Foreground", class: "bg-muted-foreground text-muted" },
-      ]
-    },
-    {
-      title: "Destructive Colors",
-      colors: [
-        { name: "Destructive", class: "bg-destructive text-destructive-foreground" },
-        { name: "Destructive Foreground", class: "bg-destructive-foreground text-destructive" },
-      ]
-    },
-    {
-      title: "Sidebar Colors",
-      colors: [
-        { name: "Sidebar", class: "bg-sidebar text-sidebar-foreground" },
-        { name: "Sidebar Primary", class: "bg-sidebar-primary text-sidebar-primary-foreground" },
-        { name: "Sidebar Accent", class: "bg-sidebar-accent text-sidebar-accent-foreground" },
-        { name: "Sidebar Border", class: "bg-sidebar-border" },
-      ]
-    }
+  
   ];
 
   return (

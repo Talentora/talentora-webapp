@@ -33,32 +33,32 @@ const Profile = () => {
       <Button
         variant="ghost"
         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-        className="w-full justify-start gap-3 text-white hover:bg-primary-dark/10"
+        className="w-full justify-start gap-3 text-foreground hover:bg-accent/10"
       >
-        <User className="h-5 w-5 text-primary" />
-        <span className="font-medium truncate text-primary">{user?.user_metadata.full_name || user?.email}</span>
+        <User className="h-5 w-5 text-foreground" />
+        <span className="font-medium truncate text-foreground">{user?.user_metadata.full_name || user?.email}</span>
       </Button>
 
       {isUserMenuOpen && (
-        <div className="absolute top-full right-0 mb-2 rounded-lg bg-foreground p-5 shadow-xl w-[18rem]">
+        <div className=" border absolute top-full right-0 mb-2 rounded-lg bg-background p-5 shadow-xl w-[18rem]">
           <div className="space-y-[0.75em]">
             <div>
-              <h4 className="font-medium text-gray-900 text-[1em]">
+              <h4 className="font-medium text-foreground text-[1em]">
                 {user?.user_metadata.full_name || user?.email}
               </h4>
               <div className="flex items-center gap-[0.5em] mt-[0.25em]">
-                <Link href="/settings?tab=account" className="inline-flex items-center rounded-full bg-purple-100 px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-purple-800 capitalize hover:bg-purple-200">
+                <Link href="/settings?tab=account" className="inline-flex items-center rounded-full bg-primary px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-accent-foreground capitalize hover:bg-accent/80">
                   {user?.user_metadata?.role || 'User'}
                 </Link>
                 {company?.name && (
-                  <Link href="/settings?tab=company" className="inline-flex items-center rounded-full bg-blue-100 px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-blue-800 hover:bg-blue-200">
+                  <Link href="/settings?tab=company" className="inline-flex items-center rounded-full bg-secondary px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-accent-foreground capitalize hover:bg-accent/80">
                     {company.name}
                   </Link>
                 )}
               </div>
             </div>
             
-            <div className="h-[1px] bg-gray-200" />
+            <div className="h-[1px] bg-border" />
             
             <form onSubmit={handleSignOut}>
               <input type="hidden" name="pathName" value={pathname} />
@@ -66,7 +66,7 @@ const Profile = () => {
                 type="submit" 
                 variant="ghost" 
                 size="sm"
-                className="w-full justify-start text-[0.875em] text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                className="w-full justify-start text-[0.875em] text-foreground hover:text-foreground hover:bg-accent"
               >
                 <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
                 Sign out
