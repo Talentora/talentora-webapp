@@ -135,7 +135,7 @@ const IntegrationStatus = () => {
 const IntegrationStatusSkeleton = () => (
   <Card className="my-8 text-card-foreground border-none">
     <CardHeader>
-      <CardTitle className="text-primary">Integration Status</CardTitle>
+      <CardTitle >Integration Status</CardTitle>
       <CardDescription className="text-muted-foreground bg-secondary/50 p-4 rounded-lg">
         We partner with Merge.dev to provide seamless integration with your existing ATS systems.
         Merge's unified API allows us to connect with 30+ ATS providers including Greenhouse, Lever, and Workday.
