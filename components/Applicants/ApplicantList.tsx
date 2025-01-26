@@ -16,10 +16,9 @@ export default function ApplicantList() {
   useEffect(() => {
     const fetchApplicantCandidates = async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SITE_URL}/api/applications`,
-          { cache: 'no-store' }
-        );
+        const response = await fetch(`/api/applications`, {
+          cache: 'no-store'
+        });
         const data: ApplicantCandidate[] = await response.json();
         setApplicantCandidates(data);
       } catch (error) {
