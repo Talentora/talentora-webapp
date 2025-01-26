@@ -273,9 +273,9 @@ const Sidebar = () => {
             "flex items-center gap-3",
             !isSidebarOpen && "justify-center"
           )} aria-label="Logo">
-            <Logo className="h-8 w-8 text-white" />
+            <Logo className="h-8 w-8 text-black dark:text-white" />
             {isSidebarOpen && (
-              <h1 className="text-xl font-bold font-poppins text-white">
+              <h1 className="text-xl font-bold font-poppins text-black dark:text-white">
                 Talent
                 <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">
                   ora
@@ -292,7 +292,7 @@ const Sidebar = () => {
                   className="absolute -right-4 top-1/2 -translate-y-1/2 bg-primary-dark border border-primary-border rounded-full"
                   onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 >
-                  {isSidebarOpen ? <ChevronLeft className="h-5 w-5 text-white" /> : <ChevronRight className="h-5 w-5 text-white" />}
+                  {isSidebarOpen ? <ChevronLeft className="h-5 w-5 text-white" /> : <ChevronRight className="h-5 w-5 text-black dark:text-white" />}
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right" className="bg-foreground text-primary-dark z-[100]">
@@ -325,7 +325,7 @@ const Sidebar = () => {
             )}
 
             <SidebarLink href="/dashboard" icon={HomeIcon} isActive={pathname === '/dashboard'} isSidebarOpen={isSidebarOpen}>
-              <span className="text-white">Dashboard</span>
+              <span className="text-black dark:text-white">Dashboard</span>
             </SidebarLink>
             <SidebarLink 
               href="/jobs" 
@@ -336,7 +336,7 @@ const Sidebar = () => {
               isDropdownOpen={isJobsOpen}
               onDropdownClick={() => setIsJobsOpen(!isJobsOpen)}
             >
-              <span className="text-white">Jobs</span>
+              <span className="text-black dark:text-white">Jobs</span>
             </SidebarLink>
             {isSidebarOpen && isJobsOpen && (
               <div className="ml-1 mt-1 space-y-1 border-l-2 border-white/20 pl-3">
