@@ -5,16 +5,16 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '
 import { RadarChart } from 'recharts';
 type Bot = Tables<'bots'>;
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { iconOptions } from './CreateBot/BotDetails';
+import { iconOptions } from '@/components/ScoutLibrary/CreateScout/ScoutDetails';
 import { createClient } from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '../ui/skeleton';
 import { useRouter } from 'next/navigation';
 interface BotInfoProps {
-  bot: Bot;
+  scout: Bot;
 }
 
-export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
+export const ScoutInfo: React.FC<BotInfoProps> = ({ scout }) => {
   const [jobInterviewConfigs, setJobInterviewConfigs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -25,7 +25,7 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
         const { data: jobIds, error: jobIdsError } = await supabase
           .from('job_interview_config')
           .select('job_id')
-          .eq('bot_id', bot.id);
+          .eq('bot_id', scout.id);
 
         if (jobIdsError) {
           console.error('Error fetching job interview configurations:', jobIdsError);
@@ -50,7 +50,7 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
     };
 
     fetchJobInterviewConfigs();
-  }, [bot.id]);
+  }, [scout.id]);
 
   const chartConfig = {
     desktop: {
@@ -59,11 +59,11 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
     },
   } satisfies ChartConfig
 
-  if (!bot.emotion) return null;
+  if (!scout.emotion) return null;
 
   // emotion and voice are Json objects
-  const emotion = bot.emotion as { [key: string]: number };
-  const voice = bot.voice as { [key: string]: string };
+  const emotion = scout.emotion as { [key: string]: number };
+  const voice = scout.voice as { [key: string]: string };
 
   const chartData = [
     { emotion: 'speed', value: emotion.speed },
@@ -83,8 +83,8 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
   return (
     <div className="space-y-6 max-w-full">
       <div className="flex items-center gap-5 mb-4">
-        {iconOptions[bot.icon as keyof typeof iconOptions]}
-        <span className="text-lg font-semibold">{bot.name}</span>
+        {iconOptions[scout.icon as keyof typeof iconOptions]}
+        <span className="text-lg font-semibold">{scout.name}</span>
       </div>
       
       <div className="space-y-6">
@@ -92,7 +92,7 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
         <section>
           <h3 className="font-semibold mb-2">About this Bot:</h3>
           <p className="text-gray-600 dark:text-gray-300 whitespace-pre-wrap break-words">
-            {bot.description}
+            {scout.description}
           </p>
         </section>
 
@@ -100,7 +100,7 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
         <section className="flex items-center gap-2">
           <h3 className="font-semibold">Role:</h3>
           <p className="text-gray-600 dark:text-gray-300 break-words">
-            {bot.role}
+            {scout.role}
           </p>
         </section>
 
@@ -108,7 +108,7 @@ export const BotInfo: React.FC<BotInfoProps> = ({ bot }) => {
         <section>
           <h3 className="font-semibold mb-2">Prompt:</h3>
           <pre className="text-gray-600 dark:text-gray-300 whitespace-pre-wrap break-words bg-gray-50 p-4 rounded-lg overflow-x-hidden">
-            {bot.prompt ? JSON.stringify(bot.prompt, null, 2) : 'No prompt available'}
+            {scout.prompt ? JSON.stringify(scout.prompt, null, 2) : 'No prompt available'}
           </pre>
         </section>
 

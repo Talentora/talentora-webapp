@@ -5,7 +5,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 
-export function BotSkeleton() {
+export function ScoutSkeleton() {
   return (
     <Card className="flex flex-row bg-foreground border border-gray-200 rounded-lg p-5 relative">
       <CardHeader className="w-1/3">
@@ -39,7 +39,7 @@ export function BotLibrarySkeleton() {
         
         {/* Bot cards */}
         {[...Array(6)].map((_, index) => (
-          <BotSkeleton key={index} />
+          <ScoutSkeleton key={index} />
         ))}
       </div>
     </div>

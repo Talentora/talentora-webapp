@@ -1,62 +1,60 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
-import BotSettings from './BotSettings';
-import CreateBot from './CreateBot';
+import ScoutSettings from '@/components/ScoutLibrary/ScoutSettings';
+import CreateScout from './CreateScout';
 import { Search } from 'lucide-react';
-import { Tables } from '@/types/types_db';
-import { BotLibrarySkeleton } from './BotSkeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BotWithJobs } from '@/types/custom';
+import { ScoutWithJobs } from '@/types/custom';
 
-export default function BotLibrary({ bots: initialBots }: { bots: BotWithJobs[] }) {
-  const [bots, setBots] = useState<BotWithJobs[]>(initialBots || []);
-  const [filteredBots, setFilteredBots] = useState<BotWithJobs[]>(bots);
+export default function ScoutLibrary({ scouts: initialscouts }: { scouts: ScoutWithJobs[] }) {
+  const [scouts, setscouts] = useState<ScoutWithJobs[]>(initialscouts || []);
+  const [filteredscouts, setFilteredscouts] = useState<ScoutWithJobs[]>(scouts);
 
-  console.log("bots",bots);
-  console.log("filteredBots",filteredBots);
+  console.log("scouts",scouts);
+  console.log("filteredscouts",filteredscouts);
 
 
 
-  const handleBotCreated = (newBot: BotWithJobs) => {
-    if (!newBot || !newBot.id) {
-      console.error('Invalid bot data received');
+  const handlescoutCreated = (newscout: ScoutWithJobs) => {
+    if (!newscout || !newscout.id) {
+      console.error('Invalid scout data received');
       return;
     }
-    const updatedBots = [...bots, newBot];
-    setBots(updatedBots);
-    setFilteredBots(updatedBots);
+    const updatedscouts = [...scouts, newscout];
+    setscouts(updatedscouts);
+    setFilteredscouts(updatedscouts);
   };
 
-  const handleBotDeleted = (botId: number) => {
-    const updatedBots = bots.filter(bot => bot.id !== botId);
-    setBots(updatedBots);
-    setFilteredBots(updatedBots);
+  const handlescoutDeleted = (scoutId: number) => {
+    const updatedscouts = scouts.filter(scout => scout.id !== scoutId);
+    setscouts(updatedscouts);
+    setFilteredscouts(updatedscouts);
   };
 
-  const handleBotUpdated = (updatedBot: BotWithJobs) => {
-    const updatedBots = bots.map(bot => 
-      bot.id === updatedBot.id ? updatedBot : bot
+  const handlescoutUpdated = (updatedscout: ScoutWithJobs) => {
+    const updatedscouts = scouts.map(scout => 
+      scout.id === updatedscout.id ? updatedscout : scout
     );
-    setBots(updatedBots);
-    setFilteredBots(updatedBots);
+    setscouts(updatedscouts);
+    setFilteredscouts(updatedscouts);
   };
 
   const handleSearch = (searchTerm: string) => {
-    const filtered = bots.filter(
-      (bot: BotWithJobs) =>
-        bot?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        bot?.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    const filtered = scouts.filter(
+      (scout: ScoutWithJobs) =>
+        scout?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        scout?.description?.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setFilteredBots(filtered);
+    setFilteredscouts(filtered);
   };
 
-  // Filter bots based on whether they have jobs configured
-  const activeBots = filteredBots.filter(
-    bot => bot.job_interview_config && bot.job_interview_config.length > 0
+  // Filter scouts based on whether they have jobs configured
+  const activescouts = filteredscouts.filter(
+    scout => scout.job_interview_config && scout.job_interview_config.length > 0
   );
-  const inactiveBots = filteredBots.filter(
-    bot => !bot.job_interview_config || bot.job_interview_config.length === 0
+  const inactivescouts = filteredscouts.filter(
+    scout => !scout.job_interview_config || scout.job_interview_config.length === 0
   );
 
   return (
@@ -73,7 +71,7 @@ export default function BotLibrary({ bots: initialBots }: { bots: BotWithJobs[] 
           <div className="relative w-full">
             <Input
               type="search"
-              placeholder="Search bots..."
+              placeholder="Search scouts..."
               className="w-full pl-10"
               onChange={(e) => handleSearch(e.target.value)}
             />
@@ -82,31 +80,31 @@ export default function BotLibrary({ bots: initialBots }: { bots: BotWithJobs[] 
             </div>
           </div>
           <div className="flex flex-row justify-end">
-            <CreateBot onBotCreated={handleBotCreated} />
+            <CreateScout onBotCreated={handlescoutCreated} />
           </div>
         </div>
 
         <Tabs defaultValue="active" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="active">
-              Active Scouts ({activeBots.length})
+              Active Scouts ({activescouts.length})
             </TabsTrigger>
             <TabsTrigger value="inactive">
-              Inactive Scouts ({inactiveBots.length})
+              Inactive Scouts ({inactivescouts.length})
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="active">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activeBots.map((bot: BotWithJobs) => (
-                <BotSettings 
-                  key={bot.id} 
-                  bot={bot} 
-                  onBotDeleted={handleBotDeleted}
-                  onBotUpdated={handleBotUpdated}
+              {activescouts.map((scout: ScoutWithJobs) => (
+                <ScoutSettings 
+                  key={scout.id} 
+                  scout={scout} 
+                  onscoutDeleted={handlescoutDeleted}
+                  onscoutUpdated={handlescoutUpdated}
                 />
               ))}
-              {activeBots.length === 0 && (
+              {activescouts.length === 0 && (
                 <div className="col-span-full flex flex-col items-center justify-center p-6">
                   <p className="text-lg font-semibold mb-2">No active Scouts</p>
                   <p className="text-gray-500">Configure jobs for your Scouts to make them active</p>
@@ -117,18 +115,18 @@ export default function BotLibrary({ bots: initialBots }: { bots: BotWithJobs[] 
 
           <TabsContent value="inactive">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {inactiveBots.map((bot: BotWithJobs) => (
-                <BotSettings 
-                  key={bot.id} 
-                  bot={bot} 
-                  onBotDeleted={handleBotDeleted}
-                  onBotUpdated={handleBotUpdated}
+              {inactivescouts.map((scout: ScoutWithJobs) => (
+                <ScoutSettings 
+                  key={scout.id} 
+                  scout={scout} 
+                  onscoutDeleted={handlescoutDeleted}
+                  onscoutUpdated={handlescoutUpdated}
                 />
               ))}
-              {inactiveBots.length === 0 && (
+              {inactivescouts.length === 0 && (
                 <div className="col-span-full flex flex-col items-center justify-center p-6">
                   <p className="text-lg font-semibold mb-2">No inactive Scouts</p>
-                  <p className="text-gray-500">All your bots are currently active</p>
+                  <p className="text-gray-500">All your scouts are currently active</p>
                 </div>
               )}
             </div>

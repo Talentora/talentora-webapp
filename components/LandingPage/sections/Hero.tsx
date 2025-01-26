@@ -1,9 +1,19 @@
+'use client';
+
 import { ArrowRight, Brain, Users, Zap, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-
+import Link from 'next/link';
 export function Hero() {
+
+  const handleVideoClick = () => {
+    const video = document.querySelector('video');
+    if (video) {
+      video.play();
+    }
+  };
+
   return (
     <section className="container px-4 mx-auto">
       <div className="grid lg:grid-cols-2 gap-20 items-center">
@@ -26,6 +36,7 @@ export function Hero() {
               size="lg"
               variant="outline"
               className="border-accent text-accent hover:bg-accent/5 text-lg group"
+              onClick={handleVideoClick}
             >
               Watch Demo
               <Play className="ml-2 h-5 w-5" />
@@ -48,14 +59,16 @@ export function Hero() {
           <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-accent/10">
             <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-pink-600/5 backdrop-blur-sm" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <Button
-                variant="outline"
-                size="lg"
-                className="bg-white/90 hover:bg-white group"
-              >
-                <Play className="w-6 h-6 text-accent group-hover:text-accent/90" />
-                <span className="ml-2 text-accent group-hover:text-accent/90">Watch Product Demo</span>
-              </Button>
+              <video width="320" height="240" controls preload="auto" className="w-full h-full object-cover">
+                <source src="/Videos/InterviewDemo.mp4" />
+                <track
+                  src="/videos/captions-en.vtt"
+                  kind="subtitles"
+                  srcLang="en"
+                  label="English"
+                />
+                Your browser does not support the video tag.
+              </video>
             </div>
             {/* Placeholder for actual video thumbnail */}
             <div className="w-full h-full bg-gradient-to-br from-accent/10 to-pink-50" />
@@ -76,9 +89,11 @@ export function Hero() {
                 placeholder="Enter your work email..."
                 className="w-full bg-white text-lg"
               />
-              <Button className="bg-accent hover:bg-accent/90 whitespace-nowrap">
-                Get Started
-              </Button>
+              <Link href="/signup">
+                <Button className="bg-accent hover:bg-accent/90 whitespace-nowrap">
+                  Get Started
+                </Button>
+              </Link>
             </div>
           </Card>
         </div>

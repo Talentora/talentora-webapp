@@ -43,7 +43,7 @@ export default function JobPage({
 
     return (
       <>
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-800">
             {job.name}
           </h1>
@@ -54,7 +54,7 @@ export default function JobPage({
             <ArrowLeft className="h-4 w-4" />
             Back to Jobs
           </Link>
-        </div>
+        </div> */}
         <JobHeader job={job} />
         <JobConfig  jobId={job.id} applicants={applicants || []} isLoading={applicantsLoading} />
       </>

@@ -60,6 +60,7 @@ const useApplications = (applicantId: string | undefined) => {
           .eq('applicant_id', applicantId);
 
         if (error) throw error;
+        console.log(data);
         setApplications(data);
         setError(null);
       } catch (err) {
@@ -105,7 +106,7 @@ export const fetchApplicationData = async (applicationId: string, token: string)
   }
 };
 
-type EnrichedApplication = MergeJob & {
+export type EnrichedApplication = MergeJob & {
   company: Tables<'companies'> | null;
   application_data: Tables<'applications'>;
   ai_summary: Tables<'AI_summary'> | null;

@@ -11,14 +11,14 @@ import {
   MoreVertical
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { BotInfo } from './BotInfo';
+import { ScoutInfo } from '@/components/ScoutLibrary/ScoutInfo';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { iconOptions } from './CreateBot/BotDetails';
+import { iconOptions } from '@/components/ScoutLibrary/CreateScout/ScoutDetails';
 
 import {
   Card,
@@ -36,30 +36,30 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog';
 import { Tables } from '@/types/types_db';
-import { deleteBot, updateBot } from '@/utils/supabase/queries';
-import CreateBot from './CreateBot';
+import { deletescout, updateScout } from '@/utils/supabase/queries';
+import CreateScout from './CreateScout';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
-type Bot = Tables<'bots'>;
+type scout = Tables<'bots'>;
 
 
-interface BotSettingsProps {
-  bot: Bot;
-  onBotDeleted: (botId: number) => void;
-  onBotUpdated: (bot: Bot) => void;
+interface ScoutSettingsProps {
+  scout: scout;
+  onscoutDeleted: (scoutId: number) => void;
+  onscoutUpdated: (scout: scout) => void;
 }
 
-export default function BotSettings({ bot, onBotDeleted, onBotUpdated }: BotSettingsProps) {
+export default function ScoutSettings({ scout, onscoutDeleted, onscoutUpdated }: ScoutSettingsProps) {
   const [showEditDialog, setShowEditDialog] = useState(false);
 
-  const handleDeleteBot = async () => {
+  const handleDeletescout = async () => {
     try {
-      await deleteBot(bot.id);
-      onBotDeleted(bot.id);
-      toast.success('Bot deleted successfully');
+      await deletescout(scout.id);
+      onscoutDeleted(scout.id);
+      toast.success('scout deleted successfully');
     } catch (error) {
-      console.error('Failed to delete bot:', error);
-      toast.error('Failed to delete bot');
+      console.error('Failed to delete scout:', error);
+      toast.error('Failed to delete scout');
     }
   };
 
@@ -81,7 +81,7 @@ export default function BotSettings({ bot, onBotDeleted, onBotUpdated }: BotSett
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-background">
-                <DropdownMenuItem onClick={handleDeleteBot}>
+                <DropdownMenuItem onClick={handleDeletescout}>
                   Delete
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleEditClick}>
@@ -92,19 +92,19 @@ export default function BotSettings({ bot, onBotDeleted, onBotUpdated }: BotSett
           </div>
           <CardHeader className="w-1/3">
             <div className="w-full flex items-center justify-center mb-4 min-h-[100px]">
-              {/* <Bot className="h-10 w-10" /> */}
-              {iconOptions[bot.icon as keyof typeof iconOptions]}
+              {/* <scout className="h-10 w-10" /> */}
+              {iconOptions[scout.icon as keyof typeof iconOptions]}
             </div>
           </CardHeader>
           <DialogTrigger asChild>
 
           <CardContent className="w-2/3 flex flex-col gap-2">
-            <CardTitle className="text-center">{bot.name}</CardTitle>
+            <CardTitle className="text-center">{scout.name}</CardTitle>
             <CardDescription className="text-center text-gray-600 dark:text-gray-300">
-              <strong>{bot.role}</strong>
+              <strong>{scout.role}</strong>
             </CardDescription>
             <p className="text-center text-gray-600 dark:text-gray-300">
-              {bot.description}
+              {scout.description}
             </p>
           </CardContent>
           </DialogTrigger>
@@ -113,17 +113,17 @@ export default function BotSettings({ bot, onBotDeleted, onBotUpdated }: BotSett
 
       {/* Dialog Content */}
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <BotInfo bot={bot} /> 
+        <ScoutInfo scout={scout} /> 
       </DialogContent>
       </Dialog>
 
-      {/* Edit Bot Dialog */}
+      {/* Edit scout Dialog */}
       {showEditDialog && (
-        <CreateBot 
+        <CreateScout 
           isEdit={true}
-          existingBot={bot}
+          existingBot={scout}
           onClose={() => setShowEditDialog(false)}
-          onBotUpdated={onBotUpdated}
+          onBotUpdated={onscoutUpdated}
         />
       )}
     </>

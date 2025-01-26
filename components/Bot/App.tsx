@@ -13,14 +13,14 @@ import Configure from './Setup';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Ear } from 'lucide-react';
 
-type BotConfig = Tables<'bots'>;
+type ScoutConfig = Tables<'bots'>;
 type JobInterviewConfig = Tables<'job_interview_config'>;
 type CompanyContext = Tables<'company_context'>;
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
 type Application = Tables<'applications'>;
-interface BotProps {
-  bot: BotConfig;
+interface ScoutProps {
+  scout: ScoutConfig;
   jobInterviewConfig: JobInterviewConfig;
   companyContext: CompanyContext;
   job: Job;
@@ -47,7 +47,7 @@ const status_text = {
   connecting: "Connecting...",
 };
 
-export default function App({ bot, jobInterviewConfig, companyContext, job, company, mergeJob, transcript,application }: BotProps) {
+export default function App({ scout, jobInterviewConfig, companyContext, job, company, mergeJob, transcript,application }: ScoutProps) {
   const voiceClient = useRTVIClient()!;
   const transportState = useRTVIClientTransportState();
   

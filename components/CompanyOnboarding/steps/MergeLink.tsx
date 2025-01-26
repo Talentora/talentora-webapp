@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useUser } from '@/hooks/useUser';
-import { useCompany } from '@/hooks/useCompany';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { useMergeLink } from '@mergeapi/react-merge-link';
@@ -13,7 +12,7 @@ interface MergeLinkProps {
 
 const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
   const { user, loading: userLoading } = useUser();
-  const { company, loading: companyLoading } = useCompany();
+  const { company, loading: companyLoading } = useUser();
   const [linkToken, setLinkToken] = useState<string | null>(null);
 
   const hasMergeApiKey = company?.merge_account_token ? true : false;

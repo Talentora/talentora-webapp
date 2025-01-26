@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { useRecruiter } from '@/hooks/useRecruiter';
+import { useUser } from '@/hooks/useUser';
 import { Loader2 } from 'lucide-react';
 import { Job } from '@/types/merge';
 
@@ -9,7 +9,7 @@ export const StartingStep: React.FC<{
   onCompletion: (isComplete: boolean) => void;
   job: Job;
 }> = ({ onCompletion, job }) => {
-  const { recruiter } = useRecruiter();
+  const { recruiter } = useUser();
   const mergeJobId = job?.id;
 
   const [state, setState] = useState<{ loading: boolean; error: string | null }>({
