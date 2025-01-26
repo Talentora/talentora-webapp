@@ -4,14 +4,12 @@ import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2, ChevronDown, ChevronUp, Search, CreditCard, Box, Mail, BookOpen, Building2, Phone } from 'lucide-react';
-import Profile from '@/components/Layout/Profile';
-
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import Logo from '@/components/ui/icons/Logo';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 import { useUser } from '@/hooks/useUser';
-import { SignOut } from '@/utils/auth-helpers/server';
-import { handleRequest } from '@/utils/auth-helpers/client';
-import { getRedirectMethod } from '@/utils/auth-helpers/settings';
+
 import {
   SidebarHeader,
   SidebarContent,
@@ -45,11 +43,14 @@ const SidebarLink = ({ href, icon: Icon, children, isActive, isSidebarOpen, hasD
       <SidebarMenuButton
         asChild
         isActive={isActive}
-        className="hover:bg-primary-dark/10 transition-colors flex-1"
+        className={cn(
+          "hover:bg-sidebar-accent/10 transition-colors flex-1",
+          isActive && "bg-sidebar-accent text-sidebar-accent-foreground"
+        )}
       >
-        <Link href={href} className="flex items-center gap-3 text-white">
-          <Icon className="h-5 w-5 text-white" />
-          {isSidebarOpen && <span className="font-medium text-white">{children}</span>}
+        <Link href={href} className="flex items-center gap-3 text-sidebar-foreground">
+          <Icon className="h-5 w-5" />
+          {isSidebarOpen && <span className="font-medium">{children}</span>}
         </Link>
       </SidebarMenuButton>
       {hasDropdown && isSidebarOpen && (
@@ -111,9 +112,9 @@ interface scout {
 const Sidebar = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isJobsOpen, setIsJobsOpen] = useState(true);
-  const [isApplicantsOpen, setIsApplicantsOpen] = useState(true);
-  const [isscoutsOpen, setIsscoutsOpen] = useState(true);
+  const [isJobsOpen, setIsJobsOpen] = useState(false);
+  const [isApplicantsOpen, setIsApplicantsOpen] = useState(false);
+  const [isscoutsOpen, setIsscoutsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -121,7 +122,7 @@ const Sidebar = () => {
   const { user, company } = useUser();
   const router = useRouter();
   const { jobs, applications, scouts, isLoading, isError } = useSidebarData();
-  const [isSettingsOpen, setIsSettingsOpen] = useState(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isRouteLoading, setIsRouteLoading] = useState(false);
 
   useEffect(() => {
@@ -265,7 +266,7 @@ const Sidebar = () => {
       </CommandDialog>
 
       <SidebarComponent className={cn(
-        "bg-primary-dark transition-all duration-300 ease-in-out z-50",
+        "bg-sidebar text-sidebar-foreground border-r border-sidebar-border transition-all duration-300 ease-in-out z-50",
         isSidebarOpen ? "w-50" : "w-20"
       )}>
         <SidebarHeader className="relative p-4">
@@ -444,10 +445,9 @@ const Sidebar = () => {
           </SidebarMenu>
         </SidebarContent>
 
-        {/* <SidebarFooter className="p-4">
-          
-          <Profile />
-        </SidebarFooter> */}
+        <SidebarFooter className="justify-end items-center">
+          <ThemeToggle />
+        </SidebarFooter>
 
       </SidebarComponent>
     </SidebarProvider>

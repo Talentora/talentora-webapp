@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-white hover:bg-primary/90',
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline:
@@ -41,37 +41,24 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      className,
-      variant,
-      size,
-      asChild = false,
-      loading = false,
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    const Comp = asChild ? Slot : 'button';
+  ({ className, variant = "default", size = "default", ...props }, ref) => {
     return (
-      <Comp
+      <button
         className={cn(
-          buttonVariants({ variant, size, className }),
-          loading && 'opacity-75 pointer-events-none'
+          "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
+          {
+            "bg-primary text-primary-foreground hover:bg-primary/90": variant === "default",
+            "bg-destructive text-destructive-foreground hover:bg-destructive/90": variant === "destructive",
+            "border border-input hover:bg-accent hover:text-accent-foreground": variant === "outline",
+            "hover:bg-accent hover:text-accent-foreground": variant === "ghost",
+            "bg-secondary text-secondary-foreground hover:bg-secondary/80": variant === "secondary",
+            "underline-offset-4 hover:underline text-primary": variant === "link",
+          },
+          className
         )}
         ref={ref}
         {...props}
-        disabled={loading || props.disabled} // Disable the button when loading
-      >
-        {loading ? (
-          <div className="flex items-center">
-            <LoadingDots /> {/* Display loading dots */}
-          </div>
-        ) : (
-          children
-        )}
-      </Comp>
+      />
     );
   }
 );

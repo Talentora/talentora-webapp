@@ -1,4 +1,5 @@
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 type LogoProps = {
   className?: string;
@@ -12,7 +13,10 @@ export const Logo: React.FC<LogoProps> = ({ className }) => {
       viewBox="0 0 400 400"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={cn(
+        "text-primary fill-current",
+        className
+      )}
     >
       <rect width="400" height="400" fill="white" />
       <path
