@@ -19,7 +19,7 @@ export function Hero() {
       <div className="grid lg:grid-cols-2 gap-20 items-center">
         <div className="space-y-8">
           <div className="inline-flex items-center rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm">
-            <span className="text-accent font-medium">✨ AI-Powered Video Interviews</span>
+            <span className="text-primary font-medium">✨ AI-Powered Video Interviews</span>
           </div>
           <h1 className="text-5xl font-bold leading-tight tracking-tighter lg:text-6xl xl:text-7xl">
             Hire the best talent{" "}
@@ -29,13 +29,13 @@ export function Hero() {
             Our AI-powered platform conducts initial interviews, assesses candidates, and provides data-driven insights - all while you sleep.
           </p>
           <div className="flex flex-wrap gap-4">
-            <Button size="lg" className="bg-accent hover:bg-accent/90 text-lg">
+            <Button size="lg" className="bg-primary hover:bg-accent/90 text-lg">
               Start Free Trial
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-accent text-accent hover:bg-accent/5 text-lg group"
+              className="border-primary text-primary hover:bg-accent/5 text-lg group"
               onClick={handleVideoClick}
             >
               Watch Demo
