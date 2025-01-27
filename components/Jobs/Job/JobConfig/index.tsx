@@ -157,6 +157,7 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
         {setupFlags.isReady === "yes" && (
           <div className="flex flex-col col-span-1 mb-4">
             <InterviewStatus 
+              jobId='${jobId}'
               loading={loading} 
               interviewConfig={interviewConfig} 
               botInfo={botInfo}
@@ -166,19 +167,6 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
         )}
 
         <div className="grid grid-cols-1 gap-4 h-full">
-          <InterviewBot 
-            loading={loading} 
-            botInfo={botInfo} 
-            jobId={jobId} 
-            interviewConfig={interviewConfig} 
-          />
-
-          <InterviewSettings 
-            loading={loading} 
-            interviewConfig={interviewConfig} 
-            setShowSetupDialog={setShowSetupDialog} 
-            jobId={jobId} 
-          />
 
           <InterviewQuestions 
             loading={loading} 

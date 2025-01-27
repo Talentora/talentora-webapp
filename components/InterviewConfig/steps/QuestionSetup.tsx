@@ -127,6 +127,9 @@ export const QuestionSetup = ({ jobId, onCompletion, existingConfig }: QuestionS
   return (
     <div className="space-y-4 m-10">
       <h2 className="text-2xl font-bold">Setup Interview Questions</h2>
+      <h1 className="text-sm font-normal"> The structure and style of your prompt significantly impact how the interview bot responds. </h1>
+      <h2 className="text-2xl font-bold">Example</h2>
+      <h1 className="text-sm font-normal"> "You are a friendly interview assistant helping a candidate prepare for a Software Developer interview. Respond to the candidate's answer to the prompt: 'Tell me about your experience with software development and coding languages.'" </h1>
       <div className="mt-4 max-h-[400px] overflow-y-auto">
         {loading ? (
           <div className="flex justify-center items-center h-32">
@@ -170,13 +173,13 @@ export const QuestionSetup = ({ jobId, onCompletion, existingConfig }: QuestionS
       <div className="flex flex-col space-y-2">
         {!showQuestionCard ? (
           <Button
-            className="bg-primary-dark text-white"
+            className="bg-primary-dark text-muted-foreground"
             onClick={() => setShowQuestionCard(true)}
           >
             New Question +
           </Button>
         ) : (
-          <Card className="p-4 bg-purple-50 shadow-lg border border-black">
+          <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-primary-dark/50 bg-card">
             <CardHeader>
               <Textarea
                 placeholder="Enter question"
@@ -259,7 +262,7 @@ const InterviewCard = ({ questionData, onUpdate, onDelete }: InterviewCard) => {
   };
 
   return (
-    <Card className="p-4 bg-white shadow-lg border border-black">
+    <Card className="p-4 mt-4 bg-background shadow-lg border border">
       {isEditing ? (
         <>
           <Input
@@ -312,7 +315,7 @@ const InterviewCard = ({ questionData, onUpdate, onDelete }: InterviewCard) => {
                 e.stopPropagation();
                 setIsEditing(true);
               }}
-              className="opacity-10 hover:opacity-100 transition-opacity"
+              className="opacity-100 hover:opacity-10 transition-opacity"
             />
           </CardHeader>
           {isClicked && (
