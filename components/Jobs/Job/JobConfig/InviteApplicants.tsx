@@ -92,7 +92,7 @@ const InviteApplicants = ({ jobs, singleJobFlag, applicants }: InviteApplicantsP
 
   return (
     <div className="flex-1">
-      <div className="w-full h-full p-6 bg-foreground border border-border shadow-3xl rounded-lg">
+      <div className="w-full h-full p-6 border shadow-3xl rounded-lg">
         <div className="space-y-4">
           <div>
             <h2 className="text-xl font-semibold">Select Candidates to Invite</h2>
@@ -124,10 +124,10 @@ const InviteApplicants = ({ jobs, singleJobFlag, applicants }: InviteApplicantsP
 
           {!singleJobFlag && jobs && jobs.length > 0 && (
             <Select value={selectedJobId} onValueChange={setSelectedJobId}>
-              <SelectTrigger className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 hover:border-blue-300 transition-all duration-300">
-                <SelectValue placeholder="Select a job to invite candidates" className="text-blue-700 font-medium" />
+              <SelectTrigger className="transition-all duration-300">
+                <SelectValue placeholder="Select a job to invite candidates" className="font-medium" />
               </SelectTrigger>
-              <SelectContent className="bg-white border-2 border-blue-200 shadow-lg">
+              <SelectContent >
                 {jobs.map((job) => (
                   <SelectItem 
                     key={job.mergeJob.id} 
@@ -154,7 +154,7 @@ const InviteApplicants = ({ jobs, singleJobFlag, applicants }: InviteApplicantsP
                 {filteredApplicants.map((applicant) => (
                   <TableRow 
                     key={applicant.application.id}
-                    className="hover:bg-gray-50 cursor-pointer"
+                    className=" cursor-pointer"
                     onClick={() => {
                       setSelectedApplicants(prev =>
                         prev.includes(applicant)

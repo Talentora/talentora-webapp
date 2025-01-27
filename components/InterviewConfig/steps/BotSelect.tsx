@@ -24,11 +24,11 @@ interface BotSelectProps {
 }
 import { Tables } from '@/types/types_db';
 type Bot = Tables<'bots'>;
-import { useBots } from '@/hooks/useBots';
-import CreateBot from '@/components/BotLibrary/CreateBot';
+import { useScouts } from '@/hooks/useScouts';
+import CreateBot from '@/components/ScoutLibrary/CreateScout';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
-import { getBots } from '@/utils/supabase/queries';
+import { getScouts } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/client';
 
 const BotSelect = ({ onCompletion }: BotSelectProps) => {
@@ -44,7 +44,7 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
     const fetchInitialData = async () => {
       try {
         // Fetch bots
-        const botsData = await getBots();
+        const botsData = await getScouts();
         setBots(botsData || []);
 
         // Fetch existing configuration

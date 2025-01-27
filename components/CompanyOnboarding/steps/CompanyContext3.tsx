@@ -10,7 +10,7 @@ import {
   updateCompanyContext
 } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
-import { useCompany } from '@/hooks/useCompany';
+import { useUser } from '@/hooks/useUser';
 
 interface CompanyContextProps {
   onCompletion: (isComplete: boolean) => void;
@@ -27,7 +27,7 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({
   const [companyProducts, setCompanyProducts] = useState('');
   const [companyCustomers, setCompanyCustomers] = useState('');
   const [companyContextExists, setCompanyContextExists] = useState(false);
-  const { company } = useCompany();
+  const { company } = useUser();
 
   // if (!company) {
   //   return null;

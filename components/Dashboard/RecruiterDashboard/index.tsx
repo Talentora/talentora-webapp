@@ -97,6 +97,8 @@ export default function RecruiterDashboard() {
     <div className="min-h-screen">
       <main className="flex-1 mb-3 w-full">
         <div className="flex flex-col gap-6">
+          <h1 className="text-2xl font-bold">Recruiting Dashboard</h1>
+
           <div className="flex flex-col gap-6">
             <div className="flex flex-row gap-6">
             </div>

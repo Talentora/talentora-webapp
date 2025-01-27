@@ -12,14 +12,14 @@ import {
 } from '@/components/ui/card';
 import { useState } from 'react';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { useCompany } from '@/hooks/useCompany';
+import { useUser } from '@/hooks/useUser';
 import { Skeleton } from '@/components/ui/skeleton';
 
 type Company = Tables<'companies'>;
 
 const CompanyForm = () => {
   const [showApiKey, setShowApiKey] = useState(false);
-  const { company, loading }: { company: Company | null; loading: boolean } = useCompany();
+  const { company, loading }: { company: Company | null; loading: boolean } = useUser();
 
   if (loading) return <CompanyFormSkeleton />;
 

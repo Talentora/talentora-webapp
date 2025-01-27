@@ -2,16 +2,13 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2, ChevronDown, ChevronUp, Search, CreditCard, Box, Mail, BookOpen, Building2, Phone } from 'lucide-react';
-import Profile from '@/components/Layout/Profile';
-
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import Logo from '@/components/ui/icons/Logo';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 import { useUser } from '@/hooks/useUser';
-import { SignOut } from '@/utils/auth-helpers/server';
-import { handleRequest } from '@/utils/auth-helpers/client';
-import { getRedirectMethod } from '@/utils/auth-helpers/settings';
+
 import {
   SidebarHeader,
   SidebarContent,
@@ -26,63 +23,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { cn } from '@/utils/cn';
 import { useSidebarData } from '@/hooks/useSidebarData';
 import { Command, CommandInput, CommandList, CommandGroup, CommandItem, CommandDialog } from '@/components/ui/command';
-import { BotWithJobs } from '@/types/custom';
-
-interface SidebarLinkProps {
-  href: string;
-  icon: React.ElementType;
-  children: React.ReactNode;
-  isActive: boolean;
-  isSidebarOpen?: boolean;
-  hasDropdown?: boolean;
-  isDropdownOpen?: boolean;
-  onDropdownClick?: () => void;
-}
-
-const SidebarLink = ({ href, icon: Icon, children, isActive, isSidebarOpen, hasDropdown, isDropdownOpen, onDropdownClick }: SidebarLinkProps) => (
-  <SidebarMenuItem>
-    <div className="flex items-center">
-      <SidebarMenuButton
-        asChild
-        isActive={isActive}
-        className="hover:bg-primary-dark/10 transition-colors flex-1"
-      >
-        <Link href={href} className="flex items-center gap-3 text-white">
-          <Icon className="h-5 w-5 text-white" />
-          {isSidebarOpen && <span className="font-medium text-white">{children}</span>}
-        </Link>
-      </SidebarMenuButton>
-      {hasDropdown && isSidebarOpen && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onDropdownClick}
-          className="ml-2 p-1 hover:bg-primary-dark/10"
-        >
-          {isDropdownOpen ? (
-            <ChevronUp className="h-4 w-4 text-white" />
-          ) : (
-            <ChevronDown className="h-4 w-4 text-white" />
-          )}
-        </Button>
-      )}
-    </div>
-  </SidebarMenuItem>
-);
-
-interface SubLinkProps {
-  href: string;
-  children: React.ReactNode;
-}
-
-const SubLink = ({ href, children }: SubLinkProps) => (
-  <Link 
-    href={href} 
-    className="block text-sm text-white/70 hover:text-white transition-colors py-1 pl-11"
-  >
-    {children}
-  </Link>
-);
+import { ScoutWithJobs } from '@/types/custom';
+import { SidebarHeader as NewSidebarHeader } from './components/SidebarHeader';
+import { CommandSearch } from './components/CommandSearch';
+import { SidebarLink, SubLink } from './components/SidebarLink';
 
 interface Job {
   id: string;
@@ -103,7 +47,7 @@ interface ApplicationWithCandidate {
   application: Application;
 }
 
-interface Bot {
+interface scout {
   id: string;
   name?: string;
 }
@@ -111,17 +55,16 @@ interface Bot {
 const Sidebar = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isJobsOpen, setIsJobsOpen] = useState(true);
-  const [isApplicantsOpen, setIsApplicantsOpen] = useState(true);
-  const [isBotsOpen, setIsBotsOpen] = useState(true);
+  const [isJobsOpen, setIsJobsOpen] = useState(false);
+  const [isApplicantsOpen, setIsApplicantsOpen] = useState(false);
+  const [isScoutsOpen, setIsScoutsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const { user, company } = useUser();
   const router = useRouter();
-  const { jobs, applications, bots, isLoading, isError } = useSidebarData();
-  const [isSettingsOpen, setIsSettingsOpen] = useState(true);
+  const { jobs, applications, scouts, isLoading, isError } = useSidebarData();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isRouteLoading, setIsRouteLoading] = useState(false);
 
   useEffect(() => {
@@ -152,7 +95,7 @@ const Sidebar = () => {
         { type: 'page', name: 'Blog', href: '/blog', icon: BookOpen },
         { type: 'page', name: 'Contact', href: '/contact', icon: Mail },
         { type: 'page', name: 'Pricing', href: '/pricing', icon: CreditCard },
-        { type: 'page', name: 'Ora Scouts', href: '/bot', icon: Sparkles },
+        { type: 'page', name: 'Ora Scouts', href: '/scouts', icon: Sparkles },
         { type: 'page', name: 'Product', href: '/product', icon: Box }
       ]
     },
@@ -171,10 +114,10 @@ const Sidebar = () => {
           href: `/applicants/${app.application.id}`,
           icon: User
         })) || []),
-        ...(bots?.map((bot: BotWithJobs) => ({
-          type: 'bot',
-          name: bot.name || 'Untitled Bot', 
-          href: `/bot/${bot.id}`,
+        ...(scouts?.map((scout: ScoutWithJobs) => ({
+          type: 'scout',
+          name: scout.name || 'Untitled scout', 
+          href: `/scouts/${scout.id}`,
           icon: Sparkles
         })) || [])
       ]
@@ -229,15 +172,15 @@ const Sidebar = () => {
     <SidebarProvider defaultOpen className="=">
       <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
         <CommandInput 
-          placeholder="Type a command or search..." 
-          className="border-gray-300 text-gray-900 placeholder:text-gray-500"
+          placeholder="Type a command or search..."
+          className="border-border text-foreground placeholder:text-muted-foreground"
         />
-        <CommandList className="bg-white">
+        <CommandList className="bg-background">
           {searchItems.map((group) => (
             <CommandGroup 
               key={group.group} 
               heading={group.group}
-              className="text-gray-900 bg-gray-50"
+              className="text-foreground bg-background"
             >
               {group.items
                 .filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -247,14 +190,14 @@ const Sidebar = () => {
                     <CommandItem
                       key={index}
                       onSelect={() => handleNavigation(item.href)}
-                      className="hover:bg-gray-100 text-gray-900 flex items-center justify-between"
+                      className="hover:bg-accent text-foreground flex items-center justify-between"
                     >
                       <div className="flex items-center">
-                        <Icon className="mr-2 h-4 w-4 text-gray-600" />
-                        <span className="text-gray-900">{item.name}</span>
+                        <Icon className="mr-2 h-4 w-4 text-muted-foreground" />
+                        <span className="text-foreground">{item.name}</span>
                       </div>
                       {isRouteLoading && item.href === pathname && (
-                        <Loader2 className="h-4 w-4 animate-spin text-gray-600 ml-2" />
+                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground ml-2" />
                       )}
                     </CommandItem>
                   );
@@ -265,67 +208,23 @@ const Sidebar = () => {
       </CommandDialog>
 
       <SidebarComponent className={cn(
-        "bg-primary-dark transition-all duration-300 ease-in-out z-50",
+        "bg-background text-foreground border-r border-border transition-all duration-300 ease-in-out z-50",
         isSidebarOpen ? "w-50" : "w-20"
       )}>
-        <SidebarHeader className="relative p-4">
-          <Link href="/" className={cn(
-            "flex items-center gap-3",
-            !isSidebarOpen && "justify-center"
-          )} aria-label="Logo">
-            <Logo className="h-8 w-8 text-black dark:text-white" />
-            {isSidebarOpen && (
-              <h1 className="text-xl font-bold font-poppins text-black dark:text-white">
-                Talent
-                <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">
-                  ora
-                </span>
-              </h1>
-            )}
-          </Link>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute -right-4 top-1/2 -translate-y-1/2 bg-primary-dark border border-primary-border rounded-full"
-                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                >
-                  {isSidebarOpen ? <ChevronLeft className="h-5 w-5 text-white" /> : <ChevronRight className="h-5 w-5 text-black dark:text-white" />}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="bg-foreground text-primary-dark z-[100]">
-                {isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </SidebarHeader>
+        <NewSidebarHeader 
+          isSidebarOpen={isSidebarOpen} 
+          setIsSidebarOpen={setIsSidebarOpen} 
+        />
 
         <SidebarContent className="flex-1 p-2">
-          <SidebarMenu className="space-y-2">
-            {!isSidebarOpen ? (
-              <Button
-                variant="ghost" 
-                size="icon"
-                className="w-10 h-10 flex items-center justify-center text-white bg-white/10 hover:bg-white/20 border border-white/20"
-                onClick={() => setIsSearchOpen(true)}
-              >
-                <Search className="h-5 w-5" />
-              </Button>
-            ) : (
-              <Button
-                variant="ghost"
-                className="w-full h-10 flex items-center justify-start gap-2 text-white bg-white/10 hover:bg-white/20 rounded-lg border border-white/20"
-                onClick={() => setIsSearchOpen(true)}
-              >
-                <Search className="h-5 w-5" />
-                <span>Search (⌘+K)</span>
-              </Button>
-            )}
+          <div className="space-y-2">
+            <CommandSearch 
+              isSidebarOpen={isSidebarOpen}
+              searchItems={searchItems}
+            />
 
             <SidebarLink href="/dashboard" icon={HomeIcon} isActive={pathname === '/dashboard'} isSidebarOpen={isSidebarOpen}>
-              <span className="text-black dark:text-white">Dashboard</span>
+              Dashboard
             </SidebarLink>
             <SidebarLink 
               href="/jobs" 
@@ -336,13 +235,13 @@ const Sidebar = () => {
               isDropdownOpen={isJobsOpen}
               onDropdownClick={() => setIsJobsOpen(!isJobsOpen)}
             >
-              <span className="text-black dark:text-white">Jobs</span>
+              Jobs
             </SidebarLink>
             {isSidebarOpen && isJobsOpen && (
-              <div className="ml-1 mt-1 space-y-1 border-l-2 border-white/20 pl-3">
+              <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-white/70" />
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                   </div>
                 ) : (
                   filteredItems
@@ -356,28 +255,28 @@ const Sidebar = () => {
               </div>
             )}
             <SidebarLink 
-              href="/bot" 
+              href="/scouts" 
               icon={Sparkles} 
-              isActive={pathname === '/bot'} 
+              isActive={pathname === '/scouts'} 
               isSidebarOpen={isSidebarOpen}
               hasDropdown={true}
-              isDropdownOpen={isBotsOpen}
-              onDropdownClick={() => setIsBotsOpen(!isBotsOpen)}
+              isDropdownOpen={isScoutsOpen}
+              onDropdownClick={() => setIsScoutsOpen(!isScoutsOpen)}
             >
               Ora Scouts
             </SidebarLink>
-            {isSidebarOpen && isBotsOpen && (
-              <div className="ml-1 mt-1 space-y-1 border-l-2 border-white/20 pl-3">
+            {isSidebarOpen && isScoutsOpen && (
+              <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-white/70" />
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                   </div>
                 ) : (
                   filteredItems
-                    .filter(item => item.type === 'bot')
-                    .map((bot, index) => (
-                      <SubLink key={index} href={bot.href}>
-                        {bot.name}
+                    .filter(item => item.type === 'scout')
+                    .map((scout, index) => (
+                      <SubLink key={index} href={scout.href}>
+                        {scout.name}
                       </SubLink>
                     ))
                 )}
@@ -395,10 +294,10 @@ const Sidebar = () => {
               Applicants
             </SidebarLink>
             {isSidebarOpen && isApplicantsOpen && (
-              <div className="ml-1 mt-1 space-y-1 border-l-2 border-white/20 pl-3">
+              <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-white/70" />
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                   </div>
                 ) : (
                   filteredItems
@@ -423,7 +322,7 @@ const Sidebar = () => {
               Settings
             </SidebarLink>
             {isSidebarOpen && isSettingsOpen && (
-              <div className="ml-1 mt-1 space-y-1 border-l-2 border-white/20 pl-3">
+              <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
                 <SubLink href="/settings?tab=account">
                   Account
                 </SubLink>
@@ -441,13 +340,12 @@ const Sidebar = () => {
                 </SubLink>
               </div>
             )}
-          </SidebarMenu>
+          </div>
         </SidebarContent>
 
-        {/* <SidebarFooter className="p-4">
-          
-          <Profile />
-        </SidebarFooter> */}
+        <SidebarFooter className="p-4">
+          <ThemeToggle />
+        </SidebarFooter>
 
       </SidebarComponent>
     </SidebarProvider>

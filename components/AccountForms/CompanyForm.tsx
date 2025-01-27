@@ -14,13 +14,13 @@ import {
 type Company = Tables<'companies'>;
 import { useState } from 'react';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import { useCompany } from '@/hooks/useCompany';
+import { useUser } from '@/hooks/useUser';
 import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
 
 const CompanyForm = () => {
   const [showApiKey, setShowApiKey] = useState(false);
 
-  const { company, loading }: { company: Company | null; loading: boolean } = useCompany();
+  const { company, loading }: { company: Company | null; loading: boolean } = useUser();
 
 
 
@@ -29,9 +29,9 @@ const CompanyForm = () => {
   if (!company) return null;
   else {
     return (
-    <Card className="my-8 text-card-foreground">
+    <Card className="my-8 text-card-foreground border-none">
       <CardHeader>
-        <CardTitle className="text-primary">Company Information</CardTitle>
+        <CardTitle >Company Information</CardTitle>
         <CardDescription className="text-muted-foreground">
           View and manage your company details.
         </CardDescription>
@@ -48,7 +48,7 @@ const CompanyForm = () => {
             </AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="text-2xl font-bold text-primary">{company.name}</h2>
+            <h2 className="text-2xl font-bold ">{company.name}</h2>
             <Badge variant="outline" className="mt-1 bg-primary text-white">
               {company.industry}
             </Badge>
@@ -82,7 +82,7 @@ const CompanyForm = () => {
           </h3>
           <div className="mt-1 flex items-center">
             <div
-              className="bg-secondary p-2 rounded relative cursor-pointer"
+              className="bg-input p-2 rounded relative cursor-pointer"
               onMouseEnter={() => setShowApiKey(true)}
               onMouseLeave={() => setShowApiKey(false)}
             >
@@ -91,7 +91,7 @@ const CompanyForm = () => {
                   <span>
                     {company.merge_account_token || 'No API key available'}
                   </span>
-                  <EyeOffIcon className="w-4 h-4 inline-block ml-2" />
+                  {/* <EyeOffIcon className="w-4 h-4 inline-block ml-2" /> */}
                 </>
               ) : (
                 <>
@@ -112,7 +112,7 @@ const CompanyForm = () => {
 const CompanyFormSkeleton = () => (
   <Card className="my-8  text-card-foreground">
     <CardHeader>
-      <CardTitle className="text-primary">Company Information</CardTitle>
+      <CardTitle >Company Information</CardTitle>
       <CardDescription className="text-muted-foreground">
         View and manage your company details.
       </CardDescription>
@@ -123,7 +123,7 @@ const CompanyFormSkeleton = () => (
           <Skeleton className="w-16 h-16 rounded-full" />
         </Avatar>
         <div>
-          <h2 className="text-2xl font-bold text-primary">
+          <h2 className="text-2xl font-bold ">
             <Skeleton className="w-1/2 h-8" />
           </h2>
           <Badge variant="outline" className="mt-1 bg-primary text-white">

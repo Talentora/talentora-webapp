@@ -24,7 +24,7 @@ const BreadcrumbsContainer: React.FC = () => {
   ];
 
   return (
-    <div className="px-6 py-4">
+    <div className='m-1'>
 
       <Breadcrumbs items={breadcrumbs} />
     </div>

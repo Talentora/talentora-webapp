@@ -4,7 +4,7 @@ import Bot from '@/components/Bot';
 import { Tables } from '@/types/types_db';
 type Application = Tables<'applications'>;
 type JobInterviewConfig = Tables<'job_interview_config'>;
-type BotConfig = Tables<'bots'>;
+type ScoutConfig = Tables<'bots'>;
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
 type CompanyContext = Tables<'company_context'>;
@@ -12,7 +12,7 @@ import { Job as MergeJob, Candidate as MergeCandidate } from '@/types/merge';
 import { getAccountTokenFromApplication } from '@/utils/supabase/queries';
 import {
   getCompany,
-  getBotById,
+  getscoutById,
   getJobInterviewConfig,
   getJob,
   getCompanyContext,
@@ -20,8 +20,8 @@ import {
 } from '@/utils/supabase/queries';
 import { fetchJobDetails, fetchApplicationData, useApplicant } from '@/hooks/useApplicant';
 
-type BotProps = {
-  bot: BotConfig;
+type ScoutProps = {
+  scout: ScoutConfig;
   jobInterviewConfig: JobInterviewConfig;
   companyContext: CompanyContext;
   job: Job;
@@ -39,7 +39,7 @@ export default function Assessment({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [botProps, setBotProps] = useState<BotProps | null>(null);
+  const [scoutProps, setScoutProps] = useState<ScoutProps | null>(null);
 
   const { applicant } = useApplicant();
 
@@ -90,16 +90,16 @@ export default function Assessment({
         }
 
         // Fetch bot data
-        const bot = await getBotById(config.bot_id.toString());
-        if (!bot) {
-          throw new Error('Failed to fetch bot data');
+        const scout = await getscoutById(config.scout_id.toString());
+        if (!scout) {
+          throw new Error('Failed to fetch scout data');
         }
 
-        setBotProps({
+        setScoutProps({
           jobInterviewConfig: config,
           job,
           company,
-          bot,
+          scout,
           companyContext,
           mergeJob,
           application
@@ -145,7 +145,7 @@ export default function Assessment({
         </div>
       ) : (
         <>
-          {botProps && <Bot {...botProps} />}
+          {scoutProps && <Bot {...scoutProps} />}
 
          
         </>

@@ -49,10 +49,10 @@ const IntegrationStatus = () => {
   if (loading) return <IntegrationStatusSkeleton />;
 
   return (
-    <Card className="my-8 text-card-foreground">
+    <Card className="my-8 text-card-foreground border-none">
       <CardHeader>
-        <CardTitle className="text-primary">Integration Status</CardTitle>
-        <CardDescription className="text-muted-foreground bg-secondary/50 p-4 rounded-lg">
+        <CardTitle >Integration Status</CardTitle>
+        <CardDescription className="text-muted-foreground bg-secondary/50 p-4 rounded-lg italic">
           We partner with <a href="https://www.merge.dev" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Merge.dev</a> to provide seamless integration with your existing ATS systems.
           Merge's unified API allows us to connect with 30+ ATS providers including Greenhouse, Lever, and Workday.
         </CardDescription>
@@ -62,7 +62,7 @@ const IntegrationStatus = () => {
           <div className="p-6 rounded-lg">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-primary">
+                <h2 className="text-2xl font-bold ">
                   {status?.data?.end_user_organization_name || 'Organization'}
                 </h2>
                 <Badge 
@@ -133,9 +133,9 @@ const IntegrationStatus = () => {
 };
 
 const IntegrationStatusSkeleton = () => (
-  <Card className="my-8 text-card-foreground">
+  <Card className="my-8 text-card-foreground border-none">
     <CardHeader>
-      <CardTitle className="text-primary">Integration Status</CardTitle>
+      <CardTitle >Integration Status</CardTitle>
       <CardDescription className="text-muted-foreground bg-secondary/50 p-4 rounded-lg">
         We partner with Merge.dev to provide seamless integration with your existing ATS systems.
         Merge's unified API allows us to connect with 30+ ATS providers including Greenhouse, Lever, and Workday.

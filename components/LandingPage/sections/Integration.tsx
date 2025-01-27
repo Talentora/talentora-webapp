@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
-
+import Link from 'next/link';
 const benefits = [
   "One-click integration with major ATS platforms",
   "Automated candidate data sync", 
@@ -19,7 +19,7 @@ export function Integration() {
             <div className="inline-flex items-center rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm">
               <span className="text-accent font-medium">Enterprise Ready</span>
             </div>
-            <h2 className="text-4xl font-bold">
+            <h2 className="text-4xl font-bold"> 
               Seamlessly fits into your workflow
             </h2>
             <p className="text-xl text-gray-600">
@@ -34,9 +34,11 @@ export function Integration() {
               ))}
             </ul>
             <div className="flex items-center gap-4">
-              <Button className="bg-accent hover:bg-accent/90">
-                View Integrations
-              </Button>
+              <Link href="#ats-integrations" scroll={true}>
+                <Button className="bg-accent hover:bg-accent/90">
+                  View ATS Partners
+                </Button>
+              </Link>
               <Button variant="outline" className="border-accent text-accent hover:bg-accent/5">
                 Schedule Demo
               </Button>

@@ -103,7 +103,7 @@ export default function SearchBar({
                   {applicant.candidate.email_addresses?.[0]?.value || 'No email'}
                 </div>
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-primary-dark font-medium">
+                  <span className=" font-medium">
                     {applicant.job.name || 'No role specified'}
                   </span>
                   <span className="text-gray-400">

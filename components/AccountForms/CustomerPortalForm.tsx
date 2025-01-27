@@ -52,9 +52,9 @@ export default function CustomerPortalForm() {
   };
 
   return (
-    <Card className="my-8 text-card-foreground">
+    <Card className="my-8 text-card-foreground border-none">
       <CardHeader>
-        <CardTitle className="text-primary">Your Plan</CardTitle>
+        <CardTitle >Your Plan</CardTitle>
         <CardDescription className="text-muted-foreground">
           {subscription
             ? `You are currently on the ${subscription.price.product?.name} plan.`
@@ -62,11 +62,11 @@ export default function CustomerPortalForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="mt-8 mb-4 text-xl font-semibold text-primary">
+        <div className="mt-8 mb-4 text-xl font-semibold ">
           {subscription ? (
             `${subscriptionPrice}/${subscription.price.interval}`
           ) : (
-            <Link href="/" className="text-primary">
+            <Link href="/" >
               Choose your plan
             </Link>
           )}
@@ -79,7 +79,6 @@ export default function CustomerPortalForm() {
           </p>
           <Button
             onClick={handleStripePortalRequest}
-            loading={isSubmitting}
             className="bg-button-primary text-button-primary-foreground"
           >
             Open customer portal

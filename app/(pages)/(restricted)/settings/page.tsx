@@ -24,109 +24,73 @@ export default function SettingsPage() {
   const searchParams = useSearchParams();
   const tab = searchParams.get('tab') || 'account';
 
+  const tabs = [
+    {
+      label: 'Account',
+      value: 'account',
+      component: (
+        <div className="flex flex-row gap-4"> 
+      
+            <NameForm />
+              <EmailForm />
+        </div>
+      )
+    },
+    {
+      label: 'Company', 
+      value: 'company',
+      component: (
+        <div>
+            <CompanyForm />
+            <div className="mt-4">
+              <h2 className="text-lg font-semibold text-foreground mb-2">Company Onboarding</h2>
+              <Link href="/settings/onboarding">
+                <Button size="sm">Continue Onboarding</Button>
+              </Link>
+            </div>
+          </div>
+      )
+    },
+    {
+      label: 'Billing',
+      value: 'billing',
+      component: <CustomerPortalForm />
+    },
+    {
+      label: 'Team',
+      value: 'team',
+      component: <TeamMembersStep onCompletion={() => {}} />
+    },
+    {
+      label: 'Integration Status',
+      value: 'integrations',
+      component: <IntegrationStatus />
+    }
+  ]
+
   return (
     <section className="p-6">
       <div className="p-2">
         <Tabs defaultValue={tab} className="w-full">
 
           <TabsList className="flex w-full bg-transparent rounded-lg">
-            <TabsTrigger
-              value="account"
-              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
-            >
-              Account
-            </TabsTrigger>
-            <TabsTrigger
-              value="company"
-              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
-            >
-              Company
-            </TabsTrigger>
-            <TabsTrigger
-              value="billing"
-              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
-            >
-              Billing
-            </TabsTrigger>
-            <TabsTrigger
-              value="team"
-              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
-            >
-              Team
-            </TabsTrigger>
-            <TabsTrigger
-              value="integrations"
-              className="flex-1 data-[state=active]:bg-white data-[state=active]:text-primary py-1.5 text-sm"
-            >
-              Integration Status
-            </TabsTrigger>
+            {tabs.map((tab) => (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                className="flex-1 data-[state=active]:bg-background data-[state=active]:underline py-1.5 text-sm text-foreground"
+              >
+                {tab.label}
+              </TabsTrigger>
+            ))}
+           
           </TabsList>
 
-          <TabsContent value="account">
-            <Card>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <NameForm />
-                  <EmailForm />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="company">
-            <Card>
-              <CardContent className="space-y-3">
-                <CompanyForm />
-                <div className="mt-4">
-                  <h2 className="text-lg font-bold mb-2">Company Onboarding</h2>
-                  <Link href="/settings/onboarding">
-                    <Button size="sm">Get your company setup</Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* <TabsContent value="integration">
-            <Card>
-              <CardContent className="space-y-3">
-                <CompanyForm />
-                <div className="mt-4">
-                  <h2 className="text-lg font-bold mb-2">Company Onboarding</h2>
-                  <Link href="/settings/onboarding">
-                    <Button size="sm">Get your company setup</Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent> */}
-
-          <TabsContent value="billing">
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="text-xl">Billing Information</CardTitle>
-                <CardDescription>
-                  Manage your subscription and billing details.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <CustomerPortalForm />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="team">
-            <Card>
-              <CardHeader className="pb-4">
-                <InvitePage jobs={[]} isLoading={false} />
-              </CardHeader>
-              <CardContent></CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="integrations">
-            <IntegrationStatus />
-          </TabsContent>
+          {tabs.map((tab) => (
+            <TabsContent key={tab.value} value={tab.value} className="bg-background border-none">
+                {tab.component}
+            </TabsContent>
+          ))}
         </Tabs>
       </div>
     </section>

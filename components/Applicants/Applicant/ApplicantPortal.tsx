@@ -4,7 +4,7 @@ import ApplicantActions from '@/components/Applicants/Applicant/ApplicantActions
 import { portalProps } from '@/app/(pages)/(restricted)/applicants/[id]/page';
 import AnalysisDisplay from '@/components/AnalysisDisplay';
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { Alert, AlertDescription } from "@/components/ui/alert";
 interface ApplicantPortalProps {
   portalProps: portalProps;
 }
@@ -83,17 +83,11 @@ export default function ApplicantPortal({
               <>
                 {application ? (
                   <div className="flex flex-col gap-4">
-                    <div className="rounded-lg bg-accent/10 border border-accent/20 p-4 mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="flex-shrink-0">
-                          <span className="text-2xl">🤖</span>
-                        </div>
-                        <div>
-                          <h4 className="font-medium text-accent">AI Assessment Pending</h4>
-                          <p className="text-muted-foreground">The candidate hasn't completed their AI interview assessment yet. Once completed, detailed insights will appear here.</p>
-                        </div>
-                      </div>
-                    </div>
+                    <Alert intent="info" title="AI Assessment Pending">
+                      <AlertDescription>
+                        The candidate hasn't completed their AI interview assessment yet. Once completed, detailed insights will appear here.
+                      </AlertDescription>
+                    </Alert>
                     <PlaceholderAnalysis />
                   </div>
                 ) : (
