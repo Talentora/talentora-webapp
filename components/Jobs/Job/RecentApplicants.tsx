@@ -19,7 +19,7 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
   return (
     <Card>
       <CardHeader>
-        <div className="flex justify-between items-center">
+        <div className="p-4 flex justify-between items-center">
           <CardTitle className="text-xl font-semibold">
             Recent Applicants
           </CardTitle>

@@ -104,12 +104,12 @@ const InterviewStatus = ({ loading, interviewConfig, botInfo, setupFlags, jobId 
                   {botInfo ? (
                     <div className="space-y-2">
                       <div className="flex items-center gap-3 cursor-pointer hover:bg-accent/50 p-2 rounded-md" onClick={handleOpenDialog}>
-                        <div className="h-12 w-12 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white">
-                          <span>{botInfo.name?.charAt(0)}</span>
+                        <div className="h-14 w-14 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white">
                         </div>
                         <div className="flex-1">
-                          <div className="flex items-center gap-2">
+                          <div className=" items-center gap-2">
                             <h3 className="font-medium">{botInfo.name || 'Unnamed Scout'}</h3>
+                            
                             <span className="text-sm text-muted-foreground">{botInfo.description || 'No description available'}</span>
                           </div>
                         </div>
@@ -117,7 +117,7 @@ const InterviewStatus = ({ loading, interviewConfig, botInfo, setupFlags, jobId 
                     </div>
                   ) : (
                     <div className="flex flex-col items-center gap-3 py-4">
-                      <div className="h-12 w-12 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white">
+                      <div className="h-8 w-8 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white">
                         <span>No Bot</span>
                       </div>
                       <p className="text-muted-foreground text-center">
@@ -187,8 +187,7 @@ const InterviewStatus = ({ loading, interviewConfig, botInfo, setupFlags, jobId 
                     className="flex items-center gap-2 p-2 hover:bg-accent cursor-pointer rounded-md"
                     onClick={() => handleBotChange(bot)}
                   >
-                    <div className="h-12 w-12 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white">
-                      <span>{bot.name?.charAt(0)}</span>
+                    <div className="h-12 w-12 flex items-center justify-center rounded-lg bg-gradient-to-r from-orange-500 via-purple-500 to-pink-500 text-white">
                     </div>
                     <span>{bot.name}</span>
                     <span className="text-sm text-muted-foreground">{bot.description || 'No description available'}</span>

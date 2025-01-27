@@ -28,7 +28,7 @@ export function JobHeader({ job }: JobHeaderProps) {
   };
 
   return (
-    <Card className="rounded-lg hover:bg-accent/50 transition-colors p-8 dark:bg-transparent shadow-[0_4px_6px_-1px_rgba(90,79,207,0.3),0_2px_4px_-2px_rgba(90,79,207,0.2)] bg-card hover:shadow-[0_10px_15px_-3px_rgba(90,79,207,0.4),0_4px_6px_-4px_rgba(90,79,207,0.3)] transition-transform border border-border shadow-3xl">
+    <Card className="rounded-lg hover:bg-accent/50 transition-colors p-4 dark:bg-transparent shadow-[0_4px_6px_-1px_rgba(90,79,207,0.3),0_2px_4px_-2px_rgba(90,79,207,0.2)] bg-card hover:shadow-[0_10px_15px_-3px_rgba(90,79,207,0.4),0_4px_6px_-4px_rgba(90,79,207,0.3)] transition-transform border border-border shadow-3xl">
       <CardHeader className="mb-4 relative"> {/* Add relative here */}
         <h1 className="text-2xl font-bold text-primary">
             {job.name}
@@ -92,6 +92,7 @@ export function JobHeader({ job }: JobHeaderProps) {
                 dangerouslySetInnerHTML={{ __html: job.description || 'missing' }}
               />
             </CardDescription>
+            
           )}
         </section>
       </CardContent>

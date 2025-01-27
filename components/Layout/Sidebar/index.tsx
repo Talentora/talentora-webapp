@@ -208,7 +208,7 @@ const Sidebar = () => {
       </CommandDialog>
 
       <SidebarComponent className={cn(
-        "bg-background text-foreground border-r border-border transition-all duration-300 ease-in-out z-50",
+        "bg-ring text-foreground border-r border-border transition-all duration-300 ease-in-out z-50",
         isSidebarOpen ? "w-50" : "w-20"
       )}>
         <NewSidebarHeader 

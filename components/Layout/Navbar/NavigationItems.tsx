@@ -36,8 +36,8 @@ function SolutionsMenu() {
     <NavigationMenuItem>
       <NavigationMenuTrigger className="bg-transparent">Solutions</NavigationMenuTrigger>
       <NavigationMenuContent>
-        <div className="grid gap-3 p-6 w-[400px] md:w-[500px] lg:w-[600px] bg-white rounded-lg">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-3 p-2 w-[400px] md:w-[500px] lg:w-[600px] bg-white rounded-lg">
+          <div className="grid grid-cols-2 gap-2 text-black">
             <NavigationLink 
               href="/product#ai-interviews" 
               icon={<BarChart2 className="h-5 w-5 mr-2 text-purple-600" />}
@@ -74,7 +74,7 @@ function ResourcesMenu() {
     <NavigationMenuItem>
       <NavigationMenuTrigger className="bg-transparent">Resources</NavigationMenuTrigger>
       <NavigationMenuContent>
-        <div className="grid gap-3 p-6 w-[400px] bg-white rounded-lg">
+        <div className="grid gap-3 p-2 w-[400px] text-black bg-white rounded-lg">
           <NavigationLink 
             href="/blog" 
             icon={<BookOpen className="h-5 w-5 mr-2 text-indigo-600" />}
@@ -98,7 +98,7 @@ function CompanyMenu() {
     <NavigationMenuItem>
       <NavigationMenuTrigger className="bg-transparent">Company</NavigationMenuTrigger>
       <NavigationMenuContent>
-        <div className="grid grid-cols-2 gap-3 p-6 w-[400px] bg-white rounded-lg">
+        <div className="grid grid-cols-2 gap-3 p-2 w-[400px] text-black bg-white rounded-lg">
           <NavigationLink 
             href="/about" 
             icon={<Building2 className="h-5 w-5 mr-2 text-purple-600" />}

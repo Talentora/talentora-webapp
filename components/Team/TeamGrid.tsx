@@ -49,7 +49,7 @@ const TeamGrid = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">
+          <h2 className="text-4xl font-bold mb-6">
             Meet Our Team
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -64,7 +64,7 @@ const TeamGrid = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-sm overflow-hidden"
+              className="bg-background border border-input rounded-xl shadow-sm overflow-hidden"
             >
               <div className="relative h-64 w-full">
                 <Image
@@ -75,7 +75,7 @@ const TeamGrid = () => {
                 />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                <h3 className="text-xl font-semibold mb-1">
                   {member.name}
                 </h3>
                 <p className="text-blue-600 font-medium mb-3">

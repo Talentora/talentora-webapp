@@ -75,7 +75,7 @@ export default function JobPage({
         </div>
 
         {/* Left Column */}
-        <div className="space-y-5 ">
+        <div className="space-y-5">
           {!jobLoading && job && (
             <JobConfig
               jobId={job.id}

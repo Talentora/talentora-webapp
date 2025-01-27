@@ -36,7 +36,7 @@ const Values = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">
+          <h2 className="text-4xl font-bold  mb-6">
             Our Core Values
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -44,7 +44,7 @@ const Values = () => {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className=" grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {values.map((value, index) => (
             <motion.div
               key={value.title}
@@ -55,7 +55,7 @@ const Values = () => {
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                 <value.icon className="w-6 h-6 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold mb-2">
                 {value.title}
               </h3>
               <p className="text-gray-600">

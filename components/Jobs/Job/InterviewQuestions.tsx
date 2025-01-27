@@ -91,7 +91,7 @@ const InterviewQuestions = ({ loading, interviewConfig, jobId, onQuestionsUpdate
       <Dialog open={showQuestionsDialog} onOpenChange={setShowQuestionsDialog}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle>Interview Questions</DialogTitle>
+            <DialogTitle>Interview Prompts</DialogTitle>
           </DialogHeader>
           <QuestionSetup 
             jobId={jobId}
