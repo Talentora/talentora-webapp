@@ -63,7 +63,7 @@ export function SubLink({ href, children }: { href: string; children: React.Reac
   return (
     <Link 
       href={href} 
-      className="block text-sm text-muted-foreground hover:text-foreground transition-colors py-1 pl-11"
+      className="block text-sm text-muted-foreground hover:text-foreground transition-colors py-1 pl-3"
     >
       {children}
     </Link>

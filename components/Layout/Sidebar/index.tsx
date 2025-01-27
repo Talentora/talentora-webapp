@@ -209,7 +209,7 @@ const Sidebar = () => {
 
       <SidebarComponent className={cn(
         "bg-background text-foreground border-r border-border transition-all duration-300 ease-in-out z-50",
-        isSidebarOpen ? "w-50" : "w-20"
+        isSidebarOpen ? "w-1/4" : "w-20"
       )}>
         <NewSidebarHeader 
           isSidebarOpen={isSidebarOpen} 
@@ -238,7 +238,7 @@ const Sidebar = () => {
               Jobs
             </SidebarLink>
             {isSidebarOpen && isJobsOpen && (
-              <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
+              <div className=" ml-4 mt-2 space-y-1 border-l-2 border-border">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
                     <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
@@ -266,7 +266,7 @@ const Sidebar = () => {
               Ora Scouts
             </SidebarLink>
             {isSidebarOpen && isScoutsOpen && (
-              <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
+              <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-3">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
                     <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
