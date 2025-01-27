@@ -28,7 +28,7 @@ export function LogoSection() {
         {integrations.map((integration, index) => (
           <div 
             key={index} 
-            className="flex items-center justify-center bg-white p-3 md:p-4 lg:p-6 rounded-lg md:rounded-xl shadow hover:shadow-lg transition-shadow duration-300"
+            className="flex items-center justify-center bg-background border border-input p-3 md:p-4 lg:p-6 rounded-lg md:rounded-xl shadow hover:shadow-lg transition-shadow duration-300"
           >
             <div className="relative w-full aspect-[3/2]">
               <Image 

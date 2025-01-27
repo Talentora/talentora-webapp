@@ -1,4 +1,7 @@
 'use client';
+import InterviewQuestions from './InterviewQuestions'; // Update the path based on your structure
+import { useEffect, useState, useCallback } from 'react';
+
 import { JobHeader } from './JobHeader';
 import { RecentApplicants } from './RecentApplicants';
 import { EnrichedJob } from '../JobList';
@@ -43,8 +46,8 @@ export default function JobPage({
 
     return (
       <div className="flex justify-between items-center">
-
-
+        
+        {/* Add any other content for job details */}
       </div>
     );
   }, [job, jobLoading, applicants]);
@@ -61,17 +64,17 @@ export default function JobPage({
   }, [applicants, applicantsLoading]);
 
   return (
-    <div className="m-5 space-y-5">
+    <div className="pr-16 m-5 space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {/* Left Column */}
-        <div className="md:col-span-2">
+        {/* Right Column (Wider) */}
+        <div className="col-span-2 space-y-5">
           {jobDetailsSection}
           {!jobLoading && job && <JobHeader job={job} />}
-                    {applicantsSection}
-
+          
+          {applicantsSection}
         </div>
 
-        {/* Right Column */}
+        {/* Left Column */}
         <div className="space-y-5">
           {!jobLoading && job && (
             <JobConfig

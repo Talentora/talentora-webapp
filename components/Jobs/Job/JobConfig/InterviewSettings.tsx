@@ -100,6 +100,7 @@ const InterviewSettings = ({ loading, interviewConfig, setShowSetupDialog, jobId
             existingConfig={interviewConfig} 
           />
         </DialogContent>
+        
       </Dialog>
 
      

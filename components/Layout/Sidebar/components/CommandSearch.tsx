@@ -51,7 +51,7 @@ export function CommandSearch({ isSidebarOpen, searchItems }: CommandSearchProps
       <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
         <CommandInput 
           placeholder="Type a command or search..."
-          className="border-border text-foreground placeholder:text-muted-foreground"
+          className=" border-border text-foreground placeholder:text-muted-foreground"
           value={searchQuery}
           onValueChange={setSearchQuery}
         />
@@ -99,7 +99,7 @@ export function CommandSearch({ isSidebarOpen, searchItems }: CommandSearchProps
       ) : (
         <Button
           variant="ghost"
-          className="w-full h-10 flex items-center justify-start gap-2 text-foreground bg-accent/10 hover:bg-accent/20 rounded-lg border border-border"
+          className="w-full h-10 flex items-center justify-start gap-2 text-foreground bg-white/5 hover:bg-accent/20 rounded-lg border border-border"
           onClick={() => setIsSearchOpen(true)}
         >
           <Search className="h-5 w-5" />

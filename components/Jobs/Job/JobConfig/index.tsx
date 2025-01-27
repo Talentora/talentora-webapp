@@ -1,4 +1,4 @@
-// components/Jobs/Job/JobConfig.tsx
+'use client';
 import { useEffect, useState, useCallback } from 'react';
 import { getscoutById, getJobInterviewConfig } from '@/utils/supabase/queries';
 import { Tables } from '@/types/types_db';
@@ -154,27 +154,24 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
       </div>
 
       <div className={`${needsConfiguration ? 'opacity-50 pointer-events-none filter blur-sm' : ''}`}>
-      {setupFlags.isReady === "yes" && (
+        {setupFlags.isReady === "yes" && (
           <div className="flex flex-col col-span-1 mb-4">
-            <AssessmentCount 
+            <InterviewStatus 
+              jobId=''
               loading={loading} 
               interviewConfig={interviewConfig} 
-              jobId={jobId}
+              botInfo={botInfo}
+              setupFlags={setupFlags}
             />
           </div>
         )}
+
         <div className="grid grid-cols-1 gap-4 h-full">
-        <InterviewBot 
-            loading={loading} 
-            botInfo={botInfo} 
-            jobId={jobId} 
-            interviewConfig={interviewConfig} 
-          />
-          <InterviewStatus 
+
+        <InterviewQuestions 
             loading={loading} 
             interviewConfig={interviewConfig} 
-            botInfo={botInfo}
-            setupFlags={setupFlags}
+            jobId={jobId}
           />
 
           <InterviewSettings 
@@ -184,20 +181,27 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
             jobId={jobId} 
           />
 
-          <InterviewQuestions 
-            loading={loading} 
-            interviewConfig={interviewConfig} 
-            jobId={jobId}
-          />
+=
         </div>
+
         {setupFlags.isReady === "yes" && (
           <div className="flex flex-col col-span-1 mt-4">
-          <InviteApplicants 
-            jobs={combinedJob ? [combinedJob] : []}
-            singleJobFlag={true}
-            applicants={applicants}
-          />          
-        </div>
+            <AssessmentCount 
+              loading={loading} 
+              interviewConfig={interviewConfig} 
+              jobId={jobId}
+            />
+          </div>
+        )}
+
+        {setupFlags.isReady === "yes" && (
+          <div className="flex flex-col col-span-1 mt-4">
+            <InviteApplicants 
+              jobs={combinedJob ? [combinedJob] : []}
+              singleJobFlag={true}
+              applicants={applicants}
+            />          
+          </div>
         )}
       </div>
 

@@ -25,14 +25,14 @@ export function SidebarLink({
   onDropdownClick 
 }: SidebarLinkProps) {
   return (
-    <div className="flex items-center">
+    <div className="flex items-center rounded-lg hover:bg-ring">
       <div
         className={cn(
           "hover:bg-accent/10 transition-colors flex-1 rounded-md",
           isActive && "bg-accent/20 font-semibold"
         )}
       >
-        <Link href={href} className="flex items-center gap-3 text-foreground p-2">
+        <Link href={href} className="pl-4 flex  items-center gap-3 text-foreground p-2">
           <Icon className={cn(
             "h-5 w-5",
             isActive && "text-foreground",

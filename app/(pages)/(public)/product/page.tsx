@@ -151,7 +151,7 @@ const ProductPage = () => {
                 description: 'Monitor interviewer effectiveness and team collaboration'
               }
             ].map((feature) => (
-              <div key={feature.title} className="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+              <div key={feature.title} className="bg-background p-8 rounded-xl shadow-lg border border-input">
                 <div className="mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-semibold mb-4">{feature.title}</h3>
                 <p className="text-gray-600">{feature.description}</p>
