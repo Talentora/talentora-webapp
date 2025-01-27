@@ -60,32 +60,57 @@ const CreateScout = ({
   const { company } = useUser();
   const { toast } = useToast();
   const apiKey = process.env.NEXT_PUBLIC_CARTESIA_API_KEY;
-
-  if (!apiKey) {
-    throw new Error('NEXT_PUBLIC_CARTESIA_API_KEY is not set');
-  }
-
-  const tts = useTTS({
-    apiKey: apiKey,
-    sampleRate: 44100,
-  });
+  const tts = apiKey ? useTTS({ apiKey, sampleRate: 44100 }) : null;
 
   useEffect(() => {
     const fetchVoices = async () => {
-      const cartesia = new Cartesia({
-        apiKey: process.env.NEXT_PUBLIC_CARTESIA_API_KEY,
-      });
-      const voices = await cartesia.voices.list();
-      if (voices) {
-        const enVoices = voices.filter(voice => voice.language === 'en');
-        console.log("voices",voices);
-        console.log("enVoices",enVoices);
+      if (!apiKey) {
+        console.warn('Cartesia API key not found - voice features disabled');
+        return;
+      }
 
-        setVoiceOptions(enVoices);
+      try {
+        const cartesia = new Cartesia({ apiKey });
+        const voices = await cartesia.voices.list();
+        if (voices) {
+          const enVoices = voices.filter(voice => voice.language === 'en');
+          setVoiceOptions(enVoices);
+        }
+      } catch (error) {
+        console.error('Error fetching voices:', error);
       }
     };
+    
     fetchVoices();
-  }, []);
+  }, [apiKey]);
+
+  const handleListen = async () => {
+    try {
+      if (!apiKey || !tts) {
+        toast({
+          title: 'Voice Features Disabled',
+          description: 'Text-to-speech requires a valid API key',
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      const voice = newBot.voice as { [key: string]: string };
+      await tts.buffer({
+        model_id: "sonic-english",
+        voice: { mode: "id", id: voice?.id },
+        transcript: speakText,
+      } as StreamRequest);
+      await tts.play();
+    } catch (error) {
+      console.error('Error playing audio:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to play audio',
+        variant: 'destructive'
+      });
+    }
+  };
 
   useEffect(() => {
     if (isEdit) {
@@ -95,12 +120,8 @@ const CreateScout = ({
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
-    if (!open && onClose) {
-      onClose();
-    }
+    if (!open && onClose) onClose();
   };
-
-  console.log("newBot",newBot)
 
   const handleSaveBot = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,11 +137,9 @@ const CreateScout = ({
           icon: newBot.icon,
           emotion: newBot.emotion
         });
-        if (onBotUpdated && updatedBot) {
-          onBotUpdated(updatedBot);
-        }
+        onBotUpdated?.(updatedBot);
       } else {
-        const botData = {
+        const createdBot = await createscout({
           name: newBot.name,
           role: newBot.role,
           description: newBot.description,
@@ -129,16 +148,12 @@ const CreateScout = ({
           voice: newBot.voice,
           icon: newBot.icon,
           emotion: newBot.emotion
-        };
-        
-        const createdBot = await createscout(botData);
-        if (onBotCreated && createdBot) {
-          onBotCreated(createdBot);
-        }
+        });
+        onBotCreated?.(createdBot);
       }
       
       setIsOpen(false);
-      if (onClose) onClose();
+      onClose?.();
       
       toast({
         title: 'Success',
@@ -149,39 +164,6 @@ const CreateScout = ({
       toast({
         title: 'Error',
         description: `Failed to ${isEdit ? 'update' : 'create'} bot`,
-        variant: 'destructive'
-      });
-    }
-  };
-  // emotion is a Json object
-  // const emotion = newBot.emotion as { [key: string]: number };
-  const voice = newBot.voice as { [key: string]: string };
-
-  const handleListen = async () => {
-    try {
-      // const emotions = {
-      //   speed: emotion.speed,
-      //   anger: emotion.anger,
-      //   curiosity: emotion.curiosity,
-      //   positivity: emotion.positivity,
-      //   sadness: emotion.sadness,
-      //   surprise: emotion.surprise,
-      // };
-      const response = await tts.buffer({
-        model_id: "sonic-english",
-        voice: {
-          mode: "id",
-          id: voice?.id // Changed from voiceId to voice?.id
-        },
-        transcript: speakText,
-        // emotions: emotions,
-      } as StreamRequest);
-      await tts.play();
-    } catch (error) {
-      console.error('Error playing audio:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to play audio',
         variant: 'destructive'
       });
     }
