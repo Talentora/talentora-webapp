@@ -14,13 +14,21 @@ import {
 } from 'lucide-react';
 import { EnrichedJob } from '../JobList';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+
 interface JobHeaderProps {
   job: EnrichedJob;
 }
 
 export function JobHeader({ job }: JobHeaderProps) {
+  const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
+
+  const toggleDescription = () => {
+    setIsDescriptionOpen(!isDescriptionOpen);
+  };
+
   return (
-    <Card className="rounded-lg hover:bg-accent/50 transition-colors p-8 bg-white dark:bg-transparent shadow-[0_4px_6px_-1px_rgba(90,79,207,0.3),0_2px_4px_-2px_rgba(90,79,207,0.2)] bg-card hover:shadow-[0_10px_15px_-3px_rgba(90,79,207,0.4),0_4px_6px_-4px_rgba(90,79,207,0.3)] transition-transform border border-border shadow-3xl">
+    <Card className="rounded-lg hover:bg-accent/50 transition-colors p-8 dark:bg-transparent shadow-[0_4px_6px_-1px_rgba(90,79,207,0.3),0_2px_4px_-2px_rgba(90,79,207,0.2)] bg-card hover:shadow-[0_10px_15px_-3px_rgba(90,79,207,0.4),0_4px_6px_-4px_rgba(90,79,207,0.3)] transition-transform border border-border shadow-3xl">
       <CardHeader className="mb-4 relative"> {/* Add relative here */}
         <h1 className="text-2xl font-bold text-primary">
             {job.name}
@@ -68,15 +76,23 @@ export function JobHeader({ job }: JobHeaderProps) {
       <CardContent className="border-t border-input space-y-6">
         <section>
           <h3 className="mt-8 text-lg font-semibold flex items-center mb-2">
-            <ClipboardListIcon className="mr-2 h-5 w-5 text-gray-500" /> Job
-            Description
+            <ClipboardListIcon className="mr-2 h-5 w-5 text-gray-500" /> Job Description
           </h3>
-          <CardDescription className="text-sm leading-7 text-primary/70">
-            <div
-              className="prose"
-              dangerouslySetInnerHTML={{ __html: job.description || 'missing' }}
-            />
-          </CardDescription>
+
+          {/* Toggle Button */}
+          <Button onClick={toggleDescription} className="mb-2 text-sm">
+            {isDescriptionOpen ? 'Hide Description' : 'Show Description'}
+          </Button>
+
+          {/* Description */}
+          {isDescriptionOpen && (
+            <CardDescription className="text-sm leading-7 text-primary/70">
+              <div
+                className="prose"
+                dangerouslySetInnerHTML={{ __html: job.description || 'missing' }}
+              />
+            </CardDescription>
+          )}
         </section>
       </CardContent>
     </Card>

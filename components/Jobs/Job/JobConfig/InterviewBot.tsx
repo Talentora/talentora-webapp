@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tables } from '@/types/types_db';
 import Link from 'next/link';
-import { Loader2, Bot, ChevronDown, Plus } from 'lucide-react';
+import { Loader2, Bot, ChevronDown } from 'lucide-react';
 import { Brain, Code, Cpu, Database, Globe, Laptop, MessageSquare, Monitor, Network, Server } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import {
@@ -62,7 +62,6 @@ const InterviewBot = ({ loading, botInfo, jobId, interviewConfig }: InterviewBot
   const [showDialog, setShowDialog] = useState(false);
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
   const [step, setStep] = useState<'select' | 'confirm'>();
-  const [showCreateScoutDialog, setShowCreateScoutDialog] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -117,7 +116,6 @@ const InterviewBot = ({ loading, botInfo, jobId, interviewConfig }: InterviewBot
       <Card className="p-5 border border-border shadow-3xl h-full">
         <CardHeader>
           <div className="flex items-center justify-between gap-5">
-            <CardTitle className="text-xl font-semibold">Ora Scout</CardTitle>
             <Bot className="h-6 w-6 text-primary" />
           </div>
         </CardHeader>
@@ -192,15 +190,6 @@ const InterviewBot = ({ loading, botInfo, jobId, interviewConfig }: InterviewBot
                   </div>
                 ))}
               </div>
-              {/* Added padding container */}
-              <div className="px-4 -pt-4 py-2">
-                <Button 
-                  className="w-full" 
-                  onClick={() => setShowCreateScoutDialog(true)}
-                >
-                  <Plus className="mr-2 h-8 w-4" /> Create New Scout
-                </Button>
-              </div>
             </>
           ) : (
             <>
@@ -226,15 +215,6 @@ const InterviewBot = ({ loading, botInfo, jobId, interviewConfig }: InterviewBot
           )}
         </DialogContent>
       </Dialog>
-
-      <CreateScout 
-        isEdit={showCreateScoutDialog}
-        onClose={() => setShowCreateScoutDialog(false)}
-        onBotCreated={(newBot) => {
-          setAvailableBots([...availableBots, newBot]);
-          setShowCreateScoutDialog(false);
-        }}
-      />
     </div>
   );
 };
