@@ -27,7 +27,7 @@ const InterviewStatus = ({ loading, interviewConfig, botInfo, setupFlags }: Inte
 
   return (
     <div className="flex-1">
-      <Card className="p-5 bg-foreground border border-border shadow-3xl h-full">
+      <Card className="p-5 border-border shadow-3xl h-full">
         <CardHeader>
           <div className="flex items-center justify-between gap-5">
             <CardTitle className="text-xl font-semibold">Interview Status</CardTitle>

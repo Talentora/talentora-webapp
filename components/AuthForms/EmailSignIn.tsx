@@ -81,7 +81,7 @@ export default function EmailSignIn({
             variant="default"
             type="submit"
             className="mt-1"
-            loading={isSubmitting}
+            // loading={isSubmitting}
             disabled={disableButton}
           >
             Sign in

@@ -28,7 +28,7 @@ const AssessmentCard = memo<AssessmentCardProps>(({ application }) => {
     }, [application.status]);
   
     return (
-      <Card className="border bg-foreground p-5 border-border shadow-sm relative">
+      <Card className="border p-5 border-border shadow-sm relative">
         <div className="absolute top-4 right-4">
           <Dialog>
             <DialogTrigger asChild>

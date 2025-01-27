@@ -7,7 +7,7 @@ import {
 
 export function ScoutSkeleton() {
   return (
-    <Card className="flex flex-row bg-foreground border border-gray-200 rounded-lg p-5 relative">
+    <Card className="flex flex-row border border-gray-200 rounded-lg p-5 relative">
       <CardHeader className="w-1/3">
         <div className="w-full flex items-center justify-center mb-4 min-h-[100px]">
           <Skeleton className="h-10 w-10 rounded-full" />

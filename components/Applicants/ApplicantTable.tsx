@@ -35,7 +35,7 @@ export default function ApplicantTable({
     <div >
       {/* // <h1 className="text-xl font-semibold">Applicants Table </h1> */}
       <Table className="border rounded-lg">
-        <TableHeader className="bg-primary-dark text-background rounded-lg">
+        <TableHeader className="bg-primary-dark rounded-lg">
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Role</TableHead>
@@ -51,7 +51,7 @@ export default function ApplicantTable({
             <TableRow
               key={ApplicantCandidate.application.id}
               onClick={() => handleSelectApplicant(ApplicantCandidate)}
-              className="cursor-pointer bg-foreground"
+              className="cursor-pointer"
             >
               <TableCell>{`${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`}</TableCell>
               <TableCell>

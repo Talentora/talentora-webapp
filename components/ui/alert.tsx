@@ -4,11 +4,11 @@ import { CircleAlert } from 'lucide-react';
 
 import { cn } from '@/utils/cn';
 
-const alertVariants = cva('text-left border border-black rounded-lg p-4', {
+const alertVariants = cva('relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground', {
   variants: {
     intent: {
-      info: 'alert-info',
-      danger: 'border-red-200 text-red-600 bg-red-50'
+      info: 'bg-background text-foreground',
+      danger: 'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive'
     }
   },
   defaultVariants: {
@@ -39,7 +39,7 @@ export const AlertTitle = React.forwardRef<
   <p
     ref={ref}
     className={cn(
-      'text-base font-bold flex items-center gap-2 mb-2',
+      'mb-1 font-medium leading-none tracking-tight',
       className
     )}
     {...props}
@@ -51,6 +51,10 @@ export const AlertDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
-  <p ref={ref} className={cn('text-sm', className)} {...props} />
+  <p
+    ref={ref}
+    className={cn('text-sm [&_p]:leading-relaxed', className)}
+    {...props}
+  />
 ));
 AlertDescription.displayName = 'AlertDescription';

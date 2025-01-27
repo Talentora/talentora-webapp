@@ -20,7 +20,7 @@ const ThemePage = () => {
       title: "Light Theme",
       colors: [
         { name: "Background", class: "bg-background text-foreground" },
-        { name: "Foreground", class: "bg-foreground text-background" },
+        { name: "Foreground", class: "bg-foreground" },
         { name: "Border", class: "bg-border" },
         { name: "Input", class: "bg-input" },
         { name: "Ring", class: "bg-ring text-white" },

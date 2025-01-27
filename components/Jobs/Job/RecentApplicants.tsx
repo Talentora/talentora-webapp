@@ -30,7 +30,7 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
       </CardHeader>
       {visible && (
         <CardContent>
-          <Card className="p-5 bg-foreground border border-border shadow-3xl h-full">
+          <Card className="p-5 border-none shadow-3xl h-full">
             <ApplicationsGraph applicants={applicants} />
             <div className="mt-6">
               <ApplicantTable applicants={applicants} disablePortal={true} />

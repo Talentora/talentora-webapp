@@ -29,7 +29,7 @@ export default function ApplicantInfo({
   const jobName = ApplicantCandidate.job.name || 'No job specified';
   const appliedAt = ApplicantCandidate.application.created_at ? new Date(ApplicantCandidate.application.created_at).toLocaleDateString() : 'Unknown date';
   return (
-    <Card>
+    <Card className="border-none">
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar className="w-16 h-16">
           <AvatarImage alt={candidateName} src={avatarUrl} />
