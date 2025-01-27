@@ -42,7 +42,7 @@ export default function OauthSignIn() {
             variant="default"
             type="submit"
             className="w-full"
-            loading={isSubmitting}
+            // loading={isSubmitting}
           >
             <span className="mr-2">{provider.icon}</span>
             <span>{provider.displayName}</span>

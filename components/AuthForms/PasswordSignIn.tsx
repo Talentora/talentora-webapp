@@ -71,7 +71,7 @@ export default function PasswordSignIn({
           variant="default"
           type="submit"
           className="mt-1 w-full"
-          loading={isSubmitting}
+          // loading={isSubmitting}
         >
           Sign in
         </Button>

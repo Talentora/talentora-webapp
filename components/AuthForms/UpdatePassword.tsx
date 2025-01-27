@@ -69,7 +69,7 @@ export default function UpdatePassword({
             variant="default"
             type="submit"
             className="mt-1"
-            loading={isSubmitting}
+            // loading={isSubmitting}
           >
             Update Password
           </Button>
