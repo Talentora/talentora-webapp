@@ -6,7 +6,7 @@ import { ArrowRight, CheckCircle2, BarChart2, Users, FileText, MessageSquare } f
 
 const ProductPage = () => {
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 pr-16">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -128,7 +128,7 @@ const ProductPage = () => {
         <section id="analytics" className="mb-32">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-4xl font-bold mb-6">Recruitment Analytics</h2>
-            <p className="text-xl text-gray-600">
+            <p className="shadow-2xltext-xl text-gray-600">
               Make data-driven decisions with powerful recruitment analytics and insights.
             </p>
           </div>
@@ -151,7 +151,9 @@ const ProductPage = () => {
                 description: 'Monitor interviewer effectiveness and team collaboration'
               }
             ].map((feature) => (
-              <div key={feature.title} className="bg-background p-8 rounded-xl shadow-lg border border-input">
+              <div key={feature.title} className="bg-background p-8 rounded-xl shadow-lg border border-input" style={{ boxShadow: '0 0 25px 5px #5650F0' }}>
+
+
                 <div className="mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-semibold mb-4">{feature.title}</h3>
                 <p className="text-gray-600">{feature.description}</p>
