@@ -83,7 +83,7 @@ export default async function SignInPage({
                     ? 'Update Password'
                     : viewProp === 'signup'
                       ? 'Sign Up'
-                      : 'Recruiters Login'}
+                      : 'Recruiter Login'}
               </CardTitle>
             </CardHeader>
             <CardContent className='py-4 '>

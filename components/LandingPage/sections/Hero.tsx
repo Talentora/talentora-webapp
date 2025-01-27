@@ -15,7 +15,7 @@ export function Hero() {
   };
 
   return (
-    <section className="container px-4 mx-auto">
+    <section className="container px-4 py-16 mx-auto">
       <div className="grid lg:grid-cols-2 gap-20 items-center">
         <div className="space-y-8">
           <div className="inline-flex items-center rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm">
@@ -73,29 +73,7 @@ export function Hero() {
             {/* Placeholder for actual video thumbnail */}
             <div className="w-full h-full bg-gradient-to-br from-accent/10 to-pink-50" />
           </div>
-          <Card className="relative mt-6 p-6 bg-white/90 backdrop-blur-sm shadow-xl rounded-2xl border-accent/10">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center">
-                <Brain className="w-6 h-6 text-accent" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold">Try it now</h3>
-                <p className="text-gray-600">Create your first AI interview</p>
-              </div>
-            </div>
-            <div className="mt-4 flex gap-4">
-              <Input
-                type="text"
-                placeholder="Enter your work email..."
-                className="w-full bg-white text-lg"
-              />
-              <Link href="/signup">
-                <Button className="bg-accent hover:bg-accent/90 whitespace-nowrap">
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-          </Card>
+         
         </div>
       </div>
     </section>

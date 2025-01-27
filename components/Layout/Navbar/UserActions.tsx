@@ -26,4 +26,5 @@ export function UserActions({ user }: UserActionsProps) {
   }
 
   return <Profile />;
+  
 } 

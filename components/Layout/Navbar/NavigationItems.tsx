@@ -11,6 +11,7 @@ import {
   navigationMenuTriggerStyle
 } from '@/components/ui/navigation-menu';
 import { cn } from '@/utils/cn';
+import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 
 
 export function NavigationItems({ isUser, isRecruiter }: { isUser: boolean; isRecruiter: boolean }) {
@@ -125,9 +126,10 @@ function CompanyMenu() {
             description="Get in touch with us"
           />
         </div>
+        
       </NavigationMenuContent>
     </NavigationMenuItem>
-              
+             
     
   );
 }
