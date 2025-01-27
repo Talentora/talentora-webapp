@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/navigation-menu';
 import { cn } from '@/utils/cn';
 
+
 export function NavigationItems({ isUser, isRecruiter }: { isUser: boolean; isRecruiter: boolean }) {
   return (
     <NavigationMenu>
@@ -126,6 +127,8 @@ function CompanyMenu() {
         </div>
       </NavigationMenuContent>
     </NavigationMenuItem>
+              
+    
   );
 }
 
