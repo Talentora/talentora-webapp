@@ -181,7 +181,7 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
             jobId={jobId} 
           />
 
-=
+
         </div>
 
         {setupFlags.isReady === "yes" && (
