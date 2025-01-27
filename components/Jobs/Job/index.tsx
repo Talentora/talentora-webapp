@@ -46,10 +46,6 @@ export default function JobPage({
 
 
       </div>
-      <div className="flex justify-between items-center">
-
-
-      </div>
     );
   }, [job, jobLoading, applicants]);
 
