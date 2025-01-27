@@ -3,7 +3,66 @@
 @tailwind utilities;
 
 @layer base {
-  html {
-    @apply text-primary bg-background;
+  :root {
+    /* Generic colors */
+    --primary-base: #9b74f5;
+    --primary-dark: #8a5ef4;
+    --secondary-base: #df58d3;
+    --secondary-dark: #d642c7;
+    --destructive-base: #EF4444;
+    --muted-base: #F3F4F6;
+    --accent-base: #F3F4F6;
+
+    /* Light theme specific */
+    --background: #FFFFFF;
+    --foreground: #020817;
+    --border: #E5E7EB;
+    --input: #E5E7EB;
+    --ring: #8B5CF6;
+    
+    --primary: var(--primary-base);
+    --primary-foreground: #F9FAFB;
+    --secondary: var(--secondary-base);
+    --secondary-foreground: #1F2937;
+    --destructive: var(--destructive-base);
+    --destructive-foreground: #F9FAFB;
+    --muted: var(--muted-base);
+    --muted-foreground: #6B7280;
+    --accent: var(--accent-base);
+    --accent-foreground: #1F2937;
+
+   
+
+    --radius: 0.5rem;
+
+  }
+
+  .dark {
+    /* Dark theme specific */
+    --background: #020817;
+    --foreground: #F9FAFB;
+    --border: #1F2937;
+    --input: #1F2937;
+    --ring: #7C3AED;
+
+    --primary: var(--primary-dark);
+    --primary-foreground: #F9FAFB;
+    --secondary: var(--secondary-dark);
+    --secondary-foreground: #F9FAFB;
+    --destructive: #7F1D1D;
+    --destructive-foreground: #F9FAFB;
+    --muted: #1F2937;
+    --muted-foreground: #9CA3AF;
+    --accent: #1F2937;
+    --accent-foreground: #F9FAFB;
+
+   
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

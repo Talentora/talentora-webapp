@@ -47,7 +47,7 @@ export default function JobPortal() {
         <main className="container px-4">
           <div className="grid gap-6 md:grid-cols-2 px-10">
             {sortedApplications?.length === 0 ? (
-              <Card className="border bg-foreground p-5 border-border shadow-sm relative">
+              <Card className="border p-5 border-border shadow-sm relative">
                 <CardHeader>
                   <CardTitle className="text-xl font-semibold">Welcome to Talentora!</CardTitle>
                 </CardHeader>
@@ -56,7 +56,7 @@ export default function JobPortal() {
                     Thanks for checking out Talentora. You have no interview applications currently!
                   </p>
                   <p className="text-sm text-muted-foreground mt-2">
-                    <Link href="/about" className="text-primary-dark hover:underline">Click here to learn more about our platform</Link>
+                    <Link href="/about" className="hover:underline">Click here to learn more about our platform</Link>
                   </p>
                 </CardContent>
               </Card>

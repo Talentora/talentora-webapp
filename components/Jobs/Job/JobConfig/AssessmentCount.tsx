@@ -41,7 +41,7 @@ const AssessmentCount = ({ loading, interviewConfig, jobId }: AssessmentCountPro
   }, [jobId]);
 
   return (
-    <Card className="hover:bg-accent/50 transition-colors p-5 bg-foreground border border-border shadow-3xl h-full">
+    <Card className="hover:bg-accent/50 transition-colors p-5 border border-border shadow-3xl h-full">
       <CardHeader>
         <div className="flex items-center justify-between gap-5">
           <CardTitle className="text-xl font-semibold">Assessment Count</CardTitle>

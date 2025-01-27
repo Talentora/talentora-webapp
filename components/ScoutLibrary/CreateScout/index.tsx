@@ -258,7 +258,7 @@ const CreateScout = ({
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="w-full bg-primary-dark" onClick={() => setIsOpen(true)}>
+        <Button className="w-full" onClick={() => setIsOpen(true)}>
           <Plus className="mr-2 h-4 w-4" /> Create New Ora Scout
         </Button>
       </DialogTrigger>

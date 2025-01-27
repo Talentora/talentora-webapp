@@ -68,22 +68,20 @@ export function SearchFilter({ jobs, searchTerm, onSearch }: SearchFilterProps) 
       </div>
 
       {showPreview && filteredJobs.length > 0 && (
-        <div className="absolute z-10 w-full max-w-sm mt-1 bg-white border border-gray-200 rounded-md shadow-lg divide-y divide-gray-100">
+        <div className="absolute z-10 w-full max-w-sm mt-1 border rounded-md shadow-lg divide-y divide-gray-100">
           {filteredJobs.slice(0, 5).map((job, index) => (
             <div 
               key={index}
-              className={`p-3 cursor-pointer transition-colors ${
-                index === selectedIndex ? 'bg-gray-50' : 'hover:bg-gray-50'
-              }`}
+              className="p-3 cursor-pointer bg-background"
               onClick={() => handleSelectJob(job)}
               onMouseEnter={() => setSelectedIndex(index)}
             >
               <div className="flex flex-col gap-1">
-                <div className="font-medium text-gray-900">
+                <div className="font-medium">
                   {job.name}
                 </div>
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-primary-dark font-medium">
+                  <span className="p-1 bg-primary rounded font-medium">
                     {job.status || 'No status'}
                   </span>
                   <span className="text-gray-400">

@@ -90,7 +90,7 @@ export default function RecruiterDashboard() {
     <div className="flex w-full">
       <main className="flex-1 p-8 mb-6">
         <div className="flex flex-col gap-6">
-          <h1 className="text-2xl text-primary-dark font-bold">Recruiting Dashboard</h1>
+          <h1 className="text-2xl font-bold">Recruiting Dashboard</h1>
 
           <div className="flex flex-col gap-6">
             <div className="flex flex-row gap-6">

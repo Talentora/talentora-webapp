@@ -124,7 +124,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
   }, [applicants]);
 
   return (
-    <Card>
+    <Card className="border-none">
       {!hideHeader && (
         <CardHeader>
           <CardTitle>Applicants Over Time</CardTitle>

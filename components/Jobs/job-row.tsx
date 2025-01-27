@@ -26,7 +26,7 @@ export function JobRow({ job }: { job: EnrichedJob }) {
         <TableCell className="text-center" title={job.id}>
           <Tooltip>
             <TooltipTrigger asChild><span>{job.id.slice(0, 6)}...</span></TooltipTrigger>
-            <TooltipContent className="max-w-xs bg-foreground text-primary">{job.id}</TooltipContent>
+            <TooltipContent className="max-w-xs text-primary">{job.id}</TooltipContent>
           </Tooltip>
         </TableCell>
         <TableCell className="text-center">{job.name}</TableCell>

@@ -36,9 +36,9 @@ export default function NameForm() {
   };
 
   return (
-    <Card className="my-8 text-card-foreground">
+    <Card className="my-8 text-card-foreground border-none">
       <CardHeader>
-        <CardTitle className="text-primary">Your Name</CardTitle>
+        <CardTitle  >Your Name</CardTitle>
         <CardDescription className="text-muted-foreground">
           Please enter your full name, or a display name.
         </CardDescription>
@@ -63,7 +63,6 @@ export default function NameForm() {
           variant="default"
           type="submit"
           form="nameForm"
-          loading={isSubmitting}
           className="bg-white text-black border border-gray-300"
         >
           Update Name

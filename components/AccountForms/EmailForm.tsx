@@ -35,9 +35,9 @@ export default function EmailForm() {
   };
 
   return (
-    <Card className="my-8 text-card-foreground ">
+    <Card className="my-8 text-card-foreground border-none">
       <CardHeader>
-        <CardTitle className="text-primary">Your Email</CardTitle>
+        <CardTitle >Your Email</CardTitle>
         <CardDescription className="text-muted-foreground">
           Please enter the email address you want to use to login.
         </CardDescription>
@@ -62,8 +62,7 @@ export default function EmailForm() {
           variant="default"
           type="submit"
           form="emailForm"
-          loading={isSubmitting}
-          className="bg-white text-black border border-gray-300" // Change here
+          className="bg-background text-foreground border border-border"
         >
           Update Email
         </Button>

@@ -36,7 +36,7 @@ const InterviewSettings = ({ loading, interviewConfig, setShowSetupDialog, jobId
 
   return (
     <>
-      <Card className="hover:bg-accent/50 transition-colors cursor-pointer p-5 bg-foreground border border-border shadow-3xl h-full">
+      <Card className="hover:bg-accent/50 transition-colors cursor-pointer p-5  border border-border shadow-3xl h-full">
         <Link href={`/jobs/${jobId}/settings`} className="flex-1">
           <CardHeader>
             <div className="flex items-center justify-between gap-5">

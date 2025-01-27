@@ -82,7 +82,7 @@ export default function SignUp({
             variant="default"
             type="submit"
             className="mt-1 w-full"
-            loading={isSubmitting}
+            // loading={isSubmitting}
           >
             Sign up as {role}
           </Button>
