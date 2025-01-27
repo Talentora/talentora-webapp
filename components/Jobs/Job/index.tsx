@@ -78,6 +78,7 @@ export default function JobPage({
               jobId={job.id}
               applicants={applicants || []}
               isLoading={applicantsLoading}
+              
             />
           )}
         </div>

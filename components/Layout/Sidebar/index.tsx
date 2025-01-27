@@ -190,7 +190,7 @@ const Sidebar = () => {
                     <CommandItem
                       key={index}
                       onSelect={() => handleNavigation(item.href)}
-                      className="hover:bg-accent text-foreground flex items-center justify-between"
+                      className=" hover:bg-accent text-foreground flex items-center justify-between"
                     >
                       <div className="flex items-center">
                         <Icon className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -209,7 +209,7 @@ const Sidebar = () => {
 
       <SidebarComponent className={cn(
         "bg-background text-foreground border-r border-border transition-all duration-300 ease-in-out z-50",
-        isSidebarOpen ? "w-1/4" : "w-20"
+        isSidebarOpen ? "w-50" : "w-20"
       )}>
         <NewSidebarHeader 
           isSidebarOpen={isSidebarOpen} 
@@ -269,7 +269,7 @@ const Sidebar = () => {
               <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-3">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   </div>
                 ) : (
                   filteredItems
