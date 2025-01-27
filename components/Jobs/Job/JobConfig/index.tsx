@@ -132,7 +132,7 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
     <>
       <div>
         {needsConfiguration && (
-          <div className="mb-6 p-4 border rounded-lg bg-yellow-50 border-yellow-200">
+          <div className="mb-6 p-4 border rounded-lg border-yellow-200">
             <div className="flex flex-col space-y-3">
               <h3 className="text-lg font-semibold text-yellow-800">
                 Interview Configuration Required
@@ -154,14 +154,17 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
       </div>
 
       <div className={`${needsConfiguration ? 'opacity-50 pointer-events-none filter blur-sm' : ''}`}>
-        <div className="grid grid-cols-2 gap-4 h-full">
-          <InterviewSettings 
-            loading={loading} 
-            interviewConfig={interviewConfig} 
-            setShowSetupDialog={setShowSetupDialog} 
-            jobId={jobId} 
-          />
-          <InterviewBot 
+      {setupFlags.isReady === "yes" && (
+          <div className="flex flex-col col-span-1 mb-4">
+            <AssessmentCount 
+              loading={loading} 
+              interviewConfig={interviewConfig} 
+              jobId={jobId}
+            />
+          </div>
+        )}
+        <div className="grid grid-cols-1 gap-4 h-full">
+        <InterviewBot 
             loading={loading} 
             botInfo={botInfo} 
             jobId={jobId} 
@@ -173,6 +176,14 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
             botInfo={botInfo}
             setupFlags={setupFlags}
           />
+
+          <InterviewSettings 
+            loading={loading} 
+            interviewConfig={interviewConfig} 
+            setShowSetupDialog={setShowSetupDialog} 
+            jobId={jobId} 
+          />
+
           <InterviewQuestions 
             loading={loading} 
             interviewConfig={interviewConfig} 
@@ -180,22 +191,13 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
           />
         </div>
         {setupFlags.isReady === "yes" && (
-          <div className="gap-5 grid grid-cols-2 mt-4">
-            <div className="flex flex-col col-span-1">
-              <AssessmentCount 
-                loading={loading} 
-                interviewConfig={interviewConfig} 
-                jobId={jobId}
-              />
-            </div>
-            <div className="flex flex-col col-span-1">
-              <InviteApplicants 
-                jobs={combinedJob ? [combinedJob] : []}
-                singleJobFlag={true}
-                applicants={applicants}
-              />
-            </div>
-          </div>
+          <div className="flex flex-col col-span-1 mt-4">
+          <InviteApplicants 
+            jobs={combinedJob ? [combinedJob] : []}
+            singleJobFlag={true}
+            applicants={applicants}
+          />          
+        </div>
         )}
       </div>
 

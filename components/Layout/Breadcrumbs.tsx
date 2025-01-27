@@ -21,7 +21,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
             className={`
               transition-colors duration-200
               ${index === items.length - 1 
-                ? 'text-gray-900 font-medium cursor-default pointer-events-none' 
+                ? 'text-gray-500 font-medium cursor-default pointer-events-none' 
                 : 'text-gray-500 hover:text-gray-900'
               }
             `}
