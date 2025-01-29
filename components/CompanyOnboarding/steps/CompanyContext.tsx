@@ -30,10 +30,10 @@ export const CompanyContext: React.FC<CompanyContextProps> = ({
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold">Company Context</h2>
+        <h2 className="text-lg font-bold">Company Context</h2>
 
         <div className="prose max-w-none">
-          <p className="text-gray-700 leading-relaxed">
+          <p className="text-gray-500 text-sm leading-relaxed">
             Providing detailed company context is crucial for our AI recruiter
             to effectively represent your organization to potential candidates.
             This information helps create more meaningful conversations and
@@ -41,7 +41,7 @@ export const CompanyContext: React.FC<CompanyContextProps> = ({
             company. Here's what we'll need from you:
           </p>
 
-          <ul className="list-disc pl-6 space-y-2 mt-4">
+          <ul className="list-disc font-semibold text-md pl-6 space-y-2 mt-4">
             <li>
               <strong>Company Description:</strong> Your mission, vision, and
               core activities that define what you do

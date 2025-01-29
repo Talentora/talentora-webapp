@@ -8,8 +8,15 @@ export const StartingStep: React.FC<{
 }> = ({ onCompletion }) => {
   return (
     <div className="flex justify-between">
+             
+            <div>Welcome to Talentora</div>
+            <div>
+              Let&apos;s get your company set up in just a few steps
+            </div>
+          
       <div className="p-3">
         <ul className="list-disc list-inside mt-4 space-y-1">
+          
           <li>Company info</li>
           <li>ATS integration</li>
           <li>Invite your team</li>
