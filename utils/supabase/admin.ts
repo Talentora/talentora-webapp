@@ -15,8 +15,9 @@ const TRIAL_PERIOD_DAYS = 0;
 const supabaseAdmin = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
   process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY || ''
-);
-
+  
+);   
+ 
 const inviteCandidateAdmin = async (name: string, email: string) => {
   try {
     // First check if user exists
