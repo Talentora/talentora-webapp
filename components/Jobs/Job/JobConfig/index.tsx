@@ -10,7 +10,6 @@ import Link from 'next/link';
 import { DialogHeader, DialogTitle, DialogDescription, DialogContent, Dialog } from '@/components/ui/dialog';
 import InterviewQuestions from './InterviewQuestions';
 import AssessmentCount from './AssessmentCount';
-import InviteApplicants from './InviteApplicants';
 import { ApplicantCandidate, Job } from '@/types/merge';
 import { createClient } from '@/utils/supabase/client';
 
@@ -194,15 +193,7 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
           </div>
         )}
 
-        {setupFlags.isReady === "yes" && (
-          <div className="flex flex-col col-span-1 mt-4">
-            <InviteApplicants 
-              jobs={combinedJob ? [combinedJob] : []}
-              singleJobFlag={true}
-              applicants={applicants}
-            />          
-          </div>
-        )}
+   
       </div>
 
       <Dialog open={showSetupDialog} onOpenChange={setShowSetupDialog}>

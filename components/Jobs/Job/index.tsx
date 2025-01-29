@@ -60,7 +60,7 @@ export default function JobPage({
 
     if (!applicants) return null;
 
-    return <RecentApplicants applicants={applicants} />;
+    return <RecentApplicants applicants={applicants} jobs={[]} />;
   }, [applicants, applicantsLoading]);
 
   return (

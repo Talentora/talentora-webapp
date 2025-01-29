@@ -29,7 +29,7 @@ export function JobHeader({ job }: JobHeaderProps) {
 
   return (
     <Card className="rounded-lg hover:bg-accent/50 transition-colors p-4 dark:bg-transparent shadow-[0_4px_6px_-1px_rgba(90,79,207,0.3),0_2px_4px_-2px_rgba(90,79,207,0.2)] bg-card hover:shadow-[0_10px_15px_-3px_rgba(90,79,207,0.4),0_4px_6px_-4px_rgba(90,79,207,0.3)] transition-transform border border-border shadow-3xl">
-      <CardHeader className="mb-4 relative"> {/* Add relative here */}
+      <CardHeader className="mb-4 relative">
         <h1 className="text-2xl font-bold text-primary">
             {job.name}
         </h1>
@@ -61,7 +61,6 @@ export function JobHeader({ job }: JobHeaderProps) {
                 {job.status || 'Active'}
               </div>
             </span>
-            {/* Position the "Open for X days" in the top-right */}
             <span className="absolute top-0 right-0 mt-4 mr-4 flex items-center space-x-2 text-sm text-black group relative">
               <span>
                 Open for {Math.floor((Date.now() - new Date(job.created_at).getTime()) / (1000 * 60 * 60 * 24))} days
@@ -75,24 +74,24 @@ export function JobHeader({ job }: JobHeaderProps) {
       </CardHeader>
       <CardContent className="border-t border-input space-y-6">
         <section>
-          <h3 className="mt-8 text-lg font-semibold flex items-center mb-2">
-            <ClipboardListIcon className="mr-2 h-5 w-5 text-gray-500" /> Job Description
-          </h3>
+          <div className="flex items-center justify-between cursor-pointer" onClick={toggleDescription}>
+            <h3 className="text-lg font-semibold flex items-center mb-2">
+              <ClipboardListIcon className="mr-2 h-5 w-5 text-gray-500" /> Job Description
+            </h3>
+            <ArrowLeft 
+              className={`h-5 w-5 transform transition-transform duration-200 ${
+                isDescriptionOpen ? '-rotate-90' : 'rotate-90'
+              }`}
+            />
+          </div>
 
-          {/* Toggle Button */}
-          <Button onClick={toggleDescription} className="mb-2 text-sm">
-            {isDescriptionOpen ? 'Hide Description' : 'Show Description'}
-          </Button>
-
-          {/* Description */}
           {isDescriptionOpen && (
-            <CardDescription className="text-sm leading-7 text-primary/70">
+            <CardDescription className="text-sm leading-7 text-primary/70 mt-4">
               <div
                 className="prose"
                 dangerouslySetInnerHTML={{ __html: job.description || 'missing' }}
               />
             </CardDescription>
-            
           )}
         </section>
       </CardContent>
