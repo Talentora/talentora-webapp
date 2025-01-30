@@ -212,20 +212,28 @@ const InterviewStatus = ({ loading, interviewConfig, botInfo, setupFlags, jobId,
           {step === 'select' ? (
             <>
               <DialogHeader>
-                <DialogTitle>Select Interview Bot</DialogTitle>
+                <DialogTitle>Select Interview Scout</DialogTitle>
+                <DialogDescription>
+                  Choose a scout to conduct your interviews, or <a href="/scouts" className="text-primary hover:underline">create a new one</a>
+                </DialogDescription>
               </DialogHeader>
-              <div className="space-y-2">
+              <div className="space-y-4 mt-4">
                 {availableBots.map((bot) => (
                   <div
                     key={bot.id}
-                    className="flex items-center gap-2 p-2 hover:bg-accent cursor-pointer rounded-md"
+                    className="flex items-center gap-4 p-4 hover:bg-accent/50 cursor-pointer rounded-lg border border-border transition-colors"
                     onClick={() => handleBotChange(bot)}
                   >
-                    <div className="h-12 w-12 flex items-center justify-center rounded-lg bg-gradient-to-r from-orange-500 via-purple-500 to-pink-500 text-white">
+                    <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white shadow-lg">
+                      {/* Scout icon/avatar would go here */}
                     </div>
-                    <span>{bot.name}</span>
-                    <span className="text-sm text-muted-foreground">{bot.description || 'No description available'}</span>
-                    {bot.id === botInfo?.id && <span> (Current)</span>}
+                    <div className="flex-1">
+                      <div className="font-medium text-lg">{bot.name}</div>
+                      <div className="text-sm text-muted-foreground">{bot.description || 'No description available'}</div>
+                    </div>
+                    {bot.id === botInfo?.id && (
+                      <Badge variant="secondary">Current Scout</Badge>
+                    )}
                   </div>
                 ))}
               </div>

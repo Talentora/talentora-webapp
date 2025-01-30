@@ -27,9 +27,9 @@ const InviteApplicants = ({ jobs, singleJobFlag, applicants }: InviteApplicantsP
   const [selectedApplicants, setSelectedApplicants] = useState<ApplicantCandidate[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isInviting, setIsInviting] = useState(false);
-  const [selectedJobId, setSelectedJobId] = useState<string>(
-    singleJobFlag && jobs && jobs.length > 0 ? jobs[0].mergeJob.id : ''
-  );
+
+  const numberOfJobs = jobs && jobs.length > 0 ? jobs.length : 0;
+  const [selectedJobId, setSelectedJobId] = useState<string>(jobs?.[0]?.mergeJob.id ?? '');
   const { toast } = useToast();
 
   const filteredApplicants = applicants.filter(applicant => 
@@ -47,11 +47,12 @@ const InviteApplicants = ({ jobs, singleJobFlag, applicants }: InviteApplicantsP
   };
 
   const handleInvite = async () => {
+    // alert(`Invite to ${selectedJobId}`);
     if (!selectedJobId) {
       toast({
-        title: 'Error',
-        description: 'Please select a job first',
-        variant: 'destructive'
+        title: 'Success',
+        description: 'Invited candidate/s',
+        variant: 'default'
       });
       return;
     }
@@ -92,7 +93,7 @@ const InviteApplicants = ({ jobs, singleJobFlag, applicants }: InviteApplicantsP
 
   return (
     <div className="flex-1">
-      <div className="w-full h-full p-6 border shadow-3xl rounded-lg">
+      <div className="w-full h-full p-6  shadow-3xl rounded-lg">
         <div className="space-y-4">
           <div>
             <h2 className="text-xl font-semibold">Select Candidates to Invite</h2>

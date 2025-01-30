@@ -37,7 +37,7 @@ const InterviewSettings = ({ loading, interviewConfig, setShowSetupDialog, jobId
     <>
       <div className="hover:bg-accent/50 transition-colors cursor-pointer p-5 shadow-3xl h-full">
         {/* <Link href={`/jobs/${jobId}/settings`} className="flex-1"> */}
-          <div className="pb-6">
+          <div >
             <div className="flex items-center justify-between gap-5">
               <h2 className="text-xl font-semibold">Interview Settings</h2>
               <div className="flex items-center gap-2" onClick={handleEdit}>
@@ -52,13 +52,24 @@ const InterviewSettings = ({ loading, interviewConfig, setShowSetupDialog, jobId
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : interviewConfig ? (
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-medium">{interviewConfig.interview_name || 'Unnamed Interview'}</h3>
-                <p className="text-sm text-muted-foreground">Type: {interviewConfig.type || 'Not set'}</p>
-                <p className="text-sm text-muted-foreground">Duration: {interviewConfig.duration || 'Not set'} minutes</p>
+            <div className="space-y-6">
+              <div className="pt-3 rounded-lg  hover:bg-accent/50 transition-all">
+                <h4 className="text-base font-medium mb-2">{interviewConfig.interview_name || 'Unnamed Interview'}</h4>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary"></div>
+                    <p className="text-sm text-muted-foreground">
+                      <span className="font-medium">Type:</span> {interviewConfig.type || 'Not set'}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary"></div>
+                    <p className="text-sm text-muted-foreground">
+                      <span className="font-medium">Duration:</span> {interviewConfig.duration || 'Not set'} minutes
+                    </p>
+                  </div>
+                </div>
               </div>
-             
             </div>
           ) : (
             <div className="flex flex-col items-center gap-3 py-4">

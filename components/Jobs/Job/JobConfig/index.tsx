@@ -29,16 +29,17 @@ interface SetupFlags {
   isReady: "yes" | "no" | "almost";
 }
 
+
 export default function JobConfig({ 
-  jobId, 
+  // jobId, 
+  job, 
   applicants, 
   isLoading,
-  combinedJob 
 }: { 
-  jobId: string, 
+  // jobId: string, 
+  job: Job, 
   applicants: ApplicantCandidate[], 
   isLoading: boolean,
-  combinedJob: CombinedJob | null 
 }) {
   const [loading, setLoading] = useState(true);
   const [interviewConfig, setInterviewConfig] = useState<InterviewConfig | null>(null);
@@ -52,6 +53,10 @@ export default function JobConfig({
     hasDuration: false,
     isReady: "no"
   });
+
+  const [combinedJob, setCombinedJob] = useState<CombinedJob | null>(null);
+
+  const jobId = job.id;
 
   const updateSetupFlags = useCallback((config: InterviewConfig | null) => {
     if (!config) {
@@ -138,7 +143,7 @@ export default function JobConfig({
     <Card className="rounded-lg hover:bg-accent/50 transition-colors dark:bg-transparent border border-border">
       <CardContent className="space-y-6">
         {needsConfiguration && (
-          <div className="mb-6 p-4 border rounded-lg border-yellow-200">
+          <div className="mb-6 p-4 border rounded-lg border-yellow-200 relative">
             <div className="flex flex-col space-y-3">
               <h3 className="text-lg font-semibold text-yellow-800">
                 Interview Configuration Required
@@ -158,7 +163,7 @@ export default function JobConfig({
           </div>
         )}
 
-        <div className={`${needsConfiguration ? 'opacity-50 pointer-events-none filter blur-sm' : ''}`}>
+        <div className={` ${needsConfiguration ? 'opacity-50 pointer-events-none filter blur-sm' : ''}`}>
           {setupFlags.isReady === "yes" && (
             <div className="flex flex-col col-span-1 mb-4">
               <InterviewStatus 

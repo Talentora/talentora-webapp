@@ -76,7 +76,7 @@ export default function JobPage({
     <div className="pr-5 pt-3 space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Left Column (Wider) */}
-        <div className="col-span-2 space-y-5">
+        <div className="col-span-2">
           {jobDetailsSection}
           {!jobLoading && job && <JobHeader job={job} />}
           {applicantsSection}
@@ -87,10 +87,10 @@ export default function JobPage({
           {!jobLoading && job && (
             <>
               <JobConfig
-                jobId={job.id}
+                // jobId={job.id}
+                job={job}
                 applicants={applicants || []}
                 isLoading={applicantsLoading}
-                combinedJob={combinedJob}
               />
               <AssessmentCount 
                 loading={jobLoading}
