@@ -16,9 +16,9 @@ export function Integration() {
       <div className="relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
-            <div className="inline-flex items-center rounded-full border border-green-500/20 bg-green-500/5 px-4 py-1.5 text-sm">
-              <span className="text-green-500 font-medium">Enterprise Ready</span>
-            </div>
+          <div className="bg-background inline-flex items-center rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm">
+            <span className=" text-primary font-medium">✨ Enterprise Ready</span>
+          </div>
             <h2 className="text-4xl font-bold"> 
               Seamlessly fits into your workflow
             </h2>
@@ -33,19 +33,10 @@ export function Integration() {
                 </li>
               ))}
             </ul>
-            <div className="flex items-center gap-4">
-              <Link href="#ats-integrations" scroll={true}>
-                <Button className="bg-accent hover:bg-accent/90">
-                  View ATS Partners
-                </Button>
-              </Link>
-              <Button  className="border-accent hover:bg-accent/5">
-                Schedule Demo
-              </Button>
-            </div>
+           
           </div>
           <div className="relative">
-            <div className="absolute -inset-4 bg-gradient-to-r from-accent/5 to-pink-100/50 rounded-3xl blur-2xl" />
+            <div className="absolute -inset-4  rounded-3xl blur-2xl" />
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-accent/10 shadow-2xl">
               <Image
                 src="/Images/Image7.png"
@@ -55,7 +46,7 @@ export function Integration() {
                 priority
               />
               {/* Video overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-pink-600/5" />
+              <div className="absolute inset-0 " />
             </div>
           </div>
         </div>

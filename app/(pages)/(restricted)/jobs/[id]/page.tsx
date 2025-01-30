@@ -3,7 +3,7 @@ import JobPage from '@/components/Jobs/Job';
 import { useJob } from '@/hooks/useJob';
 import { Button } from '@/components/ui/button';
 import { RefreshCcw } from 'lucide-react';
-
+import { Alert, AlertDescription } from '@/components/ui/alert';
 interface JobPageProps {
   params: { id: string };
 }
@@ -25,16 +25,19 @@ export default function Page({ params }: JobPageProps) {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-[50vh] gap-4">
-        <h1 className="text-2xl font-bold text-destructive">{error}</h1>
+        <Alert intent="danger" title="Error">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
         <Button 
           onClick={() => {
             refetchJob();
             refetchApplicants();
           }}
-          className="flex items-center gap-2"
+          variant="outline"
+          className="flex items-center gap-2 mt-4"
         >
           <RefreshCcw className="h-4 w-4" />
-          Retry
+          Try Again
         </Button>
       </div>
     );
@@ -42,10 +45,11 @@ export default function Page({ params }: JobPageProps) {
 
   return (
     <JobPage 
+      // combinedJob={combinedJob}
       job={job || undefined} 
       applicants={applicants || []} 
       jobLoading={jobLoading}
       applicantsLoading={applicantsLoading}
     />
-  );
+  )
 }

@@ -12,10 +12,6 @@ const Page = () => {
 
   const [showConfig, setShowConfig] = useState(false);
 
-  // if (!jobId) {
-  //   return <div>No job ID found</div>;
-  // }
-
   return (
     <div>
 

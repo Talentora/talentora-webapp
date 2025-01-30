@@ -1,11 +1,15 @@
 'use client';
-import InterviewQuestions from './InterviewQuestions'; // Update the path based on your structure
-import { useEffect, useState, useCallback } from 'react';
+
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+import AssessmentCount from './JobConfig/AssessmentCount';
 
 import { JobHeader } from './JobHeader';
 import { RecentApplicants } from './RecentApplicants';
 import { EnrichedJob } from '../JobList';
 import JobConfig from './JobConfig';
+import InterviewQuestions from './InterviewQuestions';
 import { ApplicantCandidate } from '@/types/merge';
 import { 
   JobHeaderSkeleton, 
@@ -13,32 +17,35 @@ import {
   JobConfigSkeleton,
   BotConfigSkeleton 
 } from './JobSkeleton';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import { useMemo } from 'react';
 
 interface JobProps {
   job?: EnrichedJob;
   applicants?: ApplicantCandidate[];
   jobLoading: boolean;
   applicantsLoading: boolean;
+  combinedJob: any;
 }
 
 export default function JobPage({ 
   job, 
   applicants, 
   jobLoading, 
-  applicantsLoading 
+  applicantsLoading,
+  combinedJob
 }: JobProps) {
-  // Memoize the job details section
+  // Memoized sections
   const jobDetailsSection = useMemo(() => {
     if (jobLoading) {
       return (
-        <>
-          <JobHeaderSkeleton />
-          <JobConfigSkeleton />
-          <BotConfigSkeleton />
-        </>
+        <div className="flex flex-row gap-5 w-full">
+          <div className="flex-1">
+            <JobHeaderSkeleton />
+          </div>
+          <div className="flex-1 space-y-5">
+            <JobConfigSkeleton />
+            <BotConfigSkeleton />
+          </div>
+        </div>
       );
     }
 
@@ -46,13 +53,11 @@ export default function JobPage({
 
     return (
       <div className="flex justify-between items-center">
-        
         {/* Add any other content for job details */}
       </div>
     );
   }, [job, jobLoading, applicants]);
 
-  // Memoize the applicants section
   const applicantsSection = useMemo(() => {
     if (applicantsLoading) {
       return <RecentApplicantsSkeleton />;
@@ -60,31 +65,42 @@ export default function JobPage({
 
     if (!applicants) return null;
 
-    return <RecentApplicants applicants={applicants} jobs={[]} />;
+    return (
+      <div className="pt-3 space-y-5">
+        <RecentApplicants applicants={applicants} jobs={[]} />
+      </div>
+    );
   }, [applicants, applicantsLoading]);
 
   return (
-    <div className="pr-16 m-5 space-y-5">
+    <div className="pr-5 pt-3 space-y-5">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {/* Right Column (Wider) */}
+        {/* Left Column (Wider) */}
         <div className="col-span-2 space-y-5">
           {jobDetailsSection}
           {!jobLoading && job && <JobHeader job={job} />}
-          
           {applicantsSection}
         </div>
 
-        {/* Left Column */}
-        <div className="space-y-5">
+        {/* Right Column */}
+        <div className="col-span-1 space-y-5">
           {!jobLoading && job && (
-            <JobConfig
-              jobId={job.id}
-              applicants={applicants || []}
-              isLoading={applicantsLoading}
-            />
+            <>
+              <JobConfig
+                jobId={job.id}
+                applicants={applicants || []}
+                isLoading={applicantsLoading}
+                combinedJob={combinedJob}
+              />
+              <AssessmentCount 
+                loading={jobLoading}
+                interviewConfig={null}
+                jobId={job.id}
+              />
+            </>
           )}
         </div>
       </div>
     </div>
-  );
+  )
 }

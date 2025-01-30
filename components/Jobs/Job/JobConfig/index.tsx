@@ -9,9 +9,9 @@ import InterviewStatus from './InterviewStatus';
 import Link from 'next/link';
 import { DialogHeader, DialogTitle, DialogDescription, DialogContent, Dialog } from '@/components/ui/dialog';
 import InterviewQuestions from './InterviewQuestions';
-import AssessmentCount from './AssessmentCount';
 import { ApplicantCandidate, Job } from '@/types/merge';
 import { createClient } from '@/utils/supabase/client';
+import { Card, CardContent } from '@/components/ui/card';
 
 type InterviewConfig = Tables<'job_interview_config'>;
 type Bot = Tables<'bots'>;
@@ -29,7 +29,17 @@ interface SetupFlags {
   isReady: "yes" | "no" | "almost";
 }
 
-export default function JobConfig({ jobId, applicants, isLoading }: { jobId: string, applicants: ApplicantCandidate[], isLoading: boolean }) {
+export default function JobConfig({ 
+  jobId, 
+  applicants, 
+  isLoading,
+  combinedJob 
+}: { 
+  jobId: string, 
+  applicants: ApplicantCandidate[], 
+  isLoading: boolean,
+  combinedJob: CombinedJob | null 
+}) {
   const [loading, setLoading] = useState(true);
   const [interviewConfig, setInterviewConfig] = useState<InterviewConfig | null>(null);
   const [botInfo, setBotInfo] = useState<Bot | null>(null);
@@ -42,7 +52,6 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
     hasDuration: false,
     isReady: "no"
   });
-  const [combinedJob, setCombinedJob] = useState<CombinedJob | null>(null);
 
   const updateSetupFlags = useCallback((config: InterviewConfig | null) => {
     if (!config) {
@@ -104,11 +113,9 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
       try {
         const supabase = createClient();
         
-        // Fetch Merge job data
         const jobResponse = await fetch(`/api/jobs/${jobId}`);
         const mergeJob = await jobResponse.json();
 
-        // Fetch Supabase job data
         const { data: supabaseJob } = await supabase
           .from('jobs')
           .select('*')
@@ -128,8 +135,8 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
   }, [jobId]);
 
   return (
-    <>
-      <div>
+    <Card className="rounded-lg hover:bg-accent/50 transition-colors dark:bg-transparent border border-border">
+      <CardContent className="space-y-6">
         {needsConfiguration && (
           <div className="mb-6 p-4 border rounded-lg border-yellow-200">
             <div className="flex flex-col space-y-3">
@@ -150,71 +157,58 @@ export default function JobConfig({ jobId, applicants, isLoading }: { jobId: str
             </div>
           </div>
         )}
-      </div>
 
-      <div className={`${needsConfiguration ? 'opacity-50 pointer-events-none filter blur-sm' : ''}`}>
-        {setupFlags.isReady === "yes" && (
-          <div className="flex flex-col col-span-1 mb-4">
-            <InterviewStatus 
-              jobId=''
-              loading={loading} 
-              interviewConfig={interviewConfig} 
-              botInfo={botInfo}
-              setupFlags={setupFlags}
-            />
-          </div>
-        )}
+        <div className={`${needsConfiguration ? 'opacity-50 pointer-events-none filter blur-sm' : ''}`}>
+          {setupFlags.isReady === "yes" && (
+            <div className="flex flex-col col-span-1 mb-4">
+              <InterviewStatus 
+                jobId={jobId}
+                loading={loading} 
+                interviewConfig={interviewConfig} 
+                botInfo={botInfo}
+                setupFlags={setupFlags}
+                combinedJob={combinedJob}
+                applicants={applicants}
+              />
+            </div>
+          )}
 
-        <div className="grid grid-cols-1 gap-4 h-full">
-
-        <InterviewQuestions 
-            loading={loading} 
-            interviewConfig={interviewConfig} 
-            jobId={jobId}
-          />
-
-          <InterviewSettings 
-            loading={loading} 
-            interviewConfig={interviewConfig} 
-            setShowSetupDialog={setShowSetupDialog} 
-            jobId={jobId} 
-          />
-
-
-        </div>
-
-        {setupFlags.isReady === "yes" && (
-          <div className="flex flex-col col-span-1 mt-4">
-            <AssessmentCount 
+          <div className="grid grid-cols-1 gap-4 h-full">
+            <InterviewQuestions 
               loading={loading} 
               interviewConfig={interviewConfig} 
               jobId={jobId}
             />
-          </div>
-        )}
 
-   
-      </div>
-
-      <Dialog open={showSetupDialog} onOpenChange={setShowSetupDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>AI Interview Setup Required</DialogTitle>
-            <DialogDescription>
-              This role hasn't been configured for AI interviews yet. Set up the interview process to start screening candidates automatically.
-            </DialogDescription>
-            <br />
-            <DialogDescription>
-              Currently, we've pulled relevant information from your job posting. If you'd like to setup Talentora's conversational AI assessment, click here
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end">
-            <Link href={`/jobs/${jobId}/settings`}>
-              <Button>Configure AI Interview</Button>
-            </Link>
+            <InterviewSettings 
+              loading={loading} 
+              interviewConfig={interviewConfig} 
+              setShowSetupDialog={setShowSetupDialog} 
+              jobId={jobId} 
+            />
           </div>
-        </DialogContent>
-      </Dialog>
-    </>
+        </div>
+
+        <Dialog open={showSetupDialog} onOpenChange={setShowSetupDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>AI Interview Setup Required</DialogTitle>
+              <DialogDescription>
+                This role hasn't been configured for AI interviews yet. Set up the interview process to start screening candidates automatically.
+              </DialogDescription>
+              <br />
+              <DialogDescription>
+                Currently, we've pulled relevant information from your job posting. If you'd like to setup Talentora's conversational AI assessment, click here
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-end">
+              <Link href={`/jobs/${jobId}/settings`}>
+                <Button>Configure AI Interview</Button>
+              </Link>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </CardContent>
+    </Card>
   );
 }

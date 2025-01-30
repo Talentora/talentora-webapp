@@ -7,7 +7,7 @@ import { ApplicantCandidate, Job } from '@/types/merge';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import InviteApplicants from '@/components/Jobs/Job/JobConfig/InviteApplicants';
 import { Tables } from '@/types/types_db';
-import { Loader2 } from 'lucide-react';
+import { ChevronDown, Loader2 } from 'lucide-react';
 
 interface CombinedJob {
   mergeJob: Job;
@@ -36,20 +36,7 @@ export function RecentApplicants({ applicants, jobs, isLoading }: RecentApplican
             Recent Applicants
           </CardTitle>
           <div className="flex gap-2">
-            <Button 
-              className="bg-primary text-white" 
-              onClick={() => setInviteModalOpen(true)}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                'Invite Candidates'
-              )}
-            </Button>
-            <Button variant="outline" size="sm" onClick={toggleVisibility}>
-              {visible ? 'Hide' : 'Show'} Applicants
-            </Button>
+            <ChevronDown onClick={toggleVisibility} className={`h-4 w-4 transition-transform ${visible ? 'rotate-180' : ''}`} />
           </div>
         </div>
       </CardHeader>
