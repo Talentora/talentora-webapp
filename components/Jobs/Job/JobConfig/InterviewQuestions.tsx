@@ -23,12 +23,13 @@ const InterviewQuestions = ({ loading, interviewConfig, jobId, onQuestionsUpdate
 
   const handleCompletion = (isComplete: boolean) => {
     if (isComplete) {
-      setShowQuestionsDialog(false);
+      // setShowQuestionsDialog(false);
       onQuestionsUpdate?.();
     }
   };
 
-  const handleEditQuestions = () => {
+  const handleEditQuestions = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     setShowQuestionsDialog(true);
   };
 
