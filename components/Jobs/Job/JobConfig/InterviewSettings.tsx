@@ -1,5 +1,4 @@
 // components/Jobs/Job/InterviewSettings.tsx
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Settings, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import { Tables } from '@/types/types_db';
@@ -36,16 +35,18 @@ const InterviewSettings = ({ loading, interviewConfig, setShowSetupDialog, jobId
 
   return (
     <>
-      <Card className="hover:bg-accent/50 transition-colors cursor-pointer p-5  border border-border shadow-3xl h-full">
-        <Link href={`/jobs/${jobId}/settings`} className="flex-1">
-          <CardHeader>
+      <div className="hover:bg-accent/50 transition-colors cursor-pointer p-5 shadow-3xl h-full">
+        {/* <Link href={`/jobs/${jobId}/settings`} className="flex-1"> */}
+          <div className="pb-6">
             <div className="flex items-center justify-between gap-5">
-              <CardTitle className="text-xl font-semibold">Interview Settings</CardTitle>
-              <Settings className="h-6 w-6 text-primary" />
+              <h2 className="text-xl font-semibold">Interview Settings</h2>
+              <div className="flex items-center gap-2" onClick={handleEdit}>
+                <Settings className="h-6 w-6 text-primary" />
+              </div>
             </div>
-          </CardHeader>
-        </Link>
-        <CardContent className="flex-1">
+          </div>
+        {/* </Link> */}
+        <div className="flex-1">
           {loading ? (
             <div className="flex justify-center items-center py-4">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -57,24 +58,7 @@ const InterviewSettings = ({ loading, interviewConfig, setShowSetupDialog, jobId
                 <p className="text-sm text-muted-foreground">Type: {interviewConfig.type || 'Not set'}</p>
                 <p className="text-sm text-muted-foreground">Duration: {interviewConfig.duration || 'Not set'} minutes</p>
               </div>
-              <Separator />
-              <div className="flex justify-end gap-2">
-                <Button 
-                  onClick={handleEditQuestions}
-                  variant="outline"
-                  className="opacity-0 hover:opacity-100 transition-opacity duration-500 ease-in-out"
-                >
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  Questions
-                </Button>
-                <Button 
-                  onClick={handleEdit}
-                  className="opacity-0 hover:opacity-100 transition-opacity duration-500 ease-in-out"
-                >
-                  <Settings className="h-4 w-4 mr-2" />
-                  Settings
-                </Button>
-              </div>
+             
             </div>
           ) : (
             <div className="flex flex-col items-center gap-3 py-4">
@@ -85,14 +69,16 @@ const InterviewSettings = ({ loading, interviewConfig, setShowSetupDialog, jobId
               </p>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Settings Dialog */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Edit Interview Settings</DialogTitle>
+            <DialogTitle>
+              {interviewConfig ? 'Edit Interview Settings' : 'Interview Settings'}
+            </DialogTitle>
           </DialogHeader>
           <InterviewSettingsForm 
             jobId={jobId} 

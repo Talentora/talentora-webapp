@@ -18,12 +18,12 @@ export function Hero() {
     <section className="container px-4 py-16 mx-auto">
       <div className="grid lg:grid-cols-2 gap-20 items-center">
         <div className="space-y-8">
-          <div className="inline-flex items-center rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm">
-            <span className="text-primary font-medium">✨ AI-Powered Video Interviews</span>
+          <div className="bg-background inline-flex items-center rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm">
+            <span className=" text-primary font-medium">✨ AI-Powered Video Interviews</span>
           </div>
           <h1 className="text-5xl font-bold leading-tight tracking-tighter lg:text-6xl xl:text-7xl">
             Hire the best talent{" "}
-            <span className="bg-gradient-to-r from-accent to-pink-600 bg-clip-text text-transparent">3x faster</span>
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">3x faster</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-[600px]">
             Our AI-powered platform conducts initial interviews, assesses candidates, and provides data-driven insights - all while you sleep.

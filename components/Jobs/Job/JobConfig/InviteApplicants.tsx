@@ -17,7 +17,7 @@ type CombinedJob = {
 };
 
 interface InviteApplicantsProps {
-  jobs?: CombinedJob[];
+  jobs?: CombinedJob[] | null;
   singleJobFlag?: boolean;
   applicants: ApplicantCandidate[];
 }

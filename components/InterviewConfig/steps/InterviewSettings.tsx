@@ -83,11 +83,9 @@ export const InterviewSettings = ({
 
   return (
     <div className="space-y-4 m-10">
-      <h2 className="text-2xl font-bold">
-        {existingConfig ? 'Edit Interview Settings' : 'Interview Settings'}
-      </h2>
+     
 
-      <Card className="p-4">
+      <Card className="p-2 border-none">
         <CardHeader>
           <CardTitle>Basic Configuration</CardTitle>
         </CardHeader>

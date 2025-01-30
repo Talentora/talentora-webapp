@@ -5,9 +5,9 @@ export default function LandingPage() {
     <div className="min-h-screen">
       <main>
         <Hero />
-        <LogoSection />
         <Features />
         <Integration />
+        <LogoSection />
         <CTA />
       </main>
     </div>

@@ -20,7 +20,8 @@
     --border: #E5E7EB;
     --input: #E5E7EB;
     --ring: #ffffff;
-    
+    --sidebar: #574dc4;
+
     --primary: var(--primary-base);
     --primary-foreground: #F9FAFB;
     --secondary: var(--secondary-base);
@@ -46,6 +47,7 @@
     --border: #1F2937;
     --input: #1F2937;
     --ring: #0b082b;
+    --sidebar: #1d166b;
 
     --primary: var(--primary-dark);
     --primary-foreground: #F9FAFB;
