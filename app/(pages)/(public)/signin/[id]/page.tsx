@@ -27,6 +27,7 @@ import UpdatePassword from '@/components/AuthForms/UpdatePassword';
 import SignUp from '@/components/AuthForms/Signup';
 import { createClient } from '@/utils/supabase/server';
 import Logo from '@/components/ui/icons/Logo';
+import RecruiterSSO from '@/components/AuthForms/RecruiterSSO';
 // import { useUser } from '@/hooks/useUser';
 
 export default async function SignInPage({
@@ -70,53 +71,50 @@ export default async function SignInPage({
   return (
     <div className="flex w-full flex-col min-h-screen">
       <div className="flex justify-center flex-1">
-        <div className="flex flex-col justify-between max-w-lg p-3 m-auto w-80">
-          <div style={{"height":"80%", "display": "flex", "alignItems":"center"}} className="flex justify-center pb-6">
-            <Logo width="30px" height="30px" />
-          </div>
-          <Card shadow className="w-full max-w-lg">
+        <div className="flex flex-col justify-between max-w-5xl p-3 m-auto w-full">
+          <Card shadow className="w-full border-none">
             <CardHeader>
-              <CardTitle className="text-black text-center">
-                {viewProp === 'forgot_password'
-                  ? 'Reset Password'
-                  : viewProp === 'update_password'
-                    ? 'Update Password'
-                    : viewProp === 'signup'
-                      ? 'Sign Up'
-                      : 'Recruiter Portal'}
+              <CardTitle className="text-foreground text-center">
+                {role === 'recruiter' ? 'Recruiter Portal' : 'Sign In'}
               </CardTitle>
             </CardHeader>
-            <CardContent className="text-black">
-              {viewProp === 'password_signin' && (
-                <PasswordSignIn
-                  allowEmail={allowEmail}
-                  redirectMethod={redirectMethod}
-                  role={role || 'applicant'}
-                />
-              )}
-              {viewProp === 'email_signin' && (
-                <EmailSignIn
-                  allowPassword={allowPassword}
-                  redirectMethod={redirectMethod}
-                  disableButton={searchParams.disable_button === 'true'}
-                />
-              )}
-              {viewProp === 'forgot_password' && (
-                <ForgotPassword
-                  allowEmail={allowEmail}
-                  redirectMethod={redirectMethod}
-                  disableButton={searchParams.disable_button === 'true'}
-                />
-              )}
-              {viewProp === 'update_password' && (
-                <UpdatePassword redirectMethod={redirectMethod} />
-              )}
-              {viewProp === 'signup' && (
-                <SignUp
-                  allowEmail={allowEmail}
-                  redirectMethod={redirectMethod}
-                  role={role || 'applicant'}
-                />
+            <CardContent className="text-foreground">
+              {role === 'recruiter' ? (
+                <RecruiterSSO />
+              ) : (
+                <>
+                  {viewProp === 'password_signin' && (
+                    <PasswordSignIn
+                      allowEmail={allowEmail}
+                      redirectMethod={redirectMethod}
+                      role={role || 'applicant'}
+                    />
+                  )}
+                  {viewProp === 'email_signin' && (
+                    <EmailSignIn
+                      allowPassword={allowPassword}
+                      redirectMethod={redirectMethod}
+                      disableButton={searchParams.disable_button === 'true'}
+                    />
+                  )}
+                  {viewProp === 'forgot_password' && (
+                    <ForgotPassword
+                      allowEmail={allowEmail}
+                      redirectMethod={redirectMethod}
+                      disableButton={searchParams.disable_button === 'true'}
+                    />
+                  )}
+                  {viewProp === 'update_password' && (
+                    <UpdatePassword redirectMethod={redirectMethod} />
+                  )}
+                  {viewProp === 'signup' && (
+                    <SignUp
+                      allowEmail={allowEmail}
+                      redirectMethod={redirectMethod}
+                      role={role || 'applicant'}
+                    />
+                  )}
+                </>
               )}
             </CardContent>
           </Card>

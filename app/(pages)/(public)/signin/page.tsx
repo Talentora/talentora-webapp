@@ -15,7 +15,11 @@ export default function SignIn() {
 
   const handleContinue = () => {
     if (selectedType) {
-      router.push(`/signin/passwordSignin?role=${selectedType}`);
+      if (selectedType === 'recruiter') {
+        router.push(`/signin/password_signin?role=${selectedType}`);
+      } else {
+        router.push(`/signin/password_signin?role=${selectedType}`);
+      }
     }
   };
 
@@ -27,7 +31,7 @@ export default function SignIn() {
       </h1>
       <div className="flex flex-col md:flex-row justify-center gap-6 w-full max-w-3xl">
         <div
-          className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-white shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
+          className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-background shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
             selectedType === 'recruiter'
               ? 'ring-2 ring-blue-500 bg-blue-50'
               : ''
@@ -37,12 +41,13 @@ export default function SignIn() {
           <h2 className="text-2xl font-semibold mb-2 text-gray-700">
             Recruiter
           </h2>
-          <p className="text-center text-gray-600">
+          <p className="text-center text-gray-600 mb-4">
             I'm looking to hire talent
           </p>
+          <span className="text-sm text-blue-600">Sign in with SSO</span>
         </div>
         <div
-          className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-white shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
+          className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-background shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
             selectedType === 'applicant'
               ? 'ring-2 ring-blue-500 bg-blue-50'
               : ''
