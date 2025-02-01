@@ -1,4 +1,3 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Info } from "lucide-react"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
 import { Sparkles } from "lucide-react"
@@ -8,9 +7,9 @@ interface InterviewSummaryProps {
 
 export function InterviewSummary({ summary }: InterviewSummaryProps) {
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Interview Summary</CardTitle>
+    <div>
+      <div className="flex flex-row items-center justify-between py-6">
+        <h2 className="text-2xl font-semibold">Interview Summary</h2>
         {/* <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -21,8 +20,8 @@ export function InterviewSummary({ summary }: InterviewSummaryProps) {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider> */}
-      </CardHeader>
-      <CardContent className="space-y-4">
+      </div>
+      <div className="space-y-4">
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Sparkles className="w-4 h-4" />
           <span>AI Generated Summary</span>
@@ -32,7 +31,7 @@ export function InterviewSummary({ summary }: InterviewSummaryProps) {
             {summary}
           </p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

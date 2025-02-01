@@ -1,42 +1,37 @@
 import { AISummaryApplicant } from "@/types/analysis";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import TimelineGraph from "./TimelineGraph";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import EmotionAverages from "./EmotionAverages";
 import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
+
 interface EmotionalAnalysisProps {
     aiSummary: portalProps['AI_summary'] | null;
 }
 
 const Page = ({ aiSummary }: EmotionalAnalysisProps) => {
+    const [isExpanded, setIsExpanded] = useState(false);
     const typedSummary = aiSummary as unknown as AISummaryApplicant;
     const emotionalAnalysis = typedSummary?.emotion_eval;
 
     return (
-        <div >
-            <Card>
-                <CardHeader>
-                    <CardTitle>Emotional Analysis</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                    <p className="mb-6">We leverage the Hume AI expression analysis service to analyze the applicant's emotional state through facial expressions, voice, and language.</p>
-                    
-                    <Tabs defaultValue="timeline" className="w-full">
-                        <TabsList>
-                            <TabsTrigger value="timeline">Timeline Analysis</TabsTrigger>
-                            <TabsTrigger value="averages">Emotional Averages</TabsTrigger>
-                        </TabsList>
+        <div>
+            <div className="space-y-4">
+                <div 
+                    className="flex items-center justify-between cursor-pointer" 
+                    onClick={() => setIsExpanded(!isExpanded)}
+                >
+                    <h2 className="text-2xl font-semibold">Emotional Analysis</h2>
+                    {isExpanded ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
+                </div>
+                
+                {isExpanded && (
+                    <>
+                        <p className="mb-6">We leverage the Hume AI expression analysis service to analyze the applicant's emotional state through facial expressions, voice, and language.</p>
                         
-                        <TabsContent value="timeline">
-                            <TimelineGraph timeline={emotionalAnalysis?.timeline} />
-                        </TabsContent>
-                        
-                        <TabsContent value="averages">
-                            <EmotionAverages averages={emotionalAnalysis?.averages} />
-                        </TabsContent>
-                    </Tabs>
-                </CardContent>
-            </Card>
+                        <TimelineGraph timeline={emotionalAnalysis?.timeline} />
+                    </>
+                )}
+            </div>
         </div>
     )
 }

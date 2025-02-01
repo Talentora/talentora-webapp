@@ -6,7 +6,7 @@ import LexicalAnalysis from "./LexicalAnalysis";
 import AssessmentScores from "./AssessmentScores";
 import AssessmentSummary from "./AssessmentSummary";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import ResumeViewer from "./ResumeViewer";
 interface AnalysisDisplayProps {
     portalProps: portalProps;
 }
@@ -36,6 +36,7 @@ const Page = ({ portalProps }: AnalysisDisplayProps) => {
 
     return (
         <div className="flex flex-col gap-4">
+            
             <div className="grid grid-cols-4 gap-4">
                 <div className="col-span-3">
                     <AssessmentSummary aiSummary={AI_summary} />
@@ -44,9 +45,10 @@ const Page = ({ portalProps }: AnalysisDisplayProps) => {
                     <AssessmentScores aiSummary={AI_summary} />
                 </div>
             </div>
+            <VideoTranscript portalProps={portalProps} />
+            <ResumeViewer portalProps={portalProps} />
             <EmotionalAnalysis aiSummary={AI_summary} />
             <NewLexicalAnalysis aiSummary={AI_summary} />
-            <VideoTranscript aiSummary={AI_summary} />
         </div>
     );
 };
