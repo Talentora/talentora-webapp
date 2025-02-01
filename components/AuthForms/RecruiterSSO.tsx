@@ -16,7 +16,8 @@ export default function RecruiterSSO() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+    console.log("Signing in with SSO for domain:", domain);
+
     try {
       const { data, error } = await supabase.auth.signInWithSSO({
         domain: domain,
