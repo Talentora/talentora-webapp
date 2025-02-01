@@ -1,4 +1,7 @@
 import Image from 'next/image';
+import Logo from '@/components/ui/icons/Logo';
+
+
 
 export const StartingStep: React.FC<{
   onCompletion: (isComplete: boolean) => void;
@@ -13,9 +16,11 @@ export const StartingStep: React.FC<{
           <li>Get Started!</li>
         </ul>
       </div>
-      <div className="w-1/2 border border-gray-300">
-        <Image src="" alt="Empty Image" />
-      </div>
+      <div className="w-1/2 rounded-lg">
+      <div style={{"height":"80%", "display": "flex", "alignItems":"center"}} className="flex justify-center pb-6">
+            <Logo width="30px" height="30px" />
+          </div>
+               </div>
     </div>
   );
 };

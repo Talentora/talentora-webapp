@@ -29,7 +29,7 @@ export function CTA() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-8">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
-                  <div className="text-4xl font-bold text-accent">
+                  <div className="text-4xl font-bold ">
                     {stat.value}<span className="text-2xl">{stat.suffix}</span>
                   </div>
                   <div className="text-gray-600 mt-1">{stat.label}</div>
@@ -44,7 +44,7 @@ export function CTA() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-accent text-accent hover:bg-accent/5 text-lg group"
+                className="border-primary text-primary hover:bg-accent/5 text-lg group"
               >
                 Book Product Demo
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />

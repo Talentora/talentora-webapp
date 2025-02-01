@@ -44,7 +44,6 @@ const InterviewQuestions = ({ loading, interviewConfig, jobId, onQuestionsUpdate
       <Card className="hover:bg-accent/50 transition-colors p-5 border border-border shadow-3xl h-full">
         <CardHeader>
           <div className="flex items-center justify-between gap-5">
-            <CardTitle className="text-xl font-semibold">Interview Questions</CardTitle>
             <MessageSquare className="h-6 w-6 text-primary" />
           </div>
         </CardHeader>
@@ -92,7 +91,7 @@ const InterviewQuestions = ({ loading, interviewConfig, jobId, onQuestionsUpdate
       <Dialog open={showQuestionsDialog} onOpenChange={setShowQuestionsDialog}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle>Interview Questions</DialogTitle>
+            <DialogTitle>Interview Prompts</DialogTitle>
           </DialogHeader>
           <QuestionSetup 
             jobId={jobId}

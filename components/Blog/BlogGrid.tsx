@@ -53,7 +53,7 @@ const BlogGrid = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">
+          <h2 className="text-4xl font-bold mb-6">
             Latest Insights
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
