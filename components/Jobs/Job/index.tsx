@@ -23,7 +23,7 @@ interface JobProps {
   applicants?: ApplicantCandidate[];
   jobLoading: boolean;
   applicantsLoading: boolean;
-  // combinedJob: any;
+  combinedJob: any;
 }
 
 export default function JobPage({ 
@@ -31,7 +31,7 @@ export default function JobPage({
   applicants, 
   jobLoading, 
   applicantsLoading,
-  // combinedJob
+  combinedJob
 }: JobProps) {
   // Memoized sections
   const jobDetailsSection = useMemo(() => {
