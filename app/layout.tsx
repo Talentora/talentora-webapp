@@ -32,7 +32,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen font-sans antialiased">
+      <body className="w-full bg-gradient-to-br from-purple-500/[0.1] via-background to-pink-500/[0.1] p-0">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -49,13 +49,15 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               )}
               <main
                 id="skip"
-                className={`flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]${
+                className={` flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]${
                   isSidebarVisible ? ' ml-60' : ' w-full'
                 }`}
               >
                 <Navbar visible={isSidebarVisible} />
                 {isSidebarVisible && <BreadcrumbsContainer />}
-                <Suspense fallback={<Loading />}>{children}</Suspense>
+                <Suspense fallback={<Loading />}>
+                  {children}
+                </Suspense>
               </main>
             </div>
             <Suspense>

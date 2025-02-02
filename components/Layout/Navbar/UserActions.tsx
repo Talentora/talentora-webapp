@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import Profile from '@/components/Layout/Profile';
+import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
+
 
 interface UserActionsProps {
   user: any;
@@ -18,9 +20,11 @@ export function UserActions({ user }: UserActionsProps) {
         <Link href="/signup">
           <Button className="rounded-full px-8">Sign Up</Button>
         </Link>
+        <ThemeToggle />
       </div>
     );
   }
 
   return <Profile />;
+  
 } 

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { ApplicantCandidate } from '@/types/merge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getEvaluation } from '@/utils/supabase/queries';
 
 interface ApplicantSummaryProps {
@@ -53,44 +52,43 @@ export default function ApplicantSummary({ ApplicantCandidate }: ApplicantSummar
     return <div>No evaluation data found.</div>;
   }
   
-
   const { emotion_eval, interview_summary, text_eval } = evaluationData;
 
   return (
     <div className="grid grid-cols-2 gap-4">
       {/* Interview Summary */}
-            <Card className="flex-1 border border-gray-200 p-4 col-span-2">
-        <CardHeader>
-          <CardTitle>Interview Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="flex-1 p-4 col-span-2">
+        <div className="mb-4">
+          <h2 className="text-xl font-bold">Interview Summary</h2>
+        </div>
+        <div>
           {interview_summary ? (
             <pre className="whitespace-pre-wrap break-words">{interview_summary.summary_text}</pre>
           ) : (
             <p>No Interview Summary Available</p>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
       {/* Emotion Evaluation */}
-      <Card className="flex-1 border border-gray-200 p-4">
-        <CardHeader>
-          <CardTitle>Emotion Evaluation</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="flex-1 p-4">
+        <div className="mb-4">
+          <h2 className="text-xl font-bold">Emotion Evaluation</h2>
+        </div>
+        <div>
           {emotion_eval ? (
             <pre className="whitespace-pre-wrap break-words">{JSON.stringify(emotion_eval, null, 2)}</pre>
           ) : (
             <p>No Emotion Evaluation Data Available</p>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Text Evaluation */}
-      <Card className="flex-1 border border-gray-200 p-4">
-        <CardHeader>
-          <CardTitle>Text Evaluation</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="flex-1 p-4">
+        <div className="mb-4">
+          <h2 className="text-xl font-bold">Text Evaluation</h2>
+        </div>
+        <div>
           {text_eval ? (
             <>
             <div className="mb-4">
@@ -106,27 +104,27 @@ export default function ApplicantSummary({ ApplicantCandidate }: ApplicantSummar
               <p>{text_eval.pref_avg_score}</p>
             </div>
             <div className="mb-4">
-          <h3 className="text-lg font-semibold">Minimum Qualification Scores</h3>
-          <ul className="list-disc ml-5">
-            {text_eval.min_qual_scores.map((score: number, index: number) => (
-              <li key={index}>{score}</li>
-            ))}
-          </ul>
-        </div>
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold">Preferred Qualification Scores</h3>
-          <ul className="list-disc ml-5">
-            {text_eval.pref_qual_scores.map((score:any, index:any) => (
-              <li key={index}>{score}</li>
-            ))}
-          </ul>
-        </div>
-          </>
+              <h3 className="text-lg font-semibold">Minimum Qualification Scores</h3>
+              <ul className="list-disc ml-5">
+                {text_eval.min_qual_scores.map((score: number, index: number) => (
+                  <li key={index}>{score}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold">Preferred Qualification Scores</h3>
+              <ul className="list-disc ml-5">
+                {text_eval.pref_qual_scores.map((score:any, index:any) => (
+                  <li key={index}>{score}</li>
+                ))}
+              </ul>
+            </div>
+            </>
           ) : (
             <p>No Text Evaluation Data Available</p>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

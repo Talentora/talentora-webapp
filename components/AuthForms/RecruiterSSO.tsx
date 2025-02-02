@@ -40,10 +40,10 @@ export default function RecruiterSSO() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-8 items-center justify-between p-8">
+    <div className="flex flex-col md:flex-row gap-8 items-center justify-between p-8 border shadow-lg rounded-xl">
       <div className="flex-1 max-w-md">
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-2">Welcome Back, Recruiter!</h2>
+          <h2 className="text-2xl font-bold mb-2">Welcome Back!</h2>
           <p className="text-muted-foreground">
             Sign in with your organization's SSO to access your recruiting dashboard.
           </p>

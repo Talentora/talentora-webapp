@@ -173,14 +173,14 @@ const Sidebar = () => {
       <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
         <CommandInput 
           placeholder="Type a command or search..."
-          className="border-border text-foreground placeholder:text-muted-foreground"
+          className="border-border text-white "
         />
         <CommandList className="bg-background">
           {searchItems.map((group) => (
             <CommandGroup 
               key={group.group} 
               heading={group.group}
-              className="text-foreground bg-background"
+              className="text-white bg-background"
             >
               {group.items
                 .filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -190,11 +190,11 @@ const Sidebar = () => {
                     <CommandItem
                       key={index}
                       onSelect={() => handleNavigation(item.href)}
-                      className="hover:bg-accent text-foreground flex items-center justify-between"
+                      className=" hover:bg-accent text-white flex items-center justify-between"
                     >
                       <div className="flex items-center">
                         <Icon className="mr-2 h-4 w-4 text-muted-foreground" />
-                        <span className="text-foreground">{item.name}</span>
+                        <span className="text-white">{item.name}</span>
                       </div>
                       {isRouteLoading && item.href === pathname && (
                         <Loader2 className="h-4 w-4 animate-spin text-muted-foreground ml-2" />
@@ -208,7 +208,7 @@ const Sidebar = () => {
       </CommandDialog>
 
       <SidebarComponent className={cn(
-        "bg-background text-foreground border-r border-border transition-all duration-300 ease-in-out z-50",
+        "bg-sidebar text-white border-r border-border transition-all duration-300 ease-in-out z-50",
         isSidebarOpen ? "w-50" : "w-20"
       )}>
         <NewSidebarHeader 
@@ -238,7 +238,7 @@ const Sidebar = () => {
               Jobs
             </SidebarLink>
             {isSidebarOpen && isJobsOpen && (
-              <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
+              <div className=" ml-4 mt-2 space-y-1 border-l-2 border-border">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
                     <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
@@ -266,10 +266,10 @@ const Sidebar = () => {
               Ora Scouts
             </SidebarLink>
             {isSidebarOpen && isScoutsOpen && (
-              <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
+              <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-3">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   </div>
                 ) : (
                   filteredItems

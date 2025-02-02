@@ -15,27 +15,27 @@ export function Hero() {
   };
 
   return (
-    <section className="container px-4 mx-auto">
+    <section className="container px-4 py-16 mx-auto">
       <div className="grid lg:grid-cols-2 gap-20 items-center">
         <div className="space-y-8">
-          <div className="inline-flex items-center rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm">
-            <span className="text-accent font-medium">✨ AI-Powered Video Interviews</span>
+          <div className="bg-background inline-flex items-center rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm">
+            <span className=" text-primary font-medium">✨ AI-Powered Video Interviews</span>
           </div>
           <h1 className="text-5xl font-bold leading-tight tracking-tighter lg:text-6xl xl:text-7xl">
             Hire the best talent{" "}
-            <span className="bg-gradient-to-r from-accent to-pink-600 bg-clip-text text-transparent">3x faster</span>
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">3x faster</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-[600px]">
             Our AI-powered platform conducts initial interviews, assesses candidates, and provides data-driven insights - all while you sleep.
           </p>
           <div className="flex flex-wrap gap-4">
-            <Button size="lg" className="bg-accent hover:bg-accent/90 text-lg">
+            <Button size="lg" className="bg-primary hover:bg-accent/90 text-lg">
               Start Free Trial
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-accent text-accent hover:bg-accent/5 text-lg group"
+              className="border-primary text-primary hover:bg-accent/5 text-lg group"
               onClick={handleVideoClick}
             >
               Watch Demo
@@ -73,29 +73,7 @@ export function Hero() {
             {/* Placeholder for actual video thumbnail */}
             <div className="w-full h-full bg-gradient-to-br from-accent/10 to-pink-50" />
           </div>
-          <Card className="relative mt-6 p-6 bg-white/90 backdrop-blur-sm shadow-xl rounded-2xl border-accent/10">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center">
-                <Brain className="w-6 h-6 text-accent" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold">Try it now</h3>
-                <p className="text-gray-600">Create your first AI interview</p>
-              </div>
-            </div>
-            <div className="mt-4 flex gap-4">
-              <Input
-                type="text"
-                placeholder="Enter your work email..."
-                className="w-full bg-white text-lg"
-              />
-              <Link href="/signup">
-                <Button className="bg-accent hover:bg-accent/90 whitespace-nowrap">
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-          </Card>
+         
         </div>
       </div>
     </section>

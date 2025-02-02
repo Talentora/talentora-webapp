@@ -20,7 +20,7 @@ export function SidebarHeader({ isSidebarOpen, setIsSidebarOpen }: SidebarHeader
       )} aria-label="Logo">
         <Image src={Logo} alt="Logo" width={32} height={32} />
         {isSidebarOpen && (
-          <h1 className="text-xl font-bold font-poppins text-foreground">
+          <h1 className="text-xl font-bold font-poppins text-white">
             Talent
             <span className="font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               ora

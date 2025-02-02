@@ -21,20 +21,24 @@ export default function SignUp() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <h1 className="text-4xl font-bold mb-4 text-gray-800">Sign Up</h1>
-      <h1 className="text-3xl font-bold mb-8 text-gray-800">
+      <h1 className="text-4xl font-bold mb-4">Sign Up</h1>
+      <h1 className="text-3xl font-bold mb-8 text-gray-600">
         Choose Your Role
       </h1>
       <div className="flex flex-col md:flex-row justify-center gap-6 w-full max-w-3xl">
         <div
+<<<<<<< HEAD
           className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-background shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
+=======
+          className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-ring border border-input shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
+>>>>>>> origin/main
             selectedType === 'recruiter'
               ? 'ring-2 ring-blue-500 bg-blue-50'
               : ''
           }`}
           onClick={() => handleUserTypeSelection('recruiter')}
         >
-          <h2 className="text-2xl font-semibold mb-2 text-gray-700">
+          <h2 className="text-2xl font-semibold mb-2">
             Recruiter
           </h2>
           <p className="text-center text-gray-600">
@@ -42,14 +46,18 @@ export default function SignUp() {
           </p>
         </div>
         <div
+<<<<<<< HEAD
           className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-background shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
+=======
+          className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-ring border border-input shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
+>>>>>>> origin/main
             selectedType === 'applicant'
               ? 'ring-2 ring-blue-500 bg-blue-50'
               : ''
           }`}
           onClick={() => handleUserTypeSelection('applicant')}
         >
-          <h2 className="text-2xl font-semibold mb-2 text-gray-700">
+          <h2 className="text-2xl font-semibold mb-2 ">
             Applicant
           </h2>
           <p className="text-center text-gray-600">

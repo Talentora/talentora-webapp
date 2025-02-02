@@ -1,8 +1,8 @@
-import { Brain, Zap, Users, Lock, BarChart, Clock } from 'lucide-react'
+import { Camera, Zap, Users, Lock, BarChart, Clock } from 'lucide-react'
 
 const features = [
   {
-    icon: Brain,
+    icon: Camera,
     title: "AI Video Interviews",
     description: "Automated interviews with natural conversation flow and real-time candidate assessment."
   },
@@ -39,10 +39,10 @@ export default function Features() {
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow border border-accent/20"
+              className="bg-background rounded-2xl p-5 shadow-lg hover:shadow-xl transition-shadow border border-accent/20"
             >
-              <feature.icon className="w-12 h-12 text-accent mb-6" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
+              <feature.icon className="w-12 h-12 text-primary mb-6" />
+              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
               <p className="text-gray-600">{feature.description}</p>
             </div>
           ))}

@@ -69,15 +69,15 @@ export default async function SignInPage({
   }
 
   return (
-    <div className="flex w-full flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen justify-center mx-auto">
       <div className="flex justify-center flex-1">
         <div className="flex flex-col justify-between max-w-5xl p-3 m-auto w-full">
-          <Card shadow className="w-full border-none">
-            <CardHeader>
+          <Card className="w-full border-none">
+            {/* <CardHeader>
               <CardTitle className="text-foreground text-center">
                 {role === 'recruiter' ? 'Recruiter Portal' : 'Sign In'}
               </CardTitle>
-            </CardHeader>
+            </CardHeader> */}
             <CardContent className="text-foreground">
               {role === 'recruiter' ? (
                 <RecruiterSSO />

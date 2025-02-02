@@ -20,6 +20,7 @@ module.exports = {
   			border: 'var(--border)',
   			input: 'var(--input)',
   			ring: 'var(--ring)',
+  			sidebar: 'var(--sidebar)',
   			background: 'var(--background)',
   			foreground: 'var(--foreground)',
   			primary: {
@@ -49,16 +50,6 @@ module.exports = {
   			card: {
   				DEFAULT: 'var(--card)',
   				foreground: 'var(--card-foreground)'
-  			},
-  			sidebar: {
-  				DEFAULT: 'hsl(var(--sidebar-background))',
-  				foreground: 'hsl(var(--sidebar-foreground))',
-  				primary: 'hsl(var(--sidebar-primary))',
-  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-  				accent: 'hsl(var(--sidebar-accent))',
-  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-  				border: 'hsl(var(--sidebar-border))',
-  				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
   		borderRadius: {

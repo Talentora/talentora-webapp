@@ -1,11 +1,10 @@
 import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
-import VideoTranscript from "./VideoTranscript";
+import VideoTranscript, { VideoTranscriptSkeleton } from "./VideoTranscript";
 import NewLexicalAnalysis from "./NewLexicalAnalysis";
 import EmotionalAnalysis from "./EmotionalAnalysis";
-import LexicalAnalysis from "./LexicalAnalysis";
 import AssessmentScores from "./AssessmentScores";
 import AssessmentSummary from "./AssessmentSummary";
-import { Skeleton } from "@/components/ui/skeleton";
+import ResumeViewer from "./ResumeViewer";
 
 interface AnalysisDisplayProps {
     portalProps: portalProps;
@@ -13,18 +12,21 @@ interface AnalysisDisplayProps {
 
 const AnalysisSkeleton = () => {
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-8">
+            {/* Assessment Summary and Scores */}
             <div className="grid grid-cols-4 gap-4">
                 <div className="col-span-3">
-                    <Skeleton className="h-[200px] w-full" />
+                    <AssessmentSummary.Skeleton />
                 </div>
                 <div className="col-span-1">
-                    <Skeleton className="h-[200px] w-full" />
+                    <AssessmentScores.Skeleton />
                 </div>
             </div>
-            <Skeleton className="h-[400px] w-full" />
-            <Skeleton className="h-[200px] w-full" />
-            <Skeleton className="h-[600px] w-full" />
+
+            <VideoTranscriptSkeleton />
+            <ResumeViewer.Skeleton />
+            <EmotionalAnalysis.Skeleton />
+            <NewLexicalAnalysis.Skeleton />
         </div>
     );
 };
@@ -44,9 +46,10 @@ const Page = ({ portalProps }: AnalysisDisplayProps) => {
                     <AssessmentScores aiSummary={AI_summary} />
                 </div>
             </div>
+            <VideoTranscript portalProps={portalProps} />
+            <ResumeViewer portalProps={portalProps} />
             <EmotionalAnalysis aiSummary={AI_summary} />
             <NewLexicalAnalysis aiSummary={AI_summary} />
-            <VideoTranscript aiSummary={AI_summary} />
         </div>
     );
 };
