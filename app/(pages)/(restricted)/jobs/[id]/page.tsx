@@ -19,6 +19,7 @@ export default function Page({ params }: JobPageProps) {
     refetchJob,
     refetchApplicants 
   } = useJob(jobId);
+  
 
 
 
@@ -28,17 +29,7 @@ export default function Page({ params }: JobPageProps) {
         <Alert intent="danger" title="Error">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
-        <Button 
-          onClick={() => {
-            refetchJob();
-            refetchApplicants();
-          }}
-          variant="outline"
-          className="flex items-center gap-2 mt-4"
-        >
-          <RefreshCcw className="h-4 w-4" />
-          Try Again
-        </Button>
+       
       </div>
     );
   }

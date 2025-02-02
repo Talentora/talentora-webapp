@@ -15,12 +15,11 @@
 
     /* Light theme specific */
     --background: #FFFFFF;
-    --sidebar: #1E1768; 
+    --sidebar: #574dc4;
     --foreground: #020817;
     --border: #E5E7EB;
     --input: #E5E7EB;
     --ring: #ffffff;
-    --sidebar: #574dc4;
 
     --primary: var(--primary-base);
     --primary-foreground: #F9FAFB;
@@ -42,12 +41,11 @@
   .dark {
     /* Dark theme specific */
     --background: #020817;
-    --sidebar: #1E1768; 
+    --sidebar: #1d166b;
     --foreground: #F9FAFB;
     --border: #1F2937;
     --input: #1F2937;
     --ring: #0b082b;
-    --sidebar: #1d166b;
 
     --primary: var(--primary-dark);
     --primary-foreground: #F9FAFB;
