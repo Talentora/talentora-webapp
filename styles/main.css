@@ -15,10 +15,11 @@
 
     /* Light theme specific */
     --background: #FFFFFF;
+    --sidebar: #1E1768; 
     --foreground: #020817;
     --border: #E5E7EB;
     --input: #E5E7EB;
-    --ring: #8B5CF6;
+    --ring: #ffffff;
     
     --primary: var(--primary-base);
     --primary-foreground: #F9FAFB;
@@ -40,10 +41,11 @@
   .dark {
     /* Dark theme specific */
     --background: #020817;
+    --sidebar: #1E1768; 
     --foreground: #F9FAFB;
     --border: #1F2937;
     --input: #1F2937;
-    --ring: #7C3AED;
+    --ring: #0b082b;
 
     --primary: var(--primary-dark);
     --primary-foreground: #F9FAFB;

@@ -49,7 +49,7 @@ export default function RecentApplicantsCard({ applicants, isLoading }: { applic
             <Skeleton className="h-2 w-24" />
           </div>
         ) : (
-          <ApplicantTable applicants={applicants} />
+          <ApplicantTable applicants={applicants} title={''} />
         )}
       </CardContent>
     </Card>

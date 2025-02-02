@@ -62,14 +62,14 @@ const ContactForm = () => {
         >
           <div className="grid md:grid-cols-2 gap-16">
             <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl font-bold mb-6">
                 Get in Touch
               </h2>
               <p className="text-gray-600 mb-8">
                 Have questions about our AI-powered recruitment solutions? We'd love to hear from you.
               </p>
               
-              <div className="bg-white p-6 rounded-lg shadow-sm space-y-4">
+              <div className="bg-background p-6 rounded-lg shadow-sm space-y-4">
                 <div className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-purple-600" />
                   <div>

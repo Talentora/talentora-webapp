@@ -17,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/utils/supabase/client';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
+import CreateScout from '@/components/ScoutLibrary/CreateScout';
 
 function LucideIcon({ icon }: { icon: string }) {
   switch (icon) {
@@ -112,10 +113,9 @@ const InterviewBot = ({ loading, botInfo, jobId, interviewConfig }: InterviewBot
 
   return (
     <div className="flex-1">
-      <Card className="p-5  border border-border shadow-3xl h-full">
+      <Card className="p-5 border border-border shadow-3xl h-full">
         <CardHeader>
           <div className="flex items-center justify-between gap-5">
-            <CardTitle className="text-xl font-semibold">Ora Scout</CardTitle>
             <Bot className="h-6 w-6 text-primary" />
           </div>
         </CardHeader>
