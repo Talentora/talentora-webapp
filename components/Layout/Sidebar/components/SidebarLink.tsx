@@ -25,18 +25,18 @@ export function SidebarLink({
   onDropdownClick 
 }: SidebarLinkProps) {
   return (
-    <div className="flex items-center rounded-lg hover:bg-ring">
+    <div className="flex items-center rounded-lg ">
       <div
         className={cn(
-          "hover:bg-accent/10 transition-colors flex-1 rounded-md",
+          " transition-colors flex-1 rounded-md",
           isActive && "bg-accent/20 font-semibold"
         )}
       >
-        <Link href={href} className="pl-4 flex  items-center gap-3 text-foreground p-2">
+        <Link href={href} className="pl-4 flex  items-center gap-3 text-white p-2">
           <Icon className={cn(
             "h-5 w-5",
-            isActive && "text-foreground",
-            !isActive && "text-muted-foreground"
+            isActive && "text-white",
+            !isActive && "text-white"
           )} />
           {isSidebarOpen && <span>{children}</span>}
         </Link>
@@ -46,12 +46,12 @@ export function SidebarLink({
           variant="ghost"
           size="sm"
           onClick={onDropdownClick}
-          className="ml-2 p-3 hover:bg-accent/10"
+          className="ml-2 p-3 "
         >
           {isDropdownOpen ? (
-            <ChevronUp className="h-4 w-4 text-muted-foreground" />
+            <ChevronUp className="h-4 w-4 text-white" />
           ) : (
-            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            <ChevronDown className="h-4 w-4 text-white" />
           )}
         </Button>
       )}
@@ -63,7 +63,7 @@ export function SubLink({ href, children }: { href: string; children: React.Reac
   return (
     <Link 
       href={href} 
-      className="block text-sm text-muted-foreground hover:text-foreground transition-colors py-1 pl-3"
+      className="block text-sm text-white transition-colors py-1 pl-3"
     >
       {children}
     </Link>

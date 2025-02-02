@@ -24,11 +24,11 @@ export function LogoSection() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 lg:gap-8 max-w-xs sm:max-w-2xl md:max-w-4xl lg:max-w-5xl mx-auto">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 lg:gap-8 max-w-xs sm:max-w-2xl md:max-w-3xl mx-auto">
         {integrations.map((integration, index) => (
           <div 
             key={index} 
-            className="flex items-center justify-center bg-background border border-input p-3 md:p-4 lg:p-6 rounded-lg md:rounded-xl shadow hover:shadow-lg transition-shadow duration-300"
+            className="flex items-center justify-center bg-white border border-input p-3 md:p-4 lg:p-6 rounded-lg md:rounded-xl shadow hover:shadow-lg transition-shadow duration-300"
           >
             <div className="relative w-full aspect-[3/2]">
               <Image 

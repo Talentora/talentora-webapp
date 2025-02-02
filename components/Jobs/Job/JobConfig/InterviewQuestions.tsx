@@ -1,6 +1,4 @@
-// components/Jobs/Job/InterviewQuestions.tsx
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, MessageSquare } from 'lucide-react';
+import { Loader2, MessageSquare, MoreHorizontal } from 'lucide-react';
 import { Tables } from '@/types/types_db';
 import { DialogHeader, DialogTitle, DialogContent, Dialog } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -25,25 +23,28 @@ const InterviewQuestions = ({ loading, interviewConfig, jobId, onQuestionsUpdate
 
   const handleCompletion = (isComplete: boolean) => {
     if (isComplete) {
-      setShowQuestionsDialog(false);
+      // setShowQuestionsDialog(false);
       onQuestionsUpdate?.();
     }
   };
 
-  const handleEditQuestions = () => {
+  const handleEditQuestions = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     setShowQuestionsDialog(true);
   };
 
   return (
     <>
-      <Card className="hover:bg-accent/50 transition-colors p-5  border border-border shadow-3xl h-full">
-        <CardHeader>
+      <div className="hover:bg-accent/50 transition-colors p-5 shadow-3xl h-full rounded-lg">
+        <div className="mb-6">
           <div className="flex items-center justify-between gap-5">
-            <CardTitle className="text-xl font-semibold">Interview Questions</CardTitle>
-            <MessageSquare className="h-6 w-6 text-primary" />
+            <h2 className="text-xl font-semibold">Interview Questions</h2>
+            <div className="flex items-center gap-2" onClick={handleEditQuestions}>
+              <MessageSquare className="h-6 w-6 text-primary" />
+            </div>
           </div>
-        </CardHeader>
-        <CardContent className="flex-1">
+        </div>
+        <div className="flex-1">
           {loading ? (
             <div className="flex justify-center items-center py-4">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -56,32 +57,46 @@ const InterviewQuestions = ({ loading, interviewConfig, jobId, onQuestionsUpdate
                 </p>
               </div>
               <Separator />
-              <div className="space-y-2">
+              <div className="space-y-4">
                 {interviewQuestions.slice(0, 2).map((question, index) => (
-                  <div key={index} className="flex items-center gap-4">
-                    <div className="flex flex-col">
-                      <span className="text-xs text-muted-foreground font-semibold">Question:</span>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {question.question.length > 50 ? `${question.question.substring(0, 50)}...` : question.question}
-                      </p>
+                  <div key={index} className="p-1 rounded-lg border border-border hover:bg-accent/50 transition-all">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-sm font-medium text-primary">{index + 1}</span>
+                      </div>
+                      <div className="flex-1">
+                        <span className="text-xs uppercase tracking-wider text-muted-foreground font-medium">Question</span>
+                        <p className="text-sm mt-1 leading-relaxed">
+                          {question.question.length > 50 ? `${question.question.substring(0, 50)}...` : question.question}
+                        </p>
+                      </div>
                     </div>
-                  
                   </div>
                 ))}
-                {interviewQuestions.length > 2 && (
-                  <p className="text-sm text-muted-foreground">
-                    ...
-                  </p>
-                )}
               </div>
-              <div className="">
-                <Button 
-                  onClick={() => setShowQuestionsDialog(true)}
-                >
+              {interviewQuestions.length > 2 && (
+                <div onClick={handleEditQuestions} className="p-1 rounded-lg border border-border hover:bg-accent/50 transition-all opacity-70">
+                  <div className="flex items-center justify-center py-2">
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="flex gap-1">
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        +{interviewQuestions.length - 2} additional questions
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* <div>
+                <Button onClick={handleEditQuestions}>
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Manage Questions
                 </Button>
-              </div>
+              </div> */}
             </div>
           ) : (
             <div className="flex flex-col items-center gap-3 py-4" onClick={handleEditQuestions}>
@@ -92,8 +107,8 @@ const InterviewQuestions = ({ loading, interviewConfig, jobId, onQuestionsUpdate
               </p>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <Dialog open={showQuestionsDialog} onOpenChange={setShowQuestionsDialog}>
         <DialogContent className="max-w-4xl">
@@ -102,7 +117,7 @@ const InterviewQuestions = ({ loading, interviewConfig, jobId, onQuestionsUpdate
           </DialogHeader>
           <QuestionSetup 
             jobId={jobId}
-            onCompletion={()=>{}}
+            onCompletion={handleCompletion}
             existingConfig={interviewConfig}
           />
         </DialogContent>
