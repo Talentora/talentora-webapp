@@ -233,7 +233,7 @@ const Sidebar = () => {
                     <CommandItem
                       key={index}
                       onSelect={() => handleNavigation(item.href)}
-                      className="hover:bg-accent text-foreground flex items-center justify-between"
+                      className=" hover:bg-accent text-foreground flex items-center justify-between"
                     >
                       <div className="flex items-center">
                         <Icon className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -250,15 +250,13 @@ const Sidebar = () => {
         </CommandList>
       </CommandDialog>
 
-      <SidebarComponent
-        className={cn(
-          'bg-background text-foreground border-r border-border transition-all duration-300 ease-in-out z-50',
-          isSidebarOpen ? 'w-50' : 'w-20'
-        )}
-      >
-        <NewSidebarHeader
-          isSidebarOpen={isSidebarOpen}
-          setIsSidebarOpen={setIsSidebarOpen}
+      <SidebarComponent className={cn(
+        "bg-ring text-foreground border-r border-border transition-all duration-300 ease-in-out z-50",
+        isSidebarOpen ? "w-50" : "w-20"
+      )}>
+        <NewSidebarHeader 
+          isSidebarOpen={isSidebarOpen} 
+          setIsSidebarOpen={setIsSidebarOpen} 
         />
 
         <SidebarContent className="flex-1 p-2">
@@ -288,7 +286,7 @@ const Sidebar = () => {
               Jobs
             </SidebarLink>
             {isSidebarOpen && isJobsOpen && (
-              <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
+              <div className=" ml-4 mt-2 space-y-1 border-l-2 border-border">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
                     <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
@@ -316,10 +314,10 @@ const Sidebar = () => {
               Ora Scouts
             </SidebarLink>
             {isSidebarOpen && isScoutsOpen && (
-              <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
+              <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-3">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   </div>
                 ) : (
                   filteredItems

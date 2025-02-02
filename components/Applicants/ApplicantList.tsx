@@ -57,9 +57,8 @@ export default function ApplicantList() {
             </div>
           ) : (
             <ApplicantTable
-              applicants={filteredApplicants}
-              disablePortal={false}
-            />
+                applicants={filteredApplicants}
+                disablePortal={false} title={''}            />
           )}
         </div>
       </main>

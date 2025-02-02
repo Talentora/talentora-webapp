@@ -3,14 +3,26 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ApplicantTable from '@/components/Applicants/ApplicantTable';
 import { Button } from '@/components/ui/button';
 import ApplicationsGraph from './ApplicantStatistics/ApplicationsGraph';
-import { ApplicantCandidate } from '@/types/merge';
-interface RecentApplicantsProps {
-  applicants: ApplicantCandidate[];
+import { ApplicantCandidate, Job } from '@/types/merge';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import InviteApplicants from '@/components/Jobs/Job/JobConfig/InviteApplicants';
+import { Tables } from '@/types/types_db';
+import { Loader2 } from 'lucide-react';
+
+interface CombinedJob {
+  mergeJob: Job;
+  supabaseJob: Tables<'jobs'> | undefined;
 }
 
-export function RecentApplicants({ applicants }: RecentApplicantsProps) {
+interface RecentApplicantsProps {
+  applicants: ApplicantCandidate[];
+  jobs: CombinedJob[];
+  isLoading?: boolean;
+}
+
+export function RecentApplicants({ applicants, jobs, isLoading }: RecentApplicantsProps) {
   const [visible, setVisible] = useState(true);
-  console.log("applicants",applicants);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
 
   const toggleVisibility = () => {
     setVisible(!visible);
@@ -19,13 +31,26 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
   return (
     <Card>
       <CardHeader>
-        <div className="flex justify-between items-center">
+        <div className="p-4 flex justify-between items-center">
           <CardTitle className="text-xl font-semibold">
             Recent Applicants
           </CardTitle>
-          <Button variant="outline" size="sm" onClick={toggleVisibility}>
-            {visible ? 'Hide' : 'Show'} Applicants
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              className="bg-primary text-white" 
+              onClick={() => setInviteModalOpen(true)}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                'Invite Candidates'
+              )}
+            </Button>
+            <Button variant="outline" size="sm" onClick={toggleVisibility}>
+              {visible ? 'Hide' : 'Show'} Applicants
+            </Button>
+          </div>
         </div>
       </CardHeader>
       {visible && (
@@ -33,11 +58,20 @@ export function RecentApplicants({ applicants }: RecentApplicantsProps) {
           <Card className="p-5 border-none shadow-3xl h-full">
             <ApplicationsGraph applicants={applicants} />
             <div className="mt-6">
-              <ApplicantTable applicants={applicants} disablePortal={true} />
+              <ApplicantTable applicants={applicants} disablePortal={true} title={''} />
             </div>
           </Card>
         </CardContent>
       )}
+      <Dialog open={inviteModalOpen} onOpenChange={setInviteModalOpen}>
+        <DialogContent>
+          <InviteApplicants 
+            jobs={jobs} 
+            singleJobFlag={false} 
+            applicants={applicants} 
+          />
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

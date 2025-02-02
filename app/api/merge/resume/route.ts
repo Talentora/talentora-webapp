@@ -6,7 +6,7 @@ export async function GET(req: Request) {
   const accountToken = await getMergeApiKey();
   const baseURL = `https://api.merge.dev/api/ats/v1/attachments`;
   const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
-  console.log(apiKey, accountToken);
+
 
   if (!apiKey || !accountToken) {
     return NextResponse.json(

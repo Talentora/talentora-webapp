@@ -16,8 +16,8 @@ export function Integration() {
       <div className="relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
-            <div className="inline-flex items-center rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm">
-              <span className="text-accent font-medium">Enterprise Ready</span>
+            <div className="inline-flex items-center rounded-full border border-green-500/20 bg-green-500/5 px-4 py-1.5 text-sm">
+              <span className="text-green-500 font-medium">Enterprise Ready</span>
             </div>
             <h2 className="text-4xl font-bold"> 
               Seamlessly fits into your workflow
@@ -39,7 +39,7 @@ export function Integration() {
                   View ATS Partners
                 </Button>
               </Link>
-              <Button variant="outline" className="border-accent text-accent hover:bg-accent/5">
+              <Button  className="border-accent hover:bg-accent/5">
                 Schedule Demo
               </Button>
             </div>

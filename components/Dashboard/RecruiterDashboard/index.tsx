@@ -109,8 +109,8 @@ export default function RecruiterDashboard() {
                   applicants={applicants}
                 />
               )}
-              <Button
-                className="bg-primary-dark text-white"
+              <Button 
+                className="bg-primary text-white" 
                 onClick={() => setInviteModalOpen(true)}
                 disabled={jobsLoading || applicantsLoading}
               >

@@ -1,6 +1,6 @@
 import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AISummaryApplicant, OverallSummary, TextEvaluation, EmotionEvaluation } from "@/types/analysis";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface AssessmentSummaryProps {
     aiSummary: portalProps['AI_summary'];
@@ -19,24 +19,30 @@ const Page = ({ aiSummary }: AssessmentSummaryProps) => {
     const overallSummary = typedSummary?.overall_summary;
 
     return (
-        <div>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Assessment Summary</CardTitle>
-                </CardHeader>
-                <CardContent className={!typedSummary || !overallSummary ? "" : "p-4"}>
-                    {!typedSummary || !overallSummary ? (
-                        <div>No summary available</div>
-                    ) : (
-                        <div className="space-y-4">
-                            <p className="text-gray-700">{overallSummary.explanation}</p>
-                         
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+        <div className="space-y-4">
+            <h2 className="text-2xl font-semibold">Assessment Summary</h2>
+            <div className="p-4">
+                {!typedSummary || !overallSummary ? (
+                    <div>No summary available</div>
+                ) : (
+                    <div className="space-y-4">
+                        <p className="text-gray-700">{overallSummary.explanation}</p>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }
+
+const AssessmentSummarySkeleton = () => {
+    return (
+        <div className="space-y-4">
+            <h2 className="text-2xl font-semibold">Assessment Summary</h2>
+            <Skeleton className="h-[200px] w-full" />
+        </div>
+    );
+};
+
+Page.Skeleton = AssessmentSummarySkeleton;
 
 export default Page;

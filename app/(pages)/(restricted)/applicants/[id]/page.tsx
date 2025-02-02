@@ -158,7 +158,10 @@ export default function ApplicantPage({
           </div>
         </div>
       ) : (
-        <ApplicantPortal portalProps={portalProps} />
+        <div>
+         
+          <ApplicantPortal portalProps={portalProps} />
+        </div>
       )}
     </div>
   );
