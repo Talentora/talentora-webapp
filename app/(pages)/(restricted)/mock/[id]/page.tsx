@@ -31,7 +31,7 @@ type ScoutProps = {
   job: Job;
   company: Company;
   mergeJob: MergeJob;
-  application: Application | null;
+  application: Application;
   enableRecording: boolean;
   mock: boolean;
   demo: boolean;
@@ -39,7 +39,7 @@ type ScoutProps = {
 };
 
 export default function Mock({ params }: { params: { id: string } }) {
-  const jobId = params.id;
+  const applicationId = params.id;
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -49,11 +49,35 @@ export default function Mock({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     const fetchAllData = async () => {
+      if (!applicationId) {
+        setError('Application ID is required');
+        setIsLoading(false);
+        return;
+      }
+
       try {
+        // Fetch initial application and token
+        const { token: account_token, company: tokenCompany } =
+          await getAccountTokenFromApplication(applicationId);
+        if (!account_token) {
+          throw new Error('Failed to get account token');
+        }
+
+        const application = await getApplication(applicationId);
+        if (!application) {
+          throw new Error('Application not found');
+        }
+
+        // Fetch job related data
+        const jobId = application.job_id;
+        if (!jobId) {
+          throw new Error('Job ID not found in application');
+        }
+
         const [config, job, mergeJob] = await Promise.all([
           getJobInterviewConfig(jobId),
           getJob(jobId),
-          fetchJobDetails(jobId, '')
+          fetchJobDetails(jobId, account_token)
         ]);
 
         if (!config || !job || !mergeJob) {
@@ -83,11 +107,11 @@ export default function Mock({ params }: { params: { id: string } }) {
           scout,
           companyContext,
           mergeJob,
-          application: null,
+          application,
           enableRecording: false,
-          mock: false,
+          mock: true,
           demo: false,
-          scoutTest: true
+          scoutTest: false
         });
       } catch (err) {
         console.error('Failed to fetch data:', err);
@@ -99,7 +123,7 @@ export default function Mock({ params }: { params: { id: string } }) {
 
     setIsLoading(true);
     fetchAllData();
-  }, [jobId]);
+  }, [applicationId]);
 
   return (
     <div className="flex flex-col items-center min-h-screen">

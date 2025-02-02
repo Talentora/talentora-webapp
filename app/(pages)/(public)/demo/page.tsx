@@ -24,6 +24,7 @@ type ScoutProps = {
   mergeJob: any;
   application: any;
   enableRecording: boolean;
+  mock: boolean;
   demo: boolean;
   scoutTest: boolean;
 };
@@ -99,7 +100,7 @@ export default function Demo({ params }: { params: { id: string } }) {
             'Look for applicants who are describe their experiences in a detailed, coherent manner',
           role: 'Demo recruiter',
           voice: {
-            id: '79a125e8-cd45-4c13-8a67-188112f4dd22',
+            id: 'e00d0e4c-a5c8-443f-a8a3-473eb9a62355',
             name: 'Friendly Sidekick',
             gender: 'masculine',
             language: 'en',
@@ -167,6 +168,7 @@ export default function Demo({ params }: { params: { id: string } }) {
           mergeJob: null,
           application: null,
           enableRecording: false,
+          mock: false,
           demo: true,
           scoutTest: false
         });
