@@ -3,12 +3,35 @@ import TimelineGraph from "./TimelineGraph";
 import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface EmotionalAnalysisProps {
     aiSummary: portalProps['AI_summary'] | null;
 }
 
-const Page = ({ aiSummary }: EmotionalAnalysisProps) => {
+const EmotionalAnalysisSkeleton = () => {
+    return (
+        <div className="space-y-4">
+            <h2 className="text-2xl font-semibold">Emotional Analysis</h2>
+            <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                    <h3 className="text-lg font-medium">Facial Expressions</h3>
+                    <Skeleton className="h-[200px] w-full" />
+                </div>
+                <div className="space-y-2">
+                    <h3 className="text-lg font-medium">Voice Analysis</h3>
+                    <Skeleton className="h-[200px] w-full" />
+                </div>
+                <div className="space-y-2">
+                    <h3 className="text-lg font-medium">Language Analysis</h3>
+                    <Skeleton className="h-[200px] w-full" />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const EmotionalAnalysis = ({ aiSummary }: EmotionalAnalysisProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const typedSummary = aiSummary as unknown as AISummaryApplicant;
     const emotionalAnalysis = typedSummary?.emotion_eval;
@@ -36,4 +59,6 @@ const Page = ({ aiSummary }: EmotionalAnalysisProps) => {
     )
 }
 
-export default Page;
+EmotionalAnalysis.Skeleton = EmotionalAnalysisSkeleton;
+
+export default EmotionalAnalysis;

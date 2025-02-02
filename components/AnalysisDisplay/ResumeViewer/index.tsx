@@ -11,7 +11,16 @@ interface ResumeViewerProps {
     portalProps: portalProps;
 }
 
-const Page = ({ portalProps }: ResumeViewerProps) => {
+const ResumeViewerSkeleton = () => {
+    return (
+        <div className="space-y-4">
+            <h2 className="text-2xl font-semibold">Resume</h2>
+            <Skeleton className="h-[600px] w-full" />
+        </div>
+    );
+};
+
+const ResumeViewer = ({ portalProps }: ResumeViewerProps) => {
     const [isExpanded, setIsExpanded] = useState(true);
     const [displayUrl, setDisplayUrl] = useState<string | null>(null);
     const { mergeApplicant } = portalProps;
@@ -159,4 +168,6 @@ const Page = ({ portalProps }: ResumeViewerProps) => {
     );
 };
 
-export default Page;
+ResumeViewer.Skeleton = ResumeViewerSkeleton;
+
+export default ResumeViewer;

@@ -13,9 +13,11 @@ const ApplicantInfoSkeleton = () => (
   <div className="space-y-4">
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="flex-1">
+        <h2 className="text-lg font-semibold mb-2">Applicant Information</h2>
         <Skeleton className="h-[200px] w-full" />
       </div>
       <div className="w-64">
+        <h2 className="text-lg font-semibold mb-2">Actions</h2>
         <Skeleton className="h-[200px] w-full" />
       </div>
     </div>
@@ -25,13 +27,31 @@ const ApplicantInfoSkeleton = () => (
 const PlaceholderAnalysis = () => (
   <div className="flex flex-col gap-4">
     <div className="grid grid-cols-2 gap-4">
-      <Skeleton className="h-48 w-full" />
-      <Skeleton className="h-48 w-full" />
+      <div>
+        <h2 className="text-lg font-semibold mb-2">Assessment Summary</h2>
+        <Skeleton className="h-48 w-full" />
+      </div>
+      <div>
+        <h2 className="text-lg font-semibold mb-2">Assessment Scores</h2>
+        <Skeleton className="h-48 w-full" />
+      </div>
     </div>
-    <Skeleton className="h-64 w-full" />
-    <Skeleton className="h-64 w-full" />
-    <Skeleton className="h-64 w-full" />
-    <Skeleton className="h-96 w-full" />
+    <div>
+      <h2 className="text-lg font-semibold mb-2">Video Transcript</h2>
+      <Skeleton className="h-64 w-full" />
+    </div>
+    <div>
+      <h2 className="text-lg font-semibold mb-2">Resume</h2>
+      <Skeleton className="h-64 w-full" />
+    </div>
+    <div>
+      <h2 className="text-lg font-semibold mb-2">Emotional Analysis</h2>
+      <Skeleton className="h-64 w-full" />
+    </div>
+    <div>
+      <h2 className="text-lg font-semibold mb-2">Lexical Analysis</h2>
+      <Skeleton className="h-96 w-full" />
+    </div>
   </div>
 );
 

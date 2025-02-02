@@ -2,13 +2,30 @@ import { AISummaryApplicant } from "@/types/analysis";
 import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface AssessmentSummaryProps {
     aiSummary: portalProps['AI_summary'] | null;
 }
 
-const Page = ({ aiSummary }: AssessmentSummaryProps) => {
-    const [isExpanded, setIsExpanded] = useState(true);
+const LexicalAnalysisSkeleton = () => {
+    return (
+        <div className="space-y-4">
+            <h2 className="text-2xl font-semibold">Lexical Analysis</h2>
+            <div className="grid grid-cols-4 gap-4">
+                <div className="col-span-3">
+                    <Skeleton className="h-[200px] w-full" />
+                </div>
+                <div>
+                    <Skeleton className="h-[200px] w-full" />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const NewLexicalAnalysis = ({ aiSummary }: AssessmentSummaryProps) => {
+    const [isExpanded, setIsExpanded] = useState(false);
     const typedSummary = aiSummary as unknown as AISummaryApplicant;
     const textEval = typedSummary?.text_eval;
     
@@ -61,4 +78,6 @@ const Page = ({ aiSummary }: AssessmentSummaryProps) => {
     )
 }
 
-export default Page;
+NewLexicalAnalysis.Skeleton = LexicalAnalysisSkeleton;
+
+export default NewLexicalAnalysis;

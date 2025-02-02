@@ -1,5 +1,6 @@
 import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
 import { AISummaryApplicant, OverallSummary, TextEvaluation, EmotionEvaluation } from "@/types/analysis";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface AssessmentSummaryProps {
     aiSummary: portalProps['AI_summary'];
@@ -32,5 +33,16 @@ const Page = ({ aiSummary }: AssessmentSummaryProps) => {
         </div>
     )
 }
+
+const AssessmentSummarySkeleton = () => {
+    return (
+        <div className="space-y-4">
+            <h2 className="text-2xl font-semibold">Assessment Summary</h2>
+            <Skeleton className="h-[200px] w-full" />
+        </div>
+    );
+};
+
+Page.Skeleton = AssessmentSummarySkeleton;
 
 export default Page;
