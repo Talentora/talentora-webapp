@@ -30,6 +30,7 @@ interface ScoutProps {
   transcript: TranscriptData[];
   application: Application | null;
   enableRecording: boolean;
+  mock: boolean;
   demo: boolean;
   scoutTest: boolean;
   // transcript: { speaker: string; text: string }[];
@@ -60,12 +61,10 @@ export default function App({
   transcript,
   application,
   enableRecording,
+  mock,
   demo,
   scoutTest
 }: ScoutProps) {
-  const { user } = useUser();
-  const role = user?.data?.user_metadata?.role;
-
   const voiceClient = useRTVIClient()!;
   const transportState = useRTVIClientTransportState();
 
@@ -124,11 +123,9 @@ export default function App({
   async function leave() {
     await voiceClient.disconnect();
     if (demo) {
-      if (role === 'applicant') {
-        router.push('/dashboard');
-      } else {
-        router.push('/');
-      }
+      router.push('/');
+    } else if (mock) {
+      router.push('/mock/conclusion');
     } else if (scoutTest) {
       router.push('/jobs');
     } else {

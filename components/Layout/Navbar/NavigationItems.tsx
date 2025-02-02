@@ -71,8 +71,13 @@ function SolutionsMenu() {
         Solutions
       </NavigationMenuTrigger>
       <NavigationMenuContent>
+<<<<<<< HEAD
         <div className="grid gap-3 p-2 w-[400px] md:w-[500px] lg:w-[600px] bg-popover rounded-lg shadow-md">
           <div className="grid grid-cols-2 gap-2 text-black">
+=======
+        <div className="grid gap-3 p-6 w-[400px] md:w-[500px] lg:w-[600px] bg-white rounded-lg">
+          <div className="grid grid-cols-2 gap-4">
+>>>>>>> 14dcb55 (added mock/test/demo rooms)
             <NavigationLink
               href="/product#ai-interviews"
               icon={<BarChart2 className="h-5 w-5 mr-2 text-purple-600" />}
@@ -111,7 +116,11 @@ function ResourcesMenu() {
         Resources
       </NavigationMenuTrigger>
       <NavigationMenuContent>
+<<<<<<< HEAD
         <div className="grid gap-3 p-2 w-[400px] bg-popover rounded-lg shadow-md">
+=======
+        <div className="grid gap-3 p-6 w-[400px] bg-white rounded-lg">
+>>>>>>> 14dcb55 (added mock/test/demo rooms)
           <NavigationLink
             href="/blog"
             icon={<BookOpen className="h-5 w-5 mr-2 text-indigo-600" />}

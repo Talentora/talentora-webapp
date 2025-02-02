@@ -59,7 +59,10 @@ export default function RecruiterDashboard() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { data: applicants = [], isLoading: applicantsLoading } = useQuery({
+  // Use React Query for data fetching with caching
+  const { data: applicants = [], isLoading: applicantsLoading } = useQuery<
+    ApplicantCandidate[]
+  >({
     queryKey: ['applications'],
     queryFn: fetchApplications,
     staleTime: 5 * 60 * 1000
@@ -71,7 +74,9 @@ export default function RecruiterDashboard() {
     staleTime: 5 * 60 * 1000
   });
 
-  const { data: supabaseJobs = [], isLoading: supabaseJobsLoading } = useQuery({
+  const { data: supabaseJobs = [], isLoading: supabaseJobsLoading } = useQuery<
+    Tables<'jobs'>[]
+  >({
     queryKey: ['supabaseJobs'],
     queryFn: fetchSupabaseJobs,
     staleTime: 5 * 60 * 1000

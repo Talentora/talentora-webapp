@@ -2,8 +2,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { RTVIClientAudio, RTVIClientProvider } from 'realtime-ai-react';
 import {
+  BotLLMTextData,
   LLMHelper,
   Participant,
+  RTVIActionRequestData,
   RTVIClient,
   RTVIEvent,
   RTVIMessage
@@ -27,6 +29,7 @@ interface BotProps {
   mergeJob: MergeJob | null;
   application: Tables<'applications'> | null;
   enableRecording: boolean;
+  mock: boolean;
   demo: boolean;
   scoutTest: boolean;
 }
@@ -68,6 +71,7 @@ export default function Bot(botProps: BotProps) {
     scout,
     companyContext,
     enableRecording,
+    mock,
     demo,
     scoutTest
   } = botProps;
@@ -118,7 +122,6 @@ export default function Bot(botProps: BotProps) {
             companyContext: companyContext,
             emotion: emotion,
             enableRecording: enableRecording,
-            scoutTest: scoutTest,
             demo: demo
           }
         }
@@ -205,20 +208,18 @@ export default function Bot(botProps: BotProps) {
     );
   }, [botProps, isUserReady, showSplash]);
 
-  if (showSplash) {
+  if (showSplash && company && mergeJob) {
     return (
       <Splash
         handleReady={() => setShowSplash(false)}
         company={company}
         mergeJob={mergeJob}
         enableRecording={enableRecording}
-        demo={demo}
-        scoutTest={scoutTest}
       />
     );
   }
 
-  if (!demo && (!job || !company || !jobInterviewConfig)) {
+  if (!demo && !mock && (!job || !company || !jobInterviewConfig)) {
     return null;
   }
 

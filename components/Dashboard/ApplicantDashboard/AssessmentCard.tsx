@@ -18,7 +18,6 @@ interface AssessmentCardProps {
 }
 
 const AssessmentCard = memo<AssessmentCardProps>(({ application }) => {
-  const status = application.status;
   // Memoize the formatted date to prevent recalculation
   const formattedDate = useMemo(() => {
     return new Date(application.created_at).toLocaleDateString('en-US', {
@@ -30,13 +29,13 @@ const AssessmentCard = memo<AssessmentCardProps>(({ application }) => {
 
   // Memoize the status class to prevent recalculation
   const statusClass = useMemo(() => {
-    return status === 'complete'
+    return application.status === 'complete'
       ? 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium'
       : 'bg-red-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium';
-  }, [status]);
+  }, [application.status]);
 
   return (
-    <Card className="bg-background border p-5 border-border shadow-sm relative">
+    <Card className="border p-5 border-border shadow-sm relative">
       <div className="absolute top-4 right-4">
         <Dialog>
           <DialogTrigger asChild>
@@ -44,7 +43,7 @@ const AssessmentCard = memo<AssessmentCardProps>(({ application }) => {
               <Info className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[800px]">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>Job Details</DialogTitle>
             </DialogHeader>
@@ -69,25 +68,10 @@ const AssessmentCard = memo<AssessmentCardProps>(({ application }) => {
               </div>
               <div>
                 <h4 className="font-semibold">Status</h4>
-                <span
-                  className={cn(
-                    'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium',
-                    status === 'complete'
-                      ? 'bg-green-100 text-green-800'
-                      : status === 'incomplete'
-                        ? 'bg-red-100 text-yellow-800'
-                        : 'bg-red-100 text-red-800'
-                  )}
-                >
-                  {status}
-                </span>
+                <p className="text-sm text-muted-foreground">
+                  {application.status}
+                </p>
               </div>
-            </div>
-            <div>
-              <h4 className="font-semibold">Status</h4>
-              <p className="text-sm text-muted-foreground">
-                {application.status}
-              </p>
             </div>
           </DialogContent>
         </Dialog>
@@ -119,45 +103,15 @@ const AssessmentCard = memo<AssessmentCardProps>(({ application }) => {
               Start Interview
             </Button>
           </Link>
-          {/* <Link href={`/mock/${application.application_data.id}`}>
+          <Link href={`/mock/${application.application_data.id}`}>
             <Button
               className="text-[#6366f1] bg-white hover:bg-gray-100 border border-[#6366f1] hover:border-[#5558e6]"
               // disabled={application.status === 'complete'}
             >
               Mock Interview
             </Button>
-          </Link> */}
+          </Link>
         </div>
-
-        {/* <CardHeader>
-          <CardTitle className="text-xl font-semibold">
-            {application.name}
-          </CardTitle>
-          <div className="flex flex-row gap-1">
-            <p className="text-sm text-muted-foreground">
-              {application.company?.name}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Posted: {formattedDate}
-            </p>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-            Application Status:
-            <span className={statusClass}>{status}</span>
-          </div>
-          <div className="flex gap-3">
-            <Link href={`/assessment/${application.application_data.id}`}>
-              <Button
-                className="bg-[#6366f1] hover:bg-[#5558e6]"
-                disabled={status === 'complete'}
-              >
-                {status === 'complete' ? 'View Results' : 'Start Interview'}
-              </Button>
-            </Link>
-          </div>
-        </CardContent> */}
       </CardContent>
     </Card>
   );
