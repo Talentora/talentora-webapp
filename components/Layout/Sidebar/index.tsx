@@ -2,8 +2,35 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2, ChevronDown, ChevronUp, Search, CreditCard, Box, Mail, BookOpen, Building2, Phone } from 'lucide-react';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import {
+  BriefcaseIcon,
+  Users,
+  User,
+  Sparkles,
+  HomeIcon,
+  LogOut,
+  SettingsIcon,
+  ChevronLeft,
+  ChevronRight,
+  Sun,
+  Moon,
+  Loader2,
+  ChevronDown,
+  ChevronUp,
+  Search,
+  CreditCard,
+  Box,
+  Mail,
+  BookOpen,
+  Building2,
+  Phone
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem
+} from '@/components/ui/dropdown-menu';
 import Logo from '@/components/ui/icons/Logo';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
@@ -19,10 +46,22 @@ import {
   SidebarProvider,
   Sidebar as SidebarComponent
 } from '@/components/ui/sidebar';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
 import { useSidebarData } from '@/hooks/useSidebarData';
-import { Command, CommandInput, CommandList, CommandGroup, CommandItem, CommandDialog } from '@/components/ui/command';
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandGroup,
+  CommandItem,
+  CommandDialog
+} from '@/components/ui/command';
 import { ScoutWithJobs } from '@/types/custom';
 import { SidebarHeader as NewSidebarHeader } from './components/SidebarHeader';
 import { CommandSearch } from './components/CommandSearch';
@@ -72,16 +111,11 @@ const Sidebar = () => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setIsSearchOpen((open) => !open);
-
-
       }
-
     };
     document.addEventListener('keydown', down);
     return () => document.removeEventListener('keydown', down);
   }, []);
-
-
 
   // Generate search items from all available pages/resources
   const searchItems = [
@@ -91,7 +125,12 @@ const Sidebar = () => {
         { type: 'page', name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
         { type: 'page', name: 'Jobs', href: '/jobs', icon: BriefcaseIcon },
         { type: 'page', name: 'Applicants', href: '/applicants', icon: Users },
-        { type: 'page', name: 'Settings', href: '/settings', icon: SettingsIcon },
+        {
+          type: 'page',
+          name: 'Settings',
+          href: '/settings',
+          icon: SettingsIcon
+        },
         { type: 'page', name: 'Blog', href: '/blog', icon: BookOpen },
         { type: 'page', name: 'Contact', href: '/contact', icon: Mail },
         { type: 'page', name: 'Pricing', href: '/pricing', icon: CreditCard },
@@ -103,7 +142,7 @@ const Sidebar = () => {
       group: 'Suggested',
       items: [
         ...(jobs?.map((job: Job) => ({
-          type: 'job', 
+          type: 'job',
           name: job.name || 'Untitled Position',
           href: `/jobs/${job.id}`,
           icon: BriefcaseIcon
@@ -116,7 +155,7 @@ const Sidebar = () => {
         })) || []),
         ...(scouts?.map((scout: ScoutWithJobs) => ({
           type: 'scout',
-          name: scout.name || 'Untitled scout', 
+          name: scout.name || 'Untitled scout',
           href: `/scouts/${scout.id}`,
           icon: Sparkles
         })) || [])
@@ -124,16 +163,18 @@ const Sidebar = () => {
     }
   ];
 
-
-  const filteredItems = searchItems.flatMap(group => 
-    group.items.filter(item =>
+  const filteredItems = searchItems.flatMap((group) =>
+    group.items.filter((item) =>
       item.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
         // setIsUserMenuOpen(false);
       }
     };
@@ -171,19 +212,21 @@ const Sidebar = () => {
   return (
     <SidebarProvider defaultOpen className="=">
       <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
-        <CommandInput 
+        <CommandInput
           placeholder="Type a command or search..."
           className="border-border text-foreground placeholder:text-muted-foreground"
         />
         <CommandList className="bg-background">
           {searchItems.map((group) => (
-            <CommandGroup 
-              key={group.group} 
+            <CommandGroup
+              key={group.group}
               heading={group.group}
               className="text-foreground bg-background"
             >
               {group.items
-                .filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                .filter((item) =>
+                  item.name.toLowerCase().includes(searchQuery.toLowerCase())
+                )
                 .map((item, index) => {
                   const Icon = item.icon;
                   return (
@@ -207,29 +250,36 @@ const Sidebar = () => {
         </CommandList>
       </CommandDialog>
 
-      <SidebarComponent className={cn(
-        "bg-background text-foreground border-r border-border transition-all duration-300 ease-in-out z-50",
-        isSidebarOpen ? "w-50" : "w-20"
-      )}>
-        <NewSidebarHeader 
-          isSidebarOpen={isSidebarOpen} 
-          setIsSidebarOpen={setIsSidebarOpen} 
+      <SidebarComponent
+        className={cn(
+          'bg-background text-foreground border-r border-border transition-all duration-300 ease-in-out z-50',
+          isSidebarOpen ? 'w-50' : 'w-20'
+        )}
+      >
+        <NewSidebarHeader
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
         />
 
         <SidebarContent className="flex-1 p-2">
           <div className="space-y-2">
-            <CommandSearch 
+            <CommandSearch
               isSidebarOpen={isSidebarOpen}
               searchItems={searchItems}
             />
 
-            <SidebarLink href="/dashboard" icon={HomeIcon} isActive={pathname === '/dashboard'} isSidebarOpen={isSidebarOpen}>
+            <SidebarLink
+              href="/dashboard"
+              icon={HomeIcon}
+              isActive={pathname === '/dashboard'}
+              isSidebarOpen={isSidebarOpen}
+            >
               Dashboard
             </SidebarLink>
-            <SidebarLink 
-              href="/jobs" 
-              icon={BriefcaseIcon} 
-              isActive={pathname === '/jobs'} 
+            <SidebarLink
+              href="/jobs"
+              icon={BriefcaseIcon}
+              isActive={pathname === '/jobs'}
               isSidebarOpen={isSidebarOpen}
               hasDropdown={true}
               isDropdownOpen={isJobsOpen}
@@ -245,7 +295,7 @@ const Sidebar = () => {
                   </div>
                 ) : (
                   filteredItems
-                    .filter(item => item.type === 'job')
+                    .filter((item) => item.type === 'job')
                     .map((job, index) => (
                       <SubLink key={index} href={job.href}>
                         {job.name}
@@ -254,10 +304,10 @@ const Sidebar = () => {
                 )}
               </div>
             )}
-            <SidebarLink 
-              href="/scouts" 
-              icon={Sparkles} 
-              isActive={pathname === '/scouts'} 
+            <SidebarLink
+              href="/scouts"
+              icon={Sparkles}
+              isActive={pathname === '/scouts'}
               isSidebarOpen={isSidebarOpen}
               hasDropdown={true}
               isDropdownOpen={isScoutsOpen}
@@ -273,7 +323,7 @@ const Sidebar = () => {
                   </div>
                 ) : (
                   filteredItems
-                    .filter(item => item.type === 'scout')
+                    .filter((item) => item.type === 'scout')
                     .map((scout, index) => (
                       <SubLink key={index} href={scout.href}>
                         {scout.name}
@@ -282,10 +332,10 @@ const Sidebar = () => {
                 )}
               </div>
             )}
-            <SidebarLink 
-              href="/applicants" 
-              icon={Users} 
-              isActive={pathname === '/applicants'} 
+            <SidebarLink
+              href="/applicants"
+              icon={Users}
+              isActive={pathname === '/applicants'}
               isSidebarOpen={isSidebarOpen}
               hasDropdown={true}
               isDropdownOpen={isApplicantsOpen}
@@ -301,7 +351,7 @@ const Sidebar = () => {
                   </div>
                 ) : (
                   filteredItems
-                    .filter(item => item.type === 'applicant')
+                    .filter((item) => item.type === 'applicant')
                     .map((applicant, index) => (
                       <SubLink key={index} href={applicant.href}>
                         {applicant.name}
@@ -310,10 +360,10 @@ const Sidebar = () => {
                 )}
               </div>
             )}
-            <SidebarLink 
-              href="/settings" 
-              icon={SettingsIcon} 
-              isActive={pathname.startsWith('/settings')} 
+            <SidebarLink
+              href="/settings"
+              icon={SettingsIcon}
+              isActive={pathname.startsWith('/settings')}
               isSidebarOpen={isSidebarOpen}
               hasDropdown={true}
               isDropdownOpen={isSettingsOpen}
@@ -323,18 +373,10 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isSettingsOpen && (
               <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
-                <SubLink href="/settings?tab=account">
-                  Account
-                </SubLink>
-                <SubLink href="/settings?tab=company">
-                  Company
-                </SubLink>
-                <SubLink href="/settings?tab=billing">
-                  Billing
-                </SubLink>
-                <SubLink href="/settings?tab=team">
-                  Team
-                </SubLink>
+                <SubLink href="/settings?tab=account">Account</SubLink>
+                <SubLink href="/settings?tab=company">Company</SubLink>
+                <SubLink href="/settings?tab=billing">Billing</SubLink>
+                <SubLink href="/settings?tab=team">Team</SubLink>
                 <SubLink href="/settings?tab=integrations">
                   Integration Status
                 </SubLink>
@@ -346,7 +388,6 @@ const Sidebar = () => {
         <SidebarFooter className="p-4">
           <ThemeToggle />
         </SidebarFooter>
-
       </SidebarComponent>
     </SidebarProvider>
   );

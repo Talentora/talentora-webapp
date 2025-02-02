@@ -6,15 +6,21 @@ import { VoiceVisualizer } from 'realtime-ai-react';
 import { RTVIClientVideo } from 'realtime-ai-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from '@/components/ui/select';
 import { Loader2 } from 'lucide-react';
 
-const Configure: React.FC<{ onStartInterview: () => void }> = ({ onStartInterview }) => {
+const Configure: React.FC<{ onStartInterview: () => void }> = ({
+  onStartInterview
+}) => {
   const [showCameraSelection, setShowCameraSelection] = useState(false);
   const [loading, setLoading] = useState(false);
   const voiceClient = useRTVIClient()!;
-
-
   const {
     availableMics,
     selectedMic,
@@ -28,7 +34,7 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({ onStartIntervie
     if (selectedMic) {
       updateMic(selectedMic.deviceId);
     } else {
-      console.warn("No microphone selected");
+      console.warn('No microphone selected');
     }
     if (selectedCam) {
       updateCam(selectedCam.deviceId);
@@ -65,24 +71,30 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({ onStartIntervie
             {availableMics.length === 0 ? (
               <div className="flex flex-col items-center space-y-4">
                 <Loader2 className="h-8 w-8 animate-spin" />
-                <p className="text-sm text-gray-500">Loading audio devices...</p>
-                
+                <p className="text-sm text-gray-500">
+                  Loading audio devices...
+                </p>
               </div>
             ) : (
               <>
-                <Select value={selectedMic?.deviceId || ''} onValueChange={updateMic}>
+                <Select
+                  value={selectedMic?.deviceId || ''}
+                  onValueChange={updateMic}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a microphone" />
                   </SelectTrigger>
                   <SelectContent>
-                    {availableMics.map((mic: { deviceId: string; label: string }) => (
-                      <SelectItem key={mic.deviceId} value={mic.deviceId}>
-                        {mic.label}
-                      </SelectItem>
-                    ))}
+                    {availableMics.map(
+                      (mic: { deviceId: string; label: string }) => (
+                        <SelectItem key={mic.deviceId} value={mic.deviceId}>
+                          {mic.label}
+                        </SelectItem>
+                      )
+                    )}
                   </SelectContent>
                 </Select>
-                
+
                 {selectedMic && (
                   <div className="space-y-4">
                     <div className="flex justify-center">
@@ -106,21 +118,30 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({ onStartIntervie
             {availableCams.length === 0 ? (
               <div className="flex flex-col items-center space-y-4">
                 <Loader2 className="h-8 w-8 animate-spin" />
-                <p className="text-sm text-gray-500">Loading video devices...</p>
-                
+                <p className="text-sm text-gray-500">
+                  Loading video devices...
+                </p>
               </div>
             ) : (
               <>
-                <Select value={selectedCam?.deviceId || ''} onValueChange={updateCam}>
+                <Select
+                  value={selectedCam?.deviceId || ''}
+                  onValueChange={updateCam}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a camera" />
                   </SelectTrigger>
                   <SelectContent>
-                    {availableCams.map((camera: { deviceId: string; label: string }) => (
-                      <SelectItem key={camera.deviceId} value={camera.deviceId}>
-                        {camera.label}
-                      </SelectItem>
-                    ))}
+                    {availableCams.map(
+                      (camera: { deviceId: string; label: string }) => (
+                        <SelectItem
+                          key={camera.deviceId}
+                          value={camera.deviceId}
+                        >
+                          {camera.label}
+                        </SelectItem>
+                      )
+                    )}
                   </SelectContent>
                 </Select>
 

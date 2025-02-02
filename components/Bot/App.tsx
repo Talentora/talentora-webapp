@@ -21,13 +21,17 @@ type Company = Tables<'companies'>;
 type Application = Tables<'applications'>;
 interface ScoutProps {
   scout: ScoutConfig;
-  jobInterviewConfig: JobInterviewConfig;
+  jobInterviewConfig: JobInterviewConfig | null;
   companyContext: CompanyContext;
-  job: Job;
+  job: Job | null;
   company: Company;
-  mergeJob: MergeJob;
+  mergeJob: MergeJob | null;
   transcript: TranscriptData[];
-  application: Application;
+  application: Application | null;
+  enableRecording: boolean;
+  mock: boolean;
+  demo: boolean;
+  scoutTest: boolean;
   // transcript: { speaker: string; text: string }[];
 }
 
@@ -35,34 +39,46 @@ type TranscriptData = {
   // speaker: string;
   text: string;
   role: 'bot' | 'user';
-}
-
+};
 
 // import { TranscriptData } from 'realtime-ai';
 import { useRouter } from 'next/navigation';
 const status_text = {
-  idle: "Initializing...",
-  initialized: "Start",
-  authenticating: "Requesting bot...",
-  connecting: "Connecting...",
+  idle: 'Initializing...',
+  initialized: 'Start',
+  authenticating: 'Requesting bot...',
+  connecting: 'Connecting...'
 };
 
-export default function App({ scout, jobInterviewConfig, companyContext, job, company, mergeJob, transcript,application }: ScoutProps) {
+export default function App({
+  scout,
+  jobInterviewConfig,
+  companyContext,
+  job,
+  company,
+  mergeJob,
+  transcript,
+  application,
+  enableRecording,
+  mock,
+  demo,
+  scoutTest
+}: ScoutProps) {
   const voiceClient = useRTVIClient()!;
   const transportState = useRTVIClientTransportState();
-  
-  const [appState, setAppState] = useState<'idle' | 'ready' | 'connecting' | 'connected'>('idle');
+
+  const [appState, setAppState] = useState<
+    'idle' | 'ready' | 'connecting' | 'connected'
+  >('idle');
   const [error, setError] = useState<RTVIError | null>(null);
   const [startAudioOff, setStartAudioOff] = useState(false);
   const mountedRef = useRef<boolean>(false);
-  const applicationId = application.id;
+  const applicationId = application?.id;
 
   const router = useRouter();
 
-
-
   voiceClient.on(RTVIEvent.Error, (message: RTVIMessage) => {
-    console.log("Error", message);
+    console.log('Error', message);
     setError(message as unknown as RTVIError);
   });
 
@@ -75,41 +91,45 @@ export default function App({ scout, jobInterviewConfig, companyContext, job, co
 
   useEffect(() => {
     switch (transportState) {
-      case "initialized":
-        setAppState("ready");
+      case 'initialized':
+        setAppState('ready');
         break;
-      case "authenticating":
-      case "connecting":
-        setAppState("connecting");
+      case 'authenticating':
+      case 'connecting':
+        setAppState('connecting');
         break;
-      case "connected":
-      case "ready":
-        setAppState("connected");
+      case 'connected':
+      case 'ready':
+        setAppState('connected');
         break;
       default:
-        setAppState("idle");
+        setAppState('idle');
     }
   }, [transportState]);
-
-
-
 
   async function start() {
     if (!voiceClient) return;
 
     // Join the session
     try {
-        await voiceClient.connect();  
+      await voiceClient.connect();
     } catch (e) {
-        setError((e as RTVIError));
-        voiceClient.disconnect();
+      setError(e as RTVIError);
+      voiceClient.disconnect();
     }
   }
 
   async function leave() {
     await voiceClient.disconnect();
-    router.push('/assessment/conclusion');
-
+    if (demo) {
+      router.push('/');
+    } else if (mock) {
+      router.push('/mock/conclusion');
+    } else if (scoutTest) {
+      router.push('/jobs');
+    } else {
+      router.push('/assessment/conclusion');
+    }
   }
 
   // Error: show full screen message
@@ -121,24 +141,22 @@ export default function App({ scout, jobInterviewConfig, companyContext, job, co
     );
   }
 
-
   if (appState === 'connected') {
     return (
       <div>
         <VideoInterviewSession
           onLeave={leave}
-        job={mergeJob}
-        company={company}
-        startAudioOff={startAudioOff}
+          job={mergeJob}
+          company={company}
+          startAudioOff={startAudioOff}
           transcript={transcript}
+          demo={demo}
         />
       </div>
     );
   }
 
   const isReady = appState === 'ready';
-
-  console.log("Voice Client", voiceClient);
 
   return (
     <Card className="animate-appear max-w-lg mx-auto mt-8">

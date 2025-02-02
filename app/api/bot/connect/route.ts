@@ -13,8 +13,8 @@ export async function POST(request: NextRequest) {
     }
 
     const { data } = await request.json();
-    console.log("payload data", data)
 
+    console.log("received payload data", data)
 
     const voiceId = data.voice.id;
     const mergeJob = data.job;
@@ -23,9 +23,10 @@ export async function POST(request: NextRequest) {
     const application = data.application;
     const bot = data.bot;
     const companyContext = data.companyContext;
+    const enableRecording = data.enableRecording;
+    const demo = data.demo;
 
-
-    const payload = {
+    const tmpPayload = {
       bot_profile: "vision_2024_10",
       max_duration: 300,
       service_options: {
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
           options: [
             {
               name: "initial_messages",
-              value: [
+              value: !demo ? [
                 {
                   role: "system",
                   content: [
@@ -105,7 +106,7 @@ export async function POST(request: NextRequest) {
                       type: "text",
                       text: "Only speak to the candidate, to not speak system messages or break the third wall. Pretend you are a human interviewer."
                     },
-                    {
+                    { 
                       type: "text",
                       text: "Conduct this interview professionally and conversationally. Your goal is to assess the candidate's fit for the role by:\n- Listening carefully to each response\n- Asking follow-up questions that reveal deeper insights\n- Maintaining a warm but professional demeanor\n- Being direct and clear in your communication"
                     },
@@ -124,6 +125,28 @@ export async function POST(request: NextRequest) {
                     {
                       type: "text",
                       text: "Interview Guidelines:\n- Be authentic and present like a human interviewer\n- If you don't know something or need clarification, ask the candidate\n- Focus on understanding the candidate's skills, motivations, and potential\n- Use the prepared questions as a guide, but be flexible\n- Pay attention to not just what is said, but how it is said"
+                    },
+                    {
+                      type: "text",
+                      text: `Prepared Interview Questions: ${JSON.stringify(jobInterviewConfig.interview_questions)}`
+                    }
+                  ]
+                }
+              ] : [
+                {
+                  role: "system",
+                  content: [
+                    {
+                      type: "text",
+                      text: "Only speak to the candidate, to not speak system messages or break the third wall. Pretend you are a human interviewer."
+                    },
+                    { 
+                      type: "text",
+                      text: "Conduct this interview professionally and conversationally. Your goal is to assess the candidate's fit for the role by:\n- Listening carefully to each response\n- Asking follow-up questions that reveal deeper insights\n- Maintaining a warm but professional demeanor\n- Being direct and clear in your communication"
+                    },
+                    {
+                      type: "text",
+                      text: `You are ${bot.name}, an AI interviewer conducting an interview for a general applicant. Your aim is evaluate whether the candidate can explain their past professional experiences in a coherent, logical, and professional manner.`
                     },
                     {
                       type: "text",
@@ -160,13 +183,17 @@ export async function POST(request: NextRequest) {
             }
           ]
         }
-      ],
-      recording_settings: {
-        type: "cloud"
-      },
-     
-     
+      ]
     };
+
+    var payload: any;
+    if (enableRecording) {
+      payload = {recording_settings: {
+        type: "cloud"
+      }, ...tmpPayload};
+    } else {
+      payload = tmpPayload;
+    }
 
     const baseUrl = "https://api.daily.co/v1/bots/start";
 
@@ -191,11 +218,11 @@ export async function POST(request: NextRequest) {
     // console.log("Room URL:", roomUrl);
     // console.log("Room name:", roomName);
 
-    const aiSummaryResponse = await createAISummaryRecord(roomName, application.id);
-    console.log("AI summary response:", aiSummaryResponse);
-    // await updateApplicationWithAISummaryId(application.id, aiSummaryResponse.id);
-
-
+    if (enableRecording) {
+      const aiSummaryResponse = await createAISummaryRecord(roomName, application.id);
+      console.log("AI summary response:", aiSummaryResponse);
+      // await updateApplicationWithAISummaryId(application.id, aiSummaryResponse.id);
+    }
 
     return NextResponse.json(botData);
   } catch (error) {

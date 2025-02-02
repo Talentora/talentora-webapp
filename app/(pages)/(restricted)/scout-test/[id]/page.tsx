@@ -31,15 +31,15 @@ type ScoutProps = {
   job: Job;
   company: Company;
   mergeJob: MergeJob;
-  application: Application;
+  application: Application | null;
   enableRecording: boolean;
   mock: boolean;
   demo: boolean;
   scoutTest: boolean;
 };
 
-export default function Assessment({ params }: { params: { id: string } }) {
-  const applicationId = params.id;
+export default function Mock({ params }: { params: { id: string } }) {
+  const jobId = params.id;
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -49,35 +49,11 @@ export default function Assessment({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     const fetchAllData = async () => {
-      if (!applicationId) {
-        setError('Application ID is required');
-        setIsLoading(false);
-        return;
-      }
-
       try {
-        // Fetch initial application and token
-        const { token: account_token, company: tokenCompany } =
-          await getAccountTokenFromApplication(applicationId);
-        if (!account_token) {
-          throw new Error('Failed to get account token');
-        }
-
-        const application = await getApplication(applicationId);
-        if (!application) {
-          throw new Error('Application not found');
-        }
-
-        // Fetch job related data
-        const jobId = application.job_id;
-        if (!jobId) {
-          throw new Error('Job ID not found in application');
-        }
-
         const [config, job, mergeJob] = await Promise.all([
           getJobInterviewConfig(jobId),
           getJob(jobId),
-          fetchJobDetails(jobId, account_token)
+          fetchJobDetails(jobId, '')
         ]);
 
         if (!config || !job || !mergeJob) {
@@ -107,11 +83,11 @@ export default function Assessment({ params }: { params: { id: string } }) {
           scout,
           companyContext,
           mergeJob,
-          application,
-          enableRecording: true,
+          application: null,
+          enableRecording: false,
           mock: false,
           demo: false,
-          scoutTest: false
+          scoutTest: true
         });
       } catch (err) {
         console.error('Failed to fetch data:', err);
@@ -123,7 +99,7 @@ export default function Assessment({ params }: { params: { id: string } }) {
 
     setIsLoading(true);
     fetchAllData();
-  }, [applicationId]);
+  }, [jobId]);
 
   return (
     <div className="flex flex-col items-center min-h-screen">
@@ -146,7 +122,7 @@ export default function Assessment({ params }: { params: { id: string } }) {
               }
             </p>
             <p className="mt-2 text-sm text-gray-500 text-center">
-              Please wait while we prepare your interview
+              Please wait while we prepare your mock interview
             </p>
           </div>
         </div>

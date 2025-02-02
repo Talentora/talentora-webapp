@@ -38,7 +38,7 @@ type ScoutProps = {
   scoutTest: boolean;
 };
 
-export default function Assessment({ params }: { params: { id: string } }) {
+export default function Mock({ params }: { params: { id: string } }) {
   const applicationId = params.id;
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -108,8 +108,8 @@ export default function Assessment({ params }: { params: { id: string } }) {
           companyContext,
           mergeJob,
           application,
-          enableRecording: true,
-          mock: false,
+          enableRecording: false,
+          mock: true,
           demo: false,
           scoutTest: false
         });
@@ -146,7 +146,7 @@ export default function Assessment({ params }: { params: { id: string } }) {
               }
             </p>
             <p className="mt-2 text-sm text-gray-500 text-center">
-              Please wait while we prepare your interview
+              Please wait while we prepare your mock interview
             </p>
           </div>
         </div>
