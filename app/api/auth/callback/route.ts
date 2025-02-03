@@ -34,3 +34,9 @@ export async function GET(request: NextRequest) {
     )
   );
 }
+
+// Add POST handler to handle callback requests that use POST.
+export async function POST(request: NextRequest) {
+  // For simplicity, we forward POST requests to the GET handler.
+  return GET(request);
+}

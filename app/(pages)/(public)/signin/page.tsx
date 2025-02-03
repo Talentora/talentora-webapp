@@ -25,39 +25,39 @@ export default function SignIn() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <h1 className="text-4xl font-bold mb-4">Sign In</h1>
-      <h1 className="text-3xl font-bold mb-8 ">
+      <h1 className="text-4xl font-bold mb-4 text-foreground">Sign In</h1>
+      <h1 className="text-3xl font-bold mb-8 text-foreground">
         Choose Your Role
       </h1>
       <div className="flex flex-col md:flex-row justify-center gap-6 w-full max-w-3xl">
         <div
-          className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-background shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
+          className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg border shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
             selectedType === 'recruiter'
-              ? 'ring-2 ring-blue-500 bg-blue-50'
-              : ''
+              ? 'border-2 border-primary'
+              : 'border-border'
           }`}
           onClick={() => handleUserTypeSelection('recruiter')}
         >
-          <h2 className="text-2xl font-semibold mb-2">
+          <h2 className="text-2xl font-semibold mb-2 text-foreground">
             Recruiter
           </h2>
-          <p className="text-center text-gray-600 mb-4">
+          <p className="text-center text-muted-foreground mb-4">
             I'm looking to hire talent
           </p>
-          <span className="text-sm text-blue-600">Sign in with SSO</span>
+          <span className="text-sm text-primary">Sign in with SSO</span>
         </div>
         <div
-          className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-background shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
+          className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg border shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
             selectedType === 'applicant'
-              ? 'ring-2 ring-blue-500 bg-blue-50'
-              : ''
+              ? 'border-2 border-primary'
+              : 'border-border'
           }`}
           onClick={() => handleUserTypeSelection('applicant')}
         >
-          <h2 className="text-2xl font-semibold mb-2">
+          <h2 className="text-2xl font-semibold mb-2 text-foreground">
             Applicant
           </h2>
-          <p className="text-center text-gray-600">
+          <p className="text-center text-muted-foreground">
             I'm looking for job opportunities
           </p>
         </div>
