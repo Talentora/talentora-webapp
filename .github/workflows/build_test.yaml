@@ -34,7 +34,7 @@ env:
   NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
   NEXT_PUBLIC_MANUAL_ROOM_ENTRY: ${{ secrets.NEXT_PUBLIC_MANUAL_ROOM_ENTRY }}
   NEXT_PUBLIC_GROQ_API_KEY: ${{ secrets.NEXT_PUBLIC_GROQ_API_KEY }}
-
+  INTERVIEW_BOT_URL: "https://talentora-interviewbot-production.up.railway.app"
 
   # MERGE
   NEXT_PUBLIC_MERGE_API_KEY: ${{ secrets.NEXT_PUBLIC_MERGE_API_KEY }}

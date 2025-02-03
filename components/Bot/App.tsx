@@ -141,7 +141,7 @@ export default function App({ scout, jobInterviewConfig, companyContext, job, co
   console.log("Voice Client", voiceClient);
 
   return (
-    <Card className="animate-appear max-w-lg mx-auto mt-8">
+    <Card className="animate-appear max-w-lg mx-auto mt-8 p-5 bg-background">
       <CardHeader>
         <CardTitle>Configuration</CardTitle>
       </CardHeader>

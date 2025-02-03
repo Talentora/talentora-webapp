@@ -57,7 +57,7 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({ onStartIntervie
   return (
     <div className="flex flex-col items-center h-screen">
       {!showCameraSelection ? (
-        <Card className="w-full border border-gray-200 p-4 ">
+        <Card className="w-full  border-gray-200 p-4 border-none">
           <CardHeader>
             <CardTitle>Select Your Microphone</CardTitle>
           </CardHeader>
@@ -98,7 +98,7 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({ onStartIntervie
           </CardContent>
         </Card>
       ) : (
-        <Card className="w-full border border-gray-200 p-4">
+        <Card className="w-full border-none p-4">
           <CardHeader>
             <CardTitle>Select Your Camera</CardTitle>
           </CardHeader>
