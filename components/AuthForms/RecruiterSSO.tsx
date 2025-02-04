@@ -16,25 +16,33 @@ export default function RecruiterSSO() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    console.log("Signing in with SSO for domain:", domain);
+    console.log("[SSO] Starting SSO flow for domain:", domain);
 
     try {
-      const redirectTo = window.location.origin + '/auth/callback';
+      const redirectTo = `${window.location.origin}/api/auth/callback`;
+      console.log("[SSO] Using callback URL:", redirectTo);
+      
       const { data, error } = await supabase.auth.signInWithSSO({
         domain: domain,
-        options: { redirectTo }
+        options: { 
+          redirectTo
+        }
       });
-      console.log("data", data);
-      console.log("error", error);
+
+      console.log("[SSO] SignInWithSSO response - data:", data);
+      console.log("[SSO] SignInWithSSO response - error:", error);
 
       if (error) throw error;
       
       // If there's a URL to redirect to, redirect there
       if (data?.url) {
+        console.log("[SSO] Redirecting to SSO URL:", data.url);
         window.location.href = data.url;
+      } else {
+        console.error("[SSO] No URL returned from signInWithSSO");
       }
     } catch (error) {
-      console.error('SSO error:', error);
+      console.error('[SSO] Error:', error);
     } finally {
       setIsSubmitting(false);
     }
