@@ -42,6 +42,27 @@ const ApplicantCountCard = ({ factWindow,isLoading ,applicants}: { factWindow: n
     );
   }
 
+  if (!applicants || applicants.length === 0) {
+    return (
+      <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-primary-dark/50 bg-card">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">
+            Total Applicants This Month
+          </CardTitle>
+          <Link href="/applicants">
+            <UsersIcon className="h-4 w-4 text-muted-foreground cursor-pointer" />
+          </Link>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">0</div>
+          <p className="text-xs text-muted-foreground">
+            No applicants yet
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const currentMonth = new Date().getMonth();
   const factWindowDaysAgo = new Date();
   factWindowDaysAgo.setDate(factWindowDaysAgo.getDate() - factWindow);
@@ -75,6 +96,3 @@ const ApplicantCountCard = ({ factWindow,isLoading ,applicants}: { factWindow: n
 };
 
 export default ApplicantCountCard;
-
-
-

@@ -164,7 +164,7 @@ export default function JobConfig({
         )}
 
         <div className={` ${needsConfiguration ? 'opacity-50 pointer-events-none filter blur-sm' : ''}`}>
-          {setupFlags.isReady === "yes" && (
+          {/* {setupFlags.isReady === "yes" && ( */}
             <div className="flex flex-col col-span-1 mb-4">
               <InterviewStatus 
                 jobId={jobId}
@@ -176,7 +176,7 @@ export default function JobConfig({
                 applicants={applicants}
               />
             </div>
-          )}
+          {/* )} */}
 
           <div className="grid grid-cols-1 gap-4 h-full">
             <InterviewQuestions 
