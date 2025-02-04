@@ -5,22 +5,26 @@ import { Plus, Navigation, MoreHorizontal } from 'lucide-react';
 import { Job } from '@/types/merge';
 import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
+import { Badge } from '@/components/ui/badge'; // Assuming you have a Badge component
 
 export default function ActiveJobsCard({ jobs, isLoading }: { jobs: Job[], isLoading: boolean  }) {
 
   return (
-    <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-primary-dark/50 bg-card">
-      <CardHeader className="flex flex-row justify-between items-center">
-        <Link href="/jobs" className="text-sm text-muted-foreground hover:text-primary">
-        <CardTitle>Active Job Titles</CardTitle>
-        </Link>
-      </CardHeader>
-      <CardContent>
+<Card className="p-5 bg-background rounded-2xl shadow-md shadow-[#5650F0]/20">
+  <CardHeader className="flex flex-row justify-between items-center">
+    <CardTitle className="ml-4 pt-6 text-xl">Active Job Titles</CardTitle>
+    <Link href="/jobs" className="text-sm hover:text-primary">
+      <p className="text-md mt-2 pr-4 text-primary">View All</p>
+    </Link>
+  </CardHeader>
+  <CardContent>
+    {/* Job list content here */}
+        
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="gap-4">
             {[1, 2, 3, 4, 5].map((index) => (
-              <div key={index} className="p-4 border border-gray-200 rounded-lg">
-                <Skeleton className="h-4 w-32 mb-2" />
+              <div key={index} className="p-4 border border-input rounded-lg">
+                <Skeleton className="h-4 w-32 mb-8" />
                 <Skeleton className="h-2 w-24" />
               </div>
             ))}
@@ -32,7 +36,7 @@ export default function ActiveJobsCard({ jobs, isLoading }: { jobs: Job[], isLoa
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="gap-4 ">
             {jobs
               ?.slice(0, 5)
               .map((job, index) => <JobItem key={index} job={job} />)}
@@ -47,15 +51,12 @@ export default function ActiveJobsCard({ jobs, isLoading }: { jobs: Job[], isLoa
 function JobItem({ job }: { job: Job }) {
   return (
     <Link href={`/jobs/${job.id}`}>
-      <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-        <h3 className="font-semibold text-sm mb-1 truncate">{job.name}</h3>
-        <p className="text-xs text-gray-500 mb-2 truncate">
+    <div className="group p-5 bg-background rounded-2xl shadow-md mb-4 shadow-[#5650F0]/20 transition duration-300 ease-in-out hover:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
+    <h3 className="font-semibold text-sm mb-1 truncate">{job.name}</h3>
+        <p className="pt-2 text-xs text-gray-500 mb-2 truncate">
           {Array.isArray(job.departments)
             ? job.departments.slice(0, 3).map((dept: any, index: number) => (
-                <span key={index}>
-                  {typeof dept === 'object' ? dept.name : dept}
-                  {index < Math.min(job.departments.length, 3) - 1 && ', '}
-                </span>
+                <Badge key={index} className={`font-normal mr-2 ${getBadgeColor(index)}`}>{typeof dept === 'object' ? dept.name : dept}</Badge>
               ))
             : 'No departments'}
         </p>
@@ -64,11 +65,21 @@ function JobItem({ job }: { job: Job }) {
   );
 }
 
+// Helper function to get different colors for badges (Blue, Purple, Pink-based)
+function getBadgeColor(index: number) {
+  const colors = [
+    'border border-blue-600 bg-blue-500/20 text-blue-600', // Blue
+    'border border-purple-600 bg-purple-500/20 text-purple-600', // Purple
+    'border border-pink-600 bg-pink-500/20 text-pink-500', // Pink
+  ];
+  return colors[index % colors.length]; // Cycle through colors if there are more than 3 departments
+}
+
 function MoreJobsLink({ count }: { count: number }) {
   return (
     <Link href="/jobs" className="col-span-2">
       <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center">
-        <Navigation className="h-4 w-4 mr-2" />
+        <Navigation className="h-4 w-4 mt-4 mr-2" />
         <span className="text-sm font-medium">
           View {count} more job{count !== 1 ? 's' : ''}
         </span>
