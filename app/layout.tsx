@@ -47,18 +47,19 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <ReactQueryProvider>
             <div className="flex">
               {isSidebarVisible && (
-                <aside className="fixed h-full z-[100]">
+                <aside className="fixed h-full z-[100] w-1/6">
                   <Sidebar />
                 </aside>
               )}
               <main
                 id="skip"
-                className={` flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]${
-                  isSidebarVisible ? ' ml-60' : ' w-full'
+                className={`flex-1 min-h-[calc(100dvh-15rem)] md:min-h-[calc(100dvh-16rem)] ${
+                  isSidebarVisible ? 'ml-[16.666667%]' : ''
+                } ${
+                  isSidebarVisible ? 'w-[83.333333%]' : 'w-full'
                 }`}
               >
                 <Navbar visible={isSidebarVisible} />
-               
                 {isSidebarVisible && <BreadcrumbsContainer />}
                 <Suspense fallback={<Loading />}>
                   {children}

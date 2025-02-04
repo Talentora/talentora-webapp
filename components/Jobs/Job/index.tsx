@@ -1,15 +1,13 @@
 'use client';
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { useMemo } from 'react';
+
 import AssessmentCount from './JobConfig/AssessmentCount';
 
 import { JobHeader } from './JobHeader';
 import { RecentApplicants } from './RecentApplicants';
 import { EnrichedJob } from '../JobList';
 import JobConfig from './JobConfig';
-import InterviewQuestions from './InterviewQuestions';
 import { ApplicantCandidate } from '@/types/merge';
 import { 
   JobHeaderSkeleton, 
@@ -23,7 +21,6 @@ interface JobProps {
   applicants?: ApplicantCandidate[];
   jobLoading: boolean;
   applicantsLoading: boolean;
-  // combinedJob: any;
 }
 
 export default function JobPage({ 

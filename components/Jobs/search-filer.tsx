@@ -62,9 +62,7 @@ export function SearchFilter({ jobs, searchTerm, onSearch }: SearchFilterProps) 
           onKeyDown={handleKeyDown}
           className="max-w-sm"
         />
-        <Button variant="outline" size="icon">
-          <Search className="h-4 w-4" />
-        </Button>
+       
       </div>
 
       {showPreview && filteredJobs.length > 0 && (
