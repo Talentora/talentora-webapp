@@ -54,6 +54,9 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 }`}
               >
                 <Navbar visible={isSidebarVisible} />
+                <div className="container mx-auto">
+                  User: {JSON.stringify(user) || 'No user'}
+                </div>
                 {isSidebarVisible && <BreadcrumbsContainer />}
                 <Suspense fallback={<Loading />}>
                   {children}

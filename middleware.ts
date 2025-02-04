@@ -2,6 +2,7 @@ import { type NextRequest } from 'next/server';
 import { updateSession } from '@/utils/supabase/middleware';
 import { NextResponse } from 'next/server';
 import { createClient } from './utils/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 // List of unprotected routes as regular expressions
 export const unprotectedRoutes = [
@@ -43,8 +44,8 @@ export async function middleware(request: NextRequest) {
   }
 
   // Check user role
-  const { role } = user.user_metadata;
-
+  // const { role } = user.user_metadata;
+  const role = await getUserRole(supabase, user.id);
   // New: Check if the user is an applicant trying to access a recruiter route
   if (
     role === 'applicant' &&
@@ -79,6 +80,10 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Add a custom header for debugging
+  response.headers.set('x-debug-request-path', request.nextUrl.pathname);
+  response.headers.set('x-debug-message', 'Middleware executed');
+
   return response;
 }
 
@@ -95,3 +100,22 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'
   ]
 };
+
+
+export async function getUserRole(supabase: SupabaseClient, user_id: string) {
+    // Query the recruiters table to check if the user's id exists.
+    console.log('Getting user role for user:', user_id);
+    const { data: recruiterData, error: recruiterError } = await supabase
+      .from('recruiters')
+      .select('id')
+      .eq('id', user_id)
+      .single();
+
+    if (recruiterData && !recruiterError) {
+        console.log('User is a recruiter');
+        return 'recruiter'
+    } else {
+        console.log('User is an applicant');
+        return 'applicant'
+    }
+}

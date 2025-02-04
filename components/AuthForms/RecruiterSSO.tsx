@@ -19,12 +19,13 @@ export default function RecruiterSSO() {
     console.log("Signing in with SSO for domain:", domain);
 
     try {
+      const redirectTo = window.location.origin + '/auth/callback';
       const { data, error } = await supabase.auth.signInWithSSO({
         domain: domain,
-        options: {
-          redirectTo: `/auth/callback`
-        }
+        options: { redirectTo }
       });
+      console.log("data", data);
+      console.log("error", error);
 
       if (error) throw error;
       
