@@ -87,7 +87,7 @@ export default function SettingsPage() {
           </TabsList>
 
           {tabs.map((tab) => (
-            <TabsContent key={tab.value} value={tab.value} className="bg-background border-none">
+            <TabsContent key={tab.value} value={tab.value} className="border-none">
                 {tab.component}
             </TabsContent>
           ))}

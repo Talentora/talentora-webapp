@@ -2,14 +2,23 @@
 import { Job } from '@/types/merge';
 import { NextResponse } from 'next/server';
 import { getMergeApiKey, getUser } from '@/utils/supabase/queries';
+import { getUserRole } from '@/middleware';
+import { createClient } from '@/utils/supabase/server';
 
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
   const jobId = params.id;
-  const user = await getUser();
-  const role = user?.user_metadata.role;
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json(
+      { error: 'User not found' },
+      { status: 404 }
+    );
+  }
+  const role = await getUserRole(supabase, user.id);
   let accountToken = null;
   const baseURL = `https://api.merge.dev/api/ats/v1`;
   const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;

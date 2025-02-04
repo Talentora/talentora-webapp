@@ -22,9 +22,9 @@ export function useSidebarData() {
   
 
   return {
-    jobs: jobs?.slice(0, 3) || [],
-    applications: applications?.slice(0, 3) || [],
-    scouts: scouts || [],
+    jobs: Array.isArray(jobs) ? jobs.slice(0, 3) : [],
+    applications: Array.isArray(applications) ? applications.slice(0, 3) : [],
+    scouts: Array.isArray(scouts) ? scouts : [],
     isLoading: jobsLoading || applicationsLoading || scoutsLoading,
     isError: jobsError || applicationsError || scoutsError
   };

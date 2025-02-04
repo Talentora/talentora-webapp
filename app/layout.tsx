@@ -11,6 +11,7 @@ import NextTopLoader from 'nextjs-toploader';
 import { createClient } from '@/utils/supabase/server';
 import ReactQueryProvider from '@/components/Providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { getUserRole } from '@/middleware';
 
 const title = 'Talentora';
 const description = 'Talentora is a platform for creating and managing AI-powered interviews.';
@@ -27,8 +28,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     data: { user }
   } = await supabase.auth.getUser();
 
-  const role = user?.user_metadata?.role;
-  const isSidebarVisible = role === 'recruiter';
+  let isSidebarVisible = false;
+  if (user) {
+    const role = await getUserRole(supabase, user.id);
+    isSidebarVisible = role === 'recruiter';
+  }
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -54,9 +58,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 }`}
               >
                 <Navbar visible={isSidebarVisible} />
-                <div className="container mx-auto">
-                  User: {JSON.stringify(user) || 'No user'}
-                </div>
+               
                 {isSidebarVisible && <BreadcrumbsContainer />}
                 <Suspense fallback={<Loading />}>
                   {children}

@@ -43,7 +43,7 @@ export default function OnboardingPage() {
     <div className="container mx-auto py-10">
       <div className="max-w-2xl mx-auto gap-3">
         {/* <Progress value={progressValue} className="mb-3"/>  */}
-        <Card className=" p-5 border border-input shadow-lg overflow-auto">
+        <Card className=" p-5 bg-background border border-input shadow-lg overflow-auto">
           <CardHeader>
             <CardTitle>Welcome to Talentora</CardTitle>
             <CardDescription>
