@@ -26,12 +26,13 @@ const features = [
 export default function Features() {
   return (
     <section className="py-24">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 ">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">
-            The Future of Hiring is Here
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        <h1 className="text-5xl font-bold leading-tight tracking-tighter lg:text-4xl xl:text-5xl">
+          The
+          <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"></span> Future of Hiring is Here
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl pt-4 mx-auto ">
             Our AI-powered platform revolutionizes the screening process, saving you countless hours while finding better candidates.
           </p>
         </div>
@@ -39,7 +40,7 @@ export default function Features() {
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="bg-background rounded-2xl p-5 shadow-lg hover:shadow-xl transition-shadow border border-accent/20"
+              className="hover:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] rounded-2xl p-5 shadow-lg shadow-[#5650F0]/20 hover:shadow-xl hover:shadow-[#5650F0]/20 transition-shadow border border-accent/20"
             >
               <feature.icon className="w-12 h-12 text-primary mb-6" />
               <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>

@@ -100,37 +100,41 @@ export default function RecruiterDashboard() {
             
             <div className="flex items-center gap-4">
               {applicantsLoading ? <Skeleton className="h-10 w-64" /> : <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} applicants={applicants} />}
-              <Button className="bg-background relative text-primary rounded-lg w-48 border border-transparent transition-all duration-300 shadow-lg shadow-[#5650F0]/50 hover:shadow-xl hover:shadow-[#5650F0]/60"
-                onClick={() => setInviteModalOpen(true)} 
+              <Button 
+                className="bg-primary text-white" 
+                onClick={() => setInviteModalOpen(true)}
                 disabled={jobsLoading || applicantsLoading}
               >
-                <div className="relative flex items-center justify-center w-full h-full z-10">
-                  {(jobsLoading || applicantsLoading) ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <>
-                      <UserPlus className="h-4 w-4 mr-2" /> Invite Candidates
-                    </>
-                  )}
-                </div>
+                {(jobsLoading || applicantsLoading) ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  'Invite Candidates'
+                )}
               </Button>
-            </div>
+              {inviteModalOpen && (
+                <Dialog open={inviteModalOpen} onOpenChange={setInviteModalOpen}>
+                  <DialogContent>
+                    <InviteApplicants jobs={combinedJobs} singleJobFlag={false} applicants={applicants} />
+                  </DialogContent>
+                </Dialog>
+              )}
+              </div>
           </div>
 
           <TimeRangeSelector />
 
-          {/* Main Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-            {/* Left Column: Fact Cards + Graph + Recent Applicants */}
-            <div className="flex flex-col gap-6 w-full col-span-2">
-              {/* Fact Cards */}
-              <div className="-mt-16 grid grid-cols-1 sm:grid-cols-4 gap-6">
-                <ApplicantCountCard factWindow={factWindow} isLoading={applicantsLoading} applicants={applicants} />
-                <InvitedCandidatesCard factWindow={factWindow} />
-                <CompletedAssessmentsCard factWindow={factWindow} />
-                <BotCountCard />
-              </div>
+          {/* Fact Cards - Full width */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full">
+            <ApplicantCountCard factWindow={factWindow} isLoading={applicantsLoading} applicants={applicants} />
+            <InvitedCandidatesCard factWindow={factWindow} />
+            <CompletedAssessmentsCard factWindow={factWindow} />
+            <BotCountCard />
+          </div>
 
+          {/* Main Layout - Two columns */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+            {/* Left Column: Graph + Recent Applicants */}
+            <div className="flex flex-col gap-6 w-full col-span-2">
               {/* Graph */}
               <Card className="max-h-[500px] mb-4 dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] p-5 border border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 w-full">
                 <CardContent>
@@ -143,7 +147,7 @@ export default function RecruiterDashboard() {
             </div>
 
             {/* Right Column: Active Jobs + ChatBot + Settings */}
-            <div className="-mt-16 flex flex-col gap-6 w-full">
+            <div className="flex flex-col gap-6 w-full">
               <ActiveJobsCard jobs={mergeJobs} isLoading={jobsLoading} />
               <BotCard />
               <SettingsCard />

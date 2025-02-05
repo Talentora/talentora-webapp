@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 const ApplicantCountCard = ({ factWindow, isLoading, applicants }: { factWindow: number, isLoading: boolean, applicants: ApplicantCandidate[] }) => {
   if (isLoading) {
     return (
-      <Card className="max-h-[100px] p-5 bg-background rounded-2xl shadow-xl shadow-[#5650F0]/50 ">
+      <Card className="max-h-[100px] group p-2 border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 transition duration-300 ease-in-out hover:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
         <CardHeader className="flex flex-row justify-between space-y-0 pb-2">
           <CardTitle className="ml-4 pt-2 text-sm font-medium">
             Total Applicants
@@ -49,8 +49,8 @@ const ApplicantCountCard = ({ factWindow, isLoading, applicants }: { factWindow:
         </Link>
       </CardHeader>
       <CardContent className="relative">
-        <div className="ml-4 -mt-6 text-2xl font-bold">{lastFactWindowDaysApplicants}</div>
-        <div className="absolute right-2 -mt-4 text-sm text-gray-500">
+      <div className="ml-4 -mt-6 text-lg sm:text-xl md:text-2xl font-bold">{lastFactWindowDaysApplicants}</div>
+      <div className="absolute right-2 -mt-4 text-sm text-gray-500">
           {percentageChange >= 0 ? '' : ''}
           {percentageChange.toFixed(2)}%
         </div>

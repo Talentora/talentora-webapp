@@ -16,10 +16,10 @@ export function Integration() {
       <div className="relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
-          <div className="bg-background inline-flex items-center rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm">
+          <div className="bg-purple-500/5 border border-purple-500 dark:bg-purple-500/20 inline-flex items-center rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm">
             <span className=" text-primary font-medium">✨ Enterprise Ready</span>
           </div>
-            <h2 className="text-4xl font-bold"> 
+            <h2 className="text-5xl tracking-tighter font-bold"> 
               Seamlessly fits into your workflow
             </h2>
             <p className="text-xl text-gray-600">
