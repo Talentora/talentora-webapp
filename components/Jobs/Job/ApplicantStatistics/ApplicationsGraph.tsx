@@ -111,14 +111,13 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
   }, [filteredApplicants]);
 
   return (
-    <Card className="p-5 -mt-6 w-screen border-none">
+    <Card className="p-5 -mt-6 w-screen border border-transparent ">
       {!hideHeader && (
         <CardHeader>
           <div className="flex justify-between items-center mb-4">
             <CardTitle className="text-2xl">Applicants Over Time</CardTitle>
             {/* Job Filter Dropdown */}
             <SelectGroup className="flex flex-row gap-2 items-center">
-              <SelectLabel>Job:</SelectLabel>
               <Select value={selectedJob} onValueChange={setSelectedJob}>
                 <SelectTrigger aria-label="Job">
                   <SelectValue placeholder="Select Job" />
@@ -155,20 +154,21 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
       <CardContent>
         <ChartContainer config={chartConfig}>
           {isLoading ? (
-            <div className="flex justify-center items-center h-full">
-              <Skeleton className="h-32 w-full" />
+            <div className="flex justify-center items-center h-22">
+              <Skeleton className="h-22 w-full" />
             </div>
           ) : (
-            <BarChart data={chartData} width={500} height={300}>
-              <CartesianGrid vertical={false} />
-              <XAxis dataKey="displayDate" tickLine={false} tickMargin={10} axisLine={false} />
-              <YAxis tickLine={false} tickMargin={10} axisLine={false} />
-              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-              <ChartLegend content={<ChartLegendContent />} />
-              {Object.keys(chartConfig).map(jobId => (
-                <Bar key={jobId} dataKey={jobId} stackId="a" fill="#5650F0" radius={[0, 0, 4, 4]} />
-              ))}
-            </BarChart>
+<BarChart data={chartData} width={300} height={100}> {/* Adjusted height to make the graph shorter */}
+  <CartesianGrid vertical={false} />
+  <XAxis dataKey="displayDate" tickLine={false} tickMargin={10} axisLine={false} />
+  <YAxis tickLine={false} tickMargin={10} axisLine={false} />
+  <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+  <ChartLegend content={<ChartLegendContent />} />
+  {Object.keys(chartConfig).map(jobId => (
+    <Bar key={jobId} dataKey={jobId} stackId="a" fill="#5650F0" radius={[0, 0, 4, 4]} />
+  ))}
+</BarChart>
+
           )}
         </ChartContainer>
       </CardContent>

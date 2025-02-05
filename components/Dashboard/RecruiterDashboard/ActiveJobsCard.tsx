@@ -10,16 +10,15 @@ import { Badge } from '@/components/ui/badge'; // Assuming you have a Badge comp
 export default function ActiveJobsCard({ jobs, isLoading }: { jobs: Job[], isLoading: boolean  }) {
 
   return (
-<Card className="p-5 bg-background rounded-2xl shadow-md shadow-[#5650F0]/20">
-  <CardHeader className="flex flex-row justify-between items-center">
-    <CardTitle className="ml-4 pt-6 text-xl">Active Job Titles</CardTitle>
-    <Link href="/jobs" className="text-sm hover:text-primary">
-      <p className="text-md mt-2 pr-4 text-primary">View All</p>
-    </Link>
-  </CardHeader>
-  <CardContent>
-    {/* Job list content here */}
-        
+    <Card className="p-5 border border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]  hover:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
+      <CardHeader className="flex flex-row justify-between items-center">
+        <CardTitle className="ml-4 text-xl">Active Job Titles</CardTitle>
+        <Link href="/jobs" className="text-sm hover:text-primary">
+          <p className="text-md mt-2 pr-4 text-primary font-semibold">View All</p>
+        </Link>
+      </CardHeader>
+      <CardContent>
+        {/* Job list content here */}
         {isLoading ? (
           <div className="gap-4">
             {[1, 2, 3, 4, 5].map((index) => (
@@ -47,23 +46,31 @@ export default function ActiveJobsCard({ jobs, isLoading }: { jobs: Job[], isLoa
     </Card>
   );
 }
-
 function JobItem({ job }: { job: Job }) {
+  const applicantCount = 0; // You should replace this with the actual applicant count data
+
   return (
     <Link href={`/jobs/${job.id}`}>
-    <div className="group p-5 bg-background rounded-2xl shadow-md mb-4 shadow-[#5650F0]/20 transition duration-300 ease-in-out hover:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
-    <h3 className="font-semibold text-sm mb-1 truncate">{job.name}</h3>
-        <p className="pt-2 text-xs text-gray-500 mb-2 truncate">
-          {Array.isArray(job.departments)
-            ? job.departments.slice(0, 3).map((dept: any, index: number) => (
-                <Badge key={index} className={`font-normal mr-2 ${getBadgeColor(index)}`}>{typeof dept === 'object' ? dept.name : dept}</Badge>
-              ))
-            : 'No departments'}
-        </p>
+      <div className="group p-5 bg-background rounded-2xl shadow-md mb-4 shadow-[#5650F0]/20 transition duration-300 ease-in-out hover:shadow-xl  hover:shadow-[#5650F0]/20">
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="font-semibold text-sm mb-1 truncate">{job.name}</h3>
+            <p className="pt-2 text-xs text-gray-500 mb-2 truncate">
+              {Array.isArray(job.departments)
+                ? job.departments.slice(0, 3).map((dept: any, index: number) => (
+                    <Badge key={index} className={`font-normal mr-2 ${getBadgeColor(index)}`}>{typeof dept === 'object' ? dept.name : dept}</Badge>
+                  ))
+                : 'No departments'}
+            </p>
+          </div>
+          {/* Displaying the applicant count without a background */}
+          <p className="text-xs font-semibold text-gray-700">{applicantCount} Applicants</p>
+        </div>
       </div>
     </Link>
   );
 }
+
 
 // Helper function to get different colors for badges (Blue, Purple, Pink-based)
 function getBadgeColor(index: number) {

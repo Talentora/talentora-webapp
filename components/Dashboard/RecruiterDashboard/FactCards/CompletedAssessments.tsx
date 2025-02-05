@@ -44,9 +44,9 @@ const CompletedAssessmentsCard = ({ factWindow }: { factWindow: number }) => {
     : ((completedAssessmentsCount - previousAssessmentsCount) / previousAssessmentsCount) * 100;
 
   return (
-    <Card className="group p-5 border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 transition duration-300 ease-in-out hover:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
+    <Card className="max-h-[100px] group p-2 border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 transition duration-300 ease-in-out hover:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
       <CardHeader className="flex flex-row justify-between space-y-0 pb-2">
-        <CardTitle className="ml-4 pt-2 text-sm font-medium">
+        <CardTitle className="ml-4 pt-4 text-sm font-medium">
           AI Assessments
         </CardTitle>
         <button className="p-2 bg-input rounded-md transition duration-300 ease-in-out group-hover:bg-background focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
@@ -55,13 +55,13 @@ const CompletedAssessmentsCard = ({ factWindow }: { factWindow: number }) => {
       </CardHeader>
       <CardContent className="relative">
         {loading ? (
-          <Skeleton className="h-4 w-32 mb-2" />
+          <Skeleton className="h-4 w-32" />
         ) : (
-          <div className="ml-4 text-2xl font-bold">{completedAssessmentsCount}</div>
+          <div className="ml-4 -mt-8 text-2xl font-bold">{completedAssessmentsCount}</div>
         )}
         {!loading && (
-          <div className="absolute bottom-2 right-4 text-sm font-medium text-gray-600">
-            {percentChange >= 0 ? `+${percentChange.toFixed(1)}%` : `${percentChange.toFixed(1)}%`}
+          <div className="-mt-4 absolute bottom-6 right-2 text-sm font-normal text-red-600">
+            {percentChange >= 0 ? `-${percentChange.toFixed(1)}%` : `${percentChange.toFixed()}%`}
           </div>
         )}
       </CardContent>

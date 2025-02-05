@@ -47,23 +47,23 @@ const InvitedCandidatesCard = ({ factWindow }: { factWindow: number }) => {
     : 0;
 
   return (
-    <Card className="group p-5 border-transparent  bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 transition duration-300 ease-in-out hover:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
-      <CardHeader className="flex flex-row justify-between space-y-0 pb-2 gap-2">
-        <CardTitle className="ml-4 pt-2 text-sm font-medium">
+    <Card className="max-h-[100px] group p-2 border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 transition duration-300 ease-in-out hover:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
+      <CardHeader className="flex flex-row justify-between space-y-0 gap-2">
+        <CardTitle className="ml-4 pt-4 text-sm font-medium">
           Candidates Invited
         </CardTitle>
         <button className="group p-2 bg-input rounded-md transition duration-300 ease-in-out group-hover:bg-background focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          <Mail className="h-6 w-6 text-green-700 group-hover:text-green-900" />
+          <Mail className="h-6 w-6 text-green-700 group-hover:text-green-700" />
         </button>
       </CardHeader>
       <CardContent className="relative">
         {loading ? (
-          <Skeleton className="h-4 w-32 mb-2" />
+          <Skeleton className="h-4 w-32" />
         ) : (
           <>
-            <div className="ml-4 text-3xl font-bold">{applicationsCount}</div>
-            <div className="absolute bottom-2 right-2 text-xs text-muted-foreground">
-              {percentageChange >= 0 ? '+' : ''}
+            <div className="ml-4 -mt-6 text-2xl font-bold">{applicationsCount}</div>
+            <div className="absolute right-2 -mt-4 text-sm text-green-600">
+            {percentageChange >= 0 ? '+' : ''}
               {percentageChange.toFixed(2)}%
             </div>
           </>

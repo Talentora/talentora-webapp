@@ -27,7 +27,7 @@ const TimeRangeSelector = () => {
       <CardHeader>
         <div className="flex justify-between items-center">
           {/* Time Range Selector Container */}
-          <div className="bg-background text-gray-500 p-2 rounded-lg border border-input flex gap-2">
+          <div className="bg-background text-gray-500 p-1 rounded-lg border border-input flex gap-2">
             <div className="flex gap-2 ">
               {timeRanges.map(({ label, value }) => (
                 <Button
