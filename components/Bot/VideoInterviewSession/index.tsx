@@ -1,10 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import {
-  useRTVIClient,
-  useRTVIClientTransportState,
-} from 'realtime-ai-react';
+import { useRTVIClient, useRTVIClientTransportState } from 'realtime-ai-react';
 import { usePermissions } from '@daily-co/daily-react';
 
 import InterviewHeader from './InterviewHeader';
@@ -21,9 +18,10 @@ type Company = Tables<'companies'>;
 interface VideoInterviewSessionProps {
   onLeave: () => void;
   startAudioOff?: boolean;
-  job: MergeJob;
+  job: MergeJob | null;
   company: Company;
   transcript: { role: 'bot' | 'user'; text: string }[];
+  demo: boolean;
 }
 
 export default function VideoInterviewSession({
@@ -32,12 +30,12 @@ export default function VideoInterviewSession({
   job,
   company,
   transcript,
+  demo
 }: VideoInterviewSessionProps) {
   const voiceClient: RTVIClient = useRTVIClient()!;
   const transportState = useRTVIClientTransportState();
   const [isMuted, setMuted] = useState(startAudioOff);
   const [isCameraOn, setIsCameraOn] = useState(true);
-
 
   // Initialize devices when component mounts
   useEffect(() => {
@@ -71,8 +69,7 @@ export default function VideoInterviewSession({
   return (
     <div className="flex flex-col h-screen w-screen">
       <div className="basis-1/6">
-        <InterviewHeader job={job} company={company} />
-        
+        <InterviewHeader job={job} company={company} demo={demo} />
       </div>
 
       <main className="flex basis-1/3 gap-4 p-4 m-5">

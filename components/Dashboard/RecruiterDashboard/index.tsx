@@ -55,28 +55,34 @@ export default function RecruiterDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
 
   // Use React Query for data fetching with caching
-  const { data: applicants = [], isLoading: applicantsLoading } = useQuery<ApplicantCandidate[]>({
+  const { data: applicants = [], isLoading: applicantsLoading } = useQuery<
+    ApplicantCandidate[]
+  >({
     queryKey: ['applications'],
     queryFn: fetchApplications,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000
   });
 
   const { data: mergeJobs = [], isLoading: jobsLoading } = useQuery<Job[]>({
     queryKey: ['jobs'],
     queryFn: fetchJobs,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000
   });
 
-  const { data: supabaseJobs = [], isLoading: supabaseJobsLoading } = useQuery<Tables<'jobs'>[]>({
+  const { data: supabaseJobs = [], isLoading: supabaseJobsLoading } = useQuery<
+    Tables<'jobs'>[]
+  >({
     queryKey: ['supabaseJobs'],
     queryFn: fetchSupabaseJobs,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000
   });
 
   // Memoize combined jobs to prevent unnecessary recalculations
   const combinedJobs = useMemo<CombinedJob[]>(() => {
     return mergeJobs.map((mergeJob: Job) => {
-      const supabaseJob = supabaseJobs.find(sJob => sJob.merge_id === mergeJob.id);
+      const supabaseJob = supabaseJobs.find(
+        (sJob) => sJob.merge_id === mergeJob.id
+      );
       return {
         mergeJob,
         supabaseJob
@@ -108,32 +114,35 @@ export default function RecruiterDashboard() {
                 onClick={() => setInviteModalOpen(true)}
                 disabled={jobsLoading || applicantsLoading}
               >
-                {(jobsLoading || applicantsLoading) ? (
+                {jobsLoading || applicantsLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   'Invite Candidates'
                 )}
               </Button>
               {inviteModalOpen && (
-                <Dialog open={inviteModalOpen} onOpenChange={setInviteModalOpen}>
+                <Dialog
+                  open={inviteModalOpen}
+                  onOpenChange={setInviteModalOpen}
+                >
                   <DialogContent>
-                    <InviteApplicants jobs={combinedJobs} singleJobFlag={false} applicants={applicants} />
+                    <InviteApplicants
+                      jobs={combinedJobs}
+                      singleJobFlag={false}
+                      applicants={applicants}
+                    />
                   </DialogContent>
                 </Dialog>
               )}
             </div>
             <div className="flex flex-row gap-6">
-              <ApplicantCountCard 
-                factWindow={factWindow} 
-                isLoading={applicantsLoading} 
-                applicants={applicants} 
-              />
-              <InvitedCandidatesCard 
+              <ApplicantCountCard
                 factWindow={factWindow}
+                isLoading={applicantsLoading}
+                applicants={applicants}
               />
-              <CompletedAssessmentsCard 
-                factWindow={factWindow}
-              />
+              <InvitedCandidatesCard factWindow={factWindow} />
+              <CompletedAssessmentsCard factWindow={factWindow} />
               <BotCountCard />
             </div>
           </div>
@@ -142,17 +151,14 @@ export default function RecruiterDashboard() {
             <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-[#5650F0]/50 bg-card">
               <CardTitle>Applications Over Time</CardTitle>
               <CardContent>
-                <ApplicationsGraph 
-                  applicants={applicants} 
-                  isLoading={applicantsLoading} 
-                  hideHeader={true} 
+                <ApplicationsGraph
+                  applicants={applicants}
+                  isLoading={applicantsLoading}
+                  hideHeader={true}
                 />
               </CardContent>
             </Card>
-            <ActiveJobsCard 
-              jobs={mergeJobs} 
-              isLoading={jobsLoading} 
-            />
+            <ActiveJobsCard jobs={mergeJobs} isLoading={jobsLoading} />
           </div>
 
           <div className="flex flex-row gap-6">

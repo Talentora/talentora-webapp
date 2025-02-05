@@ -1,0 +1,71 @@
+'use client';
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter
+} from '@/components/ui/card';
+import Confetti from 'react-confetti';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import FinishedIcon from './FinishedIcon';
+
+export default function ConclusionPage() {
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    setDimensions({
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
+  }, []);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <Confetti
+        width={dimensions.width}
+        height={dimensions.height}
+        recycle={false}
+        numberOfPieces={500}
+      />
+      <Card className="max-w-2xl w-full">
+        <CardHeader>
+          <CardTitle className="text-center text-3xl">Thank You!</CardTitle>
+          <CardDescription className="text-center">
+            Your mock interview with Talentora has been completed successfully
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="text-center text-gray-600 flex flex-row justify-center items-center m-5">
+          <ul className="list-disc text-left pl-6 space-y-4">
+            <li>
+              No responses has been recorded during the mock interview session.
+            </li>
+            <li>You can take the mock interview as many times as you like.</li>
+          </ul>
+          <div className="ml-8">
+            <FinishedIcon />
+            {/* <Image src="/finished-icon.svg" alt="Finished icon" width={200} height={200} /> */}
+          </div>
+        </CardContent>
+        <CardFooter className="flex gap-4 justify-center">
+          <Link
+            href="/dashboard"
+            className="px-6 py-2 bg-primary-dark text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Go to Dashboard
+          </Link>
+          <Link
+            href="/"
+            className="px-6 py-2 bg-background text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            Back to Home
+          </Link>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+}

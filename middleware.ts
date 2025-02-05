@@ -10,12 +10,14 @@ export const unprotectedRoutes = [
   /^\/signup(\/.*)?$/,
   /^\/about$/, // Matches '/about'
   /^\/pricing$/, // Matches '/pricing'
-  /^\/api\/auth\/callback$/ // Matches '/api/auth/callback'
+  /^\/api\/auth\/callback$/, // Matches '/api/auth/callback'
+  /^\/demo$/
 ];
 
 // Add the applicant route to the unprotected routes
 const applicantRoutes = [
   /^\/assessment(\/.*)?$/,// Matches '/bot' and any subpath like '/bot/*'
+  /^\/mock(\/.*)?$/, //Matches 'bot' and any subpath like '/bot/*
   /^\/api(\/.*)?$/ // Matches '/api' and any subpath like '/api/*'
 ];
 

@@ -16,9 +16,13 @@ import {
   getJobInterviewConfig,
   getJob,
   getCompanyContext,
-  getApplication,
+  getApplication
 } from '@/utils/supabase/queries';
-import { fetchJobDetails, fetchApplicationData, useApplicant } from '@/hooks/useApplicant';
+import {
+  fetchJobDetails,
+  fetchApplicationData,
+  useApplicant
+} from '@/hooks/useApplicant';
 
 type ScoutProps = {
   scout: ScoutConfig;
@@ -28,13 +32,13 @@ type ScoutProps = {
   company: Company;
   mergeJob: MergeJob;
   application: Application;
-}
+  enableRecording: boolean;
+  mock: boolean;
+  demo: boolean;
+  scoutTest: boolean;
+};
 
-export default function Assessment({
-  params
-}: {
-  params: { id: string };
-}) {
+export default function Assessment({ params }: { params: { id: string } }) {
   const applicationId = params.id;
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +57,8 @@ export default function Assessment({
 
       try {
         // Fetch initial application and token
-        const { token: account_token, company: tokenCompany } = await getAccountTokenFromApplication(applicationId);
+        const { token: account_token, company: tokenCompany } =
+          await getAccountTokenFromApplication(applicationId);
         if (!account_token) {
           throw new Error('Failed to get account token');
         }
@@ -91,7 +96,6 @@ export default function Assessment({
 
         // Fetch bot data
         const scout = await getscoutById(config.bot_id.toString());
-
         if (!scout) {
           throw new Error('Failed to fetch scout data');
         }
@@ -103,9 +107,12 @@ export default function Assessment({
           scout,
           companyContext,
           mergeJob,
-          application
+          application,
+          enableRecording: true,
+          mock: false,
+          demo: false,
+          scoutTest: false
         });
-        
       } catch (err) {
         console.error('Failed to fetch data:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch data');
@@ -125,18 +132,22 @@ export default function Assessment({
           <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mb-6"></div>
           <div className="animate-fade-in">
             <p className="text-xl font-medium text-primary-700 text-center animate-pulse">
-              {[
-                "Warming up the interview bot...",
-                "Practicing firm handshakes...", 
-                "Ironing the virtual suit...",
-                "Rehearsing professional small talk...",
-                "Brewing coffee for the interviewer...",
-                "Polishing tough questions...",
-                "Adjusting the virtual tie...",
-                "Setting up the perfect lighting..."
-              ][Math.floor((Date.now() / 2000) % 8)]}
+              {
+                [
+                  'Warming up the interview bot...',
+                  'Practicing firm handshakes...',
+                  'Ironing the virtual suit...',
+                  'Rehearsing professional small talk...',
+                  'Brewing coffee for the interviewer...',
+                  'Polishing tough questions...',
+                  'Adjusting the virtual tie...',
+                  'Setting up the perfect lighting...'
+                ][Math.floor((Date.now() / 2000) % 8)]
+              }
             </p>
-            <p className="mt-2 text-sm text-gray-500 text-center">Please wait while we prepare your interview</p>
+            <p className="mt-2 text-sm text-gray-500 text-center">
+              Please wait while we prepare your interview
+            </p>
           </div>
         </div>
       ) : error ? (
@@ -145,11 +156,7 @@ export default function Assessment({
           <p className="mt-2">Please try again later</p>
         </div>
       ) : (
-        <>
-          {scoutProps && <Bot {...scoutProps} />}
-
-         
-        </>
+        <>{scoutProps && <Bot {...scoutProps} />}</>
       )}
     </div>
   );
