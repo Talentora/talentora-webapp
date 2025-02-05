@@ -33,7 +33,7 @@ const TimeRangeSelector = () => {
                 <Button
                   key={value}
                   variant="ghost"
-                  className={timeRange === value ? "bg-[#5650F0] text-background" : ""}
+                  className={timeRange === value ? "bg-primary text-background" : ""}
                   onClick={() => setTimeRange(value)}
                 >
                   {label}

@@ -18,7 +18,7 @@ const SettingsCard = () => {
             Configure your recruiting preferences and settings
           </p>
           <Link href="/settings">
-            <Button className="w-full">
+            <Button className="w-full  bg-gradient-to-br from-purple-500 to-blue-500">
               Open Settings
             </Button>
           </Link>

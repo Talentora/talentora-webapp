@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 const BotCard = () => {
   return (
     <div>
-    <Card className="p-5 bg-background border border-transparent rounded-2xl shadow-md shadow-[#5650F0]/20 dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
+    <Card className="p-5 border border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="ml-4 pt-2 text-xl font-semibold">Ora Scouts</CardTitle>
         <Link href="/scouts">
@@ -17,7 +17,7 @@ const BotCard = () => {
         <p className="ml-4 text-sm -mt-4 mb-8">
         AI-powered assistant for recruiting tasks
         </p>
-        <Button className="w-full">
+        <Button className="w-full bg-gradient-to-br from-purple-500 to-blue-500">
         Chat with Bot
         </Button>
             </CardContent>

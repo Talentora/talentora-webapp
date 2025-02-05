@@ -132,7 +132,7 @@ export default function RecruiterDashboard() {
               </div>
 
               {/* Graph */}
-              <Card className=" dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] p-5 border border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 w-full">
+              <Card className="max-h-[500px] mb-4 dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] p-5 border border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 w-full">
                 <CardContent>
                   <ApplicationsGraph applicants={applicants} isLoading={applicantsLoading} hideHeader={false} />
                 </CardContent>
