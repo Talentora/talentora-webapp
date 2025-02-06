@@ -39,7 +39,10 @@ export default function PasswordSignIn({
   };
 
   return (
-    <div className="my-8">
+    <div className="my-8 w-1/3 mx-auto border shadow-lg rounded-xl p-10">
+      <h1 className="text-2xl font-bold mb-4 text-center">
+        Sign in to your account
+      </h1>
       <form
         noValidate={true}
         className="mb-4 grid gap-2"
@@ -55,7 +58,7 @@ export default function PasswordSignIn({
             autoCapitalize="none"
             autoComplete="email"
             autoCorrect="off"
-            className="w-full p-3 text-foreground  rounded-md bg-zinc-800"
+            className="w-full p-3 text-foreground  rounded-md bg-input"
           />
           <label htmlFor="password">Password</label>
           <input
@@ -64,7 +67,7 @@ export default function PasswordSignIn({
             type="password"
             name="password"
             autoComplete="current-password"
-            className="w-full p-3 text-foreground rounded-md bg-zinc-800"
+            className="w-full p-3 text-foreground rounded-md  bg-input"
           />
         </div>
         <Button

@@ -11,6 +11,7 @@ import NextTopLoader from 'nextjs-toploader';
 import { createClient } from '@/utils/supabase/server';
 import ReactQueryProvider from '@/components/Providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { getUserRole } from '@/utils/supabase/queries';
 
 const title = 'Talentora';
 const description = 'Talentora is a platform for creating and managing AI-powered interviews.';
@@ -27,8 +28,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     data: { user }
   } = await supabase.auth.getUser();
 
-  const role = user?.user_metadata?.role;
-  const isSidebarVisible = role === 'recruiter';
+  let isSidebarVisible = false;
+  if (user) {
+    const role = await getUserRole(supabase, user.id);
+    isSidebarVisible = role === 'recruiter';
+  }
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -43,14 +47,16 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <ReactQueryProvider>
             <div className="flex">
               {isSidebarVisible && (
-                <aside className="fixed h-full z-[100]">
+                <aside className="fixed h-full z-[100] w-1/6">
                   <Sidebar />
                 </aside>
               )}
               <main
                 id="skip"
-                className={` flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]${
-                  isSidebarVisible ? ' ml-60' : ' w-full'
+                className={`flex-1 min-h-[calc(100dvh-15rem)] md:min-h-[calc(100dvh-16rem)] ${
+                  isSidebarVisible ? 'ml-[16.666667%]' : ''
+                } ${
+                  isSidebarVisible ? 'w-[83.333333%]' : 'w-full'
                 }`}
               >
                 <Navbar visible={isSidebarVisible} />

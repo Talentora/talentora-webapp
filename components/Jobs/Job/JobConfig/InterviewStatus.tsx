@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import InviteApplicants from './InviteApplicants';
 import { ApplicantCandidate } from '@/types/merge';
 import type { Job as MergeJob } from '@/types/merge';  // Import as MergeJob to avoid confusion
+import { Separator } from '@/components/ui/separator';
 
 type InterviewConfig = Tables<'job_interview_config'>;
 type Bot = Tables<'bots'>;
@@ -128,33 +129,31 @@ const InterviewStatus = ({ loading, interviewConfig, botInfo, setupFlags, jobId,
                     <span>Duration Set</span>
                     <Badge variant={hasDuration ? "success" : "failure"}>{hasDuration ? "Yes" : "No"}</Badge>
                   </div>
-                </div>
-              </div>
-
-              {/* Overall Status */}
-              <div className="border-t pt-4">
-                <div className="flex justify-between items-center">
-                  {isReady !== "yes" && (
-                    <Badge 
-                      variant={isReady === "almost" ? "warning" : "failure"}
-                      className={`text-base px-3 py-1 ${
-                        isReady === "almost" ? "bg-orange-700" : "bg-red-700"
-                      }`}
-                    >
-                      {isReady === "almost" ? "Almost Ready" : "Setup Required"}
-                    </Badge>
-                  )}
-                  <Button 
-                    className={`${isReady === "yes" ? "w-full" : ""} bg-green-700 text-white rounded-2xl`}
-                    onClick={() => setInviteModalOpen(true)}
-                    disabled={loading || isReady !== "yes"}
-                  >
-                    {loading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                  <Separator className="my-4" />
+                  <div className="flex justify-end mt-4">
+                    {isReady !== "yes" ? (
+                      <Badge 
+                        variant={isReady === "almost" ? "warning" : "failure"}
+                        className={`text-base px-3 py-1 ${
+                          isReady === "almost" ? "bg-orange-700" : "bg-red-700"
+                        }`}
+                      >
+                        {isReady === "almost" ? "Almost Ready" : "Setup Required"}
+                      </Badge>
                     ) : (
-                      'Invite Candidates'
+                      <Button 
+                        className={`${isReady === "yes" ? "w-full" : ""} bg-green-700 text-white rounded-2xl`}
+                        onClick={() => setInviteModalOpen(true)}
+                        disabled={loading || isReady !== "yes"}
+                      >
+                        {loading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          'Invite Candidates'
+                        )}
+                      </Button>
                     )}
-                  </Button>
+                  </div>
                 </div>
               </div>
 
@@ -219,6 +218,7 @@ const InterviewStatus = ({ loading, interviewConfig, botInfo, setupFlags, jobId,
               </DialogHeader>
               <div className="space-y-4 mt-4">
                 {availableBots.map((bot) => (
+                  
                   <div
                     key={bot.id}
                     className="flex items-center gap-4 p-4 hover:bg-accent/50 cursor-pointer rounded-lg border border-border transition-colors"
@@ -232,7 +232,7 @@ const InterviewStatus = ({ loading, interviewConfig, botInfo, setupFlags, jobId,
                       <div className="text-sm text-muted-foreground">{bot.description || 'No description available'}</div>
                     </div>
                     {bot.id === botInfo?.id && (
-                      <Badge variant="secondary">Current Scout</Badge>
+                      <Badge variant="secondary" className='bg-primary text-white'>Current Scout</Badge>
                     )}
                   </div>
                 ))}

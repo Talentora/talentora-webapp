@@ -60,8 +60,11 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
   }, [createMergeLinkToken]);
 
   useEffect(() => {
-    onCompletion(hasMergeApiKey);
-  }, [hasMergeApiKey, onCompletion,createMergeLinkToken]);
+    // Only mark as complete if we have a Merge API key
+    if (hasMergeApiKey) {
+      onCompletion(true);
+    }
+  }, [hasMergeApiKey, onCompletion]);
 
   const onSuccess = useCallback(
     async (public_token: string) => {
@@ -85,7 +88,6 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
         }
 
         const updatedCompany = await updateCompany(company.id, {
-          ...company,
           merge_account_token: accountToken
         });
 

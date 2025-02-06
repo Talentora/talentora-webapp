@@ -55,12 +55,7 @@ const CompanyForm = () => {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <h3 className="font-semibold text-sm text-muted-foreground">
-              Website
-            </h3>
-            <p className="mt-1">{company.website_url || 'N/A'}</p>
-          </div>
+         
           <div>
             <h3 className="font-semibold text-sm text-muted-foreground">
               Location

@@ -4,9 +4,14 @@ import RecruiterDashboard from '@/components/Dashboard/RecruiterDashboard';
 import ApplicantDashboard from '@/components/Dashboard/ApplicantDashboard';
 import { useUser } from '@/hooks/useUser';
 
-const DashboardPage = () => {
+interface DashboardPageProps {
+  serverRole: string | null;
+}
+
+const DashboardPage = ({ serverRole }: DashboardPageProps) => {
   const { user } = useUser();
-  const role = user?.user_metadata?.role;
+  // Use server role as primary source, fallback to client-side metadata
+  const role = serverRole || user?.user_metadata?.role;
 
   return (
     <div>

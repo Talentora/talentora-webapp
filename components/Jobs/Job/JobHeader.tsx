@@ -6,16 +6,13 @@ import {
   Card
 } from '@/components/ui/card';
 import {
-  BriefcaseIcon,
   MapPinIcon,
-  CircleDollarSign,
   ClipboardListIcon,
-  ArrowLeft,
   ChevronDown
 } from 'lucide-react';
-import { EnrichedJob } from '../JobList';
-import { Button } from '@/components/ui/button';
+import { EnrichedJob } from '../types';
 import { useState } from 'react';
+import DepartmentChips from '@/components/Jobs/DepartmentChips';
 
 interface JobHeaderProps {
   job: EnrichedJob;
@@ -28,21 +25,22 @@ export function JobHeader({ job }: JobHeaderProps) {
     setIsDescriptionOpen(!isDescriptionOpen);
   };
 
+  console.log('JobHeader received job:', {
+    name: job.name,
+    departments: job.departments.map((d: any) => ({ id: d.id, name: d.name }))
+  });
+
   return (
     <Card className="rounded-lg hover:bg-accent/50 transition-colors p-4 dark:bg-transparent border border-border">
       <CardHeader className="mb-4 relative">
-        <h1 className="text-2xl font-bold text-foreground">{job.name}</h1>
+        <CardTitle className="text-2xl font-bold text-foreground">{job.name}</CardTitle>
         <div className="flex flex-col gap-4 mb-4">
           <div className="pt-4 flex items-center space-x-4 text-sm">
             <span className="flex items-center">
-              {job.departments.length > 0 ? job.departments.map(dept => (
-                <span key={dept.name} className="mr-2 inline-flex items-center px-3 py-1 text-xs font-medium text-gray-800 dark:text-gray-500 bg-input rounded-full">
-                  <BriefcaseIcon className="mr-1 h-4 w-4 text-gray-500" /> {dept.name}
-                </span>
-              )) : 'missing'}
+              <DepartmentChips departments={job.departments} />
             </span>
             <span className="flex items-center">
-              <MapPinIcon className="mr-1 h-4 w-4 text-gray-500" /> {job.offices.length > 0 ? job.offices.map(office => office.name).join(', ') : 'missing'}
+              <MapPinIcon className="mr-1 h-4 w-4 text-gray-500" /> {job.offices && job.offices.length > 0 ? job.offices.map((office: any) => office.name).join(', ') : 'missing'}
             </span>
             <span className="flex items-center">
               <div className={`px-2 py-1 rounded-full text-xs font-medium ${job.status === 'Closed' ? 'bg-red-100 text-red-800' : job.status === 'Draft' ? 'bg-gray-100 text-primary' : 'bg-green-100 text-green-800'}`}>

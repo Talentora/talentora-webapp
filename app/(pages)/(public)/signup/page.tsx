@@ -27,7 +27,7 @@ export default function SignUp() {
       </h1>
       <div className="flex flex-col md:flex-row justify-center gap-6 w-full max-w-3xl">
         <div
-          className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-ring border border-input shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
+          className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-background shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
             selectedType === 'recruiter'
               ? 'ring-2 ring-blue-500 bg-blue-50'
               : ''
@@ -42,7 +42,7 @@ export default function SignUp() {
           </p>
         </div>
         <div
-          className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-ring border border-input shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
+          className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-background shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
             selectedType === 'applicant'
               ? 'ring-2 ring-blue-500 bg-blue-50'
               : ''
