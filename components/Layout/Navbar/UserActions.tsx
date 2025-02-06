@@ -18,8 +18,8 @@ export function UserActions({ user, role }: UserActionsProps) {
         <Link href="/signin">
           <Button variant="ghost" className="rounded-full px-8">Login</Button>
         </Link>
-        <Link href="/signup">
-          <Button className="rounded-full px-8">Sign Up</Button>
+        <Link href="/contact#demo">
+          <Button className="rounded-full px-8">Request Demo</Button>
         </Link>
         <ThemeToggle />
       </div>

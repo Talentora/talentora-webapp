@@ -270,6 +270,39 @@ export type Database = {
         }
         Relationships: []
       }
+      form_messages: {
+        Row: {
+          company: string | null
+          created_at: string
+          email: string | null
+          id: number
+          message: string | null
+          name: string | null
+          role: string | null
+          subject: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          id?: number
+          message?: string | null
+          name?: string | null
+          role?: string | null
+          subject?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          id?: number
+          message?: string | null
+          name?: string | null
+          role?: string | null
+          subject?: string | null
+        }
+        Relationships: []
+      }
       job_interview_config: {
         Row: {
           bot_id: number | null

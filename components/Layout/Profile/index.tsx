@@ -8,6 +8,7 @@ import { User, LogOut } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { useUser } from '@/hooks/useUser';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { SignOut } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
@@ -19,15 +20,16 @@ const Profile = ({ role }: { role: string }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const queryClient = useQueryClient();
 
   const { user, company } = useUser();
   const router = useRouter();
 
-
-
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (getRedirectMethod() === 'client') {
+      // Clear all React Query cache before signing out
+      queryClient.clear();
       await handleRequest(e, SignOut, router);
     }
   };

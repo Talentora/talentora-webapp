@@ -345,12 +345,12 @@ const Sidebar = () => {
                 <SubLink href="/settings?tab=company">
                   Company
                 </SubLink>
-                <SubLink href="/settings?tab=billing">
+                {/* <SubLink href="/settings?tab=billing">
                   Billing
-                </SubLink>
-                <SubLink href="/settings?tab=team">
+                </SubLink> */}
+                {/* <SubLink href="/settings?tab=team">
                   Team
-                </SubLink>
+                </SubLink> */}
                 <SubLink href="/settings?tab=integrations">
                   Integration Status
                 </SubLink>

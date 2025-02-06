@@ -107,18 +107,18 @@ function CompanyMenu() {
             title="About"
             description="Learn about our mission and values"
           />
-          <NavigationLink 
+          {/* <NavigationLink 
             href="/team" 
             icon={<Users className="h-5 w-5 mr-2 text-blue-600" />}
             title="Team"
             description="Meet the people behind Talentora"
-          />
-          <NavigationLink 
+          /> */}
+          {/* <NavigationLink 
             href="/pricing" 
             icon={<CreditCard className="h-5 w-5 mr-2 text-green-600" />}
             title="Pricing"
             description="View our pricing plans"
-          />
+          /> */}
           <NavigationLink 
             href="/contact" 
             icon={<Mail className="h-5 w-5 mr-2 text-orange-600" />}

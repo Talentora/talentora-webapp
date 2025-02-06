@@ -11,7 +11,13 @@ export const unprotectedRoutes = [
   /^\/signin(\/.*)?$/, // Matches '/signin' and any subpath like '/signin/*'
   /^\/signup(\/.*)?$/,
   /^\/about$/, // Matches '/about'
+  /^\/contact$/, // Matches '/contact'
+  /^\/product(\/.*)?$|^$/, // Matches '/product', '/product/', and any subpath like '/product/feature'
   /^\/pricing$/, // Matches '/pricing'
+  /^\/blog$/, // Matches '/pricing'
+  /^\/help$/, // Matches '/pricing'
+  /^\/team$/, // Matches '/pricing'
+
   /^\/api\/auth\/callback$/ // Matches '/api/auth/callback'
 ];
 

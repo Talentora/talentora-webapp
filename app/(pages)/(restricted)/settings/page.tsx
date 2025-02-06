@@ -11,7 +11,6 @@ import NameForm from '@/components/AccountForms/NameForm';
 import CompanyForm from '@/components/AccountForms/CompanyForm';
 import Link from 'next/link';
 import InvitePage from '@/components/Invite';
-import { TeamMembersStep } from '@/components/CompanyOnboarding/steps/TeamMemberStep';
 import IntegrationStatus from '@/components/AccountForms/IntegrationStatus';
 import { useSearchParams } from 'next/navigation';
 
@@ -29,10 +28,10 @@ export default function SettingsPage() {
       label: 'Account',
       value: 'account',
       component: (
-        <div className="flex flex-row gap-4"> 
+        <div className="flex flex-row gap-4 w-1/2"> 
       
             <NameForm />
-              <EmailForm />
+              {/* <EmailForm /> */}
         </div>
       )
     },
@@ -51,16 +50,12 @@ export default function SettingsPage() {
           </div>
       )
     },
-    {
-      label: 'Billing',
-      value: 'billing',
-      component: <CustomerPortalForm />
-    },
-    {
-      label: 'Team',
-      value: 'team',
-      component: <TeamMembersStep onCompletion={() => {}} />
-    },
+    // {
+    //   label: 'Billing',
+    //   value: 'billing',
+    //   component: <CustomerPortalForm />
+    // },
+  
     {
       label: 'Integration Status',
       value: 'integrations',
