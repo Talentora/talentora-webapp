@@ -50,6 +50,7 @@ env:
 
 jobs:
   install-and-test: # Validation, lint test.
+    needs: generate_types
     runs-on: ubuntu-latest
     strategy:
       matrix:
