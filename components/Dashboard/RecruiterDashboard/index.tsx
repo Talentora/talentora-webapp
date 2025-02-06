@@ -80,10 +80,10 @@ export default function RecruiterDashboard() {
 
   return (
     <div className="w-screen mx-auto">
-      <main className="w-full pr-80 flex p-8 mb-6">
+      <main className="w-full pr-80 flex p-8">
         <div className="flex flex-col gap-6 w-full">
           {/* Header */}
-          <div className="flex items-center justify-between gap-4 w-full bg-background p-4 rounded-lg">
+          <div className="flex items-center justify-between gap-4 w-full p-4 rounded-lg">
             <div className="flex items-center gap-4">
               <div className="p-2 bg-white rounded-lg shadow-xl relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-indigo-500 opacity-75 rounded-lg"></div>
@@ -112,7 +112,7 @@ export default function RecruiterDashboard() {
                 )}
               </Button>
               {inviteModalOpen && (
-                <Dialog open={inviteModalOpen} onOpenChange={setInviteModalOpen}>
+                <Dialog open={inviteModalOpen} onOpenChange={setInviteModalOpen} >
                   <DialogContent>
                     <InviteApplicants jobs={combinedJobs} singleJobFlag={false} applicants={applicants} />
                   </DialogContent>
