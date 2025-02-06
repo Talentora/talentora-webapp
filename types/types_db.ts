@@ -5,9 +5,7 @@ export type Json =
   | null
   | { [key: string]: Json | undefined }
   | Json[]
-  
 
-  
 export type Database = {
   public: {
     Tables: {
@@ -160,44 +158,44 @@ export type Database = {
         Row: {
           billing_address: string | null
           company_context: string | null
+          Configured: boolean
           description: string | null
-          email_extension: string | null
           id: string
           industry: string | null
           location: string | null
           merge_account_token: string | null
           name: string
           payment_method: string | null
+          provider_id: string | null
           subscription_id: string | null
-          website_url: string | null
         }
         Insert: {
           billing_address?: string | null
           company_context?: string | null
+          Configured?: boolean
           description?: string | null
-          email_extension?: string | null
           id?: string
           industry?: string | null
           location?: string | null
           merge_account_token?: string | null
           name: string
           payment_method?: string | null
+          provider_id?: string | null
           subscription_id?: string | null
-          website_url?: string | null
         }
         Update: {
           billing_address?: string | null
           company_context?: string | null
+          Configured?: boolean
           description?: string | null
-          email_extension?: string | null
           id?: string
           industry?: string | null
           location?: string | null
           merge_account_token?: string | null
           name?: string
           payment_method?: string | null
+          provider_id?: string | null
           subscription_id?: string | null
-          website_url?: string | null
         }
         Relationships: [
           {
@@ -269,6 +267,39 @@ export type Database = {
         Update: {
           id?: string
           stripe_customer_id?: string | null
+        }
+        Relationships: []
+      }
+      form_messages: {
+        Row: {
+          company: string | null
+          created_at: string
+          email: string | null
+          id: number
+          message: string | null
+          name: string | null
+          role: string | null
+          subject: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          id?: number
+          message?: string | null
+          name?: string | null
+          role?: string | null
+          subject?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          id?: number
+          message?: string | null
+          name?: string | null
+          role?: string | null
+          subject?: string | null
         }
         Relationships: []
       }
@@ -448,28 +479,16 @@ export type Database = {
       }
       recruiters: {
         Row: {
-          avatar_url: string | null
-          billing_address: Json | null
           company_id: string | null
-          harvest_recruiters: number | null
           id: string
-          payment_method: Json | null
         }
         Insert: {
-          avatar_url?: string | null
-          billing_address?: Json | null
           company_id?: string | null
-          harvest_recruiters?: number | null
           id: string
-          payment_method?: Json | null
         }
         Update: {
-          avatar_url?: string | null
-          billing_address?: Json | null
           company_id?: string | null
-          harvest_recruiters?: number | null
           id?: string
-          payment_method?: Json | null
         }
         Relationships: [
           {
