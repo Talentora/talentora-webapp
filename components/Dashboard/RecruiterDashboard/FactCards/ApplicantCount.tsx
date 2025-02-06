@@ -5,37 +5,20 @@ import { useState, useEffect } from 'react';
 import { ApplicantCandidate } from '@/types/merge';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const ApplicantCountCard = ({ factWindow,isLoading ,applicants}: { factWindow: number, isLoading: boolean, applicants: ApplicantCandidate[] }) => {
-  // const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
-  // const [isLoading, setIsLoading] = useState(true);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const applicationsResponse = await fetch(`/api/applications`);
-
-  //     if (applicationsResponse.ok) {
-  //       const applicantsData = await applicationsResponse.json();
-  //       setApplicants(applicantsData);
-  //     }
-  //     setIsLoading(false);
-  //   };
-
-  //   fetchData();
-  // }, [factWindow]);
-
+const ApplicantCountCard = ({ factWindow, isLoading, applicants }: { factWindow: number, isLoading: boolean, applicants: ApplicantCandidate[] }) => {
   if (isLoading) {
     return (
-      <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-[#5650F0]/50 bg-card">
+      <Card className="max-h-[100px] group p-2 border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 transition duration-300 ease-in-out hover:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
         <CardHeader className="flex flex-row justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            Total Applicants This Month
+          <CardTitle className="ml-4 pt-2 text-sm font-medium">
+            Total Applicants
           </CardTitle>
           <Link href="/applicants">
-            <UsersIcon className="h-4 w-4 text-muted-foreground cursor-pointer" />
+            <UsersIcon className="h-6 w-6 text-muted-foreground cursor-pointer" />
           </Link>
         </CardHeader>
         <CardContent>
-          <Skeleton className="h-8 w-16" />
+          <Skeleton className="-mt-6 h-8 w-16" />
           <Skeleton className="h-4 w-24 mt-2" />
         </CardContent>
       </Card>
@@ -54,27 +37,26 @@ const ApplicantCountCard = ({ factWindow,isLoading ,applicants}: { factWindow: n
   const percentageChange = 0; // Since we're only looking at the last fact window days, there's no previous period to compare to.
 
   return (
-    <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-primary-dark/50 bg-card">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">
-          Total Applicants This Month
+    <Card className="max-h-[100px] group p-2 border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 transition duration-300 ease-in-out hover:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <CardTitle className="ml-4 pt-2 text-sm font-medium">
+          Total Applicants
         </CardTitle>
         <Link href="/applicants">
-          <UsersIcon className="h-4 w-4 text-muted-foreground cursor-pointer" />
+          <button className="group p-2 bg-input rounded-md transition duration-300 ease-in-out group-hover:bg-background focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <UsersIcon className="h-6 w-6 text-indigo-500 cursor-pointer group-hover:text-indigo-500" />
+          </button>
         </Link>
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{lastFactWindowDaysApplicants}</div>
-        <p className="text-xs text-muted-foreground">
-          {percentageChange >= 0 ? '+' : ''}
-          {percentageChange.toFixed(2)}% from last month
-        </p>
+      <CardContent className="relative">
+      <div className="ml-4 -mt-6 text-lg sm:text-xl md:text-2xl font-bold">{lastFactWindowDaysApplicants}</div>
+      <div className="absolute right-2 -mt-4 text-sm text-gray-500">
+          {percentageChange >= 0 ? '' : ''}
+          {percentageChange.toFixed(2)}%
+        </div>
       </CardContent>
     </Card>
   );
 };
 
 export default ApplicantCountCard;
-
-
-

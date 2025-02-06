@@ -6,19 +6,19 @@ import { Button } from '@/components/ui/button';
 const SettingsCard = () => {
   return (
     <div>
-    <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-primary-dark/50 bg-card">
+    <Card className="p-5 border border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Settings</CardTitle>
+          <CardTitle className="ml-4 pt-2 text-xl font-semibold">Settings</CardTitle>
           <Link href="/settings">
             <Settings className="h-4 w-4 text-muted-foreground cursor-pointer" />
           </Link>
         </CardHeader>
         <CardContent>
-          <p className="text-sm mb-4">
+          <p className="ml-4 text-sm -mt-4 mb-8">
             Configure your recruiting preferences and settings
           </p>
           <Link href="/settings">
-            <Button className="w-full" variant="outline">
+            <Button className="w-full  bg-gradient-to-br from-purple-500 to-blue-500">
               Open Settings
             </Button>
           </Link>

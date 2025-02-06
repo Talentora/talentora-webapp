@@ -92,8 +92,8 @@ const InviteApplicants = ({ jobs, singleJobFlag, applicants }: InviteApplicantsP
   };
 
   return (
-    <div className="flex-1">
-      <div className="w-full h-full p-6  shadow-3xl rounded-lg">
+    <div >
+      <div className="w-full h-1/2 p-6  shadow-3xl rounded-lg">
         <div className="space-y-4">
           <div>
             <h2 className="text-xl font-semibold">Select Candidates to Invite</h2>
