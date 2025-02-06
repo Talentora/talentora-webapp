@@ -10,7 +10,7 @@ import {
   ClipboardListIcon,
   ChevronDown
 } from 'lucide-react';
-import { EnrichedJob } from '../JobList';
+import { EnrichedJob } from '../types';
 import { useState } from 'react';
 import DepartmentChips from '@/components/Jobs/DepartmentChips';
 

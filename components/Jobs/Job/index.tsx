@@ -6,7 +6,7 @@ import AssessmentCount from './JobConfig/AssessmentCount';
 
 import { JobHeader } from './JobHeader';
 import { RecentApplicants } from './RecentApplicants';
-import { EnrichedJob } from '../JobList';
+import { EnrichedJob } from '../types';
 import JobConfig from './JobConfig';
 import { ApplicantCandidate } from '@/types/merge';
 import { 

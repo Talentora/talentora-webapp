@@ -58,18 +58,6 @@ export const createClient = (request: NextRequest) => {
             value: '',
             ...options
           });
-        },
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value));
-          response = NextResponse.next({
-            request,
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          );
         }
       }
     }
@@ -111,8 +99,8 @@ export async function updateSession(request: NextRequest) {
             request,
           });
           supabaseResponse.cookies.delete(name);
-        },
-      },
+        }
+      }
     }
   );
 

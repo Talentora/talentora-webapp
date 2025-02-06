@@ -2,7 +2,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '../ui/button';
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
-import { EnrichedJob } from './JobList';
+import { EnrichedJob } from './types';
 import { useRouter } from 'next/navigation';
 
 interface SearchFilterProps {

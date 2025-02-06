@@ -14,10 +14,9 @@ export const unprotectedRoutes = [
   /^\/contact$/, // Matches '/contact'
   /^\/product(\/.*)?$|^$/, // Matches '/product', '/product/', and any subpath like '/product/feature'
   /^\/pricing$/, // Matches '/pricing'
-  /^\/blog$/, // Matches '/pricing'
-  /^\/help$/, // Matches '/pricing'
-  /^\/team$/, // Matches '/pricing'
-
+  /^\/blog$/, // Matches '/blog'
+  /^\/help$/, // Matches '/help'
+  /^\/team$/, // Matches '/team'
   /^\/api\/auth\/callback$/ // Matches '/api/auth/callback'
 ];
 
@@ -51,18 +50,10 @@ export async function middleware(request: NextRequest) {
   }
 
   // Check user role
-  // const { role } = user.user_metadata;
   const role = await getUserRole(supabase, user.id);
-  // New: Check if the user is an applicant trying to access a recruiter route
-  if (
-    role === 'applicant' &&
-    !applicantRoutes.some((route) => route.test(pathname))
-  ) {
-    const dashboardUrl = new URL('/dashboard', request.url);
-    if (request.nextUrl.pathname !== dashboardUrl.pathname) {
-      return NextResponse.redirect(dashboardUrl);
-    }
-  }
+  
+  // If we're already on the onboarding page, don't redirect to prevent loops
+  const isOnboardingPage = pathname === '/settings/onboarding';
 
   if (role === 'recruiter') {
     // Check if the recruiter has a company ID in the recruiters table
@@ -72,30 +63,15 @@ export async function middleware(request: NextRequest) {
       .eq('id', user.id)
       .single();
 
-    if (error || !recruitData || !recruitData.company_id) {
-      console.error('Error fetching recruiter data:', error);
-      // If there's an error, no data, or no company_id, and trying to access a protected route,
+    if ((error || !recruitData || !recruitData.company_id) && !isOnboardingPage) {
+      // If there's an error, no data, or no company_id, and not already on onboarding,
       // redirect to the onboarding page
-      if (
-        !allUnprotectedRoutes.some((route) => route.test(pathname)) &&
-        pathname !== '/settings/onboarding'
-      ) {
-        return NextResponse.redirect(
-          new URL('/settings/onboarding', request.url)
-        );
-      }
-    } else {
+      return NextResponse.redirect(new URL('/settings/onboarding', request.url));
+    } else if (recruitData?.company_id && !isOnboardingPage) {
       // Check if company is configured
       const company = await getCompany(recruitData.company_id);
       if (!company?.Configured) {
-        if (
-          !allUnprotectedRoutes.some((route) => route.test(pathname)) &&
-          pathname !== '/settings/onboarding'
-        ) {
-          return NextResponse.redirect(
-            new URL('/settings/onboarding', request.url)
-          );
-        }
+        return NextResponse.redirect(new URL('/settings/onboarding', request.url));
       }
     }
   }
