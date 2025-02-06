@@ -2,7 +2,7 @@
 import { Job } from '@/types/merge';
 import { NextResponse } from 'next/server';
 import { getMergeApiKey } from '@/utils/supabase/queries';
-import { getUserRole } from '@/middleware';
+import { getUserRole } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/server';
 
 export async function GET(

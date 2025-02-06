@@ -12,6 +12,8 @@ import { useRouter } from 'next/navigation';
 import { SignOut } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
+import { getUserRole } from '@/utils/supabase/queries';
+import { createClient } from '@/utils/supabase/client';
 
 const Profile = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -20,6 +22,12 @@ const Profile = () => {
 
   const { user, company } = useUser();
   const router = useRouter();
+
+  const supabase = createClient();
+  if (!user) return null;
+  const userRole = getUserRole(supabase, user.id);
+
+
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,7 +56,7 @@ const Profile = () => {
               </h4>
               <div className="flex items-center gap-[0.5em] mt-[0.25em]">
                 <Link href="/settings?tab=account" className="inline-flex items-center rounded-full bg-primary px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-accent-foreground capitalize hover:bg-accent/80">
-                  {user?.user_metadata?.role || 'User'}
+                  {userRole || 'Error'}
                 </Link>
                 {company?.name && (
                   <Link href="/settings?tab=company" className="inline-flex items-center rounded-full bg-secondary px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-accent-foreground capitalize hover:bg-accent/80">

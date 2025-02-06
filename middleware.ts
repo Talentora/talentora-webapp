@@ -102,20 +102,3 @@ export const config = {
 };
 
 
-export async function getUserRole(supabase: SupabaseClient, user_id: string) {
-    // Query the recruiters table to check if the user's id exists.
-    console.log('Getting user role for user:', user_id);
-    const { data: recruiterData, error: recruiterError } = await supabase
-      .from('recruiters')
-      .select('id')
-      .eq('id', user_id)
-      .single();
-
-    if (recruiterData && !recruiterError) {
-        console.log('User is a recruiter');
-        return 'recruiter'
-    } else {
-        console.log('User is an applicant');
-        return 'applicant'
-    }
-}

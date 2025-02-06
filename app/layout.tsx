@@ -11,7 +11,7 @@ import NextTopLoader from 'nextjs-toploader';
 import { createClient } from '@/utils/supabase/server';
 import ReactQueryProvider from '@/components/Providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { getUserRole } from '@/middleware';
+import { getUserRole } from '@/utils/supabase/queries';
 
 const title = 'Talentora';
 const description = 'Talentora is a platform for creating and managing AI-powered interviews.';

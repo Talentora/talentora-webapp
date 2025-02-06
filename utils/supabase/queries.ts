@@ -7,6 +7,7 @@ type Company = Tables<'companies'>;
 type scout = Tables<'bots'>;
 type AI_Summary = Tables<'AI_summary'>;
 import { inviteRecruiterAdmin, inviteCandidateAdmin, listUsersAdmin } from '@/utils/supabase/admin';
+import { SupabaseClient } from '@supabase/supabase-js';
 // CRUD operations for the company table
 
 /**
@@ -456,6 +457,25 @@ export const createscout = async (scoutData: any): Promise<Tables<'bots'>> => {
 
   return data;
 };
+
+export async function getUserRole(supabase: SupabaseClient, user_id: string) {
+  // Query the recruiters table to check if the user's id exists.
+  console.log('Getting user role for user:', user_id);
+  const { data: recruiterData, error: recruiterError } = await supabase
+    .from('recruiters')
+    .select('id')
+    .eq('id', user_id)
+    .single();
+
+  if (recruiterData && !recruiterError) {
+      console.log('User is a recruiter');
+      return 'recruiter'
+  } else {
+      console.log('User is an applicant');
+      return 'applicant'
+  }
+}
+
 
 /**
  * Deletes a scout from the database.

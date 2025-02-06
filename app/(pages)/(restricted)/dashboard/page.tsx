@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server';
 import DashboardPage from '@/components/Dashboard';
-import { getUserRole } from '@/middleware';
+import { getUserRole } from '@/utils/supabase/queries';
 
 export default async function Page() {
   const supabase = createClient();
