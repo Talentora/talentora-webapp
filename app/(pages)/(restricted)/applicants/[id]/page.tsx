@@ -54,8 +54,6 @@ export default function ApplicantPage({
     mergeApplicant: null
   });
 
-  console.log("portalProps", portalProps);
-
   const fetchMergeData = async () => {
     const response = await fetch(`/api/applications/${params.id}`);
     if (!response.ok) {

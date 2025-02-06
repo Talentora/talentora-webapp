@@ -93,7 +93,7 @@ export async function updateSession(request: NextRequest) {
       cookies: {
         get(name: string) {
           const value = request.cookies.get(name)?.value;
-          console.log(`[Middleware] Getting cookie: ${name} = ${value}`);
+          // console.log(`[Middleware] Getting cookie: ${name} = ${value}`);
           return value;
         },
         set(name: string, value: string, options: CookieOptions) {

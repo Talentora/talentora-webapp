@@ -1,5 +1,9 @@
-'use server';
-import { Tables , Json} from '@/types/types_db';
+"use server";
+import { Database } from '@/types/types_db';
+
+type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
+type Json = Database['public']['Tables']['AI_summary']['Row']['text_eval'];
+
 import { createClient } from '@/utils/supabase/server';
 import { ScoutWithJobs } from '@/types/custom';
 type Recruiter = Tables<'recruiters'>;
@@ -53,12 +57,16 @@ export const createCompany = async (
 ): Promise<Company> => {
   const supabase = createClient();
 
-  // const { user, ...restCompanyData } = companyData;
+  // Set configured to false by default
+  const companyDataWithConfig = {
+    ...companyData,
+    configured: false
+  };
 
   // Insert the company
   const { data: createdCompany, error: companyError } = await supabase
     .from('companies')
-    .insert(companyData)
+    .insert(companyDataWithConfig)
     .select()
     .single();
 

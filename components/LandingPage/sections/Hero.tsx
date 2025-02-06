@@ -18,7 +18,7 @@ export function Hero() {
     <section className="container px-4 py-16 mx-auto">
       <div className="grid lg:grid-cols-2 gap-20 items-center">
         <div className="space-y-8">
-          <div className="bg-background inline-flex items-center rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm">
+          <div className="bg-purple-500/5 dark:bg-purple-500/20 border border-purple-500 shadow-sm inline-flex items-center rounded-full border border-accent/20 bg-accent/5 px-4 py-1.5 text-sm">
             <span className=" text-primary font-medium">✨ AI-Powered Video Interviews</span>
           </div>
           <h1 className="text-5xl font-bold leading-tight tracking-tighter lg:text-6xl xl:text-7xl">
@@ -29,13 +29,13 @@ export function Hero() {
             Our AI-powered platform conducts initial interviews, assesses candidates, and provides data-driven insights - all while you sleep.
           </p>
           <div className="flex flex-wrap gap-4">
-            <Button size="lg" className="bg-primary hover:bg-accent/90 text-lg">
+            <Button size="lg" className="bg-primary rounded-full text-lg font-normal">
               Start Free Trial
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-primary text-primary hover:bg-accent/5 text-lg group"
+              className="border-primary text-primary hover:bg-accent/5 rounded-full text-lg group"
               onClick={handleVideoClick}
             >
               Watch Demo
@@ -44,12 +44,8 @@ export function Hero() {
           </div>
           <div className="flex items-center gap-4 text-sm text-gray-600">
             <div className="flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              <span>50,000+ interviews conducted</span>
             </div>
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4" />
-              <span>4.9/5 recruiter rating</span>
             </div>
           </div>
         </div>
@@ -59,7 +55,7 @@ export function Hero() {
           <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-accent/10">
             <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-pink-600/5 backdrop-blur-sm" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <video width="320" height="240" controls preload="auto" className="w-full h-full object-cover">
+              <video width="320" height="240" controls preload="auto" className="w-full h-full object-cover shadow-2xl shadow-[#5650F0]/50">
                 <source src="/Videos/InterviewDemo.mp4" />
                 <track
                   src="/videos/captions-en.vtt"

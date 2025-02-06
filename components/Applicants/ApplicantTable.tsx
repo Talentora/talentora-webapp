@@ -24,7 +24,7 @@ export default function ApplicantTable({ applicants, disablePortal = false, titl
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">{title}</h2>
-      <Table className="border rounded-lg">
+      <Table className="border border-transparent rounded-lg">
         <TableHeader className="bg-primary-dark rounded-lg">
           <TableRow>
             <TableHead>Name</TableHead>

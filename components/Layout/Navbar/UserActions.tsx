@@ -8,9 +8,10 @@ import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 
 interface UserActionsProps {
   user: any;
+  role: string;
 }
 
-export function UserActions({ user }: UserActionsProps) {
+export function UserActions({ user, role }: UserActionsProps) {
   if (!user) {
     return (
       <div className="flex items-center space-x-2">
@@ -25,6 +26,6 @@ export function UserActions({ user }: UserActionsProps) {
     );
   }
 
-  return <Profile />;
+  return <Profile role={role} />;
   
 } 

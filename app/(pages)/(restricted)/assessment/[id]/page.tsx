@@ -90,7 +90,8 @@ export default function Assessment({
         }
 
         // Fetch bot data
-        const scout = await getscoutById(config.scout_id.toString());
+        const scout = await getscoutById(config.bot_id.toString());
+
         if (!scout) {
           throw new Error('Failed to fetch scout data');
         }

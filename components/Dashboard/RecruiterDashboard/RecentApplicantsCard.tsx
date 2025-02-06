@@ -28,13 +28,13 @@ export default function RecentApplicantsCard({ applicants, isLoading }: { applic
   // }, []);
 
   return (
-    <Card className="p-5 bg-white rounded-2xl shadow-xl shadow-primary-dark/50 bg-card">
-      <CardHeader className="pb-2 flex flex-row justify-between">
+    <Card className="p-5 rounded-2xl bg-background shadow-md shadow-[#5650F0]/20 dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
+      <CardHeader className="ml-5 pt-6 pb-2 flex flex-row justify-between">
         <CardTitle>Recent Applicants</CardTitle>
         <Link href="/applicants">
           <Button
-            className="bg-primary-dark text-white flex items-center "
-            variant="outline"
+            className="bg-[#5650F0] -mt-4 text-background flex items-center "
+            variant="secondary"
           >
             View All
           </Button>

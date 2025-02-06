@@ -21,13 +21,9 @@ export default function JobPortal() {
     );
   }, [enrichedApplications]);
 
-  if (isLoading) {
-    return <LoadingSkeleton />
-  }
-  
   return (
     <div className="min-h-screen">
-      <header className="text-primary py-8 px-6">
+      <header className="py-8 px-6">
         <div className="container mx-auto">
           <h1 className="text-3xl font-bold mb-2">Applicant Dashboard</h1>
           <p className="text-lg opacity-90">
@@ -36,7 +32,11 @@ export default function JobPortal() {
         </div>
       </header>
 
-      {error ? (
+      {isLoading ? (
+        <main>
+          <LoadingSkeleton />
+        </main>
+      ) : error ? (
         <div className="flex justify-center items-center min-h-screen">
           <Alert className="bg-red-100 border-red-400 text-red-700 max-w-md">
             <AlertTitle>Error</AlertTitle>

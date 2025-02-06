@@ -158,44 +158,44 @@ export type Database = {
         Row: {
           billing_address: string | null
           company_context: string | null
+          Configured: boolean
           description: string | null
-          email_extension: string | null
           id: string
           industry: string | null
           location: string | null
           merge_account_token: string | null
           name: string
           payment_method: string | null
+          provider_id: string | null
           subscription_id: string | null
-          website_url: string | null
         }
         Insert: {
           billing_address?: string | null
           company_context?: string | null
+          Configured?: boolean
           description?: string | null
-          email_extension?: string | null
           id?: string
           industry?: string | null
           location?: string | null
           merge_account_token?: string | null
           name: string
           payment_method?: string | null
+          provider_id?: string | null
           subscription_id?: string | null
-          website_url?: string | null
         }
         Update: {
           billing_address?: string | null
           company_context?: string | null
+          Configured?: boolean
           description?: string | null
-          email_extension?: string | null
           id?: string
           industry?: string | null
           location?: string | null
           merge_account_token?: string | null
           name?: string
           payment_method?: string | null
+          provider_id?: string | null
           subscription_id?: string | null
-          website_url?: string | null
         }
         Relationships: [
           {
@@ -446,28 +446,16 @@ export type Database = {
       }
       recruiters: {
         Row: {
-          avatar_url: string | null
-          billing_address: Json | null
           company_id: string | null
-          harvest_recruiters: number | null
           id: string
-          payment_method: Json | null
         }
         Insert: {
-          avatar_url?: string | null
-          billing_address?: Json | null
           company_id?: string | null
-          harvest_recruiters?: number | null
           id: string
-          payment_method?: Json | null
         }
         Update: {
-          avatar_url?: string | null
-          billing_address?: Json | null
           company_id?: string | null
-          harvest_recruiters?: number | null
           id?: string
-          payment_method?: Json | null
         }
         Relationships: [
           {
@@ -663,4 +651,3 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
-

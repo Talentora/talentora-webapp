@@ -8,6 +8,8 @@ import { UserActions } from './UserActions';
 export default function Navlinks({ visible }: { visible: boolean }) {
   const { user, recruiter } = useUser();
 
+  const role = visible ? 'recruiter' : 'applicant';
+
   return (
     <div className="sticky top-0 z-40 w-full bg-transparent">
       <div className="container px-4 mx-auto">
@@ -17,7 +19,7 @@ export default function Navlinks({ visible }: { visible: boolean }) {
             <NavigationItems isUser={!!user} isRecruiter={!!recruiter} />
           </div>
           <div className="flex items-center space-x-4">
-            <UserActions user={user} />
+            <UserActions user={user} role={role} />
           </div>
         </div>
       </div>

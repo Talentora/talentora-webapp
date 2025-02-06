@@ -61,24 +61,20 @@ export default function SearchBar({
   };
 
   const handleSelectApplicant = (applicant: ApplicantCandidate) => {
-    // setSearchTerm(getFullName(applicant));
-    // setShowPreview(false);
     router.push(`/applicants/${applicant.application.id}`);
   };
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-4">
+      <div className="relative flex items-center gap-4">
         <Input
           placeholder="Search applicants..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="max-w-sm"
+          className="max-w-lg pl-10"  // Adds padding to make space for the icon
         />
-        <Button variant="outline" size="icon">
-          <Search className="h-4 w-4" />
-        </Button>
+        <Search className="absolute left-3 text-gray-500 h-5 w-5" /> {/* Positions the search icon inside the input */}
       </div>
 
       {showPreview && filteredApplicants.length > 0 && (
@@ -89,10 +85,7 @@ export default function SearchBar({
               className={`p-3 cursor-pointer transition-colors ${
                 index === selectedIndex ? 'bg-gray-50' : 'hover:bg-gray-50'
               }`}
-              onClick={() => {
-                handleSelectApplicant(applicant);
-               
-              }}
+              onClick={() => handleSelectApplicant(applicant)}
               onMouseEnter={() => setSelectedIndex(index)}
             >
               <div className="flex flex-col gap-1">
@@ -103,7 +96,7 @@ export default function SearchBar({
                   {applicant.candidate.email_addresses?.[0]?.value || 'No email'}
                 </div>
                 <div className="flex justify-between items-center text-sm">
-                  <span className=" font-medium">
+                  <span className="font-medium">
                     {applicant.job.name || 'No role specified'}
                   </span>
                   <span className="text-gray-400">

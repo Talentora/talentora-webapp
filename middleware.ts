@@ -3,6 +3,7 @@ import { updateSession } from '@/utils/supabase/middleware';
 import { NextResponse } from 'next/server';
 import { createClient } from './utils/supabase/server';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { getUserRole, getCompany } from './utils/supabase/queries';
 
 // List of unprotected routes as regular expressions
 export const unprotectedRoutes = [
@@ -76,6 +77,19 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(
           new URL('/settings/onboarding', request.url)
         );
+      }
+    } else {
+      // Check if company is configured
+      const company = await getCompany(recruitData.company_id);
+      if (!company?.Configured) {
+        if (
+          !allUnprotectedRoutes.some((route) => route.test(pathname)) &&
+          pathname !== '/settings/onboarding'
+        ) {
+          return NextResponse.redirect(
+            new URL('/settings/onboarding', request.url)
+          );
+        }
       }
     }
   }
