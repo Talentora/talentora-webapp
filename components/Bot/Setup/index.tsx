@@ -55,15 +55,15 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({ onStartIntervie
   }, []);
 
   return (
-    <div className="flex flex-col items-center h-screen">
+    <div className="flex flex-col items-center h-1/2">
       {!showCameraSelection ? (
-        <Card className="w-full  border-gray-200 p-4 border-none">
+        <Card className="w-full  border border-none">
           <CardHeader>
             <CardTitle>Select Your Microphone</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {availableMics.length === 0 ? (
-              <div className="flex flex-col items-center space-y-4">
+              <div className="flex flex-col items-center">
                 <Loader2 className="h-8 w-8 animate-spin" />
                 <p className="text-sm text-gray-500">Loading audio devices...</p>
                 
@@ -84,11 +84,11 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({ onStartIntervie
                 </Select>
                 
                 {selectedMic && (
-                  <div className="space-y-4">
+                  <div className=" flex flex-col items-center justify-center">
                     <div className="flex justify-center">
                       <VoiceVisualizer participantType="local" />
                     </div>
-                    <Button onClick={handleNextToCamera} className="w-full">
+                    <Button onClick={handleNextToCamera} className="w-1/5">
                       Next
                     </Button>
                   </div>

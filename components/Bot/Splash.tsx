@@ -19,7 +19,7 @@ export const Splash: React.FC<SplashProps> = ({ handleReady, company, mergeJob }
   return (
     <Card className="w-full bg-background max-w-md mx-auto mt-8 border border-border p-5">
       <CardHeader>
-        <CardTitle>Welcome to your AI Interview</CardTitle>
+        <CardTitle>Welcome to your AI Interview Assessment</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {step === 0 && (
@@ -42,7 +42,7 @@ export const Splash: React.FC<SplashProps> = ({ handleReady, company, mergeJob }
                 <li>Your interview will be recorded for assessment purposes</li>
                 <li>The AI system will process your responses to evaluate your qualifications</li>
                 <li>Your data will be handled in accordance with our privacy policy</li>
-                <li>The interview results will be shared with {company?.name}</li>
+                <li>The interview results will be shared with <strong>{company?.name}</strong></li>
               </ul>
             </div>
             <div className="flex items-center space-x-2">
@@ -65,7 +65,7 @@ export const Splash: React.FC<SplashProps> = ({ handleReady, company, mergeJob }
         {step === 2 && (
           <>
             <p className="text-gray-600">
-              You are about to begin an AI-powered interview with {company?.name}. This interview is conducted by Talentora's advanced AI interviewer, designed to assess your qualifications for the {mergeJob?.name} position.
+              You are about to begin an AI-powered interview with <strong>{company?.name}</strong>. This interview is conducted by Talentora's advanced AI interviewer, designed to assess your qualifications for the <strong>{mergeJob?.name}</strong> position.
             </p>
             <p className="text-gray-600">
               The AI interviewer will ask you relevant questions about your experience and skills. Please speak naturally and clearly when responding.

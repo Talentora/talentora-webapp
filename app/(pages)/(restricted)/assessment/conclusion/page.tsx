@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import FinishedIcon from './FinishedIcon';
-
+import { Button } from '@/components/ui/button';
 
 export default function ConclusionPage() {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -27,7 +27,7 @@ export default function ConclusionPage() {
         recycle={false}
         numberOfPieces={500}
       />
-      <Card className="max-w-2xl w-full">
+      <Card className="max-w-2xl w-full p-3 bg-background">
         <CardHeader>
           <CardTitle className="text-center text-3xl">
             Thank You!
@@ -53,19 +53,21 @@ export default function ConclusionPage() {
             {/* <Image src="/finished-icon.svg" alt="Finished icon" width={200} height={200} /> */}
           </div>
         </CardContent>
-        <CardFooter className="flex gap-4 justify-center">
-          <Link 
-            href="/dashboard" 
-            className="px-6 py-2 bg-primary-dark text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Go to Dashboard
-          </Link>
-          <Link 
-            href="/" 
-            className="px-6 py-2 bg-background text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-          >
-            Back to Home
-          </Link>
+        <CardFooter className="flex gap-4 justify-between ">
+          <Button asChild>
+            <Link 
+              href="/dashboard" 
+            >
+              Go to Dashboard
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link 
+              href="/" 
+            >
+              Back to Home
+            </Link>
+          </Button>
         </CardFooter>
       </Card>
     </div>
