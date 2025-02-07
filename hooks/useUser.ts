@@ -2,27 +2,19 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { createClient } from '@/utils/supabase/client';
-import { type User as SupabaseUser } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 import { type Database } from '@/types/types_db';
+import { getUserRole } from '@/utils/supabase/queries';
 
 type Recruiter = Database['public']['Tables']['recruiters']['Row'];
 type Company = Database['public']['Tables']['companies']['Row'];
 type Applicant = Database['public']['Tables']['applicants']['Row'];
 
-/**
- * Hook to manage user authentication and related data
- * @returns {UseUserReturn} Object containing user, recruiter (or applicant) data, company data and loading/error states
- */
 interface UseUserReturn {
-  /** The authenticated Supabase user */
-  user: SupabaseUser | null;
-  /** Recruiter or applicant data if user exists */
+  user: User | null;
   recruiter: Recruiter | Applicant | null;
-  /** Company data if user is associated with a company */
   company: Company | null;
-  /** Loading state for any data fetching */
   loading: boolean;
-  /** Any error that occurred during data fetching */
   error: Error | null;
 }
 
@@ -46,18 +38,30 @@ export function useUser(): UseUserReturn {
     }
   });
 
-  // Determine if the user is a recruiter based on the identity data
-  const isRecruiter =
-    userData?.identities?.[0]?.identity_data?.role === 'recruiter';
+  const userId = userData?.id ?? '';
 
-  // Fetch recruiter data or applicant data (if not a recruiter) based on the user's role
+  // Query to get the user's role (as 'recruiter' or 'applicant')
+  const {
+    data: role,
+    isLoading: roleLoading,
+    error: roleError
+  } = useQuery({
+    queryKey: ['userRole', userId],
+    enabled: !!userId,
+    queryFn: async () => await getUserRole(supabase, userId)
+  });
+
+  // Derive the boolean from the role
+  const isRecruiter = role === 'recruiter';
+
+  // Fetch recruiter data or applicant data based on the user's role
   const {
     data: recruiterData,
     error: recruiterError,
     isLoading: recruiterLoading
   } = useQuery({
     queryKey: [isRecruiter ? 'recruiter' : 'applicants', userData?.id],
-    enabled: !!userData?.id,
+    enabled: !!userData?.id && !roleLoading, // wait until the role is known
     queryFn: async () => {
       if (!userData?.id) return null;
       if (isRecruiter) {
@@ -81,12 +85,11 @@ export function useUser(): UseUserReturn {
   });
 
   const recruiterRecord: Recruiter | null =
-  isRecruiter && recruiterData && 'company_id' in recruiterData
-    ? (recruiterData as Recruiter)
-    : null;
-  
+    isRecruiter && recruiterData && 'company_id' in recruiterData
+      ? (recruiterData as Recruiter)
+      : null;
 
-  // Fetch company data if recruiter exists and has company_id
+  // Fetch company data if recruiter exists and has a company_id
   const {
     data: companyData,
     error: companyError,
@@ -105,9 +108,8 @@ export function useUser(): UseUserReturn {
       return data;
     }
   });
-  
 
-  // Set up auth state listener to keep data in sync
+  // Optional: Set up an auth state listener
   useQuery({
     queryKey: ['authListener'],
     queryFn: async () => {
@@ -115,35 +117,31 @@ export function useUser(): UseUserReturn {
         data: { subscription }
       } = supabase.auth.onAuthStateChange(async (_event, _session) => {
         // The other queries will automatically re-fetch when needed
-        // due to their query key dependencies
       });
       return () => subscription.unsubscribe();
     },
-    staleTime: Infinity // Prevent unnecessary refetches of the auth listener
+    staleTime: Infinity
   });
 
   // Combine errors and loading states
-  const error = userError || recruiterError || companyError || null;
-  const loading = userLoading || recruiterLoading || companyLoading;
+  const error = userError || roleError || recruiterError || companyError || null;
+  const loading = userLoading || roleLoading || recruiterLoading || companyLoading;
 
-  if (recruiterRecord == null) { // is an applicant
+  if (recruiterRecord == null) {
     return {
       user: userData || null,
       recruiter: null,
       company: null,
       loading,
-      error:
-        error instanceof Error ? error : error ? new Error('Failed to fetch data') : null
+      error: error instanceof Error ? error : error ? new Error('Failed to fetch data') : null
     };
   } else {
-
     return { 
       user: userData || null,
       recruiter: recruiterData || null,
       company: companyData || null,
       loading,
-      error:
-        error instanceof Error ? error : error ? new Error('Failed to fetch data') : null
+      error: error instanceof Error ? error : error ? new Error('Failed to fetch data') : null
     };
   }
 }
