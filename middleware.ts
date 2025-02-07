@@ -1,86 +1,9 @@
 import { type NextRequest } from 'next/server';
 import { updateSession } from '@/utils/supabase/middleware';
-import { NextResponse } from 'next/server';
-import { createClient } from './utils/supabase/server';
-import { SupabaseClient } from '@supabase/supabase-js';
-import { getUserRole, getCompany } from './utils/supabase/queries';
-
-// List of unprotected routes as regular expressions
-export const unprotectedRoutes = [
-  /^\/$/, // Matches '/'
-  /^\/signin(\/.*)?$/, // Matches '/signin' and any subpath like '/signin/*'
-  /^\/signup(\/.*)?$/,
-  /^\/about$/, // Matches '/about'
-  /^\/contact$/, // Matches '/contact'
-  /^\/product(\/.*)?$|^$/, // Matches '/product', '/product/', and any subpath like '/product/feature'
-  /^\/pricing$/, // Matches '/pricing'
-  /^\/blog$/, // Matches '/blog'
-  /^\/help$/, // Matches '/help'
-  /^\/team$/, // Matches '/team'
-  /^\/api\/auth\/callback$/ // Matches '/api/auth/callback'
-];
-
-// Add the applicant route to the unprotected routes
-const applicantRoutes = [
-  /^\/assessment(\/.*)?$/,// Matches '/bot' and any subpath like '/bot/*'
-  /^\/api(\/.*)?$/ // Matches '/api' and any subpath like '/api/*'
-];
-
-// Combine unprotected and applicant routes
-const allUnprotectedRoutes = [...unprotectedRoutes, ...applicantRoutes];
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const supabase = createClient();
+  return await updateSession(request);
 
-  // Check if the current path matches any of the unprotected or applicant routes
-  if (allUnprotectedRoutes.some((route) => route.test(pathname))) {
-    return await updateSession(request);
-  }
-
-  // For all other routes, check authentication
-  const response = await updateSession(request);
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    // Redirect to signin page if user is not authenticated
-    return NextResponse.redirect(new URL('/signin', request.url));
-  }
-
-  // Check user role
-  const role = await getUserRole(supabase, user.id);
-  
-  // If we're already on the onboarding page, don't redirect to prevent loops
-  const isOnboardingPage = pathname === '/settings/onboarding';
-
-  if (role === 'recruiter') {
-    // Check if the recruiter has a company ID in the recruiters table
-    const { data: recruitData, error } = await supabase
-      .from('recruiters')
-      .select('company_id')
-      .eq('id', user.id)
-      .single();
-
-    if ((error || !recruitData || !recruitData.company_id) && !isOnboardingPage) {
-      // If there's an error, no data, or no company_id, and not already on onboarding,
-      // redirect to the onboarding page
-      return NextResponse.redirect(new URL('/settings/onboarding', request.url));
-    } else if (recruitData?.company_id && !isOnboardingPage) {
-      // Check if company is configured
-      const company = await getCompany(recruitData.company_id);
-      if (!company?.Configured) {
-        return NextResponse.redirect(new URL('/settings/onboarding', request.url));
-      }
-    }
-  }
-
-  // Add a custom header for debugging
-  response.headers.set('x-debug-request-path', request.nextUrl.pathname);
-  response.headers.set('x-debug-message', 'Middleware executed');
-
-  return response;
 }
 
 export const config = {
