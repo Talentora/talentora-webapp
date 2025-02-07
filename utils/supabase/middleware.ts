@@ -151,7 +151,7 @@ export async function updateSession(request: NextRequest) {
       cookies: {
         get(name: string) {
           const value = request.cookies.get(name)?.value;
-          // console.log(`[Middleware] Getting cookie: ${name} = ${value}`);
+          console.log(`[Middleware] Getting cookie: ${name} = ${value}`);
           return value;
         },
         set(name: string, value: string, options: CookieOptions) {
@@ -196,11 +196,9 @@ export async function updateSession(request: NextRequest) {
     const recruiterRedirect = await handleRecruiterRedirects(request, supabase, user);
     if (recruiterRedirect) return recruiterRedirect;
   }
-
   // Add debug headers
   supabaseResponse.headers.set('x-debug-request-path', request.nextUrl.pathname);
   supabaseResponse.headers.set('x-debug-message', 'Middleware executed');
-
 
   return supabaseResponse;
 }
