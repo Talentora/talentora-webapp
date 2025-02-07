@@ -39,8 +39,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
       <body className="w-full bg-gradient-to-br from-purple-500/[0.1] via-background to-pink-500/[0.1] p-0">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <NextTopLoader />
