@@ -26,6 +26,7 @@ const applicantRoutes = [
 // Combine unprotected and applicant routes
 export const allUnprotectedRoutes = [...unprotectedRoutes, ...applicantRoutes];
 
+
 type CookieData = {
   name: string;
   value: string;
@@ -171,6 +172,7 @@ export async function updateSession(request: NextRequest) {
         }
       }
     }
+
   );
 
   console.log('[Middleware] Created Supabase client');
@@ -198,6 +200,7 @@ export async function updateSession(request: NextRequest) {
   // Add debug headers
   supabaseResponse.headers.set('x-debug-request-path', request.nextUrl.pathname);
   supabaseResponse.headers.set('x-debug-message', 'Middleware executed');
+
 
   return supabaseResponse;
 }
