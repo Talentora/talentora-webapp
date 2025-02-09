@@ -23,6 +23,7 @@ import {
 import { cn } from '@/utils/cn';
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 
+<<<<<<< HEAD
 export function NavigationItems({
   isUser,
   isRecruiter
@@ -30,6 +31,11 @@ export function NavigationItems({
   isUser: boolean;
   isRecruiter: boolean;
 }) {
+=======
+
+export function NavigationItems({ isUser, isRecruiter }: { isUser: boolean; isRecruiter: boolean }) {
+
+>>>>>>> f2d88cc (fixed navbar, settings page, applicant sorting)
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -116,11 +122,7 @@ function ResourcesMenu() {
         Resources
       </NavigationMenuTrigger>
       <NavigationMenuContent>
-<<<<<<< HEAD
         <div className="grid gap-3 p-2 w-[400px] bg-popover rounded-lg shadow-md">
-=======
-        <div className="grid gap-3 p-6 w-[400px] bg-white rounded-lg">
->>>>>>> 14dcb55 (added mock/test/demo rooms)
           <NavigationLink
             href="/blog"
             icon={<BookOpen className="h-5 w-5 mr-2 text-indigo-600" />}

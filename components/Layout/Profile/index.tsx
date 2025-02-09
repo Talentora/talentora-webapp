@@ -4,12 +4,6 @@ import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { User, LogOut } from 'lucide-react';
-<<<<<<< HEAD
-import { useRouter, usePathname } from 'next/navigation';
-import { useQueryClient } from '@tanstack/react-query';
-import { type Database } from '@/types/types_db';
-type Company = Database['public']['Tables']['companies']['Row'];
-=======
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { type Database } from '@/types/types_db';
@@ -17,8 +11,6 @@ type Company = Database['public']['Tables']['companies']['Row'];
 import { SignOut } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
-
->>>>>>> 606cf3b (hotfix types)
 
 const Profile = ({
   user,
@@ -32,6 +24,8 @@ const Profile = ({
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
+
+  const companyData = company;
   const router = useRouter();
   const companyData = company;
   const pathname = usePathname();
@@ -101,9 +95,9 @@ const Profile = ({
 
             <form onSubmit={handleSignOut}>
               <input type="hidden" name="pathName" value={pathname} />
-              <Button 
-                type="submit" 
-                variant="ghost" 
+              <Button
+                type="submit"
+                variant="ghost"
                 size="sm"
                 className="w-full justify-start text-[0.875em] text-foreground hover:text-foreground hover:bg-accent"
               >

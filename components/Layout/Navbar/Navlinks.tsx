@@ -11,12 +11,17 @@ export default function Navlinks({ visible }: { visible: boolean }) {
   const { user, company } = useUser();
   const userData = user.data;
   const companyData = company.data;
-  
-  const isRecruiter = userData?.user_metadata?.role === "applicant" ? false : true;
 
-  const role = isRecruiter? "recruiter" : "applicant";
+  const isRecruiter =
+    userData?.user_metadata?.role === 'applicant' ? false : true;
+
+  const role = isRecruiter ? 'recruiter' : 'applicant';
   // visible ? 'recruiter' : 'applicant';
 
+  const isRecriter =
+    userData?.user_metadata?.role === 'applicant' ? false : true;
+
+  const role = visible ? 'recruiter' : 'applicant';
 
   if (user.loading) {
     return (
@@ -45,7 +50,7 @@ export default function Navlinks({ visible }: { visible: boolean }) {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             {!visible && <BrandLogo />}
-            <NavigationItems isUser={!!userData} isRecruiter={isRecruiter} />
+            <NavigationItems isUser={!!userData} isRecruiter={isRecriter} />
           </div>
           <div className="flex items-center space-x-4">
             <UserActions user={userData} role={role} company={companyData} />
