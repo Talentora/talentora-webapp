@@ -11,11 +11,22 @@ type Company = Database['public']['Tables']['companies']['Row'];
 type Applicant = Database['public']['Tables']['applicants']['Row'];
 
 interface UseUserReturn {
-  user: User | null;
-  recruiter: Recruiter | Applicant | null;
-  company: Company | null;
-  loading: boolean;
-  error: Error | null;
+  user: {
+    data: User | null;
+    loading: boolean;
+    error: Error | null;
+  };
+  recruiter: {
+    data: Recruiter | Applicant | null;
+    loading: boolean;
+    error: Error | null;
+  };
+  company: {
+    data: Company | null;
+    loading: boolean;
+    error: Error | null;
+  };
+  isRecruiter: boolean;
 }
 
 export function useUser(): UseUserReturn {
@@ -26,7 +37,7 @@ export function useUser(): UseUserReturn {
     data: userData,
     error: userError,
     isLoading: userLoading
-  } = useQuery({
+  } = useQuery<User | null, Error>({
     queryKey: ['user'],
     queryFn: async () => {
       const {
@@ -45,7 +56,7 @@ export function useUser(): UseUserReturn {
     data: role,
     isLoading: roleLoading,
     error: roleError
-  } = useQuery({
+  } = useQuery<'recruiter' | 'applicant' | null, Error>({
     queryKey: ['userRole', userId],
     enabled: !!userId,
     queryFn: async () => await getUserRole(supabase, userId)
@@ -59,7 +70,7 @@ export function useUser(): UseUserReturn {
     data: recruiterData,
     error: recruiterError,
     isLoading: recruiterLoading
-  } = useQuery({
+  } = useQuery<Recruiter | Applicant | null, Error>({
     queryKey: [isRecruiter ? 'recruiter' : 'applicants', userData?.id],
     enabled: !!userData?.id && !roleLoading, // wait until the role is known
     queryFn: async () => {
@@ -94,7 +105,7 @@ export function useUser(): UseUserReturn {
     data: companyData,
     error: companyError,
     isLoading: companyLoading
-  } = useQuery({
+  } = useQuery<Company | null, Error>({
     queryKey: ['company', recruiterRecord?.company_id],
     enabled: !!recruiterRecord?.company_id,
     queryFn: async () => {
@@ -110,7 +121,7 @@ export function useUser(): UseUserReturn {
   });
 
   // Optional: Set up an auth state listener
-  useQuery({
+  useQuery<void, Error>({
     queryKey: ['authListener'],
     queryFn: async () => {
       const {
@@ -123,25 +134,24 @@ export function useUser(): UseUserReturn {
     staleTime: Infinity
   });
 
-  // Combine errors and loading states
-  const error = userError || roleError || recruiterError || companyError || null;
-  const loading = userLoading || roleLoading || recruiterLoading || companyLoading;
-
-  if (recruiterRecord == null) {
-    return {
-      user: userData || null,
-      recruiter: null,
-      company: null,
-      loading,
-      error: error instanceof Error ? error : error ? new Error('Failed to fetch data') : null
-    };
-  } else {
-    return { 
-      user: userData || null,
-      recruiter: recruiterData || null,
-      company: companyData || null,
-      loading,
-      error: error instanceof Error ? error : error ? new Error('Failed to fetch data') : null
-    };
-  }
+  return {
+    user: {
+      data: userData || null,
+      loading: userLoading,
+      error: userError instanceof Error ? userError : userError ? new Error('Failed to fetch user data') : null
+    },
+    recruiter: {
+      data: recruiterData || null,
+      loading: (!!userId && !roleLoading && recruiterLoading) || roleLoading,
+      error: (recruiterError || roleError) instanceof Error ? 
+        (recruiterError || roleError) : 
+        (recruiterError || roleError) ? new Error('Failed to fetch recruiter data') : null
+    },
+    company: {
+      data: companyData || null,
+      loading: isRecruiter && !!recruiterRecord?.company_id && companyLoading,
+      error: companyError instanceof Error ? companyError : companyError ? new Error('Failed to fetch company data') : null
+    },
+    isRecruiter
+  };
 }

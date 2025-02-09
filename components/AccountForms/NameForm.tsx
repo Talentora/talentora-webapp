@@ -21,7 +21,7 @@ export default function NameForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useUser();
-  const userName = user?.user_metadata.full_name;
+  const userName = user.data?.user_metadata?.full_name;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true);
@@ -49,8 +49,8 @@ export default function NameForm() {
             type="text"
             name="fullName"
             className="w-full p-3 rounded-md bg-input text-input-foreground"
-            defaultValue={user?.user_metadata.full_name}
-            placeholder={user?.user_metadata.full_name}
+            defaultValue={userName}
+            placeholder={userName}
             maxLength={64}
           />
         </form>

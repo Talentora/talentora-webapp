@@ -36,7 +36,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="w-full bg-gradient-to-br from-purple-500/[0.1] via-background to-pink-500/[0.1] p-0">
+      <body className="min-h-screen w-full bg-gradient-to-br from-purple-500/[0.1] via-background to-pink-500/[0.1] p-0">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -45,25 +45,27 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         >
           <NextTopLoader />
           <ReactQueryProvider>
-            <div className="flex">
+            <div className="flex min-h-screen">
               {isSidebarVisible && (
-                <aside className="fixed h-full z-[100] w-1/6">
+                <aside className="fixed top-0 left-0 h-full w-64 min-w-[16rem] max-w-[20rem] z-[100]">
                   <Sidebar />
                 </aside>
               )}
               <main
                 id="skip"
-                className={`flex-1 min-h-[calc(100dvh-15rem)] md:min-h-[calc(100dvh-16rem)] ${
-                  isSidebarVisible ? 'ml-[16.666667%]' : ''
-                } ${
-                  isSidebarVisible ? 'w-[83.333333%]' : 'w-full'
+                className={`flex-1 min-h-screen ${
+                  isSidebarVisible ? 'ml-64' : ''
                 }`}
               >
-                <Navbar visible={isSidebarVisible} />
-                {isSidebarVisible && <BreadcrumbsContainer />}
-                <Suspense fallback={<Loading />}>
-                  {children}
-                </Suspense>
+                <div className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur">
+                  <Navbar visible={isSidebarVisible} />
+                  {isSidebarVisible && <BreadcrumbsContainer />}
+                </div>
+                <div >
+                  <Suspense fallback={<Loading />}>
+                    {children}
+                  </Suspense>
+                </div>
               </main>
             </div>
             <Suspense>

@@ -4,14 +4,16 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import Profile from '@/components/Layout/Profile';
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
-
+import { type Database } from '@/types/types_db';
+type Company = Database['public']['Tables']['companies']['Row'];
 
 interface UserActionsProps {
   user: any;
   role: string;
+  company: Company | null;
 }
 
-export function UserActions({ user, role }: UserActionsProps) {
+export function UserActions({ user, role, company }: UserActionsProps) {
   if (!user) {
     return (
       <div className="flex items-center space-x-2">
@@ -26,6 +28,6 @@ export function UserActions({ user, role }: UserActionsProps) {
     );
   }
 
-  return <Profile role={role} />;
+  return <Profile user={user} role={role} company={company} />;
   
 } 

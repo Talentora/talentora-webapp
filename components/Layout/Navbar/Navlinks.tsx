@@ -7,11 +7,14 @@ import { UserActions } from './UserActions';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Navlinks({ visible }: { visible: boolean }) {
-  const { user, recruiter, loading } = useUser();
+  const { user, recruiter, company } = useUser();
+  const userData = user.data;
+  const recruiterData = recruiter.data;
+  const companyData = company.data;
 
   const role = visible ? 'recruiter' : 'applicant';
 
-  if (loading) {
+  if (user.loading) {
     return (
       <div className="sticky top-0 z-40 w-full bg-transparent">
         <div className="container px-4 mx-auto">
@@ -38,10 +41,10 @@ export default function Navlinks({ visible }: { visible: boolean }) {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             {!visible && <BrandLogo />}
-            <NavigationItems isUser={!!user} isRecruiter={!!recruiter} />
+            <NavigationItems isUser={!!userData} isRecruiter={!!recruiterData} />
           </div>
           <div className="flex items-center space-x-4">
-            <UserActions user={user} role={role} />
+            <UserActions user={userData} role={role} company={companyData} />
           </div>
         </div>
       </div>

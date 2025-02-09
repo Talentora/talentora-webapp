@@ -9,20 +9,22 @@ import { cn } from '@/utils/cn';
 import { useUser } from '@/hooks/useUser';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-
+import { type Database } from '@/types/types_db';
+type Company = Database['public']['Tables']['companies']['Row'];
 import { SignOut } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import { getUserRole } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/client';
 
-const Profile = ({ role }: { role: string }) => {
+const Profile = ({ user, role, company }: { user: any, role: string, company: Company | null }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const queryClient = useQueryClient();
 
-  const { user, company } = useUser();
+  const userData = user.data;
+  const companyData = company;
   const router = useRouter();
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -42,7 +44,7 @@ const Profile = ({ role }: { role: string }) => {
         className="w-full justify-start gap-3 text-foreground hover:bg-accent/10"
       >
         <User className="h-5 w-5 text-foreground" />
-        <span className="font-medium truncate text-foreground">{user?.user_metadata.full_name || user?.email}</span>
+        <span className="font-medium truncate text-foreground">{userData?.user_metadata.full_name || userData?.email}</span>
       </Button>
 
       {isUserMenuOpen && (
@@ -50,15 +52,15 @@ const Profile = ({ role }: { role: string }) => {
           <div className="space-y-[0.75em]">
             <div>
               <h4 className="font-medium text-foreground text-[1em]">
-                {user?.user_metadata.full_name || user?.email}
+                {userData?.raw_user_meta_data.full_name || userData?.email || 'Error'}
               </h4>
               <div className="flex items-center gap-[0.5em] mt-[0.25em]">
                 <Link href="/settings?tab=account" className="inline-flex items-center rounded-full bg-primary px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-accent-foreground capitalize hover:bg-accent/80">
                   {role || 'Error'}
                 </Link>
-                {company?.name && (
+                {companyData?.name && (
                   <Link href="/settings?tab=company" className="inline-flex items-center rounded-full bg-secondary px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-accent-foreground capitalize hover:bg-accent/80">
-                    {company.name}
+                    {companyData.name || 'Error'}
                   </Link>
                 )}
               </div>
