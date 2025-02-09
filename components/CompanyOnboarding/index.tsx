@@ -12,8 +12,6 @@ import {
 import { useToast } from '@/components/Toasts/use-toast';
 import { OnboardingSteps } from './OnboardingSteps';
 import { OnboardingNavigation } from './OnboardingNavigation';
-import { Progress } from '@/components/ui/progress';
-import ProgressDots from '@/components/ui/progress-dots';
 import { updateCompany } from '@/utils/supabase/queries';
 import { useUser } from '@/hooks/useUser';
 export default function OnboardingPage() {
@@ -22,8 +20,8 @@ export default function OnboardingPage() {
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(
     new Set([1, 3, 4, 5, 7])
   ); // Initialize step 1 and 4 as completed
-  const { company } = useUser();
-  const companyId = company?.id;
+  const { data } = useUser().company;
+  const companyId = data?.id;
   if (!companyId) {
     throw new Error('Company ID is undefined');
   }

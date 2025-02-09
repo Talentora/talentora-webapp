@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { User, LogOut } from 'lucide-react';
-import { cn } from '@/utils/cn';
-import { useUser } from '@/hooks/useUser';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { type Database } from '@/types/types_db';
@@ -14,8 +12,7 @@ type Company = Database['public']['Tables']['companies']['Row'];
 import { SignOut } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
-import { getUserRole } from '@/utils/supabase/queries';
-import { createClient } from '@/utils/supabase/client';
+
 
 const Profile = ({ user, role, company }: { user: any, role: string, company: Company | null }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);

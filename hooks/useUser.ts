@@ -129,7 +129,9 @@ export function useUser(): UseUserReturn {
       } = supabase.auth.onAuthStateChange(async (_event, _session) => {
         // The other queries will automatically re-fetch when needed
       });
-      return () => subscription.unsubscribe();
+      // return () => subscription.unsubscribe();
+      return subscription.unsubscribe(); // line changed
+
     },
     staleTime: Infinity
   });

@@ -21,7 +21,12 @@ export const CompanyInfoStep: React.FC<{
   onCompletion: (isComplete: boolean) => void;
 }> = ({ onCompletion }) => {
   const { recruiter, user, company } = useUser();
-  const hasCompany = recruiter.data && 'company_id' in recruiter.data && recruiter.data.company_id ? true : false;
+
+  const recruiterData = recruiter.data;
+  const userData = user.data;
+  const companyData = company.data;
+
+  const hasCompany = recruiterData && 'company_id' in recruiterData && recruiterData.company_id ? true : false;
 
   useEffect(() => {
     onCompletion(hasCompany);
@@ -95,7 +100,7 @@ export const CompanyInfoStep: React.FC<{
           id="company"
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
-          placeholder={company?.name || 'Enter your company name'}
+          placeholder={companyData?.name || 'Enter your company name'}
           required
         />
       </div>
@@ -107,7 +112,7 @@ export const CompanyInfoStep: React.FC<{
           value={headquarters}
           onChange={(e) => setHeadquarters(e.target.value)}
           placeholder={
-            company?.location || 'Enter your company headquarters location'
+            companyData?.location || 'Enter your company headquarters location'
           }
           required
         />
@@ -119,7 +124,7 @@ export const CompanyInfoStep: React.FC<{
           id="industry"
           value={industry}
           onChange={(e) => setIndustry(e.target.value)}
-          placeholder={company?.industry || 'Enter your company industry'}
+          placeholder={companyData?.industry || 'Enter your company industry'}
           required
         />
       </div>

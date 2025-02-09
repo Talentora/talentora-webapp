@@ -4,11 +4,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2, ChevronDown, ChevronUp, Search, CreditCard, Box, Mail, BookOpen, Building2, Phone } from 'lucide-react';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import Logo from '@/components/ui/icons/Logo';
-import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
-import { useUser } from '@/hooks/useUser';
+
 
 import {
   SidebarHeader,

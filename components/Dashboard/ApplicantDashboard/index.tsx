@@ -27,7 +27,7 @@ export default function JobPortal() {
         <div className="container mx-auto">
           <h1 className="text-3xl font-bold mb-2">Applicant Dashboard</h1>
           <p className="text-lg opacity-90">
-            Welcome, {user?.user_metadata?.full_name || user?.email}
+            Welcome, {user?.data?.user_metadata?.full_name || user?.data?.email}
           </p>
         </div>
       </header>

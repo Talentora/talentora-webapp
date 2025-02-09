@@ -27,7 +27,7 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({
   const [companyProducts, setCompanyProducts] = useState('');
   const [companyCustomers, setCompanyCustomers] = useState('');
   const [companyContextExists, setCompanyContextExists] = useState(false);
-  const { company } = useUser();
+  const { data } = useUser().company;
 
   // if (!company) {
   //   return null;
@@ -35,8 +35,8 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({
 
   useEffect(() => {
     const checkCompanyContext = async () => {
-      if (company?.id) {
-        const context = await getCompanyContext(company.id);
+      if (data?.id) {
+        const context = await getCompanyContext(data.id);
         if (context) {
           setCompanyDescription(context.description);
           setCompanyCulture(context.culture);
@@ -50,7 +50,7 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({
     };
 
     checkCompanyContext();
-  }, [company?.id]);
+  }, [data?.id]);
 
   const handleChange = () => {
     // Mark as complete if all fields meet minimum length requirement
@@ -73,16 +73,16 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({
       description: companyDescription,
       culture: companyCulture,
       history: companyHistory,
-      id: company?.id
+      id: data?.id
     };
 
     try {
       if (companyContextExists) {
-        if (!company?.id) {
+        if (!data?.id) {
           throw new Error('Company ID is required');
         }
         const updatedCompanyContext = await updateCompanyContext(
-          company.id,
+          data.id,
           companyContext
         );
         console.log('Updating company context:', updatedCompanyContext);

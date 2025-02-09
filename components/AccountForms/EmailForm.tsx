@@ -17,15 +17,15 @@ import { createClient } from '@/utils/supabase/client';
 
 export default function EmailForm() {
   const router = useRouter();
-  const { user } = useUser();
+  const { data } = useUser().user;
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!user) {
+  if (!data) {
     return null;
   }
 
-  const userEmail = user?.email;
-  const role = user?.user_metadata?.role;
+  const userEmail = data?.email;
+  const role = data?.user_metadata?.role;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -41,7 +41,7 @@ export default function Assessment({
   const [isVisible, setIsVisible] = useState(false);
   const [scoutProps, setScoutProps] = useState<ScoutProps | null>(null);
 
-  const { applicant } = useApplicant();
+  // const { applicant } = useApplicant();
 
   useEffect(() => {
     const fetchAllData = async () => {

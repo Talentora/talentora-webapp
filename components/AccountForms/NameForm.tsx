@@ -16,12 +16,14 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { getUser, getRecruiter } from '@/utils/supabase/queries';
 import { useUser } from '@/hooks/useUser';
+import { User } from '@supabase/supabase-js';
+
 
 export default function NameForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user } = useUser();
-  const userName = user.data?.user_metadata?.full_name;
+  const { data } = useUser().user;
+  const userName = data?.user_metadata?.full_name;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true);
