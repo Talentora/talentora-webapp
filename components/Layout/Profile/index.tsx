@@ -4,10 +4,21 @@ import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { User, LogOut } from 'lucide-react';
+<<<<<<< HEAD
 import { useRouter, usePathname } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { type Database } from '@/types/types_db';
 type Company = Database['public']['Tables']['companies']['Row'];
+=======
+import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
+import { type Database } from '@/types/types_db';
+type Company = Database['public']['Tables']['companies']['Row'];
+import { SignOut } from '@/utils/auth-helpers/server';
+import { handleRequest } from '@/utils/auth-helpers/client';
+import { getRedirectMethod } from '@/utils/auth-helpers/settings';
+
+>>>>>>> 606cf3b (hotfix types)
 
 const Profile = ({
   user,

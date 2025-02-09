@@ -42,8 +42,11 @@ export function useUser(): UseUserReturn {
   } = useQuery<User | null, Error>({
     queryKey: ['user'],
     queryFn: async () => {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+        error: sessionError
+      } = await supabase.auth.getSession();
+
       if (sessionError) {
         console.error('Session error:', sessionError);
         return null;
@@ -54,7 +57,10 @@ export function useUser(): UseUserReturn {
         return null;
       }
 
-      const { data: { user }, error } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error
+      } = await supabase.auth.getUser();
       if (error) throw error;
       return user;
     },
@@ -63,8 +69,11 @@ export function useUser(): UseUserReturn {
   });
 
   const userId = userData?.id ?? '';
-  console.log("userdata in useuser", userData);
-  const role = userData?.identities?.[0].identity_data?.role == "applicant" ? "applicant" : "recruiter";  
+  console.log('userdata in useuser', userData);
+  const role =
+    userData?.identities?.[0].identity_data?.role == 'applicant'
+      ? 'applicant'
+      : 'recruiter';
 
   const isRecruiter = role === 'recruiter';
 
@@ -79,7 +88,7 @@ export function useUser(): UseUserReturn {
     queryFn: async () => {
       if (!userData?.id) return null;
       if (isRecruiter) {
-        console.log("going to recruiters");
+        console.log('going to recruiters');
         const { data, error } = await supabase
           .from('recruiters')
           .select('*')
@@ -88,7 +97,7 @@ export function useUser(): UseUserReturn {
         if (error) throw error;
         return data;
       } else {
-        console.log("going to applicants");
+        console.log('going to applicants');
         const { data, error } = await supabase
           .from('applicants')
           .select('*')
@@ -125,7 +134,20 @@ export function useUser(): UseUserReturn {
     }
   });
 
-
+  // Optional: Set up an auth state listener
+  useQuery<void, Error>({
+    queryKey: ['authListener'],
+    queryFn: async () => {
+      const {
+        data: { subscription }
+      } = supabase.auth.onAuthStateChange(async (_event, _session) => {
+        // The other queries will automatically re-fetch when needed
+      });
+      // return () => subscription.unsubscribe();
+      return subscription.unsubscribe(); // line changed
+    },
+    staleTime: Infinity
+  });
 
   return {
     user: {
@@ -135,18 +157,18 @@ export function useUser(): UseUserReturn {
         userError instanceof Error
           ? userError
           : userError
-          ? new Error('Failed to fetch user data')
-          : null
+            ? new Error('Failed to fetch user data')
+            : null
     },
     recruiter: {
       data: recruiterData || null,
-      loading: (!!userId && recruiterLoading),
+      loading: !!userId && recruiterLoading,
       error:
-        (recruiterError) instanceof Error
+        recruiterError instanceof Error
           ? recruiterError
           : recruiterError
-          ? new Error('Failed to fetch recruiter data')
-          : null
+            ? new Error('Failed to fetch recruiter data')
+            : null
     },
     company: {
       data: companyData || null,
@@ -155,8 +177,8 @@ export function useUser(): UseUserReturn {
         companyError instanceof Error
           ? companyError
           : companyError
-          ? new Error('Failed to fetch company data')
-          : null
+            ? new Error('Failed to fetch company data')
+            : null
     },
     isRecruiter
   };

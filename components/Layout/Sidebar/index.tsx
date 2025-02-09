@@ -25,14 +25,6 @@ import {
   Building2,
   Phone
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem
-} from '@/components/ui/dropdown-menu';
-import Logo from '@/components/ui/icons/Logo';
-import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 
 import {

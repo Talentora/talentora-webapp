@@ -21,25 +21,18 @@ export default function OnboardingPage() {
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(
     new Set([1, 3, 4, 5, 7, 8])
   ); // Initialize step 1 and 4 as completed
-<<<<<<< HEAD
-  const { user, recruiter } = useUser();
-
-  console.log(recruiter.data);
-  if (
-    !recruiter.data ||
-    !('company_id' in recruiter.data) ||
-    !recruiter.data.company_id
-  ) {
-    return <p>Error: Company ID is undefined. Please contact support.</p>;
+  const { data } = useUser().company;
+  const companyId = data?.id;
+  if (!companyId) {
+    throw new Error('Company ID is undefined');
   }
-  const companyId = recruiter.data.company_id;
-
+  const { toast } = useToast();
   const nextStep = async () => {
     const newStep = Math.min(step + 1, totalSteps);
     setStep(newStep);
+
+
   };
-=======
->>>>>>> ab0fa06 (consistency in merge)
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, totalSteps));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
