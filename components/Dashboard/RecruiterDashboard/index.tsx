@@ -22,6 +22,8 @@ import { Tables } from '@/types/types_db';
 import { createClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useUser } from '@/hooks/useUser';
+import { redirect } from 'next/navigation';
 
 const fetchApplications = async (): Promise<ApplicantCandidate[]> => {
   const response = await fetch('/api/applications');
@@ -50,6 +52,11 @@ interface CombinedJob {
 export default function RecruiterDashboard() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+
+  const { user } = useUser();
+  if (!user) {
+    redirect('/login');
+  }
 
   const { data: applicants = [], isLoading: applicantsLoading } = useQuery({
     queryKey: ['applications'],
@@ -94,7 +101,7 @@ export default function RecruiterDashboard() {
               
               <div className="flex flex-col">
                 <h1 className="text-2xl font-bold">Recruiting Dashboard</h1>
-                <p className="text-sm text-gray-500">Welcome back, Team</p>
+                <p className="text-sm text-gray-500">Welcome back, {user.full_name || user.email}</p>
               </div>
             </div>
             
