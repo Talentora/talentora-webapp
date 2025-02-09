@@ -15,6 +15,7 @@ import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 
 
 export function NavigationItems({ isUser, isRecruiter }: { isUser: boolean; isRecruiter: boolean }) {
+
   return (
     <NavigationMenu>
       <NavigationMenuList>

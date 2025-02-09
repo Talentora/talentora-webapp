@@ -20,7 +20,6 @@ const Profile = ({ user, role, company }: { user: any, role: string, company: Co
   const pathname = usePathname();
   const queryClient = useQueryClient();
 
-  const userData = user.data;
   const companyData = company;
   const router = useRouter();
 
@@ -41,7 +40,7 @@ const Profile = ({ user, role, company }: { user: any, role: string, company: Co
         className="w-full justify-start gap-3 text-foreground hover:bg-accent/10"
       >
         <User className="h-5 w-5 text-foreground" />
-        <span className="font-medium truncate text-foreground">{userData?.user_metadata.full_name || userData?.email}</span>
+        <span className="font-medium truncate text-foreground">{user?.user_metadata.full_name || user?.email}</span>
       </Button>
 
       {isUserMenuOpen && (
@@ -49,7 +48,7 @@ const Profile = ({ user, role, company }: { user: any, role: string, company: Co
           <div className="space-y-[0.75em]">
             <div>
               <h4 className="font-medium text-foreground text-[1em]">
-                {userData?.raw_user_meta_data.full_name || userData?.email || 'Error'}
+                {user?.user_metadata.full_name || user?.email || 'Error'}
               </h4>
               <div className="flex items-center gap-[0.5em] mt-[0.25em]">
                 <Link href="/settings?tab=account" className="inline-flex items-center rounded-full bg-primary px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-accent-foreground capitalize hover:bg-accent/80">

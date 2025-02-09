@@ -22,6 +22,8 @@ export default function OnboardingPage() {
   ); // Initialize step 1 and 4 as completed
   const { data } = useUser().company;
   const companyId = data?.id;
+
+
   if (!companyId) {
     throw new Error('Company ID is undefined');
   }

@@ -5,12 +5,14 @@ import { BrandLogo } from './BrandLogo';
 import { NavigationItems } from './NavigationItems';
 import { UserActions } from './UserActions';
 import { Skeleton } from '@/components/ui/skeleton';
+import { User } from '@supabase/supabase-js';
 
 export default function Navlinks({ visible }: { visible: boolean }) {
-  const { user, recruiter, company } = useUser();
+  const { user, company } = useUser();
   const userData = user.data;
-  const recruiterData = recruiter.data;
   const companyData = company.data;
+
+  const isRecriter = userData?.user_metadata?.role === "applicant" ? false : true;
 
   const role = visible ? 'recruiter' : 'applicant';
 
@@ -41,7 +43,7 @@ export default function Navlinks({ visible }: { visible: boolean }) {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             {!visible && <BrandLogo />}
-            <NavigationItems isUser={!!userData} isRecruiter={!!recruiterData} />
+            <NavigationItems isUser={!!userData} isRecruiter={isRecriter} />
           </div>
           <div className="flex items-center space-x-4">
             <UserActions user={userData} role={role} company={companyData} />
