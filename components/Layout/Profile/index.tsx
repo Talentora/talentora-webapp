@@ -75,7 +75,7 @@ const Profile = ({ role }: { role: string }) => {
                 className="w-full justify-start text-[0.875em] text-foreground hover:text-foreground hover:bg-accent"
               >
                 <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
-                Sign out
+                Sign out meow
               </Button>
             </form>
           </div>
