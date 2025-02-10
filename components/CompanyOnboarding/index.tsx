@@ -24,6 +24,7 @@ export default function OnboardingPage() {
   ); // Initialize step 1 and 4 as completed
   const { user, recruiter } = useUser();
 
+  console.log(recruiter.data);
   if (
     !recruiter.data ||
     !('company_id' in recruiter.data) ||
