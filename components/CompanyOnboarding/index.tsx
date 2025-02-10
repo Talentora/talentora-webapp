@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -27,7 +27,6 @@ export default function OnboardingPage() {
   }
   const companyId = recruiter.data.company_id;
   
-  const { toast } = useToast();
   const nextStep = async () => {
     const newStep = Math.min(step + 1, totalSteps);
     setStep(newStep);
@@ -58,9 +57,6 @@ export default function OnboardingPage() {
     }
   };
 
-  useEffect(() => {
-    // Optionally, you can add logic here to persist completedSteps to localStorage or a backend
-  }, [completedSteps]);
 
   return (
     <div className="container mx-auto py-10">
