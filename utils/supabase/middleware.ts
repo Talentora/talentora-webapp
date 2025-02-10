@@ -105,7 +105,7 @@ export async function handleAuthRedirects(request: NextRequest, user: any) {
 
   // For protected routes, if no user is found, redirect to signin
   if (!allUnprotectedRoutes.some((route) => route.test(pathname)) && !user) {
-    return NextResponse.redirect(new URL('/signin', request.url));
+    return NextResponse.redirect(new URL('/signin', process.env.NEXT_PUBLIC_SITE_URL || request.url));
   }
 
   return null;
@@ -154,13 +154,24 @@ export async function updateSession(request: NextRequest) {
           console.log(`[Middleware] Getting cookie: ${name} = ${value}`);
           return value;
         },
+        // set(name: string, value: string, options: CookieOptions) {
+        //   console.log(`[Middleware] Setting cookie: ${name}`);
+        //   request.cookies.set({ name, value, ...options });
+        //   supabaseResponse = NextResponse.next({
+        //     request,
+        //   });
+        //   supabaseResponse.cookies.set({ name, value, ...options });
+        // },
         set(name: string, value: string, options: CookieOptions) {
-          console.log(`[Middleware] Setting cookie: ${name}`);
-          request.cookies.set({ name, value, ...options });
-          supabaseResponse = NextResponse.next({
-            request,
-          });
-          supabaseResponse.cookies.set({ name, value, ...options });
+          const cookieOptions = {
+            ...options,
+            secure: true,
+            httpOnly: true,
+            sameSite: 'Lax',
+            path: '/'
+          };
+          request.cookies.set({ name, value, ...cookieOptions });
+          supabaseResponse.cookies.set({ name, value, ...cookieOptions });
         },
         remove(name: string, options: CookieOptions) {
           console.log(`[Middleware] Removing cookie: ${name}`);
@@ -169,7 +180,7 @@ export async function updateSession(request: NextRequest) {
             request,
           });
           supabaseResponse.cookies.delete(name);
-        }
+        },
       }
     }
 
