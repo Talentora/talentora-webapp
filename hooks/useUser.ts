@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
@@ -32,7 +33,7 @@ interface UseUserReturn {
 export function useUser(): UseUserReturn {
   const supabase = createClient();
 
-  // Fetch authenticated user data
+  // Fetch authenticated user data using React Query
   const {
     data: userData,
     error: userError,
@@ -40,10 +41,7 @@ export function useUser(): UseUserReturn {
   } = useQuery<User | null, Error>({
     queryKey: ['user'],
     queryFn: async () => {
-      const {
-        data: { user },
-        error
-      } = await supabase.auth.getUser();
+      const { data: { user }, error } = await supabase.auth.getUser();
       if (error) throw error;
       return user;
     }
@@ -52,39 +50,45 @@ export function useUser(): UseUserReturn {
   const userId = userData?.id ?? '';
   console.log("userdata in useuser", userData);
 
-  // Query to get the user's role (as 'recruiter' or 'applicant')
-  const {
-    data: role,
-    isLoading: roleLoading,
-    error: roleError
-  } = useQuery<'recruiter' | 'applicant' | null, Error>({
-    queryKey: ['userRole', userId],
-    enabled: !!userId,
-    queryFn: async () => await getUserRole(supabase, userId)
-  });
+  // Instead of using React Query to fetch the role, use local state + useEffect
+  const [role, setRole] = useState<'recruiter' | 'applicant' | null>(null);
+  const [roleError, setRoleError] = useState<Error | null>(null);
+  const [roleLoading, setRoleLoading] = useState<boolean>(true);
 
-  // Derive the boolean from the role
+  useEffect(() => {
+    if (!userId) {
+      setRole(null);
+      setRoleLoading(false);
+      return;
+    }
+    setRoleLoading(true);
+    getUserRole(supabase, userId)
+      .then((fetchedRole) => {
+        setRole(fetchedRole);
+        setRoleLoading(false);
+      })
+      .catch((err) => {
+        setRoleError(err);
+        setRoleLoading(false);
+      });
+  }, [userId, supabase]);
 
-
-  const isRecruiter = (role == 'recruiter');
-
+  const isRecruiter = role === 'recruiter';
 
   console.log("this is role", role);
 
-
-  // Fetch recruiter data or applicant data based on the user's role
+  // Fetch recruiter or applicant data based on the user's role using React Query
   const {
     data: recruiterData,
     error: recruiterError,
     isLoading: recruiterLoading
   } = useQuery<Recruiter | Applicant | null, Error>({
     queryKey: [isRecruiter ? 'recruiter' : 'applicants', userData?.id],
-    enabled: !!userData?.id && !roleLoading, // wait until the role is known
+    enabled: !!userData?.id && !roleLoading, // wait until role is determined
     queryFn: async () => {
       if (!userData?.id) return null;
       if (isRecruiter) {
-        console.log("going to recruiters")
-
+        console.log("going to recruiters");
         const { data, error } = await supabase
           .from('recruiters')
           .select('*')
@@ -93,7 +97,7 @@ export function useUser(): UseUserReturn {
         if (error) throw error;
         return data;
       } else {
-        console.log("going to applicants")
+        console.log("going to applicants");
         const { data, error } = await supabase
           .from('applicants')
           .select('*')
@@ -134,14 +138,10 @@ export function useUser(): UseUserReturn {
   useQuery<void, Error>({
     queryKey: ['authListener'],
     queryFn: async () => {
-      const {
-        data: { subscription }
-      } = supabase.auth.onAuthStateChange(async (_event, _session) => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, _session) => {
         // The other queries will automatically re-fetch when needed
       });
-      // return () => subscription.unsubscribe();
-      return subscription.unsubscribe(); // line changed
-
+      return subscription.unsubscribe();
     },
     staleTime: Infinity
   });
@@ -150,19 +150,32 @@ export function useUser(): UseUserReturn {
     user: {
       data: userData || null,
       loading: userLoading,
-      error: userError instanceof Error ? userError : userError ? new Error('Failed to fetch user data') : null
+      error:
+        userError instanceof Error
+          ? userError
+          : userError
+          ? new Error('Failed to fetch user data')
+          : null
     },
     recruiter: {
       data: recruiterData || null,
       loading: (!!userId && !roleLoading && recruiterLoading) || roleLoading,
-      error: (recruiterError || roleError) instanceof Error ? 
-        (recruiterError || roleError) : 
-        (recruiterError || roleError) ? new Error('Failed to fetch recruiter data') : null
+      error:
+        (recruiterError || roleError) instanceof Error
+          ? recruiterError || roleError
+          : recruiterError || roleError
+          ? new Error('Failed to fetch recruiter data')
+          : null
     },
     company: {
       data: companyData || null,
       loading: isRecruiter && !!recruiterRecord?.company_id && companyLoading,
-      error: companyError instanceof Error ? companyError : companyError ? new Error('Failed to fetch company data') : null
+      error:
+        companyError instanceof Error
+          ? companyError
+          : companyError
+          ? new Error('Failed to fetch company data')
+          : null
     },
     isRecruiter
   };
