@@ -50,7 +50,8 @@ export function useUser(): UseUserReturn {
   });
 
   const userId = userData?.id ?? '';
-
+  console.log("userdata in useuser", userData);
+  
   // Query to get the user's role (as 'recruiter' or 'applicant')
   const {
     data: role,
@@ -76,6 +77,8 @@ export function useUser(): UseUserReturn {
     queryFn: async () => {
       if (!userData?.id) return null;
       if (isRecruiter) {
+        console.log("going to recruiters")
+
         const { data, error } = await supabase
           .from('recruiters')
           .select('*')
@@ -84,6 +87,7 @@ export function useUser(): UseUserReturn {
         if (error) throw error;
         return data;
       } else {
+        console.log("going to applicants")
         const { data, error } = await supabase
           .from('applicants')
           .select('*')
