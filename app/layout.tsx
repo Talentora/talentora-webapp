@@ -113,7 +113,9 @@ export default function RootLayout({ children }: PropsWithChildren) {
           <ReactQueryProvider>
             <div className="flex min-h-screen">
               {/* Render the dynamic sidebar */}
-              <DynamicSidebar />
+              <aside className="fixed top-0 left-0 h-full w-64 min-w-[16rem] max-w-[20rem] z-[100]">
+                  <DynamicSidebar />
+              </aside>
 
               <main id="skip" className="flex-1 min-h-screen">
                 <div className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur">
