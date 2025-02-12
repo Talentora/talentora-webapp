@@ -95,13 +95,13 @@ export const createClient = (request: NextRequest) => {
 export async function handleAuthRedirects(request: NextRequest, user: any) {
   const { pathname } = request.nextUrl;
   
-  // // Redirect authenticated users away from signin/signup routes to /dashboard
-  // if (/^\/(signin|signup)(\/.*)?$/.test(pathname)) {
-  //   if (user) {
-  //     return NextResponse.redirect(new URL('/dashboard', request.url));
-  //   }
-  //   return null;
-  // }
+  // Redirect authenticated users away from signin/signup routes to /dashboard
+  if (/^\/(signin|signup)(\/.*)?$/.test(pathname)) {
+    if (user) {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+    return null;
+  }
 
   // For protected routes, if no user is found, redirect to signin
   if (!allUnprotectedRoutes.some((route) => route.test(pathname)) && !user) {
@@ -115,7 +115,7 @@ export async function handleRecruiterRedirects(request: NextRequest, supabase: a
   const { pathname } = request.nextUrl;
   const role = await getUserRole(supabase, user.id);
   const isOnboardingPage = pathname === '/settings/onboarding';
-  console.log("is this working")
+
   if (role === 'recruiter') {
     const { data: recruitData, error } = await supabase
       .from('recruiters')
