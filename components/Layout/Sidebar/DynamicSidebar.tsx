@@ -10,7 +10,7 @@ export default function DynamicSidebar() {
   // Assume you have a way to get the user ID (e.g., a custom hook or context)
   useEffect(() => {
     async function fetchUser() {
-      const res = await fetch('/api/user/getUserRole'); // or wherever you get the user info
+      const res = await fetch('/api/users/getUserRole'); // or wherever you get the user info
       const data = await res.json();
       if (data?.user?.id) setUserId(data.user.id);
     }
