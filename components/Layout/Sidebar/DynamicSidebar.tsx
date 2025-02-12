@@ -1,49 +1,37 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/client';
-import { getUserRole } from '@/utils/supabase/queries';
 import Sidebar from '@/components/Layout/Sidebar';
 
 export default function DynamicSidebar() {
   const [isRecruiter, setIsRecruiter] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // Assume you have a way to get the user ID (e.g., a custom hook or context)
+  useEffect(() => {
+    async function fetchUser() {
+      const res = await fetch('/api/user/getUserRole'); // or wherever you get the user info
+      const data = await res.json();
+      if (data?.user?.id) setUserId(data.user.id);
+    }
+    fetchUser();
+  }, []);
 
   useEffect(() => {
-    const supabase = createClient();
-
-    async function fetchUserRole() {
+    if (!userId) return;
+    async function fetchRole() {
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        console.log(user, "user in dynamic sidebar");
-        if (user) {
-            const role = await getUserRole(supabase, user.id);
-            console.log("role in dynamic sidebar", role);
-            setIsRecruiter(role === 'recruiter');
-        } else {
-            console.log("meoowww")
-            setIsRecruiter(false);
-        }
-        
+        const res = await fetch(`/api/getUserRole?userId=${userId}`);
+        const data = await res.json();
+        console.log("role in dynamic sidebar", data.role);
+        setIsRecruiter(data.role === 'recruiter');
       } catch (error) {
         console.error("Error fetching user role:", error);
         setIsRecruiter(false);
       }
     }
-
-    // Check role on mount
-    fetchUserRole();
-
-    // Listen for authentication state changes
-    const { data: authListener } = supabase.auth.onAuthStateChange(() => {
-      fetchUserRole();
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
+    fetchRole();
+  }, [userId]);
 
   if (!isRecruiter) return null;
   return (
