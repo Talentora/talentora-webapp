@@ -51,7 +51,7 @@ export function useUser(): UseUserReturn {
 
   const userId = userData?.id ?? '';
   console.log("userdata in useuser", userData);
-  
+
   // Query to get the user's role (as 'recruiter' or 'applicant')
   const {
     data: role,
@@ -64,7 +64,8 @@ export function useUser(): UseUserReturn {
   });
 
   // Derive the boolean from the role
-  const isRecruiter = role === 'recruiter';
+  console.log("this is role", role);
+  const isRecruiter = (role === 'recruiter');
 
   // Fetch recruiter data or applicant data based on the user's role
   const {
