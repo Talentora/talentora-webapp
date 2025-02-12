@@ -1,29 +1,33 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/client'; // client-side Supabase client
 import { getUserRole } from '@/utils/supabase/queries';
-import { useUser } from '@/hooks/useUser'; // Assuming this is your custom hook
 import Sidebar from '@/components/Layout/Sidebar';
 
 export default function DynamicSidebar() {
   const [isRecruiter, setIsRecruiter] = useState(false);
-  const { user } = useUser();
 
   useEffect(() => {
     const supabase = createClient();
 
     async function fetchUserRole() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (user) {
-        const recruiterStatus = user?.data?.user_metadata?.role === 'applicant' ? false : true;
-        setIsRecruiter(recruiterStatus);
+        const role = await getUserRole(supabase, user.id);
+        setIsRecruiter(role === 'recruiter');
       } else {
         setIsRecruiter(false);
       }
     }
 
+    // Check role on mount
     fetchUserRole();
 
+    // Listen for authentication state changes
     const { data: authListener } = supabase.auth.onAuthStateChange(() => {
       fetchUserRole();
     });
@@ -31,8 +35,9 @@ export default function DynamicSidebar() {
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, [user]);
+  }, []);
 
+  // Only render the sidebar if the user is a recruiter
   if (!isRecruiter) return null;
   return (
     <aside className="fixed top-0 left-0 h-full w-64 min-w-[16rem] max-w-[20rem] z-[100]">
