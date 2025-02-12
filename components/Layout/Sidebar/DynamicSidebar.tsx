@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/client'; // client-side Supabase client
+import { createClient } from '@/utils/supabase/client';
 import { getUserRole } from '@/utils/supabase/queries';
 import Sidebar from '@/components/Layout/Sidebar';
 
@@ -12,15 +12,20 @@ export default function DynamicSidebar() {
     const supabase = createClient();
 
     async function fetchUserRole() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      console.log(user, "user in dynamic sidebard");
-      if (user) {
-        const role = await getUserRole(supabase, user.id);
-        console.log("role in dynamic sidebar", role);
-        setIsRecruiter(role === 'recruiter');
-      } else {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        console.log(user, "user in dynamic sidebar");
+        if (user) {
+          const role = await getUserRole(supabase, user.id);
+          console.log("role in dynamic sidebar", role);
+          setIsRecruiter(role === 'recruiter');
+        } else {
+          setIsRecruiter(false);
+        }
+      } catch (error) {
+        console.error("Error fetching user role:", error);
         setIsRecruiter(false);
       }
     }
@@ -38,7 +43,6 @@ export default function DynamicSidebar() {
     };
   }, []);
 
-  // Only render the sidebar if the user is a recruiter
   if (!isRecruiter) return null;
   return (
     <aside className="fixed top-0 left-0 h-full w-64 min-w-[16rem] max-w-[20rem] z-[100]">
