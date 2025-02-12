@@ -64,8 +64,13 @@ export function useUser(): UseUserReturn {
   });
 
   // Derive the boolean from the role
+
+
+  const isRecruiter = (role == 'recruiter');
+
+
   console.log("this is role", role);
-  const isRecruiter = (role === 'recruiter');
+
 
   // Fetch recruiter data or applicant data based on the user's role
   const {
