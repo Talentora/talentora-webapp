@@ -18,12 +18,14 @@ export default function DynamicSidebar() {
         } = await supabase.auth.getUser();
         console.log(user, "user in dynamic sidebar");
         if (user) {
-          const role = await getUserRole(supabase, user.id);
-          console.log("role in dynamic sidebar", role);
-          setIsRecruiter(role === 'recruiter');
+            const role = await getUserRole(supabase, user.id);
+            console.log("role in dynamic sidebar", role);
+            setIsRecruiter(role === 'recruiter');
         } else {
-          setIsRecruiter(false);
+            console.log("meoowww")
+            setIsRecruiter(false);
         }
+        
       } catch (error) {
         console.error("Error fetching user role:", error);
         setIsRecruiter(false);
