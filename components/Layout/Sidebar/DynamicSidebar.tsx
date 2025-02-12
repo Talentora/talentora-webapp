@@ -8,20 +8,20 @@ export default function DynamicSidebar() {
   const [userId, setUserId] = useState<string | null>(null);
 
   // Assume you have a way to get the user ID (e.g., a custom hook or context)
-  useEffect(() => {
-    async function fetchUser() {
-      const res = await fetch('/api/users/getUserRole'); // or wherever you get the user info
-      const data = await res.json();
-      if (data?.user?.id) setUserId(data.user.id);
-    }
-    fetchUser();
-  }, []);
+//   useEffect(() => {
+//     async function fetchUser() {
+//       const res = await fetch(`/api/users/getUserRole/`); // or wherever you get the user info
+//       const data = await res.json();
+//       if (data?.user?.id) setUserId(data.user.id);
+//     }
+//     fetchUser();
+//   }, []);
 
   useEffect(() => {
     if (!userId) return;
     async function fetchRole() {
       try {
-        const res = await fetch(`/api/getUserRole?userId=${userId}`);
+        const res = await fetch(`/api/users/getUserRole?userId=${userId}`);
         const data = await res.json();
         console.log("role in dynamic sidebar", data.role);
         setIsRecruiter(data.role === 'recruiter');
