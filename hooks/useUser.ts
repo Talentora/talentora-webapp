@@ -49,29 +49,7 @@ export function useUser(): UseUserReturn {
 
   const userId = userData?.id ?? '';
   console.log("userdata in useuser", userData);
-
-  // Instead of using React Query to fetch the role, use local state + useEffect
-  const [role, setRole] = useState<'recruiter' | 'applicant' | null>(null);
-  const [roleError, setRoleError] = useState<Error | null>(null);
-  const [roleLoading, setRoleLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (!userId) {
-      setRole(null);
-      setRoleLoading(false);
-      return;
-    }
-    setRoleLoading(true);
-    getUserRole(supabase, userId)
-      .then((fetchedRole) => {
-        setRole(fetchedRole);
-        setRoleLoading(false);
-      })
-      .catch((err) => {
-        setRoleError(err);
-        setRoleLoading(false);
-      });
-  }, [userId, supabase]);
+  const role = userData?.identities?.[0].identity_data?.role == "applicant" ? "applicant" : "recruiter";  
 
   const isRecruiter = role === 'recruiter';
 
@@ -84,7 +62,7 @@ export function useUser(): UseUserReturn {
     isLoading: recruiterLoading
   } = useQuery<Recruiter | Applicant | null, Error>({
     queryKey: [isRecruiter ? 'recruiter' : 'applicants', userData?.id],
-    enabled: !!userData?.id && !roleLoading, // wait until role is determined
+    enabled: !!userData?.id, // wait until role is determined
     queryFn: async () => {
       if (!userData?.id) return null;
       if (isRecruiter) {
@@ -159,11 +137,11 @@ export function useUser(): UseUserReturn {
     },
     recruiter: {
       data: recruiterData || null,
-      loading: (!!userId && !roleLoading && recruiterLoading) || roleLoading,
+      loading: (!!userId && recruiterLoading),
       error:
-        (recruiterError || roleError) instanceof Error
-          ? recruiterError || roleError
-          : recruiterError || roleError
+        (recruiterError) instanceof Error
+          ? recruiterError
+          : recruiterError
           ? new Error('Failed to fetch recruiter data')
           : null
     },
