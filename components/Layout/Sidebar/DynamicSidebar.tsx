@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client'; // client-side Supabase client
 import { getUserRole } from '@/utils/supabase/queries';
 import Sidebar from '@/components/Layout/Sidebar';
+import { useUser } from '@/hooks/useUser';
 
 export default function DynamicSidebar() {
   const [isRecruiter, setIsRecruiter] = useState(false);
@@ -11,14 +12,14 @@ export default function DynamicSidebar() {
   useEffect(() => {
     const supabase = createClient();
 
+    const { user } = useUser();
+  
+  
     async function fetchUserRole() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
       if (user) {
-        const role = await getUserRole(supabase, user.id);
-        setIsRecruiter(role === 'recruiter');
+        const isRecruiter = user?.data?.user_metadata?.role === "applicant" ? false : true;
+
+        setIsRecruiter(isRecruiter);
       } else {
         setIsRecruiter(false);
       }
