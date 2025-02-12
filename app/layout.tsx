@@ -57,9 +57,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               )} */}
 
                {/* Render the dynamic sidebar */}
-               <aside className="fixed top-0 left-0 h-full w-64 min-w-[16rem] max-w-[20rem] z-[100]">
-                  <DynamicSidebar />
-              </aside>
+              <DynamicSidebar />
               <main
                 id="skip"
                 className={`flex-1 min-h-screen ${

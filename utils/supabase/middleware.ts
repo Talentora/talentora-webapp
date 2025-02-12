@@ -115,7 +115,7 @@ export async function handleRecruiterRedirects(request: NextRequest, supabase: a
   const { pathname } = request.nextUrl;
   const role = await getUserRole(supabase, user.id);
   const isOnboardingPage = pathname === '/settings/onboarding';
-
+  console.log("is this working")
   if (role === 'recruiter') {
     const { data: recruitData, error } = await supabase
       .from('recruiters')
