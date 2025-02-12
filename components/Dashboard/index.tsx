@@ -12,6 +12,7 @@ const DashboardPage = ({ serverRole }: DashboardPageProps) => {
   const { user } = useUser();
   // Use server role as primary source, fallback to client-side metadata
   const role = serverRole || user?.data?.user_metadata?.role;
+
   return (
     <div>
       {role === 'recruiter' && (

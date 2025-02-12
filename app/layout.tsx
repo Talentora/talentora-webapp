@@ -29,6 +29,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   } = await supabase.auth.getUser();
 
   let isSidebarVisible = false;
+  
+  
+  console.log(user, "user in layout for sidebar")
+
+
   if (user) {
     const role = await getUserRole(supabase, user.id);
     isSidebarVisible = role === 'recruiter';

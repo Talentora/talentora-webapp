@@ -1,10 +1,3 @@
-import { Metadata } from 'next';
-import Footer from '@/components/Layout/Footer';
-import Navbar from '@/components/Layout/Navbar';
-import Sidebar from '@/components/Layout/Sidebar';
-import { Toaster } from '@/components/Toasts/toaster';
-import { PropsWithChildren, Suspense } from 'react';
-import { getURL } from '@/utils/helpers';
 import '@/styles/main.css';
 import Loading from '@/components/Layout/Loading';
 import NextTopLoader from 'nextjs-toploader'; // Import NextTopLoader

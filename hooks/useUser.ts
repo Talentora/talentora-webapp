@@ -53,8 +53,6 @@ export function useUser(): UseUserReturn {
 
   const isRecruiter = role === 'recruiter';
 
-  console.log("this is role", role);
-
   // Fetch recruiter or applicant data based on the user's role using React Query
   const {
     data: recruiterData,
