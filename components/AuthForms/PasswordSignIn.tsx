@@ -46,7 +46,9 @@ export default function PasswordSignIn({
         onSubmit={(e) => handleSubmit(e)}
       >
         <div className="grid gap-1">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email" className="text-muted-foreground">
+            Email
+          </label>
           <input
             id="email"
             placeholder="name@example.com"
@@ -55,16 +57,18 @@ export default function PasswordSignIn({
             autoCapitalize="none"
             autoComplete="email"
             autoCorrect="off"
-            className="w-full p-3 text-foreground  rounded-md bg-zinc-800"
+            className="w-full p-3 bg-background text-foreground rounded-md border border-input"
           />
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password" className="text-muted-foreground">
+            Password
+          </label>
           <input
             id="password"
             placeholder="Password"
             type="password"
             name="password"
             autoComplete="current-password"
-            className="w-full p-3 text-foreground rounded-md bg-zinc-800"
+            className="w-full p-3 bg-background text-foreground rounded-md border border-input"
           />
         </div>
         <Button
@@ -79,7 +83,7 @@ export default function PasswordSignIn({
       <p>
         <Link
           href={`/signin/forgot_password?role=${role}`}
-          className="font-light text-sm"
+          className="font-light text-sm text-muted-foreground"
         >
           Forgot your password?
         </Link>
@@ -87,7 +91,7 @@ export default function PasswordSignIn({
       <p>
         <Link
           href={`/signin/signup?role=${role}`}
-          className="font-light text-sm"
+          className="font-light text-sm text-muted-foreground"
         >
           Don&apos;t have an account? Sign up
         </Link>

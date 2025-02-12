@@ -36,30 +36,32 @@ export function NavigationItems({ isUser, isRecruiter }: { isUser: boolean; isRe
 function SolutionsMenu() {
   return (
     <NavigationMenuItem>
-      <NavigationMenuTrigger className="bg-transparent">Solutions</NavigationMenuTrigger>
+      <NavigationMenuTrigger className="bg-transparent">
+        Solutions
+      </NavigationMenuTrigger>
       <NavigationMenuContent>
-        <div className="grid gap-3 p-2 w-[400px] md:w-[500px] lg:w-[600px] bg-white rounded-lg">
+        <div className="grid gap-3 p-2 w-[400px] md:w-[500px] lg:w-[600px] bg-popover rounded-lg shadow-md">
           <div className="grid grid-cols-2 gap-2 text-black">
-            <NavigationLink 
-              href="/product#ai-interviews" 
+            <NavigationLink
+              href="/product#ai-interviews"
               icon={<BarChart2 className="h-5 w-5 mr-2 text-purple-600" />}
               title="AI Interviews"
               description="Automated candidate screening and assessment"
             />
-            <NavigationLink 
-              href="/product#analytics" 
+            <NavigationLink
+              href="/product#analytics"
               icon={<Users className="h-5 w-5 mr-2 text-blue-600" />}
               title="Analytics"
               description="Data-driven hiring insights and metrics"
             />
-            <NavigationLink 
-              href="/product#assessments" 
+            <NavigationLink
+              href="/product#assessments"
               icon={<FileText className="h-5 w-5 mr-2 text-green-600" />}
               title="Assessments"
               description="Standardized skills evaluation"
             />
-            <NavigationLink 
-              href="/product#collaboration" 
+            <NavigationLink
+              href="/product#collaboration"
               icon={<MessageSquare className="h-5 w-5 mr-2 text-orange-600" />}
               title="Collaboration"
               description="Team feedback and hiring decisions"
@@ -74,17 +76,19 @@ function SolutionsMenu() {
 function ResourcesMenu() {
   return (
     <NavigationMenuItem>
-      <NavigationMenuTrigger className="bg-transparent">Resources</NavigationMenuTrigger>
+      <NavigationMenuTrigger className="bg-transparent">
+        Resources
+      </NavigationMenuTrigger>
       <NavigationMenuContent>
-        <div className="grid gap-3 p-2 w-[400px] text-black bg-white rounded-lg">
-          <NavigationLink 
-            href="/blog" 
+        <div className="grid gap-3 p-2 w-[400px] bg-popover rounded-lg shadow-md">
+          <NavigationLink
+            href="/blog"
             icon={<BookOpen className="h-5 w-5 mr-2 text-indigo-600" />}
             title="Blog"
             description="Latest insights and updates"
           />
-          <NavigationLink 
-            href="/help" 
+          <NavigationLink
+            href="/help"
             icon={<HelpCircle className="h-5 w-5 mr-2 text-red-600" />}
             title="Help Center"
             description="Guides and documentation"
@@ -98,39 +102,38 @@ function ResourcesMenu() {
 function CompanyMenu() {
   return (
     <NavigationMenuItem>
-      <NavigationMenuTrigger className="bg-transparent">Company</NavigationMenuTrigger>
+      <NavigationMenuTrigger className="bg-transparent">
+        Company
+      </NavigationMenuTrigger>
       <NavigationMenuContent>
-        <div className="grid grid-cols-2 gap-3 p-2 w-[400px] text-black bg-white rounded-lg">
-          <NavigationLink 
-            href="/about" 
+        <div className="grid grid-cols-2 gap-3 p-2 w-[400px] bg-popover rounded-lg shadow-md">
+          <NavigationLink
+            href="/about"
             icon={<Building2 className="h-5 w-5 mr-2 text-purple-600" />}
             title="About"
             description="Learn about our mission and values"
           />
-          <NavigationLink 
-            href="/team" 
+          <NavigationLink
+            href="/team"
             icon={<Users className="h-5 w-5 mr-2 text-blue-600" />}
             title="Team"
             description="Meet the people behind Talentora"
           />
-          <NavigationLink 
-            href="/pricing" 
+          <NavigationLink
+            href="/pricing"
             icon={<CreditCard className="h-5 w-5 mr-2 text-green-600" />}
             title="Pricing"
             description="View our pricing plans"
           />
-          <NavigationLink 
-            href="/contact" 
+          <NavigationLink
+            href="/contact"
             icon={<Mail className="h-5 w-5 mr-2 text-orange-600" />}
             title="Contact"
             description="Get in touch with us"
           />
         </div>
-        
       </NavigationMenuContent>
     </NavigationMenuItem>
-             
-    
   );
 }
 
@@ -141,12 +144,20 @@ interface NavigationLinkProps {
   description: string;
 }
 
-function NavigationLink({ href, icon, title, description }: NavigationLinkProps) {
+function NavigationLink({
+  href,
+  icon,
+  title,
+  description
+}: NavigationLinkProps) {
   return (
-    <Link href={href} className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50">
+    <Link
+      href={href}
+      className="group block space-y-2 p-4 rounded-lg hover:bg-muted transition-colors"
+    >
       <div className="flex items-center">
         {icon}
-        <h3 className="font-medium">{title}</h3>
+        <h3 className="font-medium text-foreground">{title}</h3>
       </div>
       <p className="text-sm text-muted-foreground">{description}</p>
     </Link>

@@ -53,11 +53,10 @@ const BlogGrid = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold mb-6">
-            Latest Insights
-          </h2>
+          <h2 className="text-4xl font-bold mb-6">Latest Insights</h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Stay updated with the latest trends and insights in recruitment and AI technology
+            Stay updated with the latest trends and insights in recruitment and
+            AI technology
           </p>
         </motion.div>
 
@@ -68,7 +67,7 @@ const BlogGrid = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+              className="bg-background rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-border"
             >
               <Link href={`/blog/${post.id}`}>
                 <div className="relative h-48 w-full">
@@ -99,14 +98,12 @@ const BlogGrid = () => {
                 </div>
 
                 <Link href={`/blog/${post.id}`}>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
+                  <h3 className="text-xl font-semibold text-foreground mb-2 hover:text-primary transition-colors">
                     {post.title}
                   </h3>
                 </Link>
 
-                <p className="text-gray-600 mb-4">
-                  {post.excerpt}
-                </p>
+                <p className="text-muted-foreground mb-4">{post.excerpt}</p>
 
                 <Link
                   href={`/blog/${post.id}`}
@@ -120,7 +117,7 @@ const BlogGrid = () => {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 export default BlogGrid 
