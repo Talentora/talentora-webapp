@@ -14,7 +14,6 @@ function isValidEmail(email: string) {
 export async function redirectToPath(path: string) {
   return redirect(path);
 }
-
 export async function SignOut(formData: FormData) {
   const pathName = String(formData.get('pathName')).trim();
 
@@ -29,8 +28,26 @@ export async function SignOut(formData: FormData) {
     );
   }
 
+  // Clear all authentication-related cookies
+  const response = new Response(null, { status: 200 });
+
+  const cookiesToDelete = [
+    'sb-access-token',
+    'sb-refresh-token',
+    'sb-session',
+    'sb-user'
+  ];
+
+  cookiesToDelete.forEach((cookie) => {
+    response.headers.append(
+      'Set-Cookie',
+      `${cookie}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`
+    );
+  });
+
   return '/';
 }
+
 
 export async function signInWithEmail(formData: FormData) {
   const cookieStore = cookies();
