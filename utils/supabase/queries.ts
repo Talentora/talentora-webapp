@@ -533,7 +533,7 @@ export const getscoutById = async (id: string): Promise<scout | null> => {
   const { data, error } = await supabase
     .from('bots')
     .select('*')
-    .eq('id', id)
+    .eq('id', Number(id))
     .single();
 
   if (error) {
@@ -567,7 +567,7 @@ export const updateScout = async (
   const { data, error } = await supabase
     .from('bots')
     .update(filteredscoutData)
-    .eq('id', id)
+    .eq('id', Number(id))
     .select();
 
   if (error) {
