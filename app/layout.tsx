@@ -24,9 +24,10 @@ export const metadata: Metadata = {
   description: description
 };
 
+const { user } = useUser();
+
 export default async function RootLayout({ children }: PropsWithChildren) {
   const supabase = createClient();
-  const { user } = useUser();
 
 
   let isSidebarVisible = false;
