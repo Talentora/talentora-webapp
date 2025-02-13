@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'User ID required' }, { status: 400 });
   }
   console.log(userId, "userid in route.ts");
-  
+
     const supabase = createClient();
     const { data, error } = await supabase
         .from('recruiters')
@@ -18,12 +18,10 @@ export async function GET(request: Request) {
         .eq('id', userId)
         .single();
 
-  console.log(data, "AAAAAAAAAAAAAAA")
   if (error || !data) {
     return NextResponse.json({ error: 'Could not fetch role' }, { status: 500 });
   }
   if (data && !error) {
-    console.log('User is a recruiter2');
     return NextResponse.json({ role: 'recruiter' });
 } else {
     console.log('User is an applicant2');

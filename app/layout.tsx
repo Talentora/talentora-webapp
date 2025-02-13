@@ -22,14 +22,11 @@ export const metadata: Metadata = {
   title: title,
   description: description
 };
-
 export default async function RootLayout({ children }: PropsWithChildren) {
   const supabase = createClient();
   const {
     data: { user }
   } = await supabase.auth.getUser();
-
-
 
   let isSidebarVisible = false;
 
@@ -39,40 +36,23 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   } else {
     isSidebarVisible = false;
   }
-  console.log(user, "user in layout.tsx")
-  console.log("issidebarvisible??", isSidebarVisible);
+  console.log(user, "user in layout.tsx");
+  console.log("isSidebarVisible??", isSidebarVisible);
 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen w-full bg-gradient-to-br from-purple-500/[0.1] via-background to-pink-500/[0.1] p-0">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
           <NextTopLoader />
           <ReactQueryProvider>
             <div className="flex min-h-screen">
-              {/* {isSidebarVisible && (
-                <aside className="fixed top-0 left-0 h-full w-64 min-w-[16rem] max-w-[20rem] z-[100]">
-                  <Sidebar />
-                </aside>
-              )} */}
-
-               {/* Render the dynamic sidebar */}
-              <DynamicSidebar user_id={user?.id} />
-              <main
-                id="skip"
-                className={`flex-1 min-h-screen ${
-                  isSidebarVisible ? 'ml-64' : ''
-                }`}
-              >
+              {isSidebarVisible && <DynamicSidebar/>}
+              <main id="skip" className="flex-1 min-h-screen">
                 <div className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur">
                   <Navbar visible={isSidebarVisible} />
                   {isSidebarVisible && <BreadcrumbsContainer />}
                 </div>
-                <div >
+                <div>
                   <Suspense fallback={<Loading />}>
                     {children}
                   </Suspense>
