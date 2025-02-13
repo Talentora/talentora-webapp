@@ -10,6 +10,8 @@ export default function DynamicSidebar() {
     const { user } = useUser();
 
     async function fetchRole() {
+
+
         try {
             const res = await fetch(`/api/users/getUserRole?userId=${user.data?.id}`);
             const data = await res.json();
@@ -22,7 +24,11 @@ export default function DynamicSidebar() {
         }
     }
 
-    fetchRole();
+    useEffect(() => {
+        if (user.data) fetchRole();
+    }, [user.data]);
+
+    // fetchRole();
 
     if (!isRecruiter) return null;
     return (
