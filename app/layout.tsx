@@ -13,6 +13,7 @@ import ReactQueryProvider from '@/components/Providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { getUserRole } from '@/utils/supabase/queries';
 import DynamicSidebar from '@/components/Layout/Sidebar/DynamicSidebar';
+import { useUser } from '@/hooks/useUser';
 
 const title = 'Talentora';
 const description = 'Talentora is a platform for creating and managing AI-powered interviews.';
@@ -25,20 +26,20 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   const supabase = createClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
+  const { user } = useUser();
+
 
   let isSidebarVisible = false;
 
-  if (user) {
-    const role = await getUserRole(supabase, user.id);
+  if (user?.data) {
+    const role = await getUserRole(supabase, user?.data?.id);
     isSidebarVisible = role === 'recruiter';
   } else {
     isSidebarVisible = false;
   }
-  console.log(user, "user in layout.tsx")
+  console.log(user.data, "user in layout.tsx")
   console.log("issidebarvisible??", isSidebarVisible);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen w-full bg-gradient-to-br from-purple-500/[0.1] via-background to-pink-500/[0.1] p-0">
