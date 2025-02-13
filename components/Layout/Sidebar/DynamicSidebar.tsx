@@ -22,14 +22,14 @@ export default function DynamicSidebar( user_id: DynamicSidebarProps ) {
 //   }, []);
 
     const { user } = useUser();
-
+    console.log("user in dynamicsidebar", user);
     useEffect(() => {
     if (!user_id) return;
     async function fetchRole() {
         try {
         const res = await fetch(`/api/users/getUserRole?userId=${user.data?.id}`);
         const data = await res.json();
-        console.log("role in dynamic sidebar", data.role);
+        console.log("role in dynamic sidebar", data);
         
         setIsRecruiter(data.role === 'recruiter');
         } catch (error) {

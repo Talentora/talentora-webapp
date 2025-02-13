@@ -9,7 +9,8 @@ export async function GET(request: Request) {
   if (!userId) {
     return NextResponse.json({ error: 'User ID required' }, { status: 400 });
   }
-  console.log()
+  console.log(userId, "userid in route.ts");
+  
     const supabase = createClient();
     const { data, error } = await supabase
         .from('recruiters')
