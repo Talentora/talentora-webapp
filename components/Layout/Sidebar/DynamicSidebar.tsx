@@ -22,11 +22,9 @@ export default function DynamicSidebar() {
         }
     }
 
-    useEffect(() => {
-        fetchRole();
-    }, []);
+    fetchRole();
 
-    // if (!isRecruiter) return null;
+    if (!isRecruiter) return null;
     return (
         <aside className="fixed top-0 left-0 h-full w-64 min-w-[16rem] max-w-[20rem] z-[100]">
             <Sidebar />

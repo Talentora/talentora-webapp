@@ -38,8 +38,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   } else {
     isSidebarVisible = false;
   }
-  console.log(user, "user in layout.tsx")
-  console.log("issidebarvisible??", isSidebarVisible);
+
 
   return (
     <html lang="en" suppressHydrationWarning>
