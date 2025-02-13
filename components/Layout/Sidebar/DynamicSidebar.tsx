@@ -25,8 +25,10 @@ export default function DynamicSidebar() {
     }
 
     useEffect(() => {
-        if (user.data) fetchRole();
+        fetchRole();
     }, [user.data]);
+
+    // const isRecruiter2 = user?.user_metadata?.role === "applicant" ? false : true;
 
     // fetchRole();
 
