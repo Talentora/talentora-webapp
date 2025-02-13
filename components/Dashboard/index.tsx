@@ -19,6 +19,8 @@ const DashboardPage = ({ serverRole }: DashboardPageProps) => {
     }
   }, [serverRole, user]);
 
+  setRole(user?.data?.user_metadata.role);
+
   if (!role) {
     return <div>Loading...</div>; // or a loading spinner
   }
