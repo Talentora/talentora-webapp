@@ -3,9 +3,12 @@
 import { useEffect, useState } from 'react';
 import Sidebar from '@/components/Layout/Sidebar';
 
-export default function DynamicSidebar() {
+interface DynamicSidebarProps {
+    user_id?: string; // Optional, or use `user_id: string` if you know it'll always be provided
+}
+
+export default function DynamicSidebar( user_id: DynamicSidebarProps ) {
   const [isRecruiter, setIsRecruiter] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
 
   // Assume you have a way to get the user ID (e.g., a custom hook or context)
 //   useEffect(() => {
@@ -18,10 +21,10 @@ export default function DynamicSidebar() {
 //   }, []);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!user_id) return;
     async function fetchRole() {
       try {
-        const res = await fetch(`/api/users/getUserRole?userId=${userId}`);
+        const res = await fetch(`/api/users/getUserRole?userId=${user_id}`);
         const data = await res.json();
         console.log("role in dynamic sidebar", data.role);
         setIsRecruiter(data.role === 'recruiter');
@@ -31,7 +34,7 @@ export default function DynamicSidebar() {
       }
     }
     fetchRole();
-  }, [userId]);
+  }, [user_id]);
 
   if (!isRecruiter) return null;
   return (
