@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import Sidebar from '@/components/Layout/Sidebar';
 import { useUser } from '@/hooks/useUser';
 
-
 export default function DynamicSidebar() {
     const [isRecruiter, setIsRecruiter] = useState(false);
 
@@ -24,12 +23,12 @@ export default function DynamicSidebar() {
     }
     fetchRole();
 
+  if (!isRecruiter) return null;
+  return (
+    <aside className="fixed top-0 left-0 h-full w-64 min-w-[16rem] max-w-[20rem] z-[100]">
+      <Sidebar />
+    </aside>
+  );
+}
 
-    if (!isRecruiter) return null;
-    return (
-      // Remove "fixed" so that it takes space in the layout.
-      <aside className="w-64 min-w-[16rem] max-w-[20rem]">
-        <Sidebar />
-      </aside>
-    );
-  }
+
