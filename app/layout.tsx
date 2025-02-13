@@ -29,8 +29,6 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     data: { user }
   } = await supabase.auth.getUser();
 
-
-
   let isSidebarVisible = false;
 
   if (user) {
@@ -54,20 +52,16 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <NextTopLoader />
           <ReactQueryProvider>
             <div className="flex min-h-screen">
-         
-               {/* Render the dynamic sidebar */}
               <DynamicSidebar />
               <main
                 id="skip"
-                className={`flex-1 min-h-screen ${
-                  isSidebarVisible ? 'ml-64' : ''
-                }`}
+                className="flex-1 min-h-screen"
               >
                 <div className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur">
                   <Navbar visible={isSidebarVisible} />
                   {isSidebarVisible && <BreadcrumbsContainer />}
                 </div>
-                <div >
+                <div>
                   <Suspense fallback={<Loading />}>
                     {children}
                   </Suspense>
