@@ -3,7 +3,7 @@ import Navbar from '@/components/Layout/Navbar';
 import Sidebar from '@/components/Layout/Sidebar';
 import BreadcrumbsContainer from '@/components/Layout/BreadcrumbsContainer';
 import { Toaster } from '@/components/Toasts/toaster';
-import { PropsWithChildren, Suspense } from 'react';
+import { PropsWithChildren, Suspense, useEffect, useState } from 'react';
 import { getURL } from '@/utils/helpers';
 import '@/styles/main.css';
 import Loading from '@/components/Layout/Loading';
@@ -23,22 +23,27 @@ export const metadata: Metadata = {
   description: description
 };
 
-export default async function RootLayout({ children }: PropsWithChildren) {
-  const supabase = createClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
+export default function RootLayout({ children }: PropsWithChildren) {
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
-  let isSidebarVisible = false;
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const supabase = createClient();
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
 
-  if (user) {
-    const role = await getUserRole(supabase, user.id);
-    isSidebarVisible = role === 'recruiter';
-  } else {
-    isSidebarVisible = false;
-  }
-  console.log(user, "user in layout.tsx")
-  console.log("issidebarvisible??", isSidebarVisible);
+      if (user) {
+        const role = await getUserRole(supabase, user.id);
+        setIsSidebarVisible(role === 'recruiter');
+      } else {
+        setIsSidebarVisible(false);
+      }
+      console.log(user, "user in layout.tsx");
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -52,7 +57,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <NextTopLoader />
           <ReactQueryProvider>
             <div className="flex min-h-screen">
-              <DynamicSidebar />
+              {isSidebarVisible && <DynamicSidebar />}
               <main
                 id="skip"
                 className="flex-1 min-h-screen"

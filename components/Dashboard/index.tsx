@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import RecruiterDashboard from '@/components/Dashboard/RecruiterDashboard';
 import ApplicantDashboard from '@/components/Dashboard/ApplicantDashboard';
 import { useUser } from '@/hooks/useUser';
@@ -10,8 +11,17 @@ interface DashboardPageProps {
 
 const DashboardPage = ({ serverRole }: DashboardPageProps) => {
   const { user } = useUser();
-  // Use server role as primary source, fallback to client-side metadata
-  const role = serverRole || user?.data?.user_metadata?.role;
+  const [role, setRole] = useState<string | null>(serverRole);
+
+  useEffect(() => {
+    if (!serverRole && user?.data?.user_metadata?.role) {
+      setRole(user.data.user_metadata.role);
+    }
+  }, [serverRole, user]);
+
+  if (!role) {
+    return <div>Loading...</div>; // or a loading spinner
+  }
 
   return (
     <div>
