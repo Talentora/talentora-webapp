@@ -1,9 +1,8 @@
 import { Metadata } from 'next';
 import Navbar from '@/components/Layout/Navbar';
-import Sidebar from '@/components/Layout/Sidebar';
 import BreadcrumbsContainer from '@/components/Layout/BreadcrumbsContainer';
 import { Toaster } from '@/components/Toasts/toaster';
-import { PropsWithChildren, Suspense, useEffect, useState } from 'react';
+import { PropsWithChildren, Suspense } from 'react';
 import { getURL } from '@/utils/helpers';
 import '@/styles/main.css';
 import Loading from '@/components/Layout/Loading';
@@ -13,6 +12,7 @@ import ReactQueryProvider from '@/components/Providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { getUserRole } from '@/utils/supabase/queries';
 import DynamicSidebar from '@/components/Layout/Sidebar/DynamicSidebar';
+import ClientLayout from '@/components/Layout/ClientLayout';
 
 const title = 'Talentora';
 const description = 'Talentora is a platform for creating and managing AI-powered interviews.';
@@ -23,27 +23,21 @@ export const metadata: Metadata = {
   description: description
 };
 
-export default function RootLayout({ children }: PropsWithChildren) {
-  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+export default async function RootLayout({ children }: PropsWithChildren) {
+  const supabase = createClient();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const supabase = createClient();
-      const {
-        data: { user }
-      } = await supabase.auth.getUser();
+  let isSidebarVisible = false;
 
-      if (user) {
-        const role = await getUserRole(supabase, user.id);
-        setIsSidebarVisible(role === 'recruiter');
-      } else {
-        setIsSidebarVisible(false);
-      }
-      console.log(user, "user in layout.tsx");
-    };
-
-    fetchUserData();
-  }, []);
+  if (user) {
+    const role = await getUserRole(supabase, user.id);
+    isSidebarVisible = role === 'recruiter';
+  } else {
+    isSidebarVisible = false;
+  }
+  console.log(user, "user in layout.tsx")
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -57,21 +51,9 @@ export default function RootLayout({ children }: PropsWithChildren) {
           <NextTopLoader />
           <ReactQueryProvider>
             <div className="flex min-h-screen">
-              {isSidebarVisible && <DynamicSidebar />}
-              <main
-                id="skip"
-                className="flex-1 min-h-screen"
-              >
-                <div className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur">
-                  <Navbar visible={isSidebarVisible} />
-                  {isSidebarVisible && <BreadcrumbsContainer />}
-                </div>
-                <div>
-                  <Suspense fallback={<Loading />}>
-                    {children}
-                  </Suspense>
-                </div>
-              </main>
+              <ClientLayout isSidebarVisible={isSidebarVisible}>
+                {children}
+              </ClientLayout>
             </div>
             <Suspense>
               <Toaster />
