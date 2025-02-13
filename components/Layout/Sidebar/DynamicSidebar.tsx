@@ -27,6 +27,7 @@ export default function DynamicSidebar( user_id: DynamicSidebarProps ) {
         const res = await fetch(`/api/users/getUserRole?userId=${user_id}`);
         const data = await res.json();
         console.log("role in dynamic sidebar", data.role);
+        
         setIsRecruiter(data.role === 'recruiter');
       } catch (error) {
         console.error("Error fetching user role:", error);
@@ -34,7 +35,7 @@ export default function DynamicSidebar( user_id: DynamicSidebarProps ) {
       }
     }
     fetchRole();
-  }, [user_id]);
+  }, []);
 
   if (!isRecruiter) return null;
   return (

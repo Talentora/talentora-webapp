@@ -37,7 +37,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   } else {
     isSidebarVisible = false;
   }
-
+  console.log(user, "user in layout.tsx")
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen w-full bg-gradient-to-br from-purple-500/[0.1] via-background to-pink-500/[0.1] p-0">
