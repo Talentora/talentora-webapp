@@ -22,8 +22,9 @@ export default function DynamicSidebar( user_id: DynamicSidebarProps ) {
 //   }, []);
 
     const { user } = useUser();
-    console.log("user in dynamicsidebar", user);
-    useEffect(() => {
+    console.log("user in dynamicsidebar", user.data?.id);
+
+    // useEffect(() => {
     if (!user_id) return;
     async function fetchRole() {
         try {
@@ -38,7 +39,7 @@ export default function DynamicSidebar( user_id: DynamicSidebarProps ) {
         }
     }
     fetchRole();
-    }, []);
+    // }, []);
 
   if (!isRecruiter) return null;
   return (
