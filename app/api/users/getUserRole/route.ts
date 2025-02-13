@@ -17,7 +17,7 @@ export async function GET(request: Request) {
         .eq('id', userId)
         .single();
 
-
+  console.log(data, "AAAAAAAAAAAAAAA")
   if (error || !data) {
     return NextResponse.json({ error: 'Could not fetch role' }, { status: 500 });
   }
