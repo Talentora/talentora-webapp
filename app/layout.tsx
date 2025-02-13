@@ -29,10 +29,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     data: { user }
   } = await supabase.auth.getUser();
 
+  let role = null;
   let isSidebarVisible = false;
 
   if (user) {
-    const role = await getUserRole(supabase, user.id);
+    role = await getUserRole(supabase, user.id);
     isSidebarVisible = role === 'recruiter';
   } else {
     isSidebarVisible = false;
@@ -52,10 +53,10 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <NextTopLoader />
           <ReactQueryProvider>
             <div className="flex min-h-screen">
-              {isSidebarVisible && <DynamicSidebar />}
+              {isSidebarVisible && role && <DynamicSidebar />}
               <main
                 id="skip"
-                className="flex-1 min-h-screen"
+                className={`flex-1 min-h-screen ${isSidebarVisible ? 'ml-64' : ''}`}
               >
                 <div className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur">
                   <Navbar visible={isSidebarVisible} />
