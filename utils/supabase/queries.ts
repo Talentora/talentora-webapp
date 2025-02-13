@@ -134,18 +134,18 @@ export const updateCompany = async (
  * @returns A boolean indicating whether the deletion was successful.
  * @throws Error if the deletion operation fails.
  */
-export const deleteCompany = async (id: number): Promise<boolean> => {
-  const supabase = createClient();
-  const { error } = await supabase.from('companies').delete().eq('id', id);
+// export const deleteCompany = async (id: number): Promise<boolean> => {
+//   const supabase = createClient();
+//   const { error } = await supabase.from('companies').delete().eq('id', id);
 
-  if (error) {
-    console.error('Failed to delete company:', error.message);
-    return false;
-  }
+//   if (error) {
+//     console.error('Failed to delete company:', error.message);
+//     return false;
+//   }
 
-  console.log('Company deleted successfully');
-  return true;
-};
+//   console.log('Company deleted successfully');
+//   return true;
+// };
 
 export const getUser = async () => {
   const supabase = createClient();
