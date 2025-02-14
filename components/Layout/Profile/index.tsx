@@ -12,23 +12,33 @@ type Company = Database['public']['Tables']['companies']['Row'];
 import { SignOut } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
-
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 const Profile = ({ user, role, company }: { user: any, role: string, company: Company | null }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const queryClient = useQueryClient();
-
-  const companyData = company;
   const router = useRouter();
+  const supabase = createClientComponentClient();
 
-  const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (getRedirectMethod() === 'client') {
-      // Clear all React Query cache before signing out
+  const handleSignOut = async () => {
+    try {
+      // Clear React Query cache
       queryClient.clear();
-      await handleRequest(e, SignOut, router);
+      
+      // Sign out using Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        throw error;
+      }
+
+      // Redirect to home page
+      router.push('/');
+      router.refresh();
+    } catch (error) {
+      console.error('Error signing out:', error);
     }
   };
 
@@ -64,18 +74,15 @@ const Profile = ({ user, role, company }: { user: any, role: string, company: Co
             
             <div className="h-[1px] bg-border" />
             
-            <form onSubmit={handleSignOut}>
-              <input type="hidden" name="pathName" value={pathname} />
-              <Button 
-                type="submit" 
-                variant="ghost" 
-                size="sm"
-                className="w-full justify-start text-[0.875em] text-foreground hover:text-foreground hover:bg-accent"
-              >
-                <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
-                Sign out
-              </Button>
-            </form>
+            <Button 
+              onClick={handleSignOut}
+              variant="ghost" 
+              size="sm"
+              className="w-full justify-start text-[0.875em] text-foreground hover:text-foreground hover:bg-accent"
+            >
+              <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
+              Sign out
+            </Button>
           </div>
         </div>
       )}

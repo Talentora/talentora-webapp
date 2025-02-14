@@ -124,6 +124,7 @@ export async function GET(request: Request) {
 
     const validResults = combinedResults
     // combinedResults.filter(result => result !== null);
+    console.log("Validresults in applications route", validResults);
     return NextResponse.json(validResults);
   } catch (error) {
     console.error('Error fetching data:', error);
