@@ -12,11 +12,13 @@ export async function GET() {
     const authResponse = await supabase.auth.getUser();
     console.log('Auth Response:', authResponse);
 
+    
+
     if (!authResponse.data || !authResponse.data.user) {
       console.error('No user found in auth response:', authResponse);
       return NextResponse.json(
         { error: 'Unauthorized - User not authenticated' },
-        { status: 401 }
+        { status: 4012 }
       );
     }
 
