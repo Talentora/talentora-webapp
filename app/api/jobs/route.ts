@@ -85,10 +85,11 @@ export async function GET() {
     const allOffices = officesResponse.ok ? (await officesResponse.json()).results : [];
 
     console.log('\n=== Department Data ===');
-    console.log('All departments:', JSON.stringify(allDepartments.map((d: any) => ({ id: d.id, name: d.name })), null, 2));
+    // console.log('All departments:', JSON.stringify(allDepartments.map((d: any) => ({ id: d.id, name: d.name })), null, 2));
 
     // Enrich jobs with their specific departments and offices
     const enrichedJobs = jobs.map((job: any) => {
+
       console.log(`\n=== Processing Job: ${job.name} ===`);
       console.log('Job departments array:', JSON.stringify(job.departments, null, 2));
       
@@ -102,18 +103,12 @@ export async function GET() {
         offices: jobOffices
       };
 
-      console.log('Enriched job departments:', JSON.stringify(enrichedJob.departments.map((d: any) => ({ id: d.id, name: d.name })), null, 2));
+      // console.log('Enriched job departments:', JSON.stringify(enrichedJob.departments.map((d: any) => ({ id: d.id, name: d.name })), null, 2));
       return enrichedJob;
     });
 
     return NextResponse.json(enrichedJobs, {
       status: 200,
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-        'Surrogate-Control': 'no-store'
-      }
     });
   } catch (error) {
     console.error('Error in /api/jobs:', error);
