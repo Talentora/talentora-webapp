@@ -51,7 +51,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <NextTopLoader />
           <ReactQueryProvider>
             <div className="flex min-h-screen">
-              {isSidebarVisible && <DynamicSidebar />}
+              {<DynamicSidebar />}
               <main
                 id="skip"
                 className={`flex-1 min-h-screen ${isSidebarVisible ? 'ml-64' : ''}`}

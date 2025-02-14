@@ -29,7 +29,7 @@ export default function DynamicSidebar() {
         } else {
             setIsRecruiter(false);
         }
-    }, [user.data]);
+    }, [user.data, user]);
 
     return (
         <aside className={`fixed top-0 left-0 h-full ${isRecruiter ? 'w-64 min-w-[16rem] max-w-[20rem]' : 'w-0 min-w-0 max-w-0'} z-[100]`}>
