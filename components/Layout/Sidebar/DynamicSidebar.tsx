@@ -10,8 +10,6 @@ export default function DynamicSidebar() {
     const { user } = useUser();
 
     async function fetchRole() {
-
-
         try {
             const res = await fetch(`/api/users/getUserRole?userId=${user.data?.id}`);
             const data = await res.json();
@@ -25,16 +23,15 @@ export default function DynamicSidebar() {
     }
 
     useEffect(() => {
-        fetchRole();
-    }, [user.data]);
+        if (user.data?.id) {
+            fetchRole();
+        } else {
+            setIsRecruiter(false);
+        }
+    }, [user.data?.id]);
 
-    // const isRecruiter2 = user?.user_metadata?.role === "applicant" ? false : true;
-
-    // fetchRole();
-
-    if (!isRecruiter) return null;
     return (
-        <aside className="fixed top-0 left-0 h-full w-64 min-w-[16rem] max-w-[20rem] z-[100]">
+        <aside className={`fixed top-0 left-0 h-full w-64 min-w-[16rem] max-w-[20rem] z-[100] ${isRecruiter ? '' : 'hidden'}`}>
             <Sidebar />
         </aside>
     );

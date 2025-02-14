@@ -39,7 +39,6 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     isSidebarVisible = false;
   }
 
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen w-full bg-gradient-to-br from-purple-500/[0.1] via-background to-pink-500/[0.1] p-0">
@@ -52,7 +51,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <NextTopLoader />
           <ReactQueryProvider>
             <div className="flex min-h-screen">
-              {<DynamicSidebar />}
+              {isSidebarVisible && <DynamicSidebar />}
               <main
                 id="skip"
                 className={`flex-1 min-h-screen ${isSidebarVisible ? 'ml-64' : ''}`}
