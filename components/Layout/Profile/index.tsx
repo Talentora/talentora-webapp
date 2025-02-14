@@ -21,6 +21,7 @@ const Profile = ({ user, role, company }: { user: any, role: string, company: Co
   const queryClient = useQueryClient();
   const router = useRouter();
   const supabase = createClientComponentClient();
+  const companyData = company;
 
   const handleSignOut = async () => {
     try {
