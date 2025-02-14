@@ -3,11 +3,14 @@ import { Job } from '@/types/merge';
 import { getMergeApiKey } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/server';
 import { getUserRole } from '@/utils/supabase/queries';
+import { useUser } from '@/hooks/useUser';
 
 export async function GET() {
   try {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    // const { data: { user } } = await supabase.auth.getUser();
+    const { user } = useUser();
+
 
     if (!user) {
       return NextResponse.json(
@@ -16,7 +19,14 @@ export async function GET() {
       );
     }
 
-    const role = await getUserRole(supabase, user.id);
+    const userId = user?.data?.id;
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized - User ID not found' },
+        { status: 401 }
+      );
+    }
+    const role = await getUserRole(supabase, userId);
     let accountToken = null;
     const baseURL = `https://api.merge.dev/api/ats/v1`;
     const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
