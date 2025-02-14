@@ -9,9 +9,9 @@ export default function DynamicSidebar() {
 
     const { user } = useUser();
 
-    async function fetchRole(userId: string) {
+    async function fetchRole() {
         try {
-            const res = await fetch(`/api/users/getUserRole?userId=${userId}`);
+            const res = await fetch(`/api/users/getUserRole?userId=${user.data?.id}`);
             const data = await res.json();
             console.log("role in dynamic sidebar", data);
             
@@ -24,14 +24,14 @@ export default function DynamicSidebar() {
 
     useEffect(() => {
         if (user.data?.id) {
-            fetchRole(user.data.id);
+            fetchRole();
         } else {
             setIsRecruiter(false);
         }
     }, [user]);
 
     return (
-        <aside className={`fixed top-0 left-0 h-full w-64 min-w-[16rem] max-w-[20rem] z-[100] ${isRecruiter ? '' : 'hidden'}`}>
+        <aside className={`fixed top-0 left-0 h-full ${isRecruiter ? 'w-64 min-w-[16rem] max-w-[20rem]' : 'w-0 min-w-0 max-w-0'} z-[100]`}>
             <Sidebar />
         </aside>
     );
