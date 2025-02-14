@@ -58,7 +58,7 @@ export async function GET() {
     }
 
     const jobsData = await jobsResponse.json();
-    const jobs = jobsData.results;
+    const jobs = Array.isArray(jobsData.results) ? jobsData.results : [];
 
     console.log('\n=== API Response Structure ===');
     console.log('Sample Job Structure:', JSON.stringify(jobs[0], null, 2));
