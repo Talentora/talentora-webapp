@@ -3,30 +3,39 @@ import { Job } from '@/types/merge';
 import { getMergeApiKey } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/server';
 import { getUserRole } from '@/utils/supabase/queries';
-import { useUser } from '@/hooks/useUser';
 
 export async function GET() {
   try {
     const supabase = createClient();
-    // const { data: { user } } = await supabase.auth.getUser();
-    const { user } = useUser();
+    
+    // Add debug logging for auth
+    const authResponse = await supabase.auth.getUser();
+    console.log('Auth Response:', authResponse);
 
-
-    if (!user) {
+    if (!authResponse.data || !authResponse.data.user) {
+      console.error('No user found in auth response:', authResponse);
       return NextResponse.json(
-        { error: 'Unauthorized - User not found' },
+        { error: 'Unauthorized - User not authenticated' },
         { status: 401 }
       );
     }
 
-    const userId = user?.data?.id;
-    if (!userId) {
+    const user = authResponse.data.user;
+    console.log('User found:', user.id);
+
+    // Verify the session is valid
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
+      console.error('Session error:', sessionError);
       return NextResponse.json(
-        { error: 'Unauthorized - User ID not found' },
+        { error: 'Invalid or expired session' },
         { status: 401 }
       );
     }
-    const role = await getUserRole(supabase, userId);
+
+    const role = await getUserRole(supabase, user.id);
+    console.log('User role:', role);
+
     let accountToken = null;
     const baseURL = `https://api.merge.dev/api/ats/v1`;
     const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
