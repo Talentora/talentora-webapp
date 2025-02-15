@@ -28,18 +28,29 @@ const Profile = ({ user, role, company }: { user: any, role: string, company: Co
       // Clear React Query cache
       queryClient.clear();
       
-      // Sign out using Supabase
+      // First attempt server-side signout
+      await fetch('/api/auth/signout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      // Then perform client-side cleanup
       const { error } = await supabase.auth.signOut();
       
       if (error) {
-        throw error;
+        console.error('Supabase signout error:', error);
       }
 
-      // Redirect to home page
-      router.push('/');
-      router.refresh();
+      // Clear any localStorage items that might contain auth state
+      localStorage.removeItem('supabase.auth.token');
+      localStorage.removeItem('supabase.auth.refreshToken');
+      
+      // Force a hard reload to ensure all auth states are cleared
+      window.location.href = '/';
     } catch (error) {
       console.error('Error signing out:', error);
+      // Fallback: force reload to home page
+      window.location.href = '/';
     }
   };
 

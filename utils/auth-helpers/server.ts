@@ -14,38 +14,45 @@ function isValidEmail(email: string) {
 export async function redirectToPath(path: string) {
   return redirect(path);
 }
-export async function SignOut(formData: FormData) {
-  const pathName = String(formData.get('pathName')).trim();
-
+export async function SignOut() {
   const supabase = createClient();
-  const { error } = await supabase.auth.signOut();
+  const cookieStore = cookies();
+  
+  // Sign out from Supabase
+  const { error } = await supabase.auth.signOut({
+    scope: 'global' // This ensures complete signout including SAML session
+  });
 
   if (error) {
-    return getErrorRedirect(
-      pathName,
-      'Hmm... Something went wrong.',
-      'You could not be signed out.'
-    );
+    throw error;
   }
 
   // Clear all authentication-related cookies
-  const response = new Response(null, { status: 200 });
-
   const cookiesToDelete = [
     'sb-access-token',
     'sb-refresh-token',
     'sb-session',
+    'sb-provider-token',
+    'sb-auth-token',
     'sb-user'
   ];
 
-  cookiesToDelete.forEach((cookie) => {
-    response.headers.append(
-      'Set-Cookie',
-      `${cookie}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`
-    );
+  cookiesToDelete.forEach((cookieName) => {
+    cookieStore.delete(cookieName);
   });
 
-  return '/';
+  // Clear any SAML-specific cookies
+  const samlCookies = cookieStore.getAll().filter(cookie => 
+    cookie.name.startsWith('sb-') || 
+    cookie.name.startsWith('saml-') ||
+    cookie.name.includes('auth')
+  );
+
+  samlCookies.forEach(cookie => {
+    cookieStore.delete(cookie.name);
+  });
+
+  return true;
 }
 
 
