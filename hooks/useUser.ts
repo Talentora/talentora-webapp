@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { type Database } from '@/types/types_db';
@@ -32,8 +32,9 @@ interface UseUserReturn {
 
 export function useUser(): UseUserReturn {
   const supabase = createClient();
+  const queryClient = useQueryClient();
 
-  // Fetch authenticated user data using React Query
+  // Fetch authenticated user data using React Query with proper error handling
   const {
     data: userData,
     error: userError,
@@ -41,10 +42,24 @@ export function useUser(): UseUserReturn {
   } = useQuery<User | null, Error>({
     queryKey: ['user'],
     queryFn: async () => {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        return null;
+      }
+
+      if (!session) {
+        console.log('No active session');
+        return null;
+      }
+
       const { data: { user }, error } = await supabase.auth.getUser();
       if (error) throw error;
       return user;
-    }
+    },
+    retry: false, // Don't retry on auth errors
+    staleTime: 1000 * 60 * 5 // Cache for 5 minutes
   });
 
   const userId = userData?.id ?? '';
@@ -110,17 +125,24 @@ export function useUser(): UseUserReturn {
     }
   });
 
-  // Optional: Set up an auth state listener
-  useQuery<void, Error>({
-    queryKey: ['authListener'],
-    queryFn: async () => {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, _session) => {
-        // The other queries will automatically re-fetch when needed
-      });
-      return subscription.unsubscribe();
-    },
-    staleTime: Infinity
-  });
+  // Replace the auth state listener with useEffect
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_OUT') {
+          // Clear React Query cache for user-related queries
+          queryClient.invalidateQueries({ queryKey: ['user'] });
+          queryClient.invalidateQueries({ queryKey: ['recruiter'] });
+          queryClient.invalidateQueries({ queryKey: ['company'] });
+        }
+      }
+    );
+
+    // Cleanup subscription on unmount
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase, queryClient]); // Add dependencies
 
   return {
     user: {
