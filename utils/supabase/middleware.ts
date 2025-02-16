@@ -33,6 +33,48 @@ type CookieData = {
   options?: CookieOptions;
 };
 
+export const clearAuthCookies = (response: NextResponse) => {
+  const cookieOptions = {
+    path: '/',
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax' as const,
+    httpOnly: true,
+    maxAge: 0
+  };
+
+  // List of cookies to clear
+  const cookiesToClear = [
+    'sb-access-token',
+    'sb-refresh-token',
+    'sb-auth-token',
+    'supabase-auth-token',
+    '__stripe_mid',
+    '__stripe_sid',
+    'preferredSignInView'
+  ];
+
+  // Clear all cookies that match our patterns
+  const allCookies = response.cookies.getAll();
+  allCookies.forEach(cookie => {
+    if (
+      cookie.name.startsWith('sb-') ||
+      cookie.name.includes('supabase') ||
+      cookie.name.includes('auth') ||
+      cookie.name.includes('token') ||
+      cookie.name.includes('session')
+    ) {
+      response.cookies.delete(cookie.name);
+    }
+  });
+
+  // Also explicitly clear known cookies
+  cookiesToClear.forEach(name => {
+    response.cookies.delete(name);
+  });
+
+  return response;
+};
+
 export const createClient = (request: NextRequest) => {
   // Create an unmodified response
   let response = NextResponse.next({
@@ -41,51 +83,57 @@ export const createClient = (request: NextRequest) => {
     }
   });
 
+  // Add cookie clearing to the cookies object
+  const cookies = {
+    get(name: string) {
+      return request.cookies.get(name)?.value;
+    },
+    set(name: string, value: string, options: CookieOptions) {
+      // If the cookie is updated, update the cookies for the request and response
+      request.cookies.set({
+        name,
+        value,
+        ...options
+      });
+      response = NextResponse.next({
+        request: {
+          headers: request.headers
+        }
+      });
+      response.cookies.set({
+        name,
+        value,
+        ...options
+      });
+    },
+    remove(name: string, options: CookieOptions) {
+      // If the cookie is removed, update the cookies for the request and response
+      request.cookies.set({
+        name,
+        value: '',
+        ...options
+      });
+      response = NextResponse.next({
+        request: {
+          headers: request.headers
+        }
+      });
+      response.cookies.set({
+        name,
+        value: '',
+        ...options
+      });
+    },
+    clearAuth() {
+      response = clearAuthCookies(response);
+    }
+  };
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          // If the cookie is updated, update the cookies for the request and response
-          request.cookies.set({
-            name,
-            value,
-            ...options
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers
-            }
-          });
-          response.cookies.set({
-            name,
-            value,
-            ...options
-          });
-        },
-        remove(name: string, options: CookieOptions) {
-          // If the cookie is removed, update the cookies for the request and response
-          request.cookies.set({
-            name,
-            value: '',
-            ...options
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers
-            }
-          });
-          response.cookies.set({
-            name,
-            value: '',
-            ...options
-          });
-        }
-      }
+      cookies
     }
   );
 

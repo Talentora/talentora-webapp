@@ -25,31 +25,38 @@ const Profile = ({ user, role, company }: { user: any, role: string, company: Co
 
   const handleSignOut = async () => {
     try {
-      // Clear React Query cache
+      // Clear React Query cache first
       queryClient.clear();
       
-      // First attempt server-side signout
-      await fetch('/api/auth/signout', {
+      // Attempt server-side signout
+      const response = await fetch('/api/auth/signout', {
         method: 'POST',
         credentials: 'include',
       });
 
-      // Then perform client-side cleanup
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        console.error('Supabase signout error:', error);
+      if (!response.ok) {
+        throw new Error('Server-side sign out failed');
       }
 
-      // Clear any localStorage items that might contain auth state
-      localStorage.removeItem('supabase.auth.token');
-      localStorage.removeItem('supabase.auth.refreshToken');
+      // Perform client-side cleanup
+      await supabase.auth.signOut();
       
-      // Force a hard reload to ensure all auth states are cleared
-      window.location.href = '/';
+      // Clear any localStorage items
+      Object.keys(localStorage).forEach(key => {
+        if (key.includes('supabase') || key.includes('auth')) {
+          localStorage.removeItem(key);
+        }
+      });
+      
+      // Use router for client-side navigation first
+      router.push('/');
+      // Then force a hard reload after a short delay
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     } catch (error) {
-      console.error('Error signing out:', error);
-      // Fallback: force reload to home page
+      console.error('Error during sign out:', error);
+      // Fallback: force navigation to home
       window.location.href = '/';
     }
   };
