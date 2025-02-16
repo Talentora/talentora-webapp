@@ -102,14 +102,14 @@ const AssessmentCard = memo<AssessmentCardProps>(({ application }) => {
               Start Interview
             </Button>
           </Link>
-          <Link href={`/mock/${application.application_data.id}`}>
+          {/* <Link href={`/mock/${application.application_data.id}`}>
             <Button
               className="text-[#6366f1] bg-white hover:bg-gray-100 border border-[#6366f1] hover:border-[#5558e6]"
               // disabled={application.status === 'complete'}
             >
               Mock Interview
             </Button>
-          </Link>
+          </Link> */}
         </div>
       </CardContent>
     </Card>
