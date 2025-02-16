@@ -76,69 +76,86 @@ export const clearAuthCookies = (response: NextResponse) => {
 };
 
 export const createClient = (request: NextRequest) => {
-  // Create an unmodified response
+  // Get the site URL from environment variable or request
+  // const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
+
   let response = NextResponse.next({
     request: {
       headers: request.headers
     }
   });
 
-  // Add cookie clearing to the cookies object
-  const cookies = {
-    get(name: string) {
-      return request.cookies.get(name)?.value;
-    },
-    set(name: string, value: string, options: CookieOptions) {
-      // If the cookie is updated, update the cookies for the request and response
-      request.cookies.set({
-        name,
-        value,
-        ...options
-      });
-      response = NextResponse.next({
-        request: {
-          headers: request.headers
-        }
-      });
-      response.cookies.set({
-        name,
-        value,
-        ...options
-      });
-    },
-    remove(name: string, options: CookieOptions) {
-      // If the cookie is removed, update the cookies for the request and response
-      request.cookies.set({
-        name,
-        value: '',
-        ...options
-      });
-      response = NextResponse.next({
-        request: {
-          headers: request.headers
-        }
-      });
-      response.cookies.set({
-        name,
-        value: '',
-        ...options
-      });
-    },
-    clearAuth() {
-      response = clearAuthCookies(response);
-    }
-  };
-
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      cookies
+      auth: {
+        flowType: 'pkce',
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        persistSession: true,
+      },
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          // If the cookie is updated, update the cookies for the request and response
+          request.cookies.set({
+            name,
+            value,
+            ...options
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers
+            }
+          });
+          response.cookies.set({
+            name,
+            value,
+            ...options
+          });
+        },
+        remove(name: string, options: CookieOptions) {
+          // If the cookie is removed, update the cookies for the request and response
+          request.cookies.set({
+            name,
+            value: '',
+            ...options
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers
+            }
+          });
+          response.cookies.set({
+            name,
+            value: '',
+            ...options
+          });
+        }
+      }
     }
   );
 
   return { supabase, response };
 };
+
+// Add this new function to handle SAML redirects
+export async function handleSamlRedirect(request: NextRequest) {
+  const url = new URL(request.url);
+  const provider = url.searchParams.get('provider');
+  const samlResponse = url.searchParams.get('SAMLResponse');
+  
+  if (samlResponse && provider) {
+    // Ensure redirect happens to the production domain
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
+    return NextResponse.redirect(`${siteUrl}/auth/callback`);
+  }
+  
+  return null;
+}
 
 export async function handleAuthRedirects(request: NextRequest, user: any) {
   const { pathname } = request.nextUrl;
@@ -245,6 +262,10 @@ export async function updateSession(request: NextRequest) {
 
   console.log('[Middleware] Got user:', user ? 'Present' : 'None');
   console.log('[Middleware] Final response cookies:', supabaseResponse.cookies.getAll());
+
+  // Add SAML redirect handling
+  const samlRedirect = await handleSamlRedirect(request);
+  if (samlRedirect) return samlRedirect;
 
   // Handle auth redirects
   const authRedirect = await handleAuthRedirects(request, user);
