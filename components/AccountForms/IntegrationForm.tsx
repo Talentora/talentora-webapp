@@ -19,11 +19,11 @@ type Company = Tables<'companies'>;
 
 const CompanyForm = () => {
   const [showApiKey, setShowApiKey] = useState(false);
-  const { company, loading }: { company: Company | null; loading: boolean } = useUser();
+  const { data, loading }: { data: Company | null; loading: boolean } = useUser().company;
 
   if (loading) return <CompanyFormSkeleton />;
 
-  if (!company) return null;
+  if (!data) return null;
 
   return (
     <Card className="my-8 bg-card text-card-foreground">
@@ -37,18 +37,18 @@ const CompanyForm = () => {
         <div className="flex flex-row items-center space-x-4 pb-4">
           <Avatar className="w-16 h-16">
             <AvatarFallback>
-              {company.name?.slice(0, 2).toUpperCase() || 'CO'}
+              {data.name?.slice(0, 2).toUpperCase() || 'CO'}
             </AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="text-2xl font-bold text-primary">{company.name}</h2>
+            <h2 className="text-2xl font-bold text-primary">{data.name}</h2>
             <Badge variant="outline" className="mt-1 bg-primary text-white">
-              {company.industry}
+              {data.industry}
             </Badge>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          {Object.entries(company).map(([key, value]) => (
+          {Object.entries(data).map(([key, value]) => (
             <div key={key} className={key === 'description' ? 'col-span-2' : ''}>
               <h3 className="font-semibold text-sm text-muted-foreground capitalize">
                 {key.replace(/_/g, ' ')}

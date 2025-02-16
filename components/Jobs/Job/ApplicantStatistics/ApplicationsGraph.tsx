@@ -1,12 +1,9 @@
-'use client';
-
 import { TrendingUp } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -19,9 +16,9 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { ApplicantCandidate } from '@/types/merge';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from '@/components/ui/select';
-import { useMemo } from 'react';
 
 interface ApplicationsGraphProps {
   applicants?: ApplicantCandidate[];
@@ -30,18 +27,27 @@ interface ApplicationsGraphProps {
 }
 
 const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: ApplicationsGraphProps) => {
-  const [timeRange, setTimeRange] = useState('3 months');
   const [interval, setInterval] = useState('1 week');
+  const [selectedJob, setSelectedJob] = useState('all'); // "all" means no filtering
 
-  const chartData = React.useMemo(() => {
+  // Get unique job names for the filter dropdown
+  const jobOptions = useMemo(() => {
+    const uniqueJobs = new Set<string>();
+    applicants.forEach(applicant => {
+      uniqueJobs.add(applicant.job.name);
+    });
+    return Array.from(uniqueJobs);
+  }, [applicants]);
+
+  // Filter applicants based on selected job
+  const filteredApplicants = useMemo(() => {
+    return selectedJob === 'all' ? applicants : applicants.filter(app => app.job.name === selectedJob);
+  }, [applicants, selectedJob]);
+
+  // Process data for the chart
+  const chartData = useMemo(() => {
     const now = new Date();
-    const timeRangeInDays = {
-      '1 month': 30,
-      '3 months': 90,
-      '6 months': 180,
-      '1 year': 365
-    }[timeRange] || 90;
-
+    const timeRangeInDays = 90; // Default time range to 3 months
     const intervalInDays = {
       '1 day': 1,
       '1 week': 7,
@@ -54,31 +60,23 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
     // Create empty bins
     for (let d = new Date(startDate); d <= now; d.setDate(d.getDate() + intervalInDays)) {
       const binKey = d.toISOString().split('T')[0];
-      let displayDate = binKey;
-      
-      // Format display date based on interval
+      let displayDate = d.toLocaleString('default', { month: 'short', day: 'numeric' });
+
       if (interval === '1 month') {
         displayDate = d.toLocaleString('default', { month: 'short', year: 'numeric' });
-      } else if (interval === '1 week') {
-        displayDate = d.toLocaleString('default', { month: 'short', day: 'numeric' });
-      } else {
-        displayDate = d.toLocaleString('default', { month: 'short', day: 'numeric' });
       }
-      
+
       bins[binKey] = { date: binKey, displayDate };
     }
 
     // Fill bins with data
-    applicants.forEach(applicant => {
+    filteredApplicants.forEach(applicant => {
       const createdAt = new Date(applicant.application.applied_at);
       if (createdAt >= startDate && createdAt <= now) {
-        // Find the appropriate bin
         const binDate = new Date(createdAt);
         binDate.setHours(0, 0, 0, 0);
-        // Round down to nearest interval
         const daysToSubtract = binDate.getDate() % intervalInDays;
         binDate.setDate(binDate.getDate() - daysToSubtract);
-        
         const binKey = binDate.toISOString().split('T')[0];
         const jobId = applicant.job.id;
 
@@ -86,14 +84,10 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
           let displayDate = binKey;
           if (interval === '1 month') {
             displayDate = binDate.toLocaleString('default', { month: 'short', year: 'numeric' });
-          } else if (interval === '1 week') {
-            displayDate = binDate.toLocaleString('default', { month: 'short', day: 'numeric' });
-          } else {
-            displayDate = binDate.toLocaleString('default', { month: 'short', day: 'numeric' });
           }
           bins[binKey] = { date: binKey, displayDate };
         }
-        
+
         if (!bins[binKey][jobId]) {
           bins[binKey][jobId] = 0;
         }
@@ -102,48 +96,44 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
     });
 
     return Object.values(bins).sort((a, b) => a.date.localeCompare(b.date));
-  }, [applicants, timeRange, interval]);
+  }, [filteredApplicants, interval]);
 
-  console.log("chartData", chartData);
-
-  const chartConfig = React.useMemo(() => {
+  const chartConfig = useMemo(() => {
     const config: ChartConfig = {};
-    applicants.forEach(applicant => {
+    filteredApplicants.forEach(applicant => {
       const jobId = applicant.job.id;
-      if (!config[jobId]) {
-        // Get last 3 digits of job ID and convert to number between 0-360
-        const lastDigits = parseInt(jobId.slice(-3)) || 0;
-        const hue = (lastDigits % 360);
-        config[jobId] = {
-          label: applicant.job.name || `Job ${jobId}`,
-          color: `hsl(${hue}, 70%, 50%)`,
-        };
-      }
+      config[jobId] = {
+        label: applicant.job.name || `Job ${jobId}`,
+        color: '#5650F0',
+      };
     });
     return config;
-  }, [applicants]);
+  }, [filteredApplicants]);
 
   return (
-    <Card className="border-none">
+    <Card className="p-5 -mt-6 w-full border border-transparent">
       {!hideHeader && (
         <CardHeader>
-          <CardTitle>Applicants Over Time</CardTitle>
-          {/* <CardDescription>Stacked Bar Chart</CardDescription> */}
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-4">
+            <CardTitle className="text-2xl">Applicants Over Time</CardTitle>
+            {/* Job Filter Dropdown */}
             <SelectGroup className="flex flex-row gap-2 items-center">
-              <SelectLabel>Time Range:</SelectLabel>
-              <Select value={timeRange} onValueChange={(value) => setTimeRange(value)}>
-                <SelectTrigger aria-label="Time Range">
-                  <SelectValue placeholder="Select time range" />
+              <Select value={selectedJob} onValueChange={setSelectedJob}>
+                <SelectTrigger aria-label="Job">
+                  <SelectValue placeholder="Select Job" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1 year">1 Year</SelectItem>
-                  <SelectItem value="6 months">6 Months</SelectItem>
-                  <SelectItem value="3 months">3 Months</SelectItem>
-                  <SelectItem value="1 month">1 Month</SelectItem>
+                  <SelectItem value="all">All Jobs</SelectItem>
+                  {jobOptions.map((job) => (
+                    <SelectItem key={job} value={job}>{job}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </SelectGroup>
+          </div>
+
+          {/* Interval and Time Range Selectors */}
+          <div className="flex gap-4">
             <SelectGroup className="flex flex-row gap-2 items-center">
               <SelectLabel>Interval:</SelectLabel>
               <Select value={interval} onValueChange={(value) => setInterval(value)}>
@@ -160,36 +150,22 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
           </div>
         </CardHeader>
       )}
-      <CardContent>
-        <ChartContainer config={chartConfig}>
+
+      <CardContent style={{ paddingBottom: 0 }}>
+        <ChartContainer config={chartConfig} style={{ maxHeight: '300px', width: '100%', overflow: 'hidden' }}>
           {isLoading ? (
-            <div className="flex justify-center items-center h-full">
-              <Skeleton className="h-32 w-full" />
+            <div className="flex justify-center items-center">
+              <Skeleton className="w-full" />
             </div>
           ) : (
-            <BarChart data={chartData} width={500} height={300}>
+            <BarChart data={chartData} width={1000} height={100} layout="horizontal">
               <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="displayDate"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-              />
-              <YAxis
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-              />
+              <XAxis dataKey="displayDate" tickLine={false} tickMargin={5} axisLine={false} />
+              <YAxis tickLine={false} tickMargin={5} axisLine={false} />
               <ChartTooltip content={<ChartTooltipContent hideLabel />} />
               <ChartLegend content={<ChartLegendContent />} />
               {Object.keys(chartConfig).map(jobId => (
-                <Bar
-                  key={jobId}
-                  dataKey={jobId}
-                  stackId="a"
-                  fill={chartConfig[jobId].color}
-                  radius={[0, 0, 4, 4]}
-                />
+                <Bar key={jobId} dataKey={jobId} stackId="a" fill="#5650F0" radius={[0, 0, 4, 4]} />
               ))}
             </BarChart>
           )}

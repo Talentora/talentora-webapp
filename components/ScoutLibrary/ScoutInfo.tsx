@@ -131,7 +131,7 @@ export const ScoutInfo: React.FC<BotInfoProps> = ({ scout }) => {
             </p>
           </div>
           
-          <Card>
+          {/* <Card>
             <CardHeader className="pb-4 border-none">
               <CardTitle className="text-lg font-semibold">Emotion Radar Chart</CardTitle>
             </CardHeader>
@@ -152,7 +152,7 @@ export const ScoutInfo: React.FC<BotInfoProps> = ({ scout }) => {
                 </RadarChart>
               </ChartContainer>
             </CardContent>
-          </Card>
+          </Card> */}
         </section>
 
       

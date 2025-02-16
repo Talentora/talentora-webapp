@@ -7,7 +7,6 @@ export const useScouts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);  // State to store error message
 
-  console.log("loading",loading)
   useEffect(() => {
     const fetchScouts = async () => {
 

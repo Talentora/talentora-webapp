@@ -1,5 +1,9 @@
-'use server';
-import { Tables , Json} from '@/types/types_db';
+"use server";
+import { Database } from '@/types/types_db';
+
+type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
+type Json = Database['public']['Tables']['AI_summary']['Row']['text_eval'];
+
 import { createClient } from '@/utils/supabase/server';
 import { ScoutWithJobs } from '@/types/custom';
 type Recruiter = Tables<'recruiters'>;
@@ -7,6 +11,7 @@ type Company = Tables<'companies'>;
 type scout = Tables<'bots'>;
 type AI_Summary = Tables<'AI_summary'>;
 import { inviteRecruiterAdmin, inviteCandidateAdmin, listUsersAdmin } from '@/utils/supabase/admin';
+import { SupabaseClient } from '@supabase/supabase-js';
 // CRUD operations for the company table
 
 /**
@@ -52,12 +57,16 @@ export const createCompany = async (
 ): Promise<Company> => {
   const supabase = createClient();
 
-  // const { user, ...restCompanyData } = companyData;
+  // Set configured to false by default
+  const companyDataWithConfig = {
+    ...companyData,
+    configured: false
+  };
 
   // Insert the company
   const { data: createdCompany, error: companyError } = await supabase
     .from('companies')
-    .insert(companyData)
+    .insert(companyDataWithConfig)
     .select()
     .single();
 
@@ -125,18 +134,18 @@ export const updateCompany = async (
  * @returns A boolean indicating whether the deletion was successful.
  * @throws Error if the deletion operation fails.
  */
-export const deleteCompany = async (id: number): Promise<boolean> => {
-  const supabase = createClient();
-  const { error } = await supabase.from('companies').delete().eq('id', id);
+// export const deleteCompany = async (id: number): Promise<boolean> => {
+//   const supabase = createClient();
+//   const { error } = await supabase.from('companies').delete().eq('id', id);
 
-  if (error) {
-    console.error('Failed to delete company:', error.message);
-    return false;
-  }
+//   if (error) {
+//     console.error('Failed to delete company:', error.message);
+//     return false;
+//   }
 
-  console.log('Company deleted successfully');
-  return true;
-};
+//   console.log('Company deleted successfully');
+//   return true;
+// };
 
 export const getUser = async () => {
   const supabase = createClient();
@@ -457,6 +466,25 @@ export const createscout = async (scoutData: any): Promise<Tables<'bots'>> => {
   return data;
 };
 
+export async function getUserRole(supabase: SupabaseClient, user_id: string) {
+  // Query the recruiters table to check if the user's id exists.
+  console.log('Getting user role for user:', user_id);
+  const { data: recruiterData, error: recruiterError } = await supabase
+    .from('recruiters')
+    .select('id')
+    .eq('id', user_id)
+    .single();
+
+  if (recruiterData && !recruiterError) {
+      console.log('User is a recruiter');
+      return 'recruiter'
+  } else {
+      console.log('User is an applicant');
+      return 'applicant'
+  }
+}
+
+
 /**
  * Deletes a scout from the database.
  *
@@ -505,7 +533,7 @@ export const getscoutById = async (id: string): Promise<scout | null> => {
   const { data, error } = await supabase
     .from('bots')
     .select('*')
-    .eq('id', id)
+    .eq('id', Number(id))
     .single();
 
   if (error) {
@@ -539,7 +567,7 @@ export const updateScout = async (
   const { data, error } = await supabase
     .from('bots')
     .update(filteredscoutData)
-    .eq('id', id)
+    .eq('id', Number(id))
     .select();
 
   if (error) {

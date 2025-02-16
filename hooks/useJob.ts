@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { EnrichedJob } from '@/components/Jobs/JobList';
+import { EnrichedJob } from '@/components/Jobs/types';
 import { ApplicantCandidate } from '@/types/merge';
 
 export function useJob(jobId: string) {

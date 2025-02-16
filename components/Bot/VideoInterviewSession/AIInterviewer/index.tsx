@@ -15,7 +15,7 @@ export default function AIInterviewer({ isReady }: AIInterviewerProps) {
 
 
   return (
-    <div className="bg-gradient-to-b from-blue-500 to-purple-600 rounded-lg flex items-center justify-center h-full">
+    <div className="bg-gradient-to-b from-primary to-secondary rounded-lg flex items-center justify-center h-full p-3">
       <div className="flex flex-col items-center justify-center text-white">
         {!isReady ? (
           <div className="flex items-center gap-2">

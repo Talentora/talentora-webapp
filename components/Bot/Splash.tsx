@@ -30,11 +30,8 @@ export const Splash: React.FC<SplashProps> = ({
   return (
     <Card className="w-full bg-background max-w-md mx-auto mt-8 border border-border p-5">
       <CardHeader>
-        {enableRecording ? (
-          <CardTitle>Welcome to your AI Interview</CardTitle>
-        ) : (
-          <CardTitle>Welcome to your Mock AI Interview</CardTitle>
-        )}
+
+        <CardTitle>Welcome to your AI Interview Assessment</CardTitle>
       </CardHeader>
       {step === 0 ? <></> : <></>}
       <CardContent className="space-y-4">
@@ -114,29 +111,49 @@ export const Splash: React.FC<SplashProps> = ({
             assessment will be made after this mock interview.
           </p>
         )}
-        {/* {step === 2 && (
-            <>
-              <p className="text-gray-600">
-                You are about to begin an AI-powered interview with{' '}
-                {company?.name}. This interview is conducted by Talentora's
-                advanced AI interviewer, designed to assess your qualifications
-                for the {mergeJob?.name} position.
-              </p>
-              <p className="text-gray-600">
-                The AI interviewer will ask you relevant questions about your
-                experience and skills. Please speak naturally and clearly when
-                responding.
-              </p>
-              <p className="text-gray-600 font-medium">
-                Tips for a successful interview:
-              </p>
-              <ul className="list-disc pl-5 text-gray-600">
-                <li>Ensure you're in a quiet environment</li>
-                <li>Check your camera and microphone are working</li>
-                <li>Speak clearly and take your time with responses</li>
+              <ul className="list-disc pl-5 text-gray-600 space-y-2 mt-2">
+                <li>Your interview will be recorded for assessment purposes</li>
+                <li>The AI system will process your responses to evaluate your qualifications</li>
+                <li>Your data will be handled in accordance with our privacy policy</li>
+                <li>The interview results will be shared with <strong>{company?.name}</strong></li>
               </ul>
-            </>
-          )} */}
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="terms" 
+                checked={termsAccepted}
+                onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                className="border-2 border-gray-400 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+              />
+              <label 
+                htmlFor="terms" 
+                className="text-sm text-gray-600 cursor-pointer"
+              >
+                I have read and agree to the terms and conditions
+              </label>
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <>
+            <p className="text-gray-600">
+              You are about to begin an AI-powered interview with <strong>{company?.name}</strong>. This interview is conducted by Talentora's advanced AI interviewer, designed to assess your qualifications for the <strong>{mergeJob?.name}</strong> position.
+            </p>
+            <p className="text-gray-600">
+              The AI interviewer will ask you relevant questions about your experience and skills. Please speak naturally and clearly when responding.
+            </p>
+            <p className="text-gray-600 font-medium">
+              Tips for a successful interview:
+            </p>
+            <ul className="list-disc pl-5 text-gray-600">
+              <li>Ensure you're in a quiet environment</li>
+              <li>Check your camera and microphone are working</li>
+              <li>Speak clearly and take your time with responses</li>
+            </ul>
+          </>
+        )}
+
       </CardContent>
       <CardFooter className="flex justify-between gap-5">
         {enableRecording && showTerms ? (

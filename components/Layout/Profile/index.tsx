@@ -5,26 +5,59 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { User, LogOut } from 'lucide-react';
-import { cn } from '@/utils/cn';
-import { useUser } from '@/hooks/useUser';
 import { useRouter } from 'next/navigation';
-
+import { useQueryClient } from '@tanstack/react-query';
+import { type Database } from '@/types/types_db';
+type Company = Database['public']['Tables']['companies']['Row'];
 import { SignOut } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
-const Profile = () => {
+const Profile = ({ user, role, company }: { user: any, role: string, company: Company | null }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-
-  const { user, company } = useUser();
+  const queryClient = useQueryClient();
   const router = useRouter();
+  const supabase = createClientComponentClient();
+  const companyData = company;
 
-  const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (getRedirectMethod() === 'client') {
-      await handleRequest(e, SignOut, router);
+  const handleSignOut = async () => {
+    try {
+      // Clear React Query cache first
+      queryClient.clear();
+      
+      // Attempt server-side signout
+      const response = await fetch('/api/auth/signout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Server-side sign out failed');
+      }
+
+      // Perform client-side cleanup
+      await supabase.auth.signOut();
+      
+      // Clear any localStorage items
+      Object.keys(localStorage).forEach(key => {
+        if (key.includes('supabase') || key.includes('auth')) {
+          localStorage.removeItem(key);
+        }
+      });
+      
+      // Use router for client-side navigation first
+      router.push('/');
+      // Then force a hard reload after a short delay
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+    } catch (error) {
+      console.error('Error during sign out:', error);
+      // Fallback: force navigation to home
+      window.location.href = '/';
     }
   };
 
@@ -44,15 +77,15 @@ const Profile = () => {
           <div className="space-y-[0.75em]">
             <div>
               <h4 className="font-medium text-foreground text-[1em]">
-                {user?.user_metadata.full_name || user?.email}
+                {user?.user_metadata.full_name || user?.email || 'Error'}
               </h4>
               <div className="flex items-center gap-[0.5em] mt-[0.25em]">
                 <Link href="/settings?tab=account" className="inline-flex items-center rounded-full bg-primary px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-accent-foreground capitalize hover:bg-accent/80">
-                  {user?.user_metadata?.role || 'User'}
+                  {role || 'Error'}
                 </Link>
-                {company?.name && (
+                {companyData?.name && (
                   <Link href="/settings?tab=company" className="inline-flex items-center rounded-full bg-secondary px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-accent-foreground capitalize hover:bg-accent/80">
-                    {company.name}
+                    {companyData.name || 'Error'}
                   </Link>
                 )}
               </div>
@@ -60,18 +93,15 @@ const Profile = () => {
             
             <div className="h-[1px] bg-border" />
             
-            <form onSubmit={handleSignOut}>
-              <input type="hidden" name="pathName" value={pathname} />
-              <Button 
-                type="submit" 
-                variant="ghost" 
-                size="sm"
-                className="w-full justify-start text-[0.875em] text-foreground hover:text-foreground hover:bg-accent"
-              >
-                <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
-                Sign out
-              </Button>
-            </form>
+            <Button 
+              onClick={handleSignOut}
+              variant="ghost" 
+              size="sm"
+              className="w-full justify-start text-[0.875em] text-foreground hover:text-foreground hover:bg-accent"
+            >
+              <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
+              Sign out
+            </Button>
           </div>
         </div>
       )}

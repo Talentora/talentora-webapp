@@ -11,6 +11,8 @@ import NextTopLoader from 'nextjs-toploader';
 import { createClient } from '@/utils/supabase/server';
 import ReactQueryProvider from '@/components/Providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { getUserRole } from '@/utils/supabase/queries';
+import DynamicSidebar from '@/components/Layout/Sidebar/DynamicSidebar';
 
 const title = 'Talentora';
 const description = 'Talentora is a platform for creating and managing AI-powered interviews.';
@@ -27,37 +29,42 @@ export default async function RootLayout({ children }: PropsWithChildren) {
     data: { user }
   } = await supabase.auth.getUser();
 
-  const role = user?.user_metadata?.role;
-  const isSidebarVisible = role === 'recruiter';
+  let role = null;
+  let isSidebarVisible = false;
+
+  if (user) {
+    role = await getUserRole(supabase, user.id);
+    isSidebarVisible = role === 'recruiter';
+  } else {
+    isSidebarVisible = false;
+  }
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="w-full bg-gradient-to-br from-purple-500/[0.1] via-background to-pink-500/[0.1] p-0">
+      <body className="min-h-screen w-full bg-gradient-to-br from-purple-500/[0.1] via-background to-pink-500/[0.1] p-0">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <NextTopLoader />
           <ReactQueryProvider>
-            <div className="flex">
-              {isSidebarVisible && (
-                <aside className="fixed h-full z-[100]">
-                  <Sidebar />
-                </aside>
-              )}
+            <div className="flex min-h-screen">
+              {<DynamicSidebar />}
               <main
                 id="skip"
-                className={` flex-1 min-h-[calc(100dvh-4rem)] md:min-h[calc(100dvh-5rem)]${
-                  isSidebarVisible ? ' ml-60' : ' w-full'
-                }`}
+                className={`flex-1 min-h-screen ${isSidebarVisible ? 'ml-64' : ''}`}
               >
-                <Navbar visible={isSidebarVisible} />
-                {isSidebarVisible && <BreadcrumbsContainer />}
-                <Suspense fallback={<Loading />}>
-                  {children}
-                </Suspense>
+                <div className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur">
+                  <Navbar visible={isSidebarVisible} />
+                  {isSidebarVisible && <BreadcrumbsContainer />}
+                </div>
+                <div>
+                  <Suspense fallback={<Loading />}>
+                    {children}
+                  </Suspense>
+                </div>
               </main>
             </div>
             <Suspense>

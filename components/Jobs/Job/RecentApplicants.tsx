@@ -8,6 +8,8 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import InviteApplicants from '@/components/Jobs/Job/JobConfig/InviteApplicants';
 import { Tables } from '@/types/types_db';
 import { ChevronDown, Loader2 } from 'lucide-react';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { cn } from '@/utils/cn';
 
 interface CombinedJob {
   mergeJob: Job;
@@ -28,6 +30,8 @@ export function RecentApplicants({ applicants, jobs, isLoading }: RecentApplican
     setVisible(!visible);
   };
 
+  const hasApplicants = applicants && applicants.length > 0;
+
   return (
     <Card>
       <CardHeader>
@@ -42,7 +46,18 @@ export function RecentApplicants({ applicants, jobs, isLoading }: RecentApplican
       </CardHeader>
       {visible && (
         <CardContent>
-          <Card className="p-5 border-none shadow-3xl h-full">
+          <div className='p-2'>
+          <Alert intent="danger">
+            <AlertTitle>No Recent Applicants</AlertTitle>
+            <AlertDescription>
+              There are no recent applicants for this job posting yet.
+            </AlertDescription>
+          </Alert>
+          </div>
+          <Card className={cn(
+            "p-5 border-none shadow-3xl h-full",
+            "blur-sm pointer-events-none"
+          )}>
             <ApplicationsGraph applicants={applicants} />
             <div className="mt-6">
               <ApplicantTable applicants={applicants} disablePortal={true} title={''} />

@@ -24,13 +24,10 @@ import { cn } from '@/utils/cn';
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 
 
-export function NavigationItems({
-  isUser,
-  isRecruiter
-}: {
-  isUser: boolean;
-  isRecruiter: boolean;
-}) {
+
+export function NavigationItems({ isUser, isRecruiter }: { isUser: boolean; isRecruiter: boolean }) {
+
+
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -145,20 +142,22 @@ function CompanyMenu() {
             title="About"
             description="Learn about our mission and values"
           />
-          <NavigationLink
-            href="/team"
+
+          {/* <NavigationLink 
+            href="/team" 
             icon={<Users className="h-5 w-5 mr-2 text-blue-600" />}
             title="Team"
             description="Meet the people behind Talentora"
-          />
-          <NavigationLink
-            href="/pricing"
+          /> */}
+          {/* <NavigationLink 
+            href="/pricing" 
             icon={<CreditCard className="h-5 w-5 mr-2 text-green-600" />}
             title="Pricing"
             description="View our pricing plans"
-          />
-          <NavigationLink
-            href="/contact"
+          /> */}
+          <NavigationLink 
+            href="/contact" 
+
             icon={<Mail className="h-5 w-5 mr-2 text-orange-600" />}
             title="Contact"
             description="Get in touch with us"

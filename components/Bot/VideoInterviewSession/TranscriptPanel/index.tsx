@@ -19,7 +19,7 @@ export default function TranscriptPanel({ transcript }: TranscriptPanelProps) {
   }, [transcript]);
 
   return (
-    <div className="bg-white rounded-lg shadow-lg flex w-full flex-col">
+    <div className="bg-background rounded-lg shadow-lg flex w-full flex-col border">
       <h3 className="p-4 text-lg font-semibold text-gray-800 border-b">
         Transcript
       </h3>

@@ -120,7 +120,7 @@ export const useApplicant = () => {
   const [accountTokens, setAccountTokens] = useState<{[key: string]: string | null}>({});
   const [enrichedApplications, setEnrichedApplications] = useState<EnrichedApplication[] | null>(null);
   
-  const { applicant, error: applicantError } = useApplicantData(user?.id);
+  const { applicant, error: applicantError } = useApplicantData(user.data?.id);
   const { applications, error: applicationsError } = useApplications(applicant?.id);
 
   useEffect(() => {
@@ -174,10 +174,9 @@ export const useApplicant = () => {
   }, [applications]);
 
   return {
-    applications,
-    isLoading,
-    error: applicantError || applicationsError,
-    applicant,
-    enrichedApplications
+    isLoading: isLoading || user.loading,
+    accountTokens,
+    enrichedApplications,
+    error: applicantError || applicationsError
   };
 };
