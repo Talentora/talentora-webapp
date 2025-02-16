@@ -29,7 +29,6 @@ interface BotProps {
   mergeJob: MergeJob | null;
   application: Tables<'applications'> | null;
   enableRecording: boolean;
-  mock: boolean;
   demo: boolean;
   scoutTest: boolean;
 }
@@ -71,7 +70,6 @@ export default function Bot(botProps: BotProps) {
     scout,
     companyContext,
     enableRecording,
-    mock,
     demo,
     scoutTest
   } = botProps;
@@ -122,6 +120,7 @@ export default function Bot(botProps: BotProps) {
             companyContext: companyContext,
             emotion: emotion,
             enableRecording: enableRecording,
+            scoutTest: scoutTest,
             demo: demo
           }
         }
@@ -219,7 +218,7 @@ export default function Bot(botProps: BotProps) {
     );
   }
 
-  if (!demo && !mock && (!job || !company || !jobInterviewConfig)) {
+  if (!demo && (!job || !company || !jobInterviewConfig)) {
     return null;
   }
 

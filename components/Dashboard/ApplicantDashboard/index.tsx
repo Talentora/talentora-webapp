@@ -81,7 +81,7 @@ export default function JobPortal() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Thanks for choosing out Talentora! You currently have 
+                    Thanks for choosing out Talentora! You currently have
                     {sortedApplications?.length} applications. To prepare, train
                     your interview skills by practicing with our{' '}
                     <Link
@@ -99,7 +99,7 @@ export default function JobPortal() {
                   </p>
                 </CardContent>
               </Card>
-              <div className="grid gap-6 md:grid-cols-2 mt-6">
+              <div className="grid gap-6 md:grid-cols-2 px-10 mt-6">
                 {sortedApplications?.map((application) => (
                   <AssessmentCard
                     key={application.id}

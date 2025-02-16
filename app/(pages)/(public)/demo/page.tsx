@@ -24,7 +24,6 @@ type ScoutProps = {
   mergeJob: any;
   application: any;
   enableRecording: boolean;
-  mock: boolean;
   demo: boolean;
   scoutTest: boolean;
 };
@@ -168,7 +167,6 @@ export default function Demo({ params }: { params: { id: string } }) {
           mergeJob: null,
           application: null,
           enableRecording: false,
-          mock: false,
           demo: true,
           scoutTest: false
         });
