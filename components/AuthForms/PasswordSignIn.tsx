@@ -24,13 +24,13 @@ export default function PasswordSignIn({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       const formData = new FormData(e.currentTarget);
       formData.append('role', role);
-      
+
       await handleRequest(e, signInWithPassword, router);
-      
+
       // Force a hard refresh after successful sign-in
       window.location.href = '/dashboard';
     } catch (error) {
@@ -45,10 +45,7 @@ export default function PasswordSignIn({
       <h1 className="text-2xl font-bold mb-4 text-center">
         Sign in to your account
       </h1>
-      <form
-          noValidate={true}
-          className="mb-4 grid gap-2"
-          onSubmit={handleSubmit}      >
+      <form onSubmit={(e) => handleRequest(e, signInWithPassword, router)}>
         <input type="hidden" name="role" value={role || 'applicant'} />
         <div className="grid gap-1">
           <label htmlFor="email" className="text-muted-foreground">

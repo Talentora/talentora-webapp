@@ -16,20 +16,22 @@ export async function handleRequest(
   const formData = new FormData(e.currentTarget);
   const role = formData.get('role') || 'applicant'; // Default to applicant
 
+  try {
+    const redirectUrl: string = await requestFunc(formData);
 
-  const redirectUrl: string = await requestFunc(
-    formData
-  );
-  
-  if (router) {
-    router.push(redirectUrl);
-    router.refresh();
-    console.log("meowww")
-    return true;
-  } else {
-    return await redirectToPath(
-      `${redirectUrl}${redirectUrl.includes('?') ? '&' : '?'}role=${role}`
-    );
+    // Add role to redirect URL
+    const finalRedirectUrl = `${redirectUrl}${
+      redirectUrl.includes('?') ? '&' : '?'
+    }role=${role}`;
+
+    if (router) {
+      return router.push(finalRedirectUrl);
+    } else {
+      return await redirectToPath(finalRedirectUrl);
+    }
+  } catch (error) {
+    console.error('Auth error:', error);
+    return false;
   }
 }
 
@@ -37,14 +39,35 @@ export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
   e.preventDefault();
   const formData = new FormData(e.currentTarget);
   const provider = String(formData.get('provider')).trim() as Provider;
-  
+  const role = formData.get('role') || 'applicant'; // Get role from form
+
   const supabase = createClient();
 
-  const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL; 
+  // Add role to OAuth sign-in
   await supabase.auth.signInWithOAuth({
     provider: provider,
     options: {
-      redirectTo: redirectUrl,
+      redirectTo: `https://talentora.io?role=${role}`,
+      queryParams: {
+        redirect_to: `https://talentora.io?role=${role}`,
+        role: role as string
+      }
     }
   });
+}
+
+// Add a new function to check authentication state
+export async function checkAuthState() {
+  const supabase = createClient();
+  const {
+    data: { session },
+    error
+  } = await supabase.auth.getSession();
+
+  if (error) {
+    console.error('Auth state check error:', error);
+    return null;
+  }
+
+  return session;
 }
