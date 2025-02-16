@@ -44,10 +44,9 @@ export default function PasswordSignIn({
         Sign in to your account
       </h1>
       <form
-        noValidate={true}
-        className="mb-4 grid gap-2"
-        onSubmit={(e) => handleSubmit(e)}
+        onSubmit={(e) => handleRequest(e, signInWithPassword, router)}
       >
+        <input type="hidden" name="role" value={role || 'applicant'} />
         <div className="grid gap-1">
           <label htmlFor="email">Email</label>
           <input
