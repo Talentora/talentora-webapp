@@ -13,8 +13,6 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import PasswordSignIn from '@/components/AuthForms/PasswordSignIn';
 import EmailSignIn from '@/components/AuthForms/EmailSignIn';
-import Separator from '@/components/AuthForms/Separator';
-import OauthSignIn from '@/components/AuthForms/OauthSignIn';
 import ForgotPassword from '@/components/AuthForms/ForgotPassword';
 import UpdatePassword from '@/components/AuthForms/UpdatePassword';
 import SignUp from '@/components/AuthForms/Signup';
@@ -38,7 +36,6 @@ export default async function SignInPage({
     data: { user }
   } = await supabase.auth.getUser();
 
-  // const { user } = useUser();
 
   let viewProp: string;
 

@@ -20,23 +20,7 @@ export default function PasswordSignIn({
   // userType
 }: PasswordSignInProps) {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    setIsSubmitting(true);
-    const formData = new FormData(e.currentTarget);
-    formData.append('role', role);
-    e.currentTarget = e.currentTarget.cloneNode(true) as HTMLFormElement;
-    e.currentTarget.appendChild(
-      Object.assign(document.createElement('input'), {
-        type: 'hidden',
-        name: 'role',
-        value: role
-      })
-    );
-    await handleRequest(e, signInWithPassword, router);
-    setIsSubmitting(false);
-  };
+  // const [isSubmitting, setIsSubmitting] = useState(false);
 
   return (
     <div className="my-8 w-1/3 mx-auto border shadow-lg rounded-xl p-10">
@@ -58,7 +42,7 @@ export default function PasswordSignIn({
             autoComplete="email"
             autoCorrect="off"
             className="w-full p-3 text-foreground  rounded-md bg-input"
-          />
+          /> 
           <label htmlFor="password">Password</label>
           <input
             id="password"

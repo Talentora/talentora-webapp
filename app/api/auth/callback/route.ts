@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
       console.error('[Auth Callback] Failed to exchange code:', error);
       return NextResponse.redirect(
         getErrorRedirect(
-          `${requestUrl.origin}/signin`,
+          `${requestUrl.origin}`,
           error.name,
           "Sorry, we weren't able to log you in. Please try again."
         )

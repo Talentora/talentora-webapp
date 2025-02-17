@@ -33,19 +33,28 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
   // Get unique job names for the filter dropdown
   const jobOptions = useMemo(() => {
     const uniqueJobs = new Set<string>();
+    if (!applicants?.length) return [];
+    
     applicants.forEach(applicant => {
-      uniqueJobs.add(applicant.job.name);
+      if (applicant?.job?.name) {
+        uniqueJobs.add(applicant.job.name);
+      }
     });
     return Array.from(uniqueJobs);
   }, [applicants]);
 
   // Filter applicants based on selected job
   const filteredApplicants = useMemo(() => {
-    return selectedJob === 'all' ? applicants : applicants.filter(app => app.job.name === selectedJob);
+    if (!applicants?.length) return [];
+    return selectedJob === 'all' 
+      ? applicants 
+      : applicants.filter(app => app?.job?.name === selectedJob);
   }, [applicants, selectedJob]);
 
   // Process data for the chart
   const chartData = useMemo(() => {
+    if (!filteredApplicants?.length) return [];
+    
     const now = new Date();
     const timeRangeInDays = 90; // Default time range to 3 months
     const intervalInDays = {
@@ -71,6 +80,8 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
 
     // Fill bins with data
     filteredApplicants.forEach(applicant => {
+      if (!applicant?.application?.applied_at || !applicant?.job?.id) return;
+      
       const createdAt = new Date(applicant.application.applied_at);
       if (createdAt >= startDate && createdAt <= now) {
         const binDate = new Date(createdAt);
@@ -99,11 +110,15 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
   }, [filteredApplicants, interval]);
 
   const chartConfig = useMemo(() => {
+    if (!filteredApplicants?.length) return {};
+    
     const config: ChartConfig = {};
     filteredApplicants.forEach(applicant => {
+      if (!applicant?.job?.id || !applicant?.job?.name) return;
+      
       const jobId = applicant.job.id;
       config[jobId] = {
-        label: applicant.job.name || `Job ${jobId}`,
+        label: applicant.job.name,
         color: '#5650F0',
       };
     });

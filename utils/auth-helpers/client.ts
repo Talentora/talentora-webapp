@@ -47,9 +47,7 @@ export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
   await supabase.auth.signInWithOAuth({
     provider: provider,
     options: {
-      redirectTo: `https://talentora.io?role=${role}`,
       queryParams: {
-        redirect_to: `https://talentora.io?role=${role}`,
         role: role as string
       }
     }

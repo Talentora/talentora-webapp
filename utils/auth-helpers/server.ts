@@ -167,6 +167,7 @@ export async function signInWithPassword(formData: FormData) {
     email,
     password
   });
+  console.log(data, "meow2");
 
   if (error) {
     redirectPath = getErrorRedirect(
@@ -175,7 +176,7 @@ export async function signInWithPassword(formData: FormData) {
       error.message
     );
     redirectPath = `/signin/password_signin?role=${role}`
-  } else if (data.user) {
+  } else if (data.user && data.user.role === "applicant") {
     cookieStore.set('preferredSignInView', 'password_signin', { path: '/dashboard' });
     redirectPath = getStatusRedirect('/dashboard', 'Success!', 'You are now signed in.');
   } else {

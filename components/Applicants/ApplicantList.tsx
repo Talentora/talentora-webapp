@@ -7,9 +7,7 @@ import SearchBar from '@/components/Applicants/Searchbar';
 import { Loader2 } from 'lucide-react';
 
 export default function ApplicantList() {
-  const [ApplicantCandidates, setApplicantCandidates] = useState<
-    ApplicantCandidate[]
-  >([]);
+  const [ApplicantCandidates, setApplicantCandidates] = useState<ApplicantCandidate[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -19,10 +17,12 @@ export default function ApplicantList() {
         const response = await fetch(`/api/applications`, {
           cache: 'no-store'
         });
-        const data: ApplicantCandidate[] = await response.json();
-        setApplicantCandidates(data);
+        const data = await response.json();
+        // Ensure data is an array before setting state
+        setApplicantCandidates(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching ApplicantCandidates:', error);
+        setApplicantCandidates([]); // Set empty array on error
       } finally {
         setIsLoading(false);
       }
@@ -31,13 +31,15 @@ export default function ApplicantList() {
     fetchApplicantCandidates();
   }, []);
 
-  const filteredApplicants = ApplicantCandidates.filter(
-    (ApplicantCandidate: ApplicantCandidate) => {
-      const fullName =
-        `${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`.toLowerCase();
-      return fullName.includes(searchTerm.toLowerCase());
-    }
-  );
+  const filteredApplicants = Array.isArray(ApplicantCandidates) 
+    ? ApplicantCandidates.filter((applicant: ApplicantCandidate) => {
+        if (!applicant?.candidate?.first_name || !applicant?.candidate?.last_name) {
+          return false;
+        }
+        const fullName = `${applicant.candidate.first_name} ${applicant.candidate.last_name}`.toLowerCase();
+        return fullName.includes(searchTerm.toLowerCase());
+      })
+    : [];
 
   return (
     <div className="flex flex-col min-h-screen">

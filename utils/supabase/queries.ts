@@ -1215,4 +1215,3 @@ export const getScoutsWithJobIds = async (): Promise<ScoutWithJobs[]> => {
 
   return processedscouts;
 };
-

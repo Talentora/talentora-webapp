@@ -5,7 +5,7 @@ import { Job } from '@/types/merge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 
-export default function ActiveJobsCard({ jobs, isLoading }: { jobs: Job[], isLoading: boolean }) {
+export default function ActiveJobsCard({ jobs = [], isLoading }: { jobs: Job[], isLoading: boolean }) {
   return (
     <Card className="p-5 border border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 
         dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]  
@@ -29,16 +29,18 @@ export default function ActiveJobsCard({ jobs, isLoading }: { jobs: Job[], isLoa
               </div>
             ))}
           </div>
-        ) : jobs.length === 0 ? (
+        ) : !Array.isArray(jobs) || jobs.length === 0 ? (
           <div className="text-center text-lg">
             <p className="text-sm text-muted-foreground">No jobs available.</p>
           </div>
         ) : (
           <div className="flex flex-col space-y-4">
-            {jobs.slice(0, 5).map((job) => (
-              <JobItem key={job.id} job={job} />
+            {jobs?.slice(0, 5).map((job) => (
+              <JobItem key={job?.id} job={job} />
             ))}
-            {jobs.length > 5 && <MoreJobsLink count={jobs.length - 5} />}
+            {Array.isArray(jobs) && jobs.length > 5 && (
+              <MoreJobsLink count={jobs.length - 5} />
+            )}
           </div>
         )}
       </CardContent>
@@ -48,17 +50,17 @@ export default function ActiveJobsCard({ jobs, isLoading }: { jobs: Job[], isLoa
 
 function JobItem({ job }: { job: Job }) {
   return (
-    <Link href={`/jobs/${job.id}`} className="group">
+    <Link href={`/jobs/${job?.id}`} className="group">
       <div className="p-5 bg-background rounded-2xl shadow-md transition duration-300 ease-in-out 
           hover:shadow-xl flex flex-col space-y-2">
         <div className="flex justify-between items-center">
           <div className="truncate">
-            <h3 className="font-semibold text-md hover:text-primary mb-1">{job.name}</h3>
+            <h3 className="font-semibold text-md hover:text-primary mb-1">{job?.name}</h3>
             <div className="pt-2 text-xs text-gray-500 flex flex-wrap gap-2">
-              {Array.isArray(job.departments) && job.departments.length > 0 ? (
-                job.departments.slice(0, 3).map((dept, index) => (
+              {Array.isArray(job?.departments) && job.departments.length > 0 ? (
+                job.departments?.slice(0, 3).map((dept, index) => (
                   <Badge key={index} className={`font-normal ${getBadgeColor(index)}`}>
-                    {typeof dept === 'object' ? dept.name : dept}
+                    {typeof dept === 'object' && dept?.name ? dept.name : dept}
                   </Badge>
                 ))
               ) : (

@@ -70,10 +70,17 @@ export default function RecruiterDashboard() {
   });
 
   const combinedJobs = useMemo(() => {
+    if (!mergeJobs || !Array.isArray(mergeJobs)) {
+      console.warn('mergeJobs is null, undefined, or not an array');
+      return [];
+    }
+
     return mergeJobs.map((mergeJob) => {
-      const supabaseJob = supabaseJobs.find((sJob) => sJob.merge_id === mergeJob.id);
+      if (!mergeJob) return { mergeJob: null, supabaseJob: null };
+      
+      const supabaseJob = supabaseJobs?.find((sJob) => sJob?.merge_id === mergeJob.id);
       return { mergeJob, supabaseJob };
-    });
+    }).filter(job => job.mergeJob !== null); // Filter out null jobs
   }, [mergeJobs, supabaseJobs]);
 
   const factWindow = 90;
@@ -114,7 +121,11 @@ export default function RecruiterDashboard() {
               {inviteModalOpen && (
                 <Dialog open={inviteModalOpen} onOpenChange={setInviteModalOpen} >
                   <DialogContent>
-                    <InviteApplicants jobs={combinedJobs} singleJobFlag={false} applicants={applicants} />
+                    <InviteApplicants 
+                      jobs={combinedJobs.filter(job => job.mergeJob !== null)} 
+                      singleJobFlag={false} 
+                      applicants={applicants || []} 
+                    />
                   </DialogContent>
                 </Dialog>
               )}
