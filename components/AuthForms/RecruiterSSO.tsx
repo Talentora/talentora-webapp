@@ -19,7 +19,7 @@ export default function RecruiterSSO() {
     console.log("[SSO] Starting SSO flow for domain:", domain);
 
     try {
-      const redirectTo = `https://talentora.io/api/auth/callback`;
+      const redirectTo = `https://talentora.io/`;
       console.log("[SSO] Using callback URL:", redirectTo);
       
       const { data, error } = await supabase.auth.signInWithSSO({
