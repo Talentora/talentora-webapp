@@ -42,14 +42,11 @@ export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
   const role = formData.get('role') || 'applicant';
   
   const supabase = createClient();
-  const redirectTo = 'https://talentora.io/auth/callback';
 
   await supabase.auth.signInWithOAuth({
     provider: provider,
     options: {
-      redirectTo,
       queryParams: {
-        redirect_to: 'https://talentora.io/dashboard',
         role: role as string
       }
     }
