@@ -3,6 +3,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { getScouts } from '@/utils/supabase/queries';
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
+
 export function useSidebarData() {
   const { data: jobs, error: jobsError, isLoading: jobsLoading } = useQuery({
     queryKey: ['jobs'],
