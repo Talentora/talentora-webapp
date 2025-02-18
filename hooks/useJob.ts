@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { EnrichedJob } from '@/components/Jobs/types';
 import { ApplicantCandidate } from '@/types/merge';
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
+
 export function useJob(jobId: string) {
   const [job, setJob] = useState<EnrichedJob | null>(null);
   const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
@@ -17,7 +19,7 @@ export function useJob(jobId: string) {
     setJobLoading(true);
     try {
       console.log('Fetching job:', jobId); // Debug log
-      const response = await fetch(`/api/jobs/${jobId}`);
+      const response = await fetch(`${baseUrl}/api/jobs/${jobId}`);
       console.log('Job response status:', response.status); // Debug log
       
       if (!response.ok) {
@@ -48,7 +50,7 @@ export function useJob(jobId: string) {
     setApplicantsLoading(true);
     try {
       console.log('Fetching applicants for job:', jobId); // Debug log
-      const response = await fetch(`/api/applications?jobId=${jobId}`);
+      const response = await fetch(`${baseUrl}/api/applications?jobId=${jobId}`);
       console.log('Applicants response status:', response.status); // Debug log
       
       if (!response.ok) {
