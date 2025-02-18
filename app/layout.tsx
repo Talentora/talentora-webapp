@@ -46,6 +46,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <NextTopLoader />
           <ReactQueryProvider>
             <div className="flex">
+
               {isSidebarVisible && (
                 <aside className="fixed h-full z-[100] w-1/6">
                   <Sidebar />
@@ -60,6 +61,9 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 }`}
               >
                 <Navbar visible={isSidebarVisible} />
+                <p>
+                  {`User: ${JSON.stringify(user)|| "No User"}`}
+                </p>
                 {isSidebarVisible && <BreadcrumbsContainer />}
                 <Suspense fallback={<Loading />}>
                   {children}
