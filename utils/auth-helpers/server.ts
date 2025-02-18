@@ -15,46 +15,26 @@ export async function redirectToPath(path: string) {
   return redirect(path);
 }
 export async function SignOut() {
-  const supabase = createClient();
   const cookieStore = cookies();
-  
-  // Sign out from Supabase
-  const { error } = await supabase.auth.signOut({
-    scope: 'global' // This ensures complete signout including SAML session
-  });
+  const supabase = createClient();
 
-  if (error) {
-    throw error;
+  // First, get the session to ensure we have the most current state
+  const { data: { session } } = await supabase.auth.getSession();
+
+  // Sign out from Supabase with session scope
+  if (session) {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
   }
 
-  // Clear all authentication-related cookies
-  const cookiesToDelete = [
-    'sb-access-token',
-    'sb-refresh-token',
-    'sb-session',
-    'sb-provider-token',
-    'sb-auth-token',
-    'sb-user'
-  ];
-
-  cookiesToDelete.forEach((cookieName) => {
-    cookieStore.delete(cookieName);
-  });
-
-  // Clear any SAML-specific cookies
-  const samlCookies = cookieStore.getAll().filter(cookie => 
-    cookie.name.startsWith('sb-') || 
-    cookie.name.startsWith('saml-') ||
-    cookie.name.includes('auth')
-  );
-
-  samlCookies.forEach(cookie => {
-    cookieStore.delete(cookie.name);
-  });
+  // Clear all cookies that might contain auth state
+  // const cookiesToClear = cookieStore.getAll();
+  // cookiesToClear.forEach((cookie) => {
+  //   cookieStore.delete(cookie.name);
+  // });
 
   return true;
 }
-
 
 export async function signInWithEmail(formData: FormData) {
   const cookieStore = cookies();
@@ -176,7 +156,7 @@ export async function signInWithPassword(formData: FormData) {
       error.message
     );
     redirectPath = `/signin/password_signin?role=${role}`
-  } else if (data.user && data.user.role === "applicant") {
+  } else if (data.user && data.user.user_metadata.role === "applicant") {
     cookieStore.set('preferredSignInView', 'password_signin', { path: '/dashboard' });
     redirectPath = getStatusRedirect('/dashboard', 'Success!', 'You are now signed in.');
   } else {
