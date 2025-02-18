@@ -209,13 +209,15 @@ export default function Bot(botProps: BotProps) {
     );
   }, [botProps, isUserReady, showSplash]);
 
-  if (showSplash && company && mergeJob) {
+  if (showSplash) {
     return (
       <Splash
         handleReady={() => setShowSplash(false)}
         company={company}
         mergeJob={mergeJob}
         enableRecording={enableRecording}
+        demo={demo}
+        scoutTest={scoutTest}
       />
     );
   }

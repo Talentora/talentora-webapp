@@ -64,7 +64,7 @@ export default function App({
   scoutTest
 }: ScoutProps) {
   const { user } = useUser();
-  const role = user?.user_metadata?.role;
+  const role = user?.data?.user_metadata?.role;
 
   const voiceClient = useRTVIClient()!;
   const transportState = useRTVIClientTransportState();
