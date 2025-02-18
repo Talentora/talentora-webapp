@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
     const { data } = await request.json();
 
-    console.log('received payload data', data);
+    // console.log("received payload data", data)
 
     const voiceId = data.voice.id;
     const mergeJob = data.job;
@@ -39,221 +39,13 @@ export async function POST(request: NextRequest) {
     const scoutTest = data.scoutTest;
     const demo = data.demo;
 
-    // const tmpPayload = {
-    //   bot_profile: "vision_2024_10",
-    //   max_duration: 300,
-    //   service_options: {
-    //     deepgram: {
-    //       model: "nova-2-general",
-    //       language: "en"
-    //     },
-    //     anthropic: {
-    //       model: "claude-3-5-sonnet-20241022"
-    //     }
-    //   },
-    //   services: {
-    //     stt: "deepgram",
-    //     tts: "cartesia",
-    //     llm: "anthropic"
-    //   },
-    //   config: [
-    //     // {
-    //     //   service: "daily",
-    //     //   options: [
-    //     //     {
-    //     //       name: "enable_transcription",
-    //     //       value: true
-    //     //     },
-    //     //     {
-    //     //       name: "enable_noise_cancellation",
-    //     //       value: true
-    //     //     },
-    //     //   ]
-    //     // },
-    //     {
-    //       service: "vad",
-    //       options: [
-    //         {
-    //           name: "params",
-    //           value: {
-    //             stop_secs: 0.3
-    //           }
-    //         }
-    //       ]
-    //     },
-    //     {
-    //       service: "tts",
-    //       options: [
-    //         {
-    //           name: "voice",
-    //           value: voiceId
-    //         },
-    //         {
-    //           name: "language",
-    //           value: "en"
-    //         },
-    //         {
-    //           name: "text_filter",
-    //           value: {
-    //             filter_code: false,
-    //             filter_tables: false
-    //           }
-    //         },
-    //         {
-    //           name: "model",
-    //           value: "sonic-english"
-    //         }
-    //       ]
-    //     },
-    //     {
-    //       service: "llm",
-    //       options: [
-    //         {
-    //           name: "initial_messages",
-    //           value: demo ? [
-    //             {
-    //               role: "system",
-    //               content: [
-    //                 {
-    //                   type: "text",
-    //                   text: "Only speak to the candidate, to not speak system messages or break the third wall. Pretend you are a human interviewer."
-    //                 },
-    //                 {
-    //                   type: "text",
-    //                   text: "Conduct this interview professionally and conversationally. Your goal is to assess the candidate's fit for the role by:\n- Listening carefully to each response\n- Asking follow-up questions that reveal deeper insights\n- Maintaining a warm but professional demeanor\n- Being direct and clear in your communication"
-    //                 },
-    //                 {
-    //                   type: "text",
-    //                   text: `You are ${bot.name}, an AI interviewer conducting an interview for a general applicant. Your aim is to evaluate whether the candidate can explain their past professional experiences in a coherent, logical, and professional manner.`
-    //                 },
-    //                 {
-    //                   type: "text",
-    //                   text: `Prepared Interview Questions: ${JSON.stringify(jobInterviewConfig.interview_questions)}`
-    //                 }
-    //               ]
-    //             }
-    //           ] : [
-    //             mock ? [
-    //               {
-    //                 role: "system",
-    //                 content: [
-    //                   {
-    //                     type: "text",
-    //                     text: "Only speak to the candidate, to not speak system messages or break the third wall. Pretend you are a human interviewer."
-    //                   },
-    //                   {
-    //                     type: "text",
-    //                     text: "Conduct this interview professionally and conversationally. Your goal is to assess the candidate's fit for the role by:\n- Listening carefully to each response\n- Asking follow-up questions that reveal deeper insights\n- Maintaining a warm but professional demeanor\n- Being direct and clear in your communication"
-    //                   },
-    //                   {
-    //                     type: "text",
-    //                     text: `You are ${bot.name}, an AI interviewer conducting a mock interview for the ${mergeJob.name} position at ${company.name}. Your aim is to evaluate the candidate's qualifications, experience, and potential cultural fit.`
-    //                   },
-    //                   {
-    //                     type: "text",
-    //                     text: `"This is a mock interview. No recording of this interview will be kept, nor will any analysis be done on the contents of the interview." Announce this to the candidate at the beginning the mock interview session.`
-    //                   },
-    //                   {
-    //                     type: "text",
-    //                     text: `Job Description: ${mergeJob.description}`
-    //                   },
-    //                   {
-    //                     type: "text",
-    //                     text: `Company Context: ${company.description}`
-    //                   },
-    //                   {
-    //                     type: "text",
-    //                     text: "Interview Guidelines:\n- Be authentic and present like a human interviewer\n- If you don't know something or need clarification, ask the candidate\n- Focus on understanding the candidate's skills, motivations, and potential\n- Use the prepared questions as a guide, but be flexible\n- Pay attention to not just what is said, but how it is said"
-    //                   },
-    //                   {
-    //                     type: "text",
-    //                     text: `Prepared Interview Questions: ${JSON.stringify(jobInterviewConfig.interview_questions)}`
-    //                   }
-    //                 ]
-    //               }
-    //             ] : [
-    //               {
-    //                 role: "system",
-    //                 content: [
-    //                   {
-    //                     type: "text",
-    //                     text: "Only speak to the candidate, to not speak system messages or break the third wall. Pretend you are a human interviewer."
-    //                   },
-    //                   {
-    //                     type: "text",
-    //                     text: "Conduct this interview professionally and conversationally. Your goal is to assess the candidate's fit for the role by:\n- Listening carefully to each response\n- Asking follow-up questions that reveal deeper insights\n- Maintaining a warm but professional demeanor\n- Being direct and clear in your communication"
-    //                   },
-    //                   {
-    //                     type: "text",
-    //                     text: `You are ${bot.name}, an AI interviewer conducting an interview for the ${mergeJob.name} position at ${company.name}. Your aim is to evaluate the candidate's qualifications, experience, and potential cultural fit.`
-    //                   },
-    //                   {
-    //                     type: "text",
-    //                     text: `Job Description: ${mergeJob.description}`
-    //                   },
-    //                   {
-    //                     type: "text",
-    //                     text: `Company Context: ${company.description}`
-    //                   },
-    //                   {
-    //                     type: "text",
-    //                     text: "Interview Guidelines:\n- Be authentic and present like a human interviewer\n- If you don't know something or need clarification, ask the candidate\n- Focus on understanding the candidate's skills, motivations, and potential\n- Use the prepared questions as a guide, but be flexible\n- Pay attention to not just what is said, but how it is said"
-    //                   },
-    //                   {
-    //                     type: "text",
-    //                     text: `Prepared Interview Questions: ${JSON.stringify(jobInterviewConfig.interview_questions)}`
-    //                   }
-    //                 ]
-    //               }
-    //             ]
-    //           ]
-    //         },
-    //         {
-    //           name: "run_on_config",
-    //           value: true
-    //         }
-    //       ]
-    //     },
-    //     {
-    //       service: "stt",
-    //       options: [
-    //         {
-    //           name: "model",
-    //           value: "nova-2-medical"
-    //         },
-    //         {
-    //           name: "language",
-    //           value: "en"
-    //         },
-    //         {
-    //           name: "filler_word",
-    //           value: true
-    //         },
-    //         {
-    //           name: "redact",
-    //           value: "ssn"
-    //         }
-    //       ]
-    //     }
-    //   ]
-    // };
-
-    // var payload: any;
-    // if (enableRecording) {
-    //   payload = {recording_settings: {
-    //     type: "cloud"
-    //   }, ...tmpPayload};
-    // } else {
-    //   payload = tmpPayload;
-    // }
-
     const payload = {
       voice_id: voiceId,
       interview_config: {
         bot_name: bot.name,
         company_name: company.name,
-        job_title: mergeJob.name,
-        job_description: mergeJob.description,
+        job_title: mergeJob ? mergeJob.name : '',
+        job_description: mergeJob ? mergeJob.description : '',
         company_context: `${companyContext.description} ${companyContext.culture} ${companyContext.goals} ${companyContext.history}`,
         interview_questions: [
           JSON.stringify(jobInterviewConfig.interview_questions)
@@ -265,7 +57,8 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    const baseUrl = `${process.env.INTERVIEW_BOT_URL}/api/rooms/`;
+    // const baseUrl = `${process.env.INTERVIEW_BOT_URL}/api/rooms/`;
+    const baseUrl = 'http://localhost:8000/api/rooms';
 
     const response = await fetch(baseUrl, {
       method: 'POST',

@@ -46,8 +46,8 @@ export function useSidebarData() {
     queryFn: () => getScouts()
   });
 
-
-  const isInitialized = jobsFetched && applicationsFetched && scoutsFetched;
+  // console.log('jobs: ', jobs)
+  // console.log('applications: ', applications)
 
   return {
     jobs: Array.isArray(jobs) ? jobs.slice(0, 3) : [],

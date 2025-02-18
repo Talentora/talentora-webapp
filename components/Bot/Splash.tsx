@@ -13,15 +13,19 @@ import { Job as MergeJob } from '@/types/merge';
 type SplashProps = {
   handleReady: () => void;
   company: Tables<'companies'>;
-  mergeJob: MergeJob;
+  mergeJob: MergeJob | null;
   enableRecording: boolean;
+  demo: boolean;
+  scoutTest: boolean;
 };
 
 export const Splash: React.FC<SplashProps> = ({
   handleReady,
   company,
   mergeJob,
-  enableRecording
+  enableRecording,
+  demo,
+  scoutTest
 }) => {
   const [showTerms, setShowTerms] = useState(true); // Start with terms shown
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -30,10 +34,10 @@ export const Splash: React.FC<SplashProps> = ({
   return (
     <Card className="w-full bg-background max-w-md mx-auto mt-8 border border-border p-5">
       <CardHeader>
-        {enableRecording ? (
+        {demo ? (
           <CardTitle>Welcome to your AI Interview</CardTitle>
         ) : (
-          <CardTitle>Welcome to your Mock AI Interview</CardTitle>
+          <CardTitle>Welcome to your Demo AI Interview</CardTitle>
         )}
       </CardHeader>
       {step === 0 ? <></> : <></>}
@@ -86,7 +90,7 @@ export const Splash: React.FC<SplashProps> = ({
               </div>
             </div>
           ) : (
-            <>
+            <div>
               <p className="text-gray-600">
                 You are about to begin an AI-powered interview with{' '}
                 {company?.name}. This interview is conducted by Talentora's
@@ -106,14 +110,20 @@ export const Splash: React.FC<SplashProps> = ({
                 <li>Check your camera and microphone are working</li>
                 <li>Speak clearly and take your time with responses</li>
               </ul>
-            </>
+            </div>
           )
+        ) : demo && !scoutTest ? (
+          <p className="text-gray-600 text-center font-medium">
+            This is a demo interview. No recording will be kept and no
+            assessment will be made after this demo interview.
+          </p>
         ) : (
           <p className="text-gray-600 text-center font-medium">
-            This is a mock interview. No recording will be kept and no
-            assessment will be made after this mock interview.
+            This is a test interview. No recording will be kept and no
+            assessment will be made after this test interview.
           </p>
         )}
+
         {/* {step === 2 && (
             <>
               <p className="text-gray-600">

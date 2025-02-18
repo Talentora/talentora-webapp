@@ -38,6 +38,7 @@ const fetchApplications = async (): Promise<ApplicantCandidate[]> => {
 };
 
 const fetchJobs = async (): Promise<Job[]> => {
+  console.log('called fetchJobs');
   const response = await fetch('/api/jobs');
   if (!response.ok) throw new Error('Failed to fetch jobs');
   return response.json();
@@ -59,10 +60,7 @@ export default function RecruiterDashboard() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Use React Query for data fetching with caching
-  const { data: applicants = [], isLoading: applicantsLoading } = useQuery<
-    ApplicantCandidate[]
-  >({
+  const { data: applicants = [], isLoading: applicantsLoading } = useQuery({
     queryKey: ['applications'],
     queryFn: fetchApplications,
     staleTime: 5 * 60 * 1000
@@ -74,9 +72,7 @@ export default function RecruiterDashboard() {
     staleTime: 5 * 60 * 1000
   });
 
-  const { data: supabaseJobs = [], isLoading: supabaseJobsLoading } = useQuery<
-    Tables<'jobs'>[]
-  >({
+  const { data: supabaseJobs = [], isLoading: supabaseJobsLoading } = useQuery({
     queryKey: ['supabaseJobs'],
     queryFn: fetchSupabaseJobs,
     staleTime: 5 * 60 * 1000
