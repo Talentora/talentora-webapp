@@ -38,7 +38,7 @@ export default function SignIn() {
           }`}
           onClick={() => handleUserTypeSelection('recruiter')}
         >
-          <h2 className="text-2xl font-semibold mb-2 text-foreground">
+          <h2 className="text-2xl font-semibold mb-2 text-foreground bg-backgroun">
             Recruiter
           </h2>
           <p className="text-center text-muted-foreground mb-4">
@@ -54,7 +54,7 @@ export default function SignIn() {
           }`}
           onClick={() => handleUserTypeSelection('applicant')}
         >
-          <h2 className="text-2xl font-semibold mb-2 text-foreground">
+          <h2 className="text-2xl font-semibold mb-2 text-foreground bg-background">
             Applicant
           </h2>
           <p className="text-center text-muted-foreground">

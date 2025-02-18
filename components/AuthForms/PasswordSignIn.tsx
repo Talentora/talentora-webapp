@@ -23,19 +23,16 @@ export default function PasswordSignIn({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    setIsSubmitting(true);
-    const formData = new FormData(e.currentTarget);
-    formData.append('role', role);
-    e.currentTarget = e.currentTarget.cloneNode(true) as HTMLFormElement;
-    e.currentTarget.appendChild(
-      Object.assign(document.createElement('input'), {
-        type: 'hidden',
-        name: 'role',
-        value: role
-      })
-    );
-    await handleRequest(e, signInWithPassword, router);
-    setIsSubmitting(false);
+    try {
+      setIsSubmitting(true);
+      const formData = new FormData(e.currentTarget);
+      formData.append('role', role);
+      await handleRequest(e, signInWithPassword, router);
+    } catch (error) {
+      console.error('Sign in error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -79,14 +76,14 @@ export default function PasswordSignIn({
           Sign in
         </Button>
       </form>
-      <p>
+      {/* <p>
         <Link
           href={`/signin/forgot_password?role=${role}`}
           className="font-light text-sm"
         >
           Forgot your password?
         </Link>
-      </p>
+      </p> */}
       <p>
         <Link
           href={`/signin/signup?role=${role}`}

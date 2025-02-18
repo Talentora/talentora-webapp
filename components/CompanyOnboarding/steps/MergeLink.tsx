@@ -11,8 +11,7 @@ interface MergeLinkProps {
 }
 
 const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
-  const { user, loading: userLoading } = useUser();
-  const { company, loading: companyLoading } = useUser();
+  const { user: { data: user, loading: userLoading }, company: { data: company, loading: companyLoading } } = useUser();
   const [linkToken, setLinkToken] = useState<string | null>(null);
 
   const hasMergeApiKey = company?.merge_account_token ? true : false;

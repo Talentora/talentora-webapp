@@ -20,10 +20,8 @@ import { useUser } from '@/hooks/useUser';
 export const CompanyInfoStep: React.FC<{
   onCompletion: (isComplete: boolean) => void;
 }> = ({ onCompletion }) => {
-  const { recruiter, loading } = useUser();
+  const { recruiter: { data: recruiter, loading }, user: { data: user }, company: { data: company } } = useUser();
   const hasCompany = recruiter?.company_id ? true : false;
-  const { user } = useUser();
-  const { company } = useUser();
 
   useEffect(() => {
     onCompletion(hasCompany);

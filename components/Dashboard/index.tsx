@@ -9,7 +9,7 @@ interface DashboardPageProps {
 }
 
 const DashboardPage = ({ serverRole }: DashboardPageProps) => {
-  const { user } = useUser();
+  const { user: { data: user } } = useUser();
   // Use server role as primary source, fallback to client-side metadata
   const role = serverRole || user?.user_metadata?.role;
 

@@ -6,7 +6,7 @@ import { useUser } from './useUser';
 import { Tables } from '@/types/types_db';
 
 export function useSubscription() {
-  const { user } = useUser();
+  const { user: { data: user } } = useUser();
   const [subscription, setSubscription] = useState<Tables<'subscriptions'> | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

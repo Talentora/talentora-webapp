@@ -16,17 +16,17 @@ export async function handleRequest(
   const formData = new FormData(e.currentTarget);
   const role = formData.get('role');
 
-  const redirectUrl: string = await requestFunc(
-    formData
-    // , role
-  );
+  try {
+    const redirectUrl: string = await requestFunc(formData);
 
-  if (router) {
-    return router.push(redirectUrl);
-  } else {
-    return await redirectToPath(
-      `${redirectUrl}${redirectUrl.includes('?') ? '&' : '?'}role=${role}`
-    );
+    if (router) {
+      router.push(redirectUrl);
+    } else {
+      return await redirectToPath(redirectUrl);
+    }
+  } catch (error) {
+    console.error('Sign in error:', error);
+    // Handle error appropriately
   }
 }
 

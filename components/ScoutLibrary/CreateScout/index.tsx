@@ -57,7 +57,7 @@ const CreateScout = ({
     }
   });
 
-  const { company } = useUser();
+  const { company: { data: company } } = useUser();
   const { toast } = useToast();
   const apiKey = process.env.NEXT_PUBLIC_CARTESIA_API_KEY;
 

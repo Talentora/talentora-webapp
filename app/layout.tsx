@@ -36,7 +36,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="w-full bg-gradient-to-br from-purple-500/[0.1] via-background to-pink-500/[0.1] p-0">
+      <body className="min-h-screen w-full bg-gradient-to-br from-purple-500/[0.15] via-background to-pink-500/[0.15]">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -45,29 +45,26 @@ export default async function RootLayout({ children }: PropsWithChildren) {
         >
           <NextTopLoader />
           <ReactQueryProvider>
-            <div className="flex">
-
+            <div className="flex min-h-screen relative">
               {isSidebarVisible && (
-                <aside className="fixed h-full z-[100] w-1/6">
+                <aside className="fixed lg:relative h-screen z-[100] w-64 lg:w-1/5 transition-all duration-300 ease-in-out">
                   <Sidebar />
                 </aside>
               )}
               <main
                 id="skip"
-                className={`flex-1 min-h-[calc(100dvh-15rem)] md:min-h-[calc(100dvh-16rem)] ${
-                  isSidebarVisible ? 'ml-[16.666667%]' : ''
-                } ${
-                  isSidebarVisible ? 'w-[83.333333%]' : 'w-full'
-                }`}
+                className={`flex-1 min-h-screen flex flex-col transition-all duration-300 ease-in-out
+                  ${isSidebarVisible ? 'lg:ml-0 ml-64' : ''} 
+                  ${isSidebarVisible ? 'w-[calc(100%-16rem)] lg:w-4/5' : 'w-full'}
+                `}
               >
                 <Navbar visible={isSidebarVisible} />
-                <p>
-                  {`User: ${JSON.stringify(user)|| "No User"}`}
-                </p>
                 {isSidebarVisible && <BreadcrumbsContainer />}
-                <Suspense fallback={<Loading />}>
-                  {children}
-                </Suspense>
+                <div className="flex-grow p-4 sm:p-6 md:p-8">
+                  <Suspense fallback={<Loading />}>
+                    {children}
+                  </Suspense>
+                </div>
               </main>
             </div>
             <Suspense>

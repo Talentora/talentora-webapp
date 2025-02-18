@@ -17,7 +17,7 @@ import { createClient } from '@/utils/supabase/client';
 
 export default function EmailForm() {
   const router = useRouter();
-  const { user } = useUser();
+  const { user: { data: user } } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!user) {

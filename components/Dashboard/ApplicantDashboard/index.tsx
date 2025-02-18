@@ -10,7 +10,7 @@ import AssessmentCard from './AssessmentCard'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 export default function JobPortal() {
-  const {user} = useUser()
+  const { user: { data: user } } = useUser()
   const { enrichedApplications, isLoading, error } = useApplicant()
 
   // Memoize sorted applications

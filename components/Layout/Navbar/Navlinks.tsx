@@ -7,7 +7,7 @@ import { UserActions } from './UserActions';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Navlinks({ visible }: { visible: boolean }) {
-  const { user, recruiter, loading } = useUser();
+  const { user: { data: user, loading }, recruiter: { data: recruiter } } = useUser();
 
   const role = visible ? 'recruiter' : 'applicant';
 

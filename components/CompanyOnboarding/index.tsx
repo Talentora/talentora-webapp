@@ -22,7 +22,7 @@ export default function OnboardingPage() {
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(
     new Set([1, 3, 4, 5, 7])
   ); // Initialize step 1 and 4 as completed
-  const { company } = useUser();
+  const { company: { data: company } } = useUser();
   const companyId = company?.id;
   if (!companyId) {
     throw new Error('Company ID is undefined');

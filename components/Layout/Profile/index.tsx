@@ -22,7 +22,7 @@ const Profile = ({ role }: { role: string }) => {
   const pathname = usePathname();
   const queryClient = useQueryClient();
 
-  const { user, company } = useUser();
+  const { user: { data: user }, company: { data: company } } = useUser();
   const router = useRouter();
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {

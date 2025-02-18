@@ -13,16 +13,21 @@ type Company = Database['public']['Tables']['companies']['Row'];
  * @returns {UseUserReturn} Object containing user, recruiter, company data and loading/error states
  */
 interface UseUserReturn {
-  /** The authenticated Supabase user */
-  user: User | null;
-  /** Recruiter data if user is a recruiter */
-  recruiter: Recruiter | null;
-  /** Company data if user is associated with a company */ 
-  company: Company | null;
-  /** Loading state for any data fetching */
-  loading: boolean;
-  /** Any error that occurred during data fetching */
-  error: Error | null;
+  user: {
+    data: User | null;
+    loading: boolean;
+    error: Error | null;
+  };
+  recruiter: {
+    data: Recruiter | null;
+    loading: boolean;
+    error: Error | null;
+  };
+  company: {
+    data: Company | null;
+    loading: boolean;
+    error: Error | null;
+  };
 }
 
 export function useUser(): UseUserReturn {
@@ -85,15 +90,21 @@ export function useUser(): UseUserReturn {
     staleTime: Infinity // Prevent unnecessary refetches of the auth listener
   });
 
-  // Combine errors and loading states
-  const error = userError || recruiterError || companyError || null;
-  const loading = userLoading || recruiterLoading || companyLoading;
-
   return {
-    user: userData || null,
-    recruiter: recruiterData || null,
-    company: companyData || null,
-    loading,
-    error: error instanceof Error ? error : error ? new Error('Failed to fetch data') : null
+    user: {
+      data: userData || null,
+      loading: userLoading,
+      error: userError instanceof Error ? userError : userError ? new Error('Failed to fetch user data') : null
+    },
+    recruiter: {
+      data: recruiterData || null,
+      loading: recruiterLoading,
+      error: recruiterError instanceof Error ? recruiterError : recruiterError ? new Error('Failed to fetch recruiter data') : null
+    },
+    company: {
+      data: companyData || null,
+      loading: companyLoading,
+      error: companyError instanceof Error ? companyError : companyError ? new Error('Failed to fetch company data') : null
+    }
   };
 }

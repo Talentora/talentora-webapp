@@ -9,7 +9,7 @@ export const StartingStep: React.FC<{
   onCompletion: (isComplete: boolean) => void;
   job: Job;
 }> = ({ onCompletion, job }) => {
-  const { recruiter } = useUser();
+  const { recruiter: { data: recruiter } } = useUser();
   const mergeJobId = job?.id;
 
   const [state, setState] = useState<{ loading: boolean; error: string | null }>({

@@ -20,7 +20,7 @@ import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton componen
 const CompanyForm = () => {
   const [showApiKey, setShowApiKey] = useState(false);
 
-  const { company, loading }: { company: Company | null; loading: boolean } = useUser();
+  const { company: { data: company, loading } } = useUser();
 
 
 
