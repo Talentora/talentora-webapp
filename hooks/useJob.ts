@@ -4,6 +4,7 @@ import { ApplicantCandidate } from '@/types/merge';
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://talentora.io';
 
 const fetchWithRetry = async (url: string, retries = MAX_RETRIES): Promise<any> => {
   try {
@@ -33,7 +34,7 @@ export function useJob(jobId: string) {
     
     setJobLoading(true);
     try {
-      const jobData = await fetchWithRetry(`/api/jobs/${jobId}`);
+      const jobData = await fetchWithRetry(`${baseUrl}/api/jobs/${jobId}`);
       if (isMounted.current) {
         setJob(jobData);
         setError(null);

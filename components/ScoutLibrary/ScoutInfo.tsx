@@ -14,6 +14,8 @@ interface BotInfoProps {
   scout: Bot;
 }
 
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://talentora.io';
+
 export const ScoutInfo: React.FC<BotInfoProps> = ({ scout }) => {
   const [jobInterviewConfigs, setJobInterviewConfigs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,7 +35,7 @@ export const ScoutInfo: React.FC<BotInfoProps> = ({ scout }) => {
         }
         console.log("jobIds", jobIds)
         const jobData = await Promise.all(jobIds.map(async (jobId) => {
-          const jobResponse = await fetch(`/api/jobs/${jobId.job_id}`);
+          const jobResponse = await fetch(`${baseUrl}/api/jobs/${jobId.job_id}`);
           if (!jobResponse.ok) {
             console.error(`Failed to fetch job with id ${jobId}`);
             return null;
