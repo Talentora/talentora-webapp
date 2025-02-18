@@ -33,64 +33,6 @@ type CookieData = {
   options?: CookieOptions;
 };
 
-export const createClient = (request: NextRequest) => {
-  // Create an unmodified response
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers
-    }
-  });
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          // If the cookie is updated, update the cookies for the request and response
-          request.cookies.set({
-            name,
-            value,
-            ...options
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers
-            }
-          });
-          response.cookies.set({
-            name,
-            value,
-            ...options
-          });
-        },
-        remove(name: string, options: CookieOptions) {
-          // If the cookie is removed, update the cookies for the request and response
-          request.cookies.set({
-            name,
-            value: '',
-            ...options
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers
-            }
-          });
-          response.cookies.set({
-            name,
-            value: '',
-            ...options
-          });
-        }
-      }
-    }
-  );
-
-  return { supabase, response };
-};
 
 export async function handleAuthRedirects(request: NextRequest, user: any) {
   const { pathname } = request.nextUrl;
@@ -105,6 +47,7 @@ export async function handleAuthRedirects(request: NextRequest, user: any) {
 
   // For protected routes, if no user is found, redirect to signin
   if (!allUnprotectedRoutes.some((route) => route.test(pathname)) && !user) {
+    console.log('[Middleware] Redirecting user to signin: meowww', user);
     return NextResponse.redirect(new URL('/signin', process.env.NEXT_PUBLIC_SITE_URL || request.url));
   }
 
@@ -186,8 +129,6 @@ export async function updateSession(request: NextRequest) {
 
   );
 
-  console.log('[Middleware] Created Supabase client');
-
   // IMPORTANT: Avoid writing any logic between createServerClient and
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
@@ -200,7 +141,10 @@ export async function updateSession(request: NextRequest) {
 
   // Handle auth redirects
   const authRedirect = await handleAuthRedirects(request, user);
-  if (authRedirect) return authRedirect;
+  if (authRedirect) {
+    console.log('[Middleware] Redirecting user ahaha:', authRedirect.status, authRedirect.headers.get('Location'));
+    return authRedirect;
+  }
 
   // Handle recruiter-specific redirects if user is authenticated
   if (user) {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
 import { User } from '@supabase/supabase-js';
 import { type Database } from '@/types/types_db';
 import { getUserRole } from '@/utils/supabase/queries';

@@ -14,35 +14,28 @@ function isValidEmail(email: string) {
 export async function redirectToPath(path: string) {
   return redirect(path);
 }
-export async function SignOut(formData: FormData) {
-  const pathName = String(formData.get('pathName')).trim();
-
+export async function SignOut() {
+  const cookieStore = cookies();
   const supabase = createClient();
-  const { error } = await supabase.auth.signOut();
+
+  const { error } = await supabase.auth.signOut({
+    scope: 'global'
+  });
 
   if (error) {
-    return getErrorRedirect(
-      pathName,
-      'Hmm... Something went wrong.',
-      'You could not be signed out.'
-    );
+    console.error('Sign out error:', error);
+    throw error;
   }
 
-  // Clear all authentication-related cookies
-  const response = new Response(null, { status: 200 });
-
-  const cookiesToDelete = [
+  // Clear all auth-related cookies
+  const cookiesToClear = [
     'sb-access-token',
-    'sb-refresh-token',
-    'sb-session',
-    'sb-user'
+    'sb-auth-token',
+    // 'supabase-auth-token',
   ];
 
-  cookiesToDelete.forEach((cookie) => {
-    response.headers.append(
-      'Set-Cookie',
-      `${cookie}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`
-    );
+  cookiesToClear.forEach(name => {
+    cookieStore.delete(name);
   });
 
   return '/';

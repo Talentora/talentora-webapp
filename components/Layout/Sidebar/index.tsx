@@ -1,4 +1,3 @@
-// Start of Selection
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -61,7 +60,7 @@ const Sidebar = () => {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
-  const { jobs, applications, scouts, isLoading, isError } = useSidebarData();
+  const { jobs, applications, scouts, isLoading, isError, isInitialized } = useSidebarData();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isRouteLoading, setIsRouteLoading] = useState(false);
 
@@ -155,6 +154,26 @@ const Sidebar = () => {
     }
   };
 
+  const renderLoadingOrEmpty = (type: 'jobs' | 'scouts' | 'applicants') => {
+    if (!isInitialized || isLoading) {
+      return (
+        <div className="flex items-center justify-center py-2">
+          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+        </div>
+      );
+    }
+
+    const messages = {
+      jobs: 'No jobs available',
+      scouts: 'No Ora scouts available',
+      applicants: 'No applicants available'
+    };
+
+    return (
+      <div className="px-2 py-1 text-sm text-muted-foreground">{messages[type]}</div>
+    );
+  };
+
   return (
     <SidebarProvider defaultOpen className="=">
       <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
@@ -237,24 +256,19 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isJobsOpen && (
               <div className="ml-4 mt-2 space-y-1 border-l-2 border-border">
-                {isLoading ? (
-                  <div className="flex items-center justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                  </div>
-                ) : (
-                  (() => {
-                    const jobItems = filteredItems.filter(item => item.type === 'job');
-                    return jobItems.length > 0 ? (
-                      jobItems.map((job, index) => (
-                        <SubLink key={index} href={job.href}>
-                          {job.name}
-                        </SubLink>
-                      ))
-                    ) : (
-                      <div className="px-2 py-1 text-sm text-muted-foreground">No jobs available</div>
-                    );
-                  })()
-                )}
+                {(() => {
+                  if (!isInitialized || isLoading) {
+                    return renderLoadingOrEmpty('jobs');
+                  }
+                  const jobItems = filteredItems.filter(item => item.type === 'job');
+                  return jobItems.length > 0 ? (
+                    jobItems.map((job, index) => (
+                      <SubLink key={index} href={job.href}>
+                        {job.name}
+                      </SubLink>
+                    ))
+                  ) : renderLoadingOrEmpty('jobs');
+                })()}
               </div>
             )}
             <SidebarLink
@@ -270,24 +284,19 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isScoutsOpen && (
               <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-3">
-                {isLoading ? (
-                  <div className="flex items-center justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  </div>
-                ) : (
-                  (() => {
-                    const scoutItems = filteredItems.filter(item => item.type === 'scout');
-                    return scoutItems.length > 0 ? (
-                      scoutItems.map((scout, index) => (
-                        <SubLink key={index} href={scout.href}>
-                          {scout.name}
-                        </SubLink>
-                      ))
-                    ) : (
-                      <div className="px-2 py-1 text-sm text-muted-foreground">No Ora scouts available</div>
-                    );
-                  })()
-                )}
+                {(() => {
+                  if (!isInitialized || isLoading) {
+                    return renderLoadingOrEmpty('scouts');
+                  }
+                  const scoutItems = filteredItems.filter(item => item.type === 'scout');
+                  return scoutItems.length > 0 ? (
+                    scoutItems.map((scout, index) => (
+                      <SubLink key={index} href={scout.href}>
+                        {scout.name}
+                      </SubLink>
+                    ))
+                  ) : renderLoadingOrEmpty('scouts');
+                })()}
               </div>
             )}
             <SidebarLink
@@ -303,24 +312,19 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isApplicantsOpen && (
               <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
-                {isLoading ? (
-                  <div className="flex items-center justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                  </div>
-                ) : (
-                  (() => {
-                    const applicantItems = filteredItems.filter(item => item.type === 'applicant');
-                    return applicantItems.length > 0 ? (
-                      applicantItems.map((applicant, index) => (
-                        <SubLink key={index} href={applicant.href}>
-                          {applicant.name}
-                        </SubLink>
-                      ))
-                    ) : (
-                      <div className="px-2 py-1 text-sm text-muted-foreground">No applicants available</div>
-                    );
-                  })()
-                )}
+                {(() => {
+                  if (!isInitialized || isLoading) {
+                    return renderLoadingOrEmpty('applicants');
+                  }
+                  const applicantItems = filteredItems.filter(item => item.type === 'applicant');
+                  return applicantItems.length > 0 ? (
+                    applicantItems.map((applicant, index) => (
+                      <SubLink key={index} href={applicant.href}>
+                        {applicant.name}
+                      </SubLink>
+                    ))
+                  ) : renderLoadingOrEmpty('applicants');
+                })()}
               </div>
             )}
             <SidebarLink
@@ -366,4 +370,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-// End of Selectio

@@ -9,9 +9,6 @@ import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { type Database } from '@/types/types_db';
 type Company = Database['public']['Tables']['companies']['Row'];
-import { SignOut } from '@/utils/auth-helpers/server';
-import { handleRequest } from '@/utils/auth-helpers/client';
-import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 
 
 const Profile = ({ user, role, company }: { user: any, role: string, company: Company | null }) => {
@@ -25,10 +22,27 @@ const Profile = ({ user, role, company }: { user: any, role: string, company: Co
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (getRedirectMethod() === 'client') {
-      // Clear all React Query cache before signing out
-      queryClient.clear();
-      await handleRequest(e, SignOut, router);
+    queryClient.clear();
+    
+    try {
+      const response = await fetch('/api/auth/signout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log('Sign out response:', response);
+
+      if (response.ok) {
+        const redirectUrl = response.headers.get('location') || '/';
+        router.push(redirectUrl);
+        router.refresh();
+      } else {
+        console.error('Sign out failed');
+      }
+
+    } catch (error) {
+      console.error('Sign out error:', error);
     }
   };
 

@@ -16,7 +16,7 @@ import {
 import { toast } from '@/components/Toasts/use-toast';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
 
 export function InviteUserComponent() {
   const [name, setName] = useState('');

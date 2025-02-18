@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
 import { useUser } from '@/hooks/useUser';
 import { Loader2 } from 'lucide-react';
 import { Job } from '@/types/merge';

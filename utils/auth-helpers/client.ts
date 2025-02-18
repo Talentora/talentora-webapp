@@ -1,6 +1,6 @@
 'use client';
 
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
 import { type Provider } from '@supabase/supabase-js';
 import { getURL } from '@/utils/helpers';
 import { redirectToPath } from './server';
