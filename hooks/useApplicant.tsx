@@ -154,7 +154,8 @@ export const useApplicant = () => {
           tokens[application.id] = token;
 
           const aiSummary = (application as any).AI_summary?.[0] || null;
-          const status = aiSummary ? 'complete' : 'incomplete';
+          const status = 'incomplete'
+          // aiSummary ? 'complete' : 'incomplete';
 
           let jobData: Partial<MergeJob>;
           

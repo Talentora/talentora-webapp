@@ -18,20 +18,22 @@ export async function SignOut() {
   const cookieStore = cookies();
   const supabase = createClient();
 
-  // First, get the session to ensure we have the most current state
-  const { data: { session } } = await supabase.auth.getSession();
+  // Get all cookies
+  const cookiesToClear = cookieStore.getAll();
 
-  // Sign out from Supabase with session scope
-  if (session) {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-  }
+  // Sign out from Supabase
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
 
-  // Clear all cookies that might contain auth state
-  // const cookiesToClear = cookieStore.getAll();
-  // cookiesToClear.forEach((cookie) => {
-  //   cookieStore.delete(cookie.name);
-  // });
+  // Clear all auth-related cookies
+  cookiesToClear.forEach((cookie) => {
+    if (cookie.name.includes('supabase') || 
+        cookie.name.includes('auth') || 
+        cookie.name.includes('sb-') ||
+        cookie.name === 'preferredSignInView') {
+      cookieStore.delete(cookie.name);
+    }
+  });
 
   return true;
 }
