@@ -8,7 +8,7 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
 export function useSidebarData() {
   const { data: jobs, error: jobsError, isLoading: jobsLoading } = useQuery({
     queryKey: ['jobs'],
-    queryFn: () => fetch('/api/jobs')
+    queryFn: () => fetch(`${baseUrl}/api/jobs`)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch jobs');
         return res.json();
@@ -20,7 +20,7 @@ export function useSidebarData() {
 
   const { data: applications, error: applicationsError, isLoading: applicationsLoading } = useQuery({
     queryKey: ['applications'],
-    queryFn: () => fetch('/api/applications')
+    queryFn: () => fetch(`${baseUrl}/api/applications`)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch applications');
         return res.json();

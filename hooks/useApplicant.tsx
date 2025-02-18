@@ -77,21 +77,37 @@ const useApplications = (applicantId: string | undefined) => {
   return { applications, error };
 };
 
-// Helper function to fetch job details
-export const fetchJobDetails = async (jobId: string, token: string): Promise<MergeJob | null> => {
-  try {
-    const response = await fetch(`${baseUrl}/api/jobs/${jobId}`, {
-      headers: { 'X-Account-Token': token }
-    });
-    if (response.ok) {
-      return await response.json();
+// Enhanced fetchJobDetails with retries
+export const fetchJobDetails = async (jobId: string, token: string, retries = 2): Promise<MergeJob | null> => {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(`${baseUrl}/api/jobs/${jobId}`, {
+        headers: { 'X-Account-Token': token }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (!data) throw new Error('Empty response');
+        return data;
+      }
+      
+      if (attempt === retries) return null;
+      // Wait before retry
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+    } catch (error) {
+      console.error(`Error fetching job data (attempt ${attempt + 1}):`, error);
+      if (attempt === retries) return null;
     }
-    return null;
-  } catch (error) {
-    console.error('Error fetching job data:', error);
-    return null;
   }
+  return null;
 };
+
+// Create a minimal job structure when details are missing
+const createFallbackJob = (application: Tables<'applications'>): Partial<MergeJob> => ({
+  id: application.job_id,
+  status: 'active',
+  created_at: application.created_at,
+});
 
 export const fetchApplicationData = async (applicationId: string, token: string): Promise<MergeApplication | null> => {
   try {
@@ -137,30 +153,25 @@ export const useApplicant = () => {
           const {token, company} = await getAccountTokenFromApplication(application.id);
           tokens[application.id] = token;
 
-          // Check if there's an AI summary
-          const aiSummary = (application as any).ai_summaries?.[0] || null;
+          const aiSummary = (application as any).AI_summary?.[0] || null;
           const status = aiSummary ? 'complete' : 'incomplete';
 
+          let jobData: Partial<MergeJob>;
+          
           if (token) {
             const jobDetails = await fetchJobDetails(application.job_id, token);
-            if (jobDetails) {
-              enriched.push({
-                ...jobDetails, 
-                company, 
-                application_data: application,
-                ai_summary: aiSummary,
-                status
-              });
-            }
+            jobData = jobDetails || createFallbackJob(application);
           } else {
-            enriched.push({
-              ...application as unknown as MergeJob, 
-              company, 
-              application_data: application,
-              ai_summary: aiSummary,
-              status
-            });
+            jobData = createFallbackJob(application);
           }
+
+          enriched.push({
+            ...jobData as MergeJob,
+            company,
+            application_data: application,
+            ai_summary: aiSummary,
+            status
+          });
         }
 
         setAccountTokens(tokens);
