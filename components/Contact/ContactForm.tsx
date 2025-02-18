@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '../ui/input'
 import { useToast } from '@/hooks/use-toast'
 import { useEffect } from 'react'
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/client'
 
 const ContactForm = () => {
   const { toast } = useToast()

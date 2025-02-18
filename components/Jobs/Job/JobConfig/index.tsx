@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { DialogHeader, DialogTitle, DialogDescription, DialogContent, Dialog } from '@/components/ui/dialog';
 import InterviewQuestions from './InterviewQuestions';
 import { ApplicantCandidate, Job } from '@/types/merge';
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 
 type InterviewConfig = Tables<'job_interview_config'>;

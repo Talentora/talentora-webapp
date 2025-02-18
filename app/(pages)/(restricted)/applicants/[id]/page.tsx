@@ -6,7 +6,7 @@ import { ApplicantCandidate } from '@/types/merge';
 import { ArrowLeft } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import {Tables} from "@/types/types_db";
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/client';
 
 export type portalProps = {
   AI_summary: Tables<'AI_summary'> | null; 

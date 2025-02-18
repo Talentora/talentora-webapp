@@ -19,7 +19,7 @@ import SearchBar from '@/components/Applicants/Searchbar';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import InviteApplicants from '@/components/Jobs/Job/JobConfig/InviteApplicants';
 import { Tables } from '@/types/types_db';
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 

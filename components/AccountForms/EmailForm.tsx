@@ -13,7 +13,6 @@ import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useUser } from '@/hooks/useUser';
-import { createClient } from '@/utils/supabase/client';
 
 export default function EmailForm() {
   const router = useRouter();
