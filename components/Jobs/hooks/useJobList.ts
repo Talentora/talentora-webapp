@@ -40,12 +40,13 @@ export function useJobList(): {
     queryFn: async () => {
       const response = await fetch('/api/jobs');
       if (!response.ok) {
-        throw new Error('Failed to fetch jobs');
+        throw new Error(`Failed to fetch jobs: ${response.status}`);
       }
       return response.json();
     },
     staleTime: 5 * 60 * 1000,
-    retry: 2
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
   // Fetch and enrich jobs with interview configs
@@ -167,4 +168,4 @@ export function useJobList(): {
     paginatedJobs,
     totalPages,
   };
-} 
+}

@@ -2,6 +2,23 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { EnrichedJob } from '@/components/Jobs/types';
 import { ApplicantCandidate } from '@/types/merge';
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000;
+
+const fetchWithRetry = async (url: string, retries = MAX_RETRIES): Promise<any> => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    if (retries > 0) {
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+      return fetchWithRetry(url, retries - 1);
+    }
+    throw error;
+  }
+};
+
 export function useJob(jobId: string) {
   const [job, setJob] = useState<EnrichedJob | null>(null);
   const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
@@ -16,22 +33,13 @@ export function useJob(jobId: string) {
     
     setJobLoading(true);
     try {
-      console.log('Fetching job:', jobId); // Debug log
-      const response = await fetch(`/api/jobs/${jobId}`);
-      console.log('Job response status:', response.status); // Debug log
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch job: ${response.statusText}`);
-      }
-      
-      const jobData = await response.json();
-      console.log('Job data received:', jobData); // Debug log
-      
+      const jobData = await fetchWithRetry(`/api/jobs/${jobId}`);
       if (isMounted.current) {
         setJob(jobData);
+        setError(null);
       }
     } catch (err) {
-      console.error('Error fetching job:', err); // Debug log
+      console.error('Error fetching job:', err);
       if (isMounted.current) {
         setError(err instanceof Error ? err.message : 'Failed to fetch job');
       }
@@ -47,23 +55,12 @@ export function useJob(jobId: string) {
     
     setApplicantsLoading(true);
     try {
-      console.log('Fetching applicants for job:', jobId); // Debug log
-      const response = await fetch(`/api/applications?jobId=${jobId}`);
-      console.log('Applicants response status:', response.status); // Debug log
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch applicants: ${response.statusText}`);
-      }
-      
-      const applicantsData = await response.json();
-      console.log('Applicants data received:', applicantsData); // Debug log
-      
+      const applicantsData = await fetchWithRetry(`/api/applications?jobId=${jobId}`);
       if (isMounted.current) {
         setApplicants(applicantsData);
       }
     } catch (err) {
       console.error('Error fetching applicants:', err);
-      // Don't set error state for applicants failure
     } finally {
       if (isMounted.current) {
         setApplicantsLoading(false);
