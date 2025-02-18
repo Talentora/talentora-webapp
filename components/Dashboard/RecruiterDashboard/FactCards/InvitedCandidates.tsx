@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { Mail } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
 
 const InvitedCandidatesCard = ({ factWindow }: { factWindow: number }) => {

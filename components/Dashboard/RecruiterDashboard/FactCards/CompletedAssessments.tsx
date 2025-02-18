@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Brain } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const CompletedAssessmentsCard = ({ factWindow }: { factWindow: number }) => {

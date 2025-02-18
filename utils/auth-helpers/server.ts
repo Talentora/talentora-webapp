@@ -30,8 +30,9 @@ export async function SignOut() {
   // Clear all auth-related cookies
   const cookiesToClear = [
     'sb-access-token',
+    'sb-refresh-token',
     'sb-auth-token',
-    // 'supabase-auth-token',
+    'supabase-auth-token',
   ];
 
   cookiesToClear.forEach(name => {

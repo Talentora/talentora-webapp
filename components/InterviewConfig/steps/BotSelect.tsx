@@ -29,7 +29,7 @@ import CreateBot from '@/components/ScoutLibrary/CreateScout';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 import { getScouts } from '@/utils/supabase/queries';
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/client';
 
 const BotSelect = ({ onCompletion }: BotSelectProps) => {
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);

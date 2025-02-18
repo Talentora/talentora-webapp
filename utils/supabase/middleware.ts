@@ -43,6 +43,14 @@ type CookieData = {
   options?: CookieOptions;
 };
 
+const cookieOptions: CookieOptions = {
+  secure: true,
+  httpOnly: true,
+  sameSite: 'lax',
+  path: '/',
+  maxAge: 60 * 60 * 24 * 7 // 1 week
+};
+
 // Add this new function to handle SAML redirects
 export async function handleSamlRedirect(request: NextRequest) {
   const url = new URL(request.url);
@@ -118,11 +126,15 @@ export async function handleRecruiterRedirects(
 }
 
 export async function updateSession(request: NextRequest) {
-  console.log('[Middleware] Updating session...');
-  // console.log('[Middleware] Initial request cookies:', request.cookies.getAll());
+  console.log('[Middleware] Cookie Debug:', {
+    sbAuth: request.cookies.get('sb-auth-token')?.value,
+    refreshToken: request.cookies.get('sb-refresh-token')?.value
+  });
 
-  let supabaseResponse = NextResponse.next({
-    request
+  const supabaseResponse = NextResponse.next({
+    request: {
+      headers: request.headers
+    }
   });
 
   const supabase = createServerClient(
@@ -131,47 +143,36 @@ export async function updateSession(request: NextRequest) {
     {
       cookies: {
         get(name: string) {
-          const value = request.cookies.get(name)?.value;
-          console.log(`[Middleware] Getting cookie: ${name} = ${value}`);
-          return value;
+          const cookie = request.cookies.get(name);
+          console.log(`[Middleware] Getting cookie ${name}:`, cookie?.value);
+          return cookie?.value;
         },
-        // set(name: string, value: string, options: CookieOptions) {
-        //   console.log(`[Middleware] Setting cookie: ${name}`);
-        //   request.cookies.set({ name, value, ...options });
-        //   supabaseResponse = NextResponse.next({
-        //     request,
-        //   });
-        //   supabaseResponse.cookies.set({ name, value, ...options });
-        // },
         set(name: string, value: string, options: CookieOptions) {
-          const cookieOptions = {
-            ...options,
-            secure: true,
-            httpOnly: true,
-            sameSite: 'Lax',
-            path: '/'
-          };
-          request.cookies.set({ name, value, ...cookieOptions });
-          supabaseResponse.cookies.set({ name, value, ...cookieOptions });
+          console.log(`[Middleware] Setting cookie ${name}:`, value);
+          supabaseResponse.cookies.set({
+            name,
+            value,
+            ...cookieOptions,
+            ...options
+          });
         },
         remove(name: string, options: CookieOptions) {
-          console.log(`[Middleware] Removing cookie: ${name}`);
-          request.cookies.delete(name);
-          supabaseResponse = NextResponse.next({
-            request
+          console.log(`[Middleware] Removing cookie ${name}`);
+          supabaseResponse.cookies.delete({
+            name,
+            ...cookieOptions,
+            ...options
           });
-          supabaseResponse.cookies.delete(name);
         }
       }
     }
   );
 
-  // IMPORTANT: Avoid writing any logic between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-  // issues with users being randomly logged out.
   const {
-    data: { user }
+    data: { user },
+    error
   } = await supabase.auth.getUser();
+  console.log('[Middleware] Auth Debug:', { user: !!user, error });
 
   console.log('[Middleware] Got user:', user ? 'Present' : 'None');
   console.log(
