@@ -13,7 +13,7 @@ export function useSubscription() {
 
   useEffect(() => {
     const fetchSubscription = async () => {
-      if (!user) {
+      if (!user.data) {
         setLoading(false);
         return;
       }
@@ -28,7 +28,7 @@ export function useSubscription() {
     };
 
     fetchSubscription();
-  }, [user]);
+  }, [user.data]);
 
   return { subscription, loading, error };
 }

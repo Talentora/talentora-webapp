@@ -3,6 +3,8 @@ import { Job } from '@/types/merge';
 import { getMergeApiKey } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/server';
 import { getUserRole } from '@/utils/supabase/queries';
+import { createClient } from '@/utils/supabase/server';
+import { getUserRole } from '@/utils/supabase/queries';
 
 export async function GET() {
   try {
@@ -40,6 +42,16 @@ export async function GET() {
         { status: 500 }
       );
     }
+    if (!apiKey || !accountToken) {
+      console.log('Missing credentials:', {
+        apiKey: !apiKey ? 'missing' : 'present',
+        accountToken: !accountToken ? 'missing' : 'present'
+      });
+      return NextResponse.json(
+        { error: 'API credentials not found' },
+        { status: 500 }
+      );
+    }
 
     const jobsResponse = await fetch(`${baseURL}/jobs`, {
       headers: {
@@ -51,6 +63,7 @@ export async function GET() {
 
     if (!jobsResponse.ok) {
       console.error('Failed to fetch jobs:', await jobsResponse.text());
+      console.error('Failed to fetch jobs:', await jobsResponse.text());
       return NextResponse.json(
         { error: 'Failed to fetch jobs' },
         { status: jobsResponse.status }
@@ -58,7 +71,10 @@ export async function GET() {
     }
 
     const jobsData = await jobsResponse.json();
-    const jobs = jobsData.results;
+    const jobs = Array.isArray(jobsData.results) ? jobsData.results : [];
+
+    console.log('\n=== API Response Structure ===');
+    console.log('Sample Job Structure:', JSON.stringify(jobs[0], null, 2));
 
     console.log('\n=== API Response Structure ===');
     console.log('Sample Job Structure:', JSON.stringify(jobs[0], null, 2));
@@ -106,8 +122,11 @@ export async function GET() {
       return enrichedJob;
     });
 
-    return NextResponse.json(enrichedJobs, { status: 200 });
+    return NextResponse.json(enrichedJobs, {
+      status: 200,
+    });
   } catch (error) {
+    console.error('Error in /api/jobs:', error);
     console.error('Error in /api/jobs:', error);
     return NextResponse.json(
       { error: 'An error occurred while fetching jobs' },

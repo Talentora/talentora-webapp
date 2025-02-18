@@ -41,6 +41,8 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           attribute="class"
           defaultTheme="light"
           enableSystem={false}
+          defaultTheme="light"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <NextTopLoader />

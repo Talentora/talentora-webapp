@@ -60,7 +60,7 @@ export default function ScoutLibrary({ scouts: initialscouts }: { scouts: ScoutW
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6 relative group">
-        <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">Ora</span> Scout Gallery
+        Ora Scout Gallery
         <div className="absolute hidden group-hover:block bg-white border border-gray-200 rounded-lg p-3 shadow-lg z-10 w-64 text-sm text-gray-600 top-full left-0 mt-1">
           An Ora Scout is an AI-powered interview assistant that helps screen and evaluate candidates through natural conversations, providing consistent and unbiased initial assessments.
         </div>

@@ -50,10 +50,20 @@ const ApplicantCountCard = ({ factWindow, isLoading, applicants }: { factWindow:
   const factWindowDaysAgo = new Date();
   factWindowDaysAgo.setDate(factWindowDaysAgo.getDate() - factWindow);
 
-  const lastFactWindowDaysApplicants = applicants.filter((applicant) => {
-    const appliedDate = new Date(applicant.application.applied_at);
-    return appliedDate >= factWindowDaysAgo;
-  }).length;
+  const lastFactWindowDaysApplicants = Array.isArray(applicants) ? applicants
+    .filter((applicant) => {
+      if (!applicant || !applicant.application || !applicant.application.applied_at) {
+        return false;
+      }
+      try {
+        const appliedDate = new Date(applicant.application.applied_at);
+        return !isNaN(appliedDate.getTime()) && appliedDate >= factWindowDaysAgo;
+      } catch (error) {
+        console.error('Error processing applicant date:', error);
+        return false;
+      }
+    })
+    .length : 0;
 
   const percentageChange = 0; // Since we're only looking at the last fact window days, there's no previous period to compare to.
 

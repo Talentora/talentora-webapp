@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { User, LogOut } from 'lucide-react';
-import { cn } from '@/utils/cn';
-import { useUser } from '@/hooks/useUser';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -24,6 +22,8 @@ const Profile = ({ role }: { role: string }) => {
 
   const { user: { data: user }, company: { data: company } } = useUser();
   const router = useRouter();
+  const supabase = createClientComponentClient();
+  const companyData = company;
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -50,15 +50,16 @@ const Profile = ({ role }: { role: string }) => {
           <div className="space-y-[0.75em]">
             <div>
               <h4 className="font-medium text-foreground text-[1em]">
-                {user?.user_metadata.full_name || user?.email}
+                {user?.user_metadata.full_name || user?.email || 'Error'}
               </h4>
               <div className="flex items-center gap-[0.5em] mt-[0.25em]">
                 <Link href="/settings?tab=account" className="inline-flex items-center rounded-full bg-primary px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-accent-foreground capitalize hover:bg-accent/80">
                   {role || 'Error'}
+                  {role || 'Error'}
                 </Link>
-                {company?.name && (
+                {companyData?.name && (
                   <Link href="/settings?tab=company" className="inline-flex items-center rounded-full bg-secondary px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-accent-foreground capitalize hover:bg-accent/80">
-                    {company.name}
+                    {companyData.name || 'Error'}
                   </Link>
                 )}
               </div>
@@ -66,18 +67,15 @@ const Profile = ({ role }: { role: string }) => {
             
             <div className="h-[1px] bg-border" />
             
-            <form onSubmit={handleSignOut}>
-              <input type="hidden" name="pathName" value={pathname} />
-              <Button 
-                type="submit" 
-                variant="ghost" 
-                size="sm"
-                className="w-full justify-start text-[0.875em] text-foreground hover:text-foreground hover:bg-accent"
-              >
-                <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
-                Sign out
-              </Button>
-            </form>
+            <Button 
+              onClick={handleSignOut}
+              variant="ghost" 
+              size="sm"
+              className="w-full justify-start text-[0.875em] text-foreground hover:text-foreground hover:bg-accent"
+            >
+              <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
+              Sign out
+            </Button>
           </div>
         </div>
       )}

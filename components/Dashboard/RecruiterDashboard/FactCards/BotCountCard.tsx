@@ -1,7 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useUser } from '@/hooks/useUser';
 import { Building2 } from 'lucide-react';
-import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
 import { useScouts } from '@/hooks/useScouts';
 

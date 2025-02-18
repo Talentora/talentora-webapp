@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useUser } from '@/hooks/useUser';
 import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/client';
 
 export default function EmailForm() {
   const router = useRouter();
@@ -29,15 +30,41 @@ export default function EmailForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.preventDefault();
     setIsSubmitting(true);
+    
+    const formData = new FormData(e.currentTarget);
+    const newEmail = formData.get('newEmail') as string;
+    
     
     const formData = new FormData(e.currentTarget);
     const newEmail = formData.get('newEmail') as string;
     
     // Check if the new email is the same as the old email
     if (newEmail === userEmail) {
+    if (newEmail === userEmail) {
       setIsSubmitting(false);
       return;
+    }
+
+    try {
+      const response = await fetch('/api/auth/update-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ newEmail }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update email');
+      }
+
+      router.refresh();
+    } catch (error) {
+      console.error('Error updating email:', error);
+    } finally {
+      setIsSubmitting(false);
     }
 
     try {
@@ -65,11 +92,13 @@ export default function EmailForm() {
     <Card className="my-8 text-card-foreground border-none">
       <CardHeader>
         <CardTitle>Your Email</CardTitle>
+        <CardTitle>Your Email</CardTitle>
         <CardDescription className="text-muted-foreground">
           Please enter the email address you want to use to login.
         </CardDescription>
       </CardHeader>
       <CardContent>
+        <form id="emailForm" onSubmit={handleSubmit}>
         <form id="emailForm" onSubmit={handleSubmit}>
           <input
             type="text"
@@ -90,8 +119,10 @@ export default function EmailForm() {
           type="submit"
           form="emailForm"
           disabled={isSubmitting}
+          disabled={isSubmitting}
           className="bg-background text-foreground border border-border"
         >
+          {isSubmitting ? 'Updating...' : 'Update Email'}
           {isSubmitting ? 'Updating...' : 'Update Email'}
         </Button>
       </CardFooter>

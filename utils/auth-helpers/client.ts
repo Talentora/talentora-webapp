@@ -31,18 +31,32 @@ export async function handleRequest(
 }
 
 export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
-  // Prevent default form submission refresh
   e.preventDefault();
   const formData = new FormData(e.currentTarget);
   const provider = String(formData.get('provider')).trim() as Provider;
-
-  // Create client-side supabase client and call signInWithOAuth
+  const role = formData.get('role') || 'applicant';
+  
   const supabase = createClient();
-  const redirectURL = getURL('/auth/callback');
+
   await supabase.auth.signInWithOAuth({
     provider: provider,
     options: {
-      redirectTo: redirectURL
+      queryParams: {
+        role: role as string
+      }
     }
   });
+}
+
+// Add a new function to check authentication state
+export async function checkAuthState() {
+  const supabase = createClient();
+  const { data: { session }, error } = await supabase.auth.getSession();
+  
+  if (error) {
+    console.error('Auth state check error:', error);
+    return null;
+  }
+  
+  return session;
 }

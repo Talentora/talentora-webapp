@@ -131,7 +131,7 @@ export const ScoutInfo: React.FC<BotInfoProps> = ({ scout }) => {
             </p>
           </div>
           
-          <Card>
+          {/* <Card>
             <CardHeader className="pb-4 border-none">
               <CardTitle className="text-lg font-semibold">Emotion Radar Chart</CardTitle>
             </CardHeader>
@@ -152,7 +152,7 @@ export const ScoutInfo: React.FC<BotInfoProps> = ({ scout }) => {
                 </RadarChart>
               </ChartContainer>
             </CardContent>
-          </Card>
+          </Card> */}
         </section>
 
       
@@ -200,18 +200,22 @@ function BotJobTable({ jobInterviewConfigs, isLoading }: { jobInterviewConfigs: 
               </tr>
             ) : jobInterviewConfigs.map((job, index) => (
               <tr key={index} className="hover:bg-gray-100 cursor-pointer" onClick={() => {
-                router.push(`/jobs/${job.id}`);
+                if (job?.id) {
+                  router.push(`/jobs/${job.id}`);
+                }
               }}>
                 <td className="px-6 py-4">
-                  <div className="text-sm text-gray-900 break-words">{job.name}</div>
+                  <div className="text-sm text-gray-900 break-words">
+                    {job?.name || 'Unnamed Job'}
+                  </div>
                 </td>
                 <td className="px-6 py-4">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    job.status === 'OPEN' 
+                    job?.status === 'OPEN' 
                       ? "bg-green-100 text-green-800" 
                       : "bg-red-100 text-red-800"
                   }`}>
-                    {job.status === 'OPEN' ? 'Yes' : 'No'}
+                    {job?.status === 'OPEN' ? 'Yes' : 'No'}
                   </span>
                 </td>
               </tr>

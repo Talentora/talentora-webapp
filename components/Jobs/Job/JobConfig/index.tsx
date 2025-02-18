@@ -13,6 +13,8 @@ import { ApplicantCandidate, Job } from '@/types/merge';
 import { createClient } from '@/utils/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://talentora.io';
+
 type InterviewConfig = Tables<'job_interview_config'>;
 type Bot = Tables<'bots'>;
 
@@ -118,7 +120,7 @@ export default function JobConfig({
       try {
         const supabase = createClient();
         
-        const jobResponse = await fetch(`/api/jobs/${jobId}`);
+        const jobResponse = await fetch(`${baseUrl}/api/jobs/${jobId}`);
         const mergeJob = await jobResponse.json();
 
         const { data: supabaseJob } = await supabase

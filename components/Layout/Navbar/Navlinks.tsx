@@ -38,7 +38,7 @@ export default function Navlinks({ visible }: { visible: boolean }) {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             {!visible && <BrandLogo />}
-            <NavigationItems isUser={!!user} isRecruiter={!!recruiter} />
+            <NavigationItems isUser={!!userData} isRecruiter={isRecruiter} />
           </div>
           <div className="flex items-center space-x-4">
             <UserActions user={user} role={role} />

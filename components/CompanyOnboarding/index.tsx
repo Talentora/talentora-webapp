@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -10,6 +10,7 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { useToast } from '@/components/Toasts/use-toast';
+import { useToast } from '@/components/Toasts/use-toast';
 import { OnboardingSteps } from './OnboardingSteps';
 import { OnboardingNavigation } from './OnboardingNavigation';
 import { Progress } from '@/components/ui/progress';
@@ -18,8 +19,10 @@ import { updateCompany } from '@/utils/supabase/queries';
 import { useUser } from '@/hooks/useUser';
 export default function OnboardingPage() {
   const totalSteps = 7;
+  const totalSteps = 7;
   const [step, setStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(
+    new Set([1, 3, 4, 5, 7])
     new Set([1, 3, 4, 5, 7])
   ); // Initialize step 1 and 4 as completed
   const { company: { data: company } } = useUser();
@@ -37,6 +40,7 @@ export default function OnboardingPage() {
 
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
+  const handleStepCompletion = async (stepNumber: number, isComplete: boolean) => {
   const handleStepCompletion = async (stepNumber: number, isComplete: boolean) => {
     setCompletedSteps((prev) => {
       const updated = new Set(prev);
@@ -66,6 +70,7 @@ export default function OnboardingPage() {
     <div className="container mx-auto py-10">
       <div className="max-w-2xl mx-auto gap-3">
         {/* <Progress value={progressValue} className="mb-3"/>  */}
+        <Card className="h-1/2 p-5 bg-background border shadow-lg overflow-auto">
         <Card className="h-1/2 p-5 bg-background border shadow-lg overflow-auto">
           <CardHeader>
             <CardTitle>Welcome to Talentora</CardTitle>

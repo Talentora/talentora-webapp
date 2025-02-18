@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useUser } from '@/hooks/useUser';
+import { updateCompany } from '@/utils/supabase/queries';
+import { toast } from '@/components/Toasts/use-toast';
 import { useUser } from '@/hooks/useUser';
 import { updateCompany } from '@/utils/supabase/queries';
 import { toast } from '@/components/Toasts/use-toast';
@@ -44,8 +48,14 @@ export const CompletionStep: React.FC = () => {
             <Button>Go to Dashboard</Button>
           </Link>
         </div>
+        <div className="mt-4">
+          <Link href="/dashboard">
+            <Button>Go to Dashboard</Button>
+          </Link>
+        </div>
       </div>
       <div className="w-1/2 border border-gray-300">
+        <Image src="" alt="Empty Image" width={500} height={300} />
         <Image src="" alt="Empty Image" width={500} height={300} />
       </div>
     </div>

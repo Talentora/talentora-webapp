@@ -16,6 +16,8 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { getUser, getRecruiter } from '@/utils/supabase/queries';
 import { useUser } from '@/hooks/useUser';
+import { User } from '@supabase/supabase-js';
+
 
 export default function NameForm() {
   const router = useRouter();

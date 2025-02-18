@@ -2,18 +2,14 @@
 
 import { Tables } from '@/types/types_db';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import CustomerPortalForm from '@/components/AccountForms/CustomerPortalForm';
-import EmailForm from '@/components/AccountForms/EmailForm';
 import NameForm from '@/components/AccountForms/NameForm';
 import CompanyForm from '@/components/AccountForms/CompanyForm';
 import Link from 'next/link';
 import InvitePage from '@/components/Invite';
 import IntegrationStatus from '@/components/AccountForms/IntegrationStatus';
 import { useSearchParams } from 'next/navigation';
-
+import { useUser } from '@/hooks/useUser';
 
 
 type Recruiter = Tables<'recruiters'>;
@@ -22,6 +18,10 @@ type Company = Tables<'companies'>;
 export default function SettingsPage() {
   const searchParams = useSearchParams();
   const tab = searchParams.get('tab') || 'account';
+
+  const { user } = useUser();
+  const isRecruiter = user?.data?.user_metadata?.role === "applicant" ? false : true;
+
 
   const tabs = [
     {
@@ -82,6 +82,7 @@ export default function SettingsPage() {
           </TabsList>
 
           {tabs.map((tab) => (
+            <TabsContent key={tab.value} value={tab.value} className="border-none">
             <TabsContent key={tab.value} value={tab.value} className="border-none">
                 {tab.component}
             </TabsContent>

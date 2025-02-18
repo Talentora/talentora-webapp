@@ -14,10 +14,10 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
   const { user: { data: user, loading: userLoading }, company: { data: company, loading: companyLoading } } = useUser();
   const [linkToken, setLinkToken] = useState<string | null>(null);
 
-  const hasMergeApiKey = company?.merge_account_token ? true : false;
+  const hasMergeApiKey = company.data?.merge_account_token ? true : false;
 
   const createMergeLinkToken = useCallback(async () => {
-    if (!user || !company) {
+    if (!user.data || !company.data) {
       toast({
         variant: 'destructive',
         title: 'Error',
@@ -31,9 +31,9 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          end_user_origin_id: user.id,
-          end_user_organization_name: company.name,
-          end_user_email_address: user.email,
+          end_user_origin_id: user.data.id,
+          end_user_organization_name: company.data.name,
+          end_user_email_address: user.data.email,
           categories: ['ats']
         })
       });
@@ -52,13 +52,18 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
       });
       console.error('Error creating link token:', err);
     }
-  }, [company,user]);
+  }, [company.data, user.data]);
 
   useEffect(() => {
     createMergeLinkToken();
   }, [createMergeLinkToken]);
 
   useEffect(() => {
+    // Only mark as complete if we have a Merge API key
+    if (hasMergeApiKey) {
+      onCompletion(true);
+    }
+  }, [hasMergeApiKey, onCompletion]);
     // Only mark as complete if we have a Merge API key
     if (hasMergeApiKey) {
       onCompletion(true);
@@ -82,7 +87,7 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
         const data = await response.json();
         const accountToken = data.account_token;
 
-        if (!company) {
+        if (!company.data) {
           throw new Error('Company not found');
         }
 
@@ -104,7 +109,7 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
         console.error('Error in token exchange:', err);
       }
     },
-    [company, onCompletion]
+    [company.data, onCompletion]
   );
 
   const { open, isReady } = useMergeLink({
@@ -112,7 +117,7 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
     onSuccess
   });
 
-  if (userLoading || companyLoading || !linkToken || !isReady) {
+  if (user.loading || company.loading || !linkToken || !isReady) {
     return (
       <div className="flex justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />

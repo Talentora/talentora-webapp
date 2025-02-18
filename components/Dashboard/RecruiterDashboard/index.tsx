@@ -24,13 +24,27 @@ import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const fetchApplications = async (): Promise<ApplicantCandidate[]> => {
-  const response = await fetch('/api/applications');
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
+  const response = await fetch(`${baseUrl}/api/applications`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  });
+  
   if (!response.ok) throw new Error('Failed to fetch applications');
   return response.json();
 };
 
 const fetchJobs = async (): Promise<Job[]> => {
-  const response = await fetch('/api/jobs');
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
+  const response = await fetch(`${baseUrl}/api/jobs`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // Important for auth cookies
+  });
+  
   if (!response.ok) throw new Error('Failed to fetch jobs');
   return response.json();
 };
@@ -70,10 +84,17 @@ export default function RecruiterDashboard() {
   });
 
   const combinedJobs = useMemo(() => {
+    if (!mergeJobs || !Array.isArray(mergeJobs)) {
+      console.warn('mergeJobs is null, undefined, or not an array');
+      return [];
+    }
+
     return mergeJobs.map((mergeJob) => {
-      const supabaseJob = supabaseJobs.find((sJob) => sJob.merge_id === mergeJob.id);
+      if (!mergeJob) return { mergeJob: null, supabaseJob: null };
+      
+      const supabaseJob = supabaseJobs?.find((sJob) => sJob?.merge_id === mergeJob.id);
       return { mergeJob, supabaseJob };
-    });
+    }).filter(job => job.mergeJob !== null); // Filter out null jobs
   }, [mergeJobs, supabaseJobs]);
 
   const factWindow = 90;
@@ -114,7 +135,11 @@ export default function RecruiterDashboard() {
               {inviteModalOpen && (
                 <Dialog open={inviteModalOpen} onOpenChange={setInviteModalOpen} >
                   <DialogContent>
-                    <InviteApplicants jobs={combinedJobs} singleJobFlag={false} applicants={applicants} />
+                    <InviteApplicants 
+                      jobs={combinedJobs.filter(job => job.mergeJob !== null)} 
+                      singleJobFlag={false} 
+                      applicants={applicants || []} 
+                    />
                   </DialogContent>
                 </Dialog>
               )}

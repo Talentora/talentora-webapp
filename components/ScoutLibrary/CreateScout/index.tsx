@@ -111,7 +111,7 @@ const CreateScout = ({
           role: newBot.role,
           description: newBot.description,
           prompt: newBot.prompt,
-          company_id: company?.id,
+          company_id: company?.data?.id,
           voice: newBot.voice,
           icon: newBot.icon,
           emotion: newBot.emotion
@@ -125,7 +125,7 @@ const CreateScout = ({
           role: newBot.role,
           description: newBot.description,
           prompt: newBot.prompt,
-          company_id: company?.id,
+          company_id: company?.data?.id,
           voice: newBot.voice,
           icon: newBot.icon,
           emotion: newBot.emotion

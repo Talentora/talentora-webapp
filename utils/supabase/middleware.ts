@@ -33,7 +33,9 @@ type CookieData = {
 };
 
 export const createClient = (request: NextRequest) => {
-  // Create an unmodified response
+  // Get the site URL from environment variable or request
+  // const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
+
   let response = NextResponse.next({
     request: {
       headers: request.headers
@@ -44,6 +46,12 @@ export const createClient = (request: NextRequest) => {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      auth: {
+        flowType: 'pkce',
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        persistSession: true,
+      },
       cookies: {
         get(name: string) {
           return request.cookies.get(name)?.value;

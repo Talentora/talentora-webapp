@@ -5,39 +5,56 @@ import { ApplicantCandidate } from '@/types/merge';
 import ApplicantTable from '@/components/Applicants/ApplicantTable';
 import SearchBar from '@/components/Applicants/Searchbar';
 import { Loader2 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 
 export default function ApplicantList() {
-  const [ApplicantCandidates, setApplicantCandidates] = useState<
-    ApplicantCandidate[]
-  >([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchApplicantCandidates = async () => {
+  const { 
+    data: ApplicantCandidates = [], 
+    isLoading, 
+    error 
+  } = useQuery({
+    queryKey: ['applicants'],
+    queryFn: async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+
       try {
-        const response = await fetch(`/api/applications`, {
-          cache: 'no-store'
+        const response = await fetch('/api/applications', {
+          cache: 'no-store',
+          signal: controller.signal,
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
         });
-        const data: ApplicantCandidate[] = await response.json();
-        setApplicantCandidates(data);
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
       } catch (error) {
         console.error('Error fetching ApplicantCandidates:', error);
-      } finally {
-        setIsLoading(false);
+        throw error;
       }
-    };
+    },
+    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+    retry: 2
+  });
 
-    fetchApplicantCandidates();
-  }, []);
-
-  const filteredApplicants = ApplicantCandidates.filter(
-    (ApplicantCandidate: ApplicantCandidate) => {
-      const fullName =
-        `${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`.toLowerCase();
-      return fullName.includes(searchTerm.toLowerCase());
-    }
-  );
+  const filteredApplicants = Array.isArray(ApplicantCandidates) 
+    ? ApplicantCandidates.filter((applicant: ApplicantCandidate) => {
+        if (!applicant?.candidate?.first_name || !applicant?.candidate?.last_name) {
+          return false;
+        }
+        const fullName = `${applicant.candidate.first_name} ${applicant.candidate.last_name}`.toLowerCase();
+        return fullName.includes(searchTerm.toLowerCase());
+      })
+    : [];
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -52,13 +69,20 @@ export default function ApplicantList() {
             applicants={ApplicantCandidates}
           />
           {isLoading ? (
-            <div className="flex justify-center items-center h-full">
-              <Loader2 className="animate-spin" />
+            <div className="flex flex-col gap-4 items-center justify-center h-[400px]">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">Loading applicants...</p>
+            </div>
+          ) : error ? (
+            <div className="flex items-center justify-center h-[400px]">
+              <p className="text-sm text-destructive">Error loading applicants. Please try again.</p>
             </div>
           ) : (
             <ApplicantTable
-                applicants={filteredApplicants}
-                disablePortal={false} title={''}            />
+              applicants={filteredApplicants}
+              disablePortal={false}
+              title={''}
+            />
           )}
         </div>
       </main>

@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import Profile from '@/components/Layout/Profile';
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
-
+import { type Database } from '@/types/types_db';
+type Company = Database['public']['Tables']['companies']['Row'];
 
 interface UserActionsProps {
   user: any;
@@ -18,6 +19,8 @@ export function UserActions({ user, role }: UserActionsProps) {
         <Link href="/signin">
           <Button variant="ghost" className="rounded-full px-8">Login</Button>
         </Link>
+        <Link href="/contact#demo">
+          <Button className="rounded-full px-8">Request Demo</Button>
         <Link href="/contact#demo">
           <Button className="rounded-full px-8">Request Demo</Button>
         </Link>

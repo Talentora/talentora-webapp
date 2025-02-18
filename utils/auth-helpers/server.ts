@@ -14,22 +14,26 @@ function isValidEmail(email: string) {
 export async function redirectToPath(path: string) {
   return redirect(path);
 }
-
-export async function SignOut(formData: FormData) {
-  const pathName = String(formData.get('pathName')).trim();
-
+export async function SignOut() {
+  const cookieStore = cookies();
   const supabase = createClient();
-  const { error } = await supabase.auth.signOut();
 
-  if (error) {
-    return getErrorRedirect(
-      pathName,
-      'Hmm... Something went wrong.',
-      'You could not be signed out.'
-    );
+  // First, get the session to ensure we have the most current state
+  const { data: { session } } = await supabase.auth.getSession();
+
+  // Sign out from Supabase with session scope
+  if (session) {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
   }
 
-  return '/';
+  // Clear all cookies that might contain auth state
+  // const cookiesToClear = cookieStore.getAll();
+  // cookiesToClear.forEach((cookie) => {
+  //   cookieStore.delete(cookie.name);
+  // });
+
+  return true;
 }
 
 export async function signInWithEmail(formData: FormData) {
@@ -143,6 +147,7 @@ export async function signInWithPassword(formData: FormData) {
     email,
     password
   });
+  console.log(data, "meow2");
 
   if (error) {
     redirectPath = getErrorRedirect(
@@ -368,17 +373,20 @@ export async function updateName(formData: FormData) {
   if (error) {
     return getErrorRedirect(
       '/settings?tab=account',
+      '/settings?tab=account',
       'Your name could not be updated.',
       error.message
     );
   } else if (data.user) {
     return getStatusRedirect(
       '/settings?tab=account',
+      '/settings?tab=account',
       'Success!',
       'Your name has been updated.'
     );
   } else {
     return getErrorRedirect(
+      '/settings?tab=account',
       '/settings?tab=account',
       'Hmm... Something went wrong.',
       'Your name could not be updated.'
