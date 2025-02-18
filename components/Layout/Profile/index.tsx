@@ -48,16 +48,13 @@ const Profile = ({ user, role, company }: { user: any, role: string, company: Co
         }
       });
       
-      // Use router for client-side navigation first
-      router.push('/');
-      // Then force a hard reload after a short delay
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
+      // Redirect to the main site URL
+      window.location.href = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
+      
     } catch (error) {
       console.error('Error during sign out:', error);
-      // Fallback: force navigation to home
-      window.location.href = '/';
+      // Fallback: force navigation to main site
+      window.location.href = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
     }
   };
 
