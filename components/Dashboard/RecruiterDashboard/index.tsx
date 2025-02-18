@@ -24,13 +24,27 @@ import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const fetchApplications = async (): Promise<ApplicantCandidate[]> => {
-  const response = await fetch('/api/applications');
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
+  const response = await fetch(`${baseUrl}/api/applications`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  });
+  
   if (!response.ok) throw new Error('Failed to fetch applications');
   return response.json();
 };
 
 const fetchJobs = async (): Promise<Job[]> => {
-  const response = await fetch('/api/jobs');
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
+  const response = await fetch(`${baseUrl}/api/jobs`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // Important for auth cookies
+  });
+  
   if (!response.ok) throw new Error('Failed to fetch jobs');
   return response.json();
 };

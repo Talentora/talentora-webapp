@@ -11,6 +11,7 @@ import {
 } from '../types';
 
 const ITEMS_PER_PAGE = 10;
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://talentora.io';
 
 export function useJobList(): {
   state: JobListState;
@@ -38,7 +39,7 @@ export function useJobList(): {
   const { data: apiJobs = [], isLoading: apiLoading, error } = useQuery({
     queryKey: ['jobs'],
     queryFn: async () => {
-      const response = await fetch('/api/jobs');
+      const response = await fetch(`${baseUrl}/api/jobs`);
       if (!response.ok) {
         throw new Error('Failed to fetch jobs');
       }
@@ -167,4 +168,4 @@ export function useJobList(): {
     paginatedJobs,
     totalPages,
   };
-} 
+}
