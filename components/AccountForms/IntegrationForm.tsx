@@ -19,11 +19,13 @@ type Company = Tables<'companies'>;
 
 const CompanyForm = () => {
   const [showApiKey, setShowApiKey] = useState(false);
-  const { company, loading }: { company: Company | null; loading: boolean } = useUser();
+  const { company } = useUser();
+  const companyData = company?.data;
+  const companyLoading = company?.loading;
 
-  if (loading) return <CompanyFormSkeleton />;
+  if (companyLoading) return <CompanyFormSkeleton />;
 
-  if (!company) return null;
+  if (!companyData) return null;
 
   return (
     <Card className="my-8 bg-card text-card-foreground">
@@ -37,18 +39,18 @@ const CompanyForm = () => {
         <div className="flex flex-row items-center space-x-4 pb-4">
           <Avatar className="w-16 h-16">
             <AvatarFallback>
-              {company.name?.slice(0, 2).toUpperCase() || 'CO'}
+              {companyData?.name?.slice(0, 2).toUpperCase() || 'CO'}
             </AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="text-2xl font-bold text-primary">{company.name}</h2>
+            <h2 className="text-2xl font-bold text-primary">{companyData?.name}</h2>
             <Badge variant="outline" className="mt-1 bg-primary text-white">
-              {company.industry}
+              {companyData?.industry}
             </Badge>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          {Object.entries(company).map(([key, value]) => (
+          {Object.entries(companyData).map(([key, value]) => (
             <div key={key} className={key === 'description' ? 'col-span-2' : ''}>
               <h3 className="font-semibold text-sm text-muted-foreground capitalize">
                 {key.replace(/_/g, ' ')}
@@ -62,7 +64,7 @@ const CompanyForm = () => {
                   >
                     {showApiKey ? (
                       <>
-                        <span>{value || 'No API key available'}</span>
+                        <span>{companyData?.merge_account_token || 'No API key available'}</span>
                         <EyeOffIcon className="w-4 h-4 inline-block ml-2" />
                       </>
                     ) : (
@@ -74,7 +76,7 @@ const CompanyForm = () => {
                   </div>
                 </div>
               ) : (
-                <p className="mt-1">{value || 'N/A'}</p>
+                <p className="mt-1">{companyData?.[key as keyof Company] || 'N/A'}</p>
               )}
             </div>
           ))}

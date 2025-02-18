@@ -7,13 +7,15 @@ import { updateCompany } from '@/utils/supabase/queries';
 import { toast } from '@/components/Toasts/use-toast';
 
 export const CompletionStep: React.FC = () => {
-  const { company, loading } = useUser();
+  const { company } = useUser();
+  const companyData = company?.data;
+  const companyLoading = company?.loading;
 
   useEffect(() => {
     const markConfigured = async () => {
-      if (company && !loading) {
+      if (companyData && !companyLoading) {
         try {
-          await updateCompany(company.id, {
+          await updateCompany(companyData.id, {
             Configured: true
           });
         } catch (error) {
@@ -28,7 +30,7 @@ export const CompletionStep: React.FC = () => {
     };
 
     markConfigured();
-  }, [company, loading]);
+  }, [companyData, companyLoading]);
 
   return (
     <div className="flex justify-between">
