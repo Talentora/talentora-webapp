@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Tables } from '@/types/types_db';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
 import { useUser } from './useUser';
 import { getAccountTokenFromApplication } from '@/utils/supabase/queries';
 import { Application as MergeApplication, Job as MergeJob } from '@/types/merge';

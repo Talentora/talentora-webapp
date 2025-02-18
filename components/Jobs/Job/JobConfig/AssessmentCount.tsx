@@ -1,6 +1,6 @@
 import { Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface AssessmentCountProps {

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { createClient } from '@/utils/supabase/client';
+import { useQuery } from '@tanstack/react-query';
+import { createClient } from '@/utils/supabase/server';
 import { User } from '@supabase/supabase-js';
 import { type Database } from '@/types/types_db';
 import { getUserRole } from '@/utils/supabase/queries';
@@ -134,20 +134,24 @@ export function useUser(): UseUserReturn {
     }
   });
 
-  // Optional: Set up an auth state listener
-  useQuery<void, Error>({
-    queryKey: ['authListener'],
-    queryFn: async () => {
-      const {
-        data: { subscription }
-      } = supabase.auth.onAuthStateChange(async (_event, _session) => {
-        // The other queries will automatically re-fetch when needed
-      });
-      // return () => subscription.unsubscribe();
-      return subscription.unsubscribe(); // line changed
-    },
-    staleTime: Infinity
-  });
+  // Replace the auth state listener with useEffect
+  useEffect(() => {
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_OUT') {
+        // Clear React Query cache for user-related queries
+        queryClient.invalidateQueries({ queryKey: ['user'] });
+        queryClient.invalidateQueries({ queryKey: ['recruiter'] });
+        queryClient.invalidateQueries({ queryKey: ['company'] });
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase, queryClient]); // Add dependencies
 
   return {
     user: {

@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
 import { Building2 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';

@@ -8,10 +8,6 @@ import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { type Database } from '@/types/types_db';
 type Company = Database['public']['Tables']['companies']['Row'];
-import { SignOut } from '@/utils/auth-helpers/server';
-import { handleRequest } from '@/utils/auth-helpers/client';
-import { getRedirectMethod } from '@/utils/auth-helpers/settings';
-import { createClient } from '@/utils/supabase/client';
 const Profile = ({
   user,
   role,
@@ -28,19 +24,16 @@ const Profile = ({
   const supabase = createClient();
   const companyData = company;
 
-  const companyData = company;
-  const router = useRouter();
-  const companyData = company;
-  const pathname = usePathname();
-
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     queryClient.clear();
-    console.log('Signing out...');
+
     try {
       const response = await fetch('/api/auth/signout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
       console.log('Sign out response:', response);
 
@@ -96,18 +89,15 @@ const Profile = ({
 
             <div className="h-[1px] bg-border" />
 
-            <form onSubmit={handleSignOut}>
-              <input type="hidden" name="pathName" value={pathname} />
-              <Button
-                type="submit"
-                variant="ghost"
-                size="sm"
-                className="w-full justify-start text-[0.875em] text-foreground hover:text-foreground hover:bg-accent"
-              >
-                <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
-                Sign out
-              </Button>
-            </form>
+            <Button
+              onClick={handleSignOut}
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-[0.875em] text-foreground hover:text-foreground hover:bg-accent"
+            >
+              <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
+              Sign out
+            </Button>
           </div>
         </div>
       )}

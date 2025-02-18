@@ -6,7 +6,7 @@ import { RadarChart } from 'recharts';
 type Bot = Tables<'bots'>;
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { iconOptions } from '@/components/ScoutLibrary/CreateScout/ScoutDetails';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '../ui/skeleton';
 import { useRouter } from 'next/navigation';

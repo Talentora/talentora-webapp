@@ -15,7 +15,6 @@ export async function redirectToPath(path: string) {
   return redirect(path);
 }
 export async function SignOut() {
-
   const cookieStore = cookies();
   const supabase = createClient();
 
@@ -31,9 +30,8 @@ export async function SignOut() {
   // Clear all auth-related cookies
   const cookiesToClear = [
     'sb-access-token',
-    'sb-refresh-token',
     'sb-auth-token',
-    'supabase-auth-token',
+    // 'supabase-auth-token',
   ];
 
   cookiesToClear.forEach(name => {

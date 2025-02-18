@@ -25,8 +25,7 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { CardTitle } from '@/components/ui/card';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
 import { useRouter } from 'next/navigation';
 

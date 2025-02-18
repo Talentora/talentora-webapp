@@ -3,7 +3,7 @@ import { Tables } from '@/types/types_db';
 import { Badge } from '@/components/ui/badge';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import InviteApplicants from './InviteApplicants';

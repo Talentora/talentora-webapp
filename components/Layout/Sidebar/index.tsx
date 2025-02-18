@@ -292,19 +292,21 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isJobsOpen && (
               <div className="ml-4 mt-2 space-y-1 border-l-2 border-border">
-                {isLoading ? (
-                  <div className="flex items-center justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                  </div>
-                ) : (
-                  filteredItems
-                    .filter((item) => item.type === 'job')
-                    .map((job, index) => (
-                      <SubLink key={index} href={job.href}>
-                        {job.name}
-                      </SubLink>
-                    ))
-                )}
+                {(() => {
+                  if (!isInitialized || isLoading) {
+                    return renderLoadingOrEmpty('jobs');
+                  }
+                  const jobItems = filteredItems.filter(
+                    (item) => item.type === 'job'
+                  );
+                  return jobItems.length > 0
+                    ? jobItems.map((job, index) => (
+                        <SubLink key={index} href={job.href}>
+                          {job.name}
+                        </SubLink>
+                      ))
+                    : renderLoadingOrEmpty('jobs');
+                })()}
               </div>
             )}
             <SidebarLink
@@ -320,19 +322,21 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isScoutsOpen && (
               <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-3">
-                {isLoading ? (
-                  <div className="flex items-center justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  </div>
-                ) : (
-                  filteredItems
-                    .filter((item) => item.type === 'scout')
-                    .map((scout, index) => (
-                      <SubLink key={index} href={scout.href}>
-                        {scout.name}
-                      </SubLink>
-                    ))
-                )}
+                {(() => {
+                  if (!isInitialized || isLoading) {
+                    return renderLoadingOrEmpty('scouts');
+                  }
+                  const scoutItems = filteredItems.filter(
+                    (item) => item.type === 'scout'
+                  );
+                  return scoutItems.length > 0
+                    ? scoutItems.map((scout, index) => (
+                        <SubLink key={index} href={scout.href}>
+                          {scout.name}
+                        </SubLink>
+                      ))
+                    : renderLoadingOrEmpty('scouts');
+                })()}
               </div>
             )}
             <SidebarLink
@@ -348,19 +352,21 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isApplicantsOpen && (
               <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
-                {isLoading ? (
-                  <div className="flex items-center justify-center py-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                  </div>
-                ) : (
-                  filteredItems
-                    .filter((item) => item.type === 'applicant')
-                    .map((applicant, index) => (
-                      <SubLink key={index} href={applicant.href}>
-                        {applicant.name}
-                      </SubLink>
-                    ))
-                )}
+                {(() => {
+                  if (!isInitialized || isLoading) {
+                    return renderLoadingOrEmpty('applicants');
+                  }
+                  const applicantItems = filteredItems.filter(
+                    (item) => item.type === 'applicant'
+                  );
+                  return applicantItems.length > 0
+                    ? applicantItems.map((applicant, index) => (
+                        <SubLink key={index} href={applicant.href}>
+                          {applicant.name}
+                        </SubLink>
+                      ))
+                    : renderLoadingOrEmpty('applicants');
+                })()}
               </div>
             )}
             <SidebarLink

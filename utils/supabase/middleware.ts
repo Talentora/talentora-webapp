@@ -23,44 +23,44 @@ export const unprotectedRoutes = [
 
 // Add the applicant route to the unprotected routes
 const applicantRoutes = [
-  /^\/assessment(\/.*)?$/,// Matches '/bot' and any subpath like '/bot/*'
+  /^\/assessment(\/.*)?$/, // Matches '/bot' and any subpath like '/bot/*'
   /^\/api(\/.*)?$/ // Matches '/api' and any subpath like '/api/*'
 ];
-
 
 const staticRoutes = [
   /^\/Videos(\/.*)?$/, // Matches '/Videos' and any subpath
   /^\/images(\/.*)?$/,
   /^\/assets(\/.*)?$/,
-  /\.(ico|png|jpg|jpeg|gif|svg|mp4|webm)$/, // Matches common static file extensions
+  /\.(ico|png|jpg|jpeg|gif|svg|mp4|webm)$/ // Matches common static file extensions
 ];
-
 
 // Combine unprotected and applicant routes
-export const allUnprotectedRoutes = [
-  ...unprotectedRoutes, 
-  ...applicantRoutes,
-  ...staticRoutes
-];
+export const allUnprotectedRoutes = [...unprotectedRoutes, ...applicantRoutes];
+
+type CookieData = {
+  name: string;
+  value: string;
+  options?: CookieOptions;
+};
 
 // Add this new function to handle SAML redirects
 export async function handleSamlRedirect(request: NextRequest) {
   const url = new URL(request.url);
   const provider = url.searchParams.get('provider');
   const samlResponse = url.searchParams.get('SAMLResponse');
-  
+
   if (samlResponse && provider) {
     // Ensure redirect happens to the production domain
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
     return NextResponse.redirect(`${siteUrl}/auth/callback`);
   }
-  
+
   return null;
 }
 
 export async function handleAuthRedirects(request: NextRequest, user: any) {
   const { pathname } = request.nextUrl;
-  
+
   // Redirect authenticated users away from signin/signup routes to /dashboard
   if (/^\/(signin|signup)(\/.*)?$/.test(pathname)) {
     if (user) {
@@ -72,14 +72,20 @@ export async function handleAuthRedirects(request: NextRequest, user: any) {
 
   // For protected routes, if no user is found, redirect to signin
   if (!allUnprotectedRoutes.some((route) => route.test(pathname)) && !user) {
-    console.log('[Middleware] Redirecting user to signin:', user);
-    return NextResponse.redirect(new URL('/signin', process.env.NEXT_PUBLIC_SITE_URL || request.url));
+    console.log('[Middleware] Redirecting user to signin: meowww', user);
+    return NextResponse.redirect(
+      new URL('/signin', process.env.NEXT_PUBLIC_SITE_URL || request.url)
+    );
   }
 
   return null;
 }
 
-export async function handleRecruiterRedirects(request: NextRequest, supabase: any, user: any) {
+export async function handleRecruiterRedirects(
+  request: NextRequest,
+  supabase: any,
+  user: any
+) {
   const { pathname } = request.nextUrl;
   const role = await getUserRole(supabase, user.id);
   const isOnboardingPage = pathname === '/settings/onboarding';
@@ -91,12 +97,19 @@ export async function handleRecruiterRedirects(request: NextRequest, supabase: a
       .eq('id', user.id)
       .single();
 
-    if ((error || !recruitData || !recruitData.company_id) && !isOnboardingPage) {
-      return NextResponse.redirect(new URL('/settings/onboarding', request.url));
+    if (
+      (error || !recruitData || !recruitData.company_id) &&
+      !isOnboardingPage
+    ) {
+      return NextResponse.redirect(
+        new URL('/settings/onboarding', request.url)
+      );
     } else if (recruitData?.company_id && !isOnboardingPage) {
       const company = await getCompany(recruitData.company_id);
       if (!company?.Configured) {
-        return NextResponse.redirect(new URL('/settings/onboarding', request.url));
+        return NextResponse.redirect(
+          new URL('/settings/onboarding', request.url)
+        );
       }
     }
   }
@@ -107,23 +120,64 @@ export async function handleRecruiterRedirects(request: NextRequest, supabase: a
 export async function updateSession(request: NextRequest) {
   console.log('[Middleware] Updating session...');
   // console.log('[Middleware] Initial request cookies:', request.cookies.getAll());
-  
+
   let supabaseResponse = NextResponse.next({
-    request,
+    request
   });
 
-  const supabase = createClient();
-  // console.log('[Middleware] Created client:', supabase);
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          const value = request.cookies.get(name)?.value;
+          console.log(`[Middleware] Getting cookie: ${name} = ${value}`);
+          return value;
+        },
+        // set(name: string, value: string, options: CookieOptions) {
+        //   console.log(`[Middleware] Setting cookie: ${name}`);
+        //   request.cookies.set({ name, value, ...options });
+        //   supabaseResponse = NextResponse.next({
+        //     request,
+        //   });
+        //   supabaseResponse.cookies.set({ name, value, ...options });
+        // },
+        set(name: string, value: string, options: CookieOptions) {
+          const cookieOptions = {
+            ...options,
+            secure: true,
+            httpOnly: true,
+            sameSite: 'Lax',
+            path: '/'
+          };
+          request.cookies.set({ name, value, ...cookieOptions });
+          supabaseResponse.cookies.set({ name, value, ...cookieOptions });
+        },
+        remove(name: string, options: CookieOptions) {
+          console.log(`[Middleware] Removing cookie: ${name}`);
+          request.cookies.delete(name);
+          supabaseResponse = NextResponse.next({
+            request
+          });
+          supabaseResponse.cookies.delete(name);
+        }
+      }
+    }
+  );
 
   // IMPORTANT: Avoid writing any logic between createServerClient and
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
   const {
-    data: { user },
+    data: { user }
   } = await supabase.auth.getUser();
 
   console.log('[Middleware] Got user:', user ? 'Present' : 'None');
-  console.log('[Middleware] Final response cookies:', supabaseResponse.cookies.getAll());
+  console.log(
+    '[Middleware] Final response cookies:',
+    supabaseResponse.cookies.getAll()
+  );
 
   // Add SAML redirect handling
   const samlRedirect = await handleSamlRedirect(request);
@@ -132,16 +186,28 @@ export async function updateSession(request: NextRequest) {
   // Handle auth redirects
   const authRedirect = await handleAuthRedirects(request, user);
   if (authRedirect) {
+    console.log(
+      '[Middleware] Redirecting user ahaha:',
+      authRedirect.status,
+      authRedirect.headers.get('Location')
+    );
     return authRedirect;
   }
 
   // Handle recruiter-specific redirects if user is authenticated
   if (user) {
-    const recruiterRedirect = await handleRecruiterRedirects(request, supabase, user);
+    const recruiterRedirect = await handleRecruiterRedirects(
+      request,
+      supabase,
+      user
+    );
     if (recruiterRedirect) return recruiterRedirect;
   }
   // Add debug headers
-  supabaseResponse.headers.set('x-debug-request-path', request.nextUrl.pathname);
+  supabaseResponse.headers.set(
+    'x-debug-request-path',
+    request.nextUrl.pathname
+  );
   supabaseResponse.headers.set('x-debug-message', 'Middleware executed');
 
   return supabaseResponse;
