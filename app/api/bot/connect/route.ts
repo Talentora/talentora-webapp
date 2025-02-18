@@ -26,7 +26,6 @@ export async function POST(request: NextRequest) {
       .map((obj: { question: string }) => obj.question)
       .join(",");
 
-    
 
     const payload = {
       "voice_id": voiceId,

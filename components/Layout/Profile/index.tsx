@@ -39,7 +39,7 @@ const Profile = ({ user, role, company }: { user: any, role: string, company: Co
       }
 
       // Perform client-side cleanup
-      await supabase.auth.signOut();
+      // await supabase.auth.signOut();
       
       // Clear any localStorage items
       Object.keys(localStorage).forEach(key => {

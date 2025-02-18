@@ -1093,32 +1093,33 @@ export const getAllEvaluation = async (AISummaryId: string): Promise<Json[] | nu
  */
 export const getAccountTokenFromApplication = async (
   applicationId: string
-): Promise<{token: string | null,company: any | null}> => {
+): Promise<{token: string | null, company: any | null}> => {
   try {
     const supabase = createClient();
     
-    // Join applications -> jobs -> companies to get the account token
-    // First get the application to get the job_id
+    // Add delay to ensure data is available
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // First get the application
     const { data: applicationData, error: applicationError } = await supabase
       .from('applications')
       .select('job_id')
       .eq('id', applicationId)
-      .single();
+      .maybeSingle(); // Use maybeSingle instead of single
 
-    if (applicationError) {
+    if (applicationError || !applicationData) {
       console.error('Error fetching application:', applicationError);
       return {token: null, company: null};
     }
 
-    // Then get the job to get the company_id
+    // Then get the job
     const { data: jobData, error: jobError } = await supabase
       .from('jobs')
       .select('company_id, merge_id')
       .eq('merge_id', applicationData.job_id)
-      .single();
+      .maybeSingle();
 
-      
-    if (jobError) {
+    if (jobError || !jobData?.company_id) {
       console.error('Error fetching job:', jobError);
       return {token: null, company: null};
     }
@@ -1127,26 +1128,24 @@ export const getAccountTokenFromApplication = async (
     const { data: companyData, error: companyError } = await supabase
       .from('companies')
       .select('id, name, merge_account_token')
-      .eq('id', jobData?.company_id || '')
-      .single();
+      .eq('id', jobData.company_id)
+      .maybeSingle();
 
-
-    if (companyError) {
+    if (companyError || !companyData) {
       console.error('Error fetching company:', companyError);
       return {token: null, company: null};
     }
 
-    const account_token = companyData.merge_account_token
-    return {token: account_token, company: companyData};
+    return {
+      token: companyData.merge_account_token || null,
+      company: companyData
+    };
 
   } catch (err) {
     console.error('Unexpected error fetching account token:', err);
     return {token: null, company: null};
   }
-};
-
-
-
+}
 
 /**
  * Fetches an application by its ID.
