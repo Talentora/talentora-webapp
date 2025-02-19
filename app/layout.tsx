@@ -54,7 +54,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               {<DynamicSidebar />}
               <main
                 id="skip"
-                className={`flex-1 min-h-screen ${isSidebarVisible ? 'ml-64' : ''}`}
+                className={`flex-1 min-h-screen`}
               >
                 <div className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur">
                   <Navbar visible={isSidebarVisible} />
