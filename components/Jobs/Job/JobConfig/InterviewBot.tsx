@@ -25,6 +25,7 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { CardTitle } from '@/components/ui/card';
 import { createClient } from '@/utils/supabase/client';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
 import { useRouter } from 'next/navigation';
@@ -100,9 +101,7 @@ const InterviewBot = ({
 
   const confirmBotChange = async (bot: Bot) => {
     try {
-      await updateJobInterviewConfig(jobId, {
-        bot_id: bot.id
-      });
+      await updateJobInterviewConfig(jobId, { bot_id: bot.id });
       setShowDialog(false);
       setStep('select');
       window.location.reload();
@@ -118,9 +117,7 @@ const InterviewBot = ({
 
   const removeBot = async () => {
     try {
-      await updateJobInterviewConfig(jobId, {
-        bot_id: null
-      });
+      await updateJobInterviewConfig(jobId, { bot_id: null });
       setShowDialog(false);
       setStep('select');
       window.location.reload();
