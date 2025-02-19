@@ -20,16 +20,13 @@ export async function handleRequest(
     formData
     // , role
   );
-  console.log("reaches here ", redirectUrl);
 
-    if (router) {
-      return router.push(finalRedirectUrl);
-    } else {
-      return await redirectToPath(finalRedirectUrl);
-    }
-  } catch (error) {
-    console.error('Auth error:', error);
-    return false;
+  if (router) {
+    return router.push(redirectUrl);
+  } else {
+    return await redirectToPath(
+      `${redirectUrl}${redirectUrl.includes('?') ? '&' : '?'}role=${role}`
+    );
   }
 }
 
@@ -40,16 +37,11 @@ export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
   const role = formData.get('role') || 'applicant'; // Get role from form
 
   const supabase = createClient();
-
-  // Add role to OAuth sign-in
+  const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL;
   await supabase.auth.signInWithOAuth({
     provider: provider,
     options: {
-      redirectTo: `https://talentora.io?role=${role}`,
-      queryParams: {
-        redirect_to: `https://talentora.io?role=${role}`,
-        role: role as string
-      }
+      redirectTo: redirectUrl
     }
   });
 }
