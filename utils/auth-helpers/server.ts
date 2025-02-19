@@ -15,41 +15,29 @@ export async function redirectToPath(path: string) {
   return redirect(path);
 }
 export async function SignOut() {
-  const supabase = createClient();
+
   const cookieStore = cookies();
-  
-  // Sign out from Supabase
+  const supabase = createClient();
+
   const { error } = await supabase.auth.signOut({
-    scope: 'global' // This ensures complete signout including SAML session
+    scope: 'global'
   });
 
   if (error) {
+    console.error('Sign out error:', error);
     throw error;
   }
 
-  // Clear all authentication-related cookies
-  const cookiesToDelete = [
+  // Clear all auth-related cookies
+  const cookiesToClear = [
     'sb-access-token',
     'sb-refresh-token',
-    'sb-session',
-    'sb-provider-token',
     'sb-auth-token',
-    'sb-user'
+    'supabase-auth-token',
   ];
 
-  cookiesToDelete.forEach((cookieName) => {
-    cookieStore.delete(cookieName);
-  });
-
-  // Clear any SAML-specific cookies
-  const samlCookies = cookieStore.getAll().filter(cookie => 
-    cookie.name.startsWith('sb-') || 
-    cookie.name.startsWith('saml-') ||
-    cookie.name.includes('auth')
-  );
-
-  samlCookies.forEach(cookie => {
-    cookieStore.delete(cookie.name);
+  cookiesToClear.forEach(name => {
+    cookieStore.delete(name);
   });
 
   return true;
@@ -167,7 +155,7 @@ export async function signInWithPassword(formData: FormData) {
     email,
     password
   });
-
+  console.log("this in signinwithpassword", data);
   if (error) {
     redirectPath = getErrorRedirect(
       '/signin/password_signin',

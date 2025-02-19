@@ -9,10 +9,10 @@ import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { type Database } from '@/types/types_db';
 type Company = Database['public']['Tables']['companies']['Row'];
-import { SignOut } from '@/utils/auth-helpers/server';
-import { handleRequest } from '@/utils/auth-helpers/client';
-import { getRedirectMethod } from '@/utils/auth-helpers/settings';
-import { createClient } from '@/utils/supabase/client';
+
+
+
+
 const Profile = ({ user, role, company }: { user: any, role: string, company: Company | null }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -22,41 +22,31 @@ const Profile = ({ user, role, company }: { user: any, role: string, company: Co
   const supabase = createClient();
   const companyData = company;
 
-  const handleSignOut = async () => {
+
+  const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    queryClient.clear();
+    
     try {
-      // Clear React Query cache first
-      queryClient.clear();
-      
-      // Attempt server-side signout
       const response = await fetch('/api/auth/signout', {
         method: 'POST',
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        throw new Error('Server-side sign out failed');
-      }
-
-      // Perform client-side cleanup
-      await supabase.auth.signOut();
-      
-      // Clear any localStorage items
-      Object.keys(localStorage).forEach(key => {
-        if (key.includes('supabase') || key.includes('auth')) {
-          localStorage.removeItem(key);
+        headers: {
+          'Content-Type': 'application/json'
         }
       });
-      
-      // Use router for client-side navigation first
-      router.push('/');
-      // Then force a hard reload after a short delay
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
+      console.log('Sign out response:', response);
+
+      if (response.ok) {
+        const redirectUrl = response.headers.get('location') || '/';
+        router.push(redirectUrl);
+        router.refresh();
+      } else {
+        console.error('Sign out failed');
+      }
+
     } catch (error) {
-      console.error('Error during sign out:', error);
-      // Fallback: force navigation to home
-      window.location.href = '/';
+      console.error('Sign out error:', error);
+
     }
   };
 

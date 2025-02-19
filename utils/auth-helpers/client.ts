@@ -16,22 +16,18 @@ export async function handleRequest(
   const formData = new FormData(e.currentTarget);
   const role = formData.get('role') || 'applicant'; // Default to applicant
 
-  try {
-    const redirectUrl: string = await requestFunc(formData);
-    
-    // Add role to redirect URL
-    const finalRedirectUrl = `${redirectUrl}${
-      redirectUrl.includes('?') ? '&' : '?'
-    }role=${role}`;
 
-    if (router) {
-      return router.push(finalRedirectUrl);
-    } else {
-      return await redirectToPath(finalRedirectUrl);
-    }
-  } catch (error) {
-    console.error('Auth error:', error);
-    return false;
+  const redirectUrl: string = await requestFunc(
+    formData
+    // , role
+  );
+  
+  if (router) {
+    return router.push(redirectUrl);
+  } else {
+    return await redirectToPath(
+      `${redirectUrl}${redirectUrl.includes('?') ? '&' : '?'}role=${role}`
+    );
   }
 }
 
@@ -42,18 +38,12 @@ export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
   const role = formData.get('role') || 'applicant'; // Get role from form
   
   const supabase = createClient();
-  window.location.origin
-  // Add role to OAuth sign-in
+
+  const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL; 
   await supabase.auth.signInWithOAuth({
     provider: provider,
     options: {
-      redirectTo: window.location.origin,
-      // `https://talentora.io`,
-      queryParams: {
-        redirect_to: window.location.origin,
-        // `https://talentora.io`,
-        role: role as string
-      }
+      redirectTo: redirectUrl,
     }
   });
 }

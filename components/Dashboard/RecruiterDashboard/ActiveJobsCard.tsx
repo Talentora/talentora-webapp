@@ -54,19 +54,7 @@ function JobItem({ job }: { job: Job }) {
         <div className="flex justify-between items-center">
           <div className="truncate">
             <h3 className="font-semibold text-md hover:text-primary mb-1">{job.name}</h3>
-            <div className="pt-2 text-xs text-gray-500 flex flex-wrap gap-2">
-              {Array.isArray(job.departments) && job.departments.length > 0 ? (
-                job.departments.slice(0, 3).map((dept, index) => (
-                  <Badge key={index} className={`font-normal ${getBadgeColor(index)}`}>
-                    {typeof dept === 'object' ? dept.name : dept}
-                  </Badge>
-                ))
-              ) : (
-                <span className="text-gray-400">No departments</span>
-              )}
-            </div>
           </div>
-          <p className="text-xs font-semibold text-gray-700">0 Applicants</p>
         </div>
       </div>
     </Link>

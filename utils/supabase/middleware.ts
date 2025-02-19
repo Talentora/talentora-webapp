@@ -1,11 +1,14 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getUserRole, getCompany } from '@/utils/supabase/queries';
+import { createClient } from './server';
 
 // List of unprotected routes as regular expressions
 export const unprotectedRoutes = [
   /^\/$/, // Matches '/'
   /^\/signin(\/.*)?$/, // Matches '/signin' and any subpath like '/signin/*'
+  /^\/signin\/password_signin(\/.*)?$/, // Matches '/signin/password_signin' with query params
+  /^\/password_signin(\/.*)?$/,
   /^\/signup(\/.*)?$/,
   /^\/about$/, // Matches '/about'
   /^\/contact$/, // Matches '/contact'
@@ -23,124 +26,21 @@ const applicantRoutes = [
   /^\/api(\/.*)?$/ // Matches '/api' and any subpath like '/api/*'
 ];
 
+
+const staticRoutes = [
+  /^\/Videos(\/.*)?$/, // Matches '/Videos' and any subpath
+  /^\/images(\/.*)?$/,
+  /^\/assets(\/.*)?$/,
+  /\.(ico|png|jpg|jpeg|gif|svg|mp4|webm)$/, // Matches common static file extensions
+];
+
+
 // Combine unprotected and applicant routes
-export const allUnprotectedRoutes = [...unprotectedRoutes, ...applicantRoutes];
-
-
-type CookieData = {
-  name: string;
-  value: string;
-  options?: CookieOptions;
-};
-
-export const clearAuthCookies = (response: NextResponse) => {
-  const cookieOptions = {
-    path: '/',
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax' as const,
-    httpOnly: true,
-    maxAge: 0
-  };
-
-  // List of cookies to clear
-  const cookiesToClear = [
-    'sb-access-token',
-    'sb-refresh-token',
-    'sb-auth-token',
-    'supabase-auth-token',
-    '__stripe_mid',
-    '__stripe_sid',
-    'preferredSignInView'
-  ];
-
-  // Clear all cookies that match our patterns
-  const allCookies = response.cookies.getAll();
-  allCookies.forEach(cookie => {
-    if (
-      cookie.name.startsWith('sb-') ||
-      cookie.name.includes('supabase') ||
-      cookie.name.includes('auth') ||
-      cookie.name.includes('token') ||
-      cookie.name.includes('session')
-    ) {
-      response.cookies.delete(cookie.name);
-    }
-  });
-
-  // Also explicitly clear known cookies
-  cookiesToClear.forEach(name => {
-    response.cookies.delete(name);
-  });
-
-  return response;
-};
-
-export const createClient = (request: NextRequest) => {
-  // Get the site URL from environment variable or request
-  // const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
-
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers
-    }
-  });
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      auth: {
-        flowType: 'pkce',
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        persistSession: true,
-      },
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          // If the cookie is updated, update the cookies for the request and response
-          request.cookies.set({
-            name,
-            value,
-            ...options
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers
-            }
-          });
-          response.cookies.set({
-            name,
-            value,
-            ...options
-          });
-        },
-        remove(name: string, options: CookieOptions) {
-          // If the cookie is removed, update the cookies for the request and response
-          request.cookies.set({
-            name,
-            value: '',
-            ...options
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers
-            }
-          });
-          response.cookies.set({
-            name,
-            value: '',
-            ...options
-          });
-        }
-      }
-    }
-  );
-
-  return { supabase, response };
-};
+export const allUnprotectedRoutes = [
+  ...unprotectedRoutes, 
+  ...applicantRoutes,
+  ...staticRoutes
+];
 
 // Add this new function to handle SAML redirects
 export async function handleSamlRedirect(request: NextRequest) {
@@ -163,6 +63,7 @@ export async function handleAuthRedirects(request: NextRequest, user: any) {
   // Redirect authenticated users away from signin/signup routes to /dashboard
   if (/^\/(signin|signup)(\/.*)?$/.test(pathname)) {
     if (user) {
+      console.log('[Middleware] Redirecting user to dashboard:', user);
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
     return null;
@@ -170,6 +71,7 @@ export async function handleAuthRedirects(request: NextRequest, user: any) {
 
   // For protected routes, if no user is found, redirect to signin
   if (!allUnprotectedRoutes.some((route) => route.test(pathname)) && !user) {
+    console.log('[Middleware] Redirecting user to signin:', user);
     return NextResponse.redirect(new URL('/signin', process.env.NEXT_PUBLIC_SITE_URL || request.url));
   }
 
@@ -203,55 +105,14 @@ export async function handleRecruiterRedirects(request: NextRequest, supabase: a
 
 export async function updateSession(request: NextRequest) {
   console.log('[Middleware] Updating session...');
-  console.log('[Middleware] Initial request cookies:', request.cookies.getAll());
+  // console.log('[Middleware] Initial request cookies:', request.cookies.getAll());
   
   let supabaseResponse = NextResponse.next({
     request,
   });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          const value = request.cookies.get(name)?.value;
-          console.log(`[Middleware] Getting cookie: ${name} = ${value}`);
-          return value;
-        },
-        // set(name: string, value: string, options: CookieOptions) {
-        //   console.log(`[Middleware] Setting cookie: ${name}`);
-        //   request.cookies.set({ name, value, ...options });
-        //   supabaseResponse = NextResponse.next({
-        //     request,
-        //   });
-        //   supabaseResponse.cookies.set({ name, value, ...options });
-        // },
-        set(name: string, value: string, options: CookieOptions) {
-          const cookieOptions = {
-            ...options,
-            secure: true,
-            httpOnly: true,
-            sameSite: 'Lax',
-            path: '/'
-          };
-          request.cookies.set({ name, value, ...cookieOptions });
-          supabaseResponse.cookies.set({ name, value, ...cookieOptions });
-        },
-        remove(name: string, options: CookieOptions) {
-          console.log(`[Middleware] Removing cookie: ${name}`);
-          request.cookies.delete(name);
-          supabaseResponse = NextResponse.next({
-            request,
-          });
-          supabaseResponse.cookies.delete(name);
-        },
-      }
-    }
-
-  );
-
-  console.log('[Middleware] Created Supabase client');
+  const supabase = createClient();
+  // console.log('[Middleware] Created client:', supabase);
 
   // IMPORTANT: Avoid writing any logic between createServerClient and
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
@@ -269,7 +130,9 @@ export async function updateSession(request: NextRequest) {
 
   // Handle auth redirects
   const authRedirect = await handleAuthRedirects(request, user);
-  if (authRedirect) return authRedirect;
+  if (authRedirect) {
+    return authRedirect;
+  }
 
   // Handle recruiter-specific redirects if user is authenticated
   if (user) {
