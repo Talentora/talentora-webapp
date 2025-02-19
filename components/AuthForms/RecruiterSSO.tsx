@@ -16,32 +16,30 @@ export default function RecruiterSSO() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    console.log("[SSO] Starting SSO flow for domain:", domain);
+    console.log('[SSO] Starting SSO flow for domain:', domain);
 
     try {
+      const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/callback`;
+      console.log('[SSO] Using callback URL:', redirectTo);
 
-      const redirectTo = process.env.NEXT_PUBLIC_SITE_URL;
-
-      console.log("[SSO] Using callback URL:", redirectTo);
-      
       const { data, error } = await supabase.auth.signInWithSSO({
         domain: domain,
-        options: { 
+        options: {
           redirectTo
         }
       });
 
-      console.log("[SSO] SignInWithSSO response - data:", data);
-      console.log("[SSO] SignInWithSSO response - error:", error);
+      console.log('[SSO] SignInWithSSO response - data:', data);
+      console.log('[SSO] SignInWithSSO response - error:', error);
 
       if (error) throw error;
-      
+
       // If there's a URL to redirect to, redirect there
       if (data?.url) {
-        console.log("[SSO] Redirecting to SSO URL:", data.url);
+        console.log('[SSO] Redirecting to SSO URL:', data.url);
         window.location.href = data.url;
       } else {
-        console.error("[SSO] No URL returned from signInWithSSO");
+        console.error('[SSO] No URL returned from signInWithSSO');
       }
     } catch (error) {
       console.error('[SSO] Error:', error);
@@ -56,10 +54,11 @@ export default function RecruiterSSO() {
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-2">Welcome Back!</h2>
           <p className="text-muted-foreground">
-            Sign in with your organization's SSO to access your recruiting dashboard.
+            Sign in with your organization's SSO to access your recruiting
+            dashboard.
           </p>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="domain">Company Email Domain</Label>
@@ -72,8 +71,8 @@ export default function RecruiterSSO() {
                 required
                 className="flex-1"
               />
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-32"
                 disabled={isSubmitting || !domain}
               >
@@ -101,4 +100,4 @@ export default function RecruiterSSO() {
       </div>
     </div>
   );
-} 
+}
