@@ -1,11 +1,14 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getUserRole, getCompany } from '@/utils/supabase/queries';
+import { createClient } from './server';
 
 // List of unprotected routes as regular expressions
 export const unprotectedRoutes = [
   /^\/$/, // Matches '/'
   /^\/signin(\/.*)?$/, // Matches '/signin' and any subpath like '/signin/*'
+  /^\/signin\/password_signin(\/.*)?$/, // Matches '/signin/password_signin' with query params
+  /^\/password_signin(\/.*)?$/,
   /^\/signup(\/.*)?$/,
   /^\/about$/, // Matches '/about'
   /^\/contact$/, // Matches '/contact'
@@ -23,23 +26,19 @@ const applicantRoutes = [
   /^\/api(\/.*)?$/ // Matches '/api' and any subpath like '/api/*'
 ];
 
+const staticRoutes = [
+  /^\/Videos(\/.*)?$/, // Matches '/Videos' and any subpath
+  /^\/images(\/.*)?$/,
+  /^\/assets(\/.*)?$/,
+  /\.(ico|png|jpg|jpeg|gif|svg|mp4|webm)$/, // Matches common static file extensions
+];
+
 // Combine unprotected and applicant routes
-export const allUnprotectedRoutes = [...unprotectedRoutes, ...applicantRoutes];
-
-
-type CookieData = {
-  name: string;
-  value: string;
-  options?: CookieOptions;
-};
-
-const cookieOptions: CookieOptions = {
-  secure: true,
-  httpOnly: true,
-  sameSite: 'lax',
-  path: '/',
-  maxAge: 60 * 60 * 24 * 7 // 1 week
-};
+export const allUnprotectedRoutes = [
+  ...unprotectedRoutes, 
+  ...applicantRoutes,
+  ...staticRoutes
+];
 
 export async function handleAuthRedirects(request: NextRequest, user: any) {
   const { pathname } = request.nextUrl;
@@ -47,6 +46,7 @@ export async function handleAuthRedirects(request: NextRequest, user: any) {
   // Redirect authenticated users away from signin/signup routes to /dashboard
   if (/^\/(signin|signup)(\/.*)?$/.test(pathname)) {
     if (user) {
+      console.log('[Middleware] Redirecting user to dashboard:', user);
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
     return null;
@@ -54,7 +54,7 @@ export async function handleAuthRedirects(request: NextRequest, user: any) {
 
   // For protected routes, if no user is found, redirect to signin
   if (!allUnprotectedRoutes.some((route) => route.test(pathname)) && !user) {
-    console.log('[Middleware] Redirecting user to signin: meowww', user);
+    console.log('[Middleware] Redirecting user to signin:', user);
     return NextResponse.redirect(new URL('/signin', process.env.NEXT_PUBLIC_SITE_URL || request.url));
   }
 
@@ -87,50 +87,22 @@ export async function handleRecruiterRedirects(request: NextRequest, supabase: a
 }
 
 export async function updateSession(request: NextRequest) {
-  console.log('[Middleware] Cookie Debug:', {
-    sbAuth: request.cookies.get('sb-auth-token')?.value,
-    refreshToken: request.cookies.get('sb-refresh-token')?.value,
+  console.log('[Middleware] Updating session...');
+  // console.log('[Middleware] Initial request cookies:', request.cookies.getAll());
+  
+  let supabaseResponse = NextResponse.next({
+    request,
   });
 
-  const supabaseResponse = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  });
+  const supabase = createClient();
+  // console.log('[Middleware] Created client:', supabase);
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          const cookie = request.cookies.get(name);
-          console.log(`[Middleware] Getting cookie ${name}:`, cookie?.value);
-          return cookie?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          console.log(`[Middleware] Setting cookie ${name}:`, value);
-          supabaseResponse.cookies.set({
-            name,
-            value,
-            ...cookieOptions,
-            ...options,
-          });
-        },
-        remove(name: string, options: CookieOptions) {
-          console.log(`[Middleware] Removing cookie ${name}`);
-          supabaseResponse.cookies.delete({
-            name,
-            ...cookieOptions,
-            ...options,
-          });
-        },
-      },
-    }
-  );
-
-  const { data: { user }, error } = await supabase.auth.getUser();
-  console.log('[Middleware] Auth Debug:', { user: !!user, error });
+  // IMPORTANT: Avoid writing any logic between createServerClient and
+  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
+  // issues with users being randomly logged out.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   console.log('[Middleware] Got user:', user ? 'Present' : 'None');
   console.log('[Middleware] Final response cookies:', supabaseResponse.cookies.getAll());
@@ -138,7 +110,6 @@ export async function updateSession(request: NextRequest) {
   // Handle auth redirects
   const authRedirect = await handleAuthRedirects(request, user);
   if (authRedirect) {
-    console.log('[Middleware] Redirecting user ahaha:', authRedirect.status, authRedirect.headers.get('Location'));
     return authRedirect;
   }
 
@@ -151,5 +122,6 @@ export async function updateSession(request: NextRequest) {
   supabaseResponse.headers.set('x-debug-request-path', request.nextUrl.pathname);
   supabaseResponse.headers.set('x-debug-message', 'Middleware executed');
 
+  console.log("here");
   return supabaseResponse;
 }

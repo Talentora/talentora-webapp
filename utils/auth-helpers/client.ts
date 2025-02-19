@@ -20,6 +20,7 @@ export async function handleRequest(
     formData
     // , role
   );
+  console.log("reaches here ", redirectUrl);
 
   if (router) {
     return router.push(redirectUrl);

@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'edge'
 
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
@@ -10,9 +9,7 @@ export async function POST(request: Request) {
   const supabase = createClient();
 
   // Sign out the user with global scope to clear all sessions
-  const { error } = await supabase.auth.signOut({
-    scope: 'global'  // This ensures all sessions are terminated
-  })
+  const { error } = await supabase.auth.signOut();
 
   if (error) {
     console.error('Sign out error:', error)
@@ -28,7 +25,6 @@ export async function POST(request: Request) {
     'supabase-auth-token',
     'sb-provider-token',
     'sb-session',
-    'preferredSignInView'
   ]
 
   // Clear specific auth cookies first

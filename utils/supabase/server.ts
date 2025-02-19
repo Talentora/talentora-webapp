@@ -2,72 +2,63 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { Database } from '@/types/types_db';
 
-// Create a singleton instance for the server client
 let serverClient: ReturnType<typeof createServerClient<Database>> | null = null;
-
-const cookieOptions: CookieOptions = {
-  secure: true,
-  httpOnly: true,
-  sameSite: 'lax',
-  path: '/',
-  maxAge: 60 * 60 * 24 * 7 // 1 week
-};
 
 export const createClient = () => {
   if (typeof window !== 'undefined') {
-    throw new Error('This method should only be called on the server');
+    throw new Error('createClient should only be called on the server');
   }
 
-  if (!serverClient) {
-    const cookieStore = cookies();
+  // Reset client on each request to prevent memory leaks
+  serverClient = null;
 
-    serverClient = createServerClient<Database>(
-      // Pass Supabase URL and anonymous key from the environment to the client
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  const cookieStore = cookies();
 
-      // Define a cookies object with methods for interacting with the cookie store and pass it to the client
-      {
-        cookies: {
-          // The get method is used to retrieve a cookie by its name
-          get(name: string) {
-            const cookie = cookieStore.get(name);
-            console.log(`[Server] Getting cookie ${name}:`, cookie?.value);
-            return cookie?.value;
-          },
-          // The set method is used to set a cookie with a given name, value, and options
-          set(name: string, value: string, options: CookieOptions) {
-            try {
-              console.log(`[Server] Setting cookie ${name}:`, value);
-              cookieStore.set({ 
-                name, 
-                value, 
-                ...cookieOptions,
-                ...options 
-              });
-            } catch (error) {
-              console.error('Error setting cookie:', error);
-              throw new Error(`Failed to set cookie: ${name}`);
-            }
-          },
-          // The remove method is used to delete a cookie by its name
-          remove(name: string, options: CookieOptions) {
-            try {
-              console.log(`[Server] Removing cookie ${name}`);
-              cookieStore.delete({ 
-                name,
-                ...cookieOptions,
-                ...options 
-              });
-            } catch (error) {
-              console.error('Error removing cookie:', error);
-              throw new Error(`Failed to remove cookie: ${name}`);
-            }
+  const cookieDefaults: Partial<CookieOptions> = {
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    httpOnly: true,
+    path: '/'
+  };
+
+  serverClient = createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          try {
+            cookieStore.set({
+              name,
+              value,
+              ...cookieDefaults,
+              ...options,
+            });
+          } catch (error) {
+            console.error(`Error setting cookie ${name}:`, error);
+          }
+        },
+        remove(name: string, options: CookieOptions) {
+          try {
+            cookieStore.delete({
+              name,
+              ...cookieDefaults,
+              ...options,
+            });
+          } catch (error) {
+            console.error(`Error removing cookie ${name}:`, error);
           }
         }
+      },
+      auth: {
+        detectSessionInUrl: true,
+        persistSession: true,
       }
-    );
-  }
+    }
+  );
 
   return serverClient;
 };

@@ -110,18 +110,6 @@ export function useUser(): UseUserReturn {
     }
   });
 
-  // Optional: Set up an auth state listener
-  useQuery<void, Error>({
-    queryKey: ['authListener'],
-    queryFn: async () => {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, _session) => {
-        // The other queries will automatically re-fetch when needed
-      });
-      return subscription.unsubscribe();
-    },
-    staleTime: Infinity
-  });
-
   return {
     user: {
       data: userData || null,
