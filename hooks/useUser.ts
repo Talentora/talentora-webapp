@@ -134,25 +134,6 @@ export function useUser(): UseUserReturn {
     }
   });
 
-  // Replace the auth state listener with useEffect
-  useEffect(() => {
-    const {
-      data: { subscription }
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_OUT') {
-        // Clear React Query cache for user-related queries
-        queryClient.invalidateQueries({ queryKey: ['user'] });
-        queryClient.invalidateQueries({ queryKey: ['recruiter'] });
-        queryClient.invalidateQueries({ queryKey: ['company'] });
-      }
-    });
-
-    // Cleanup subscription on unmount
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [supabase, queryClient]); // Add dependencies
-
   return {
     user: {
       data: userData || null,

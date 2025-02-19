@@ -16,13 +16,11 @@ export async function handleRequest(
   const formData = new FormData(e.currentTarget);
   const role = formData.get('role') || 'applicant'; // Default to applicant
 
-  try {
-    const redirectUrl: string = await requestFunc(formData);
-
-    // Add role to redirect URL
-    const finalRedirectUrl = `${redirectUrl}${
-      redirectUrl.includes('?') ? '&' : '?'
-    }role=${role}`;
+  const redirectUrl: string = await requestFunc(
+    formData
+    // , role
+  );
+  console.log("reaches here ", redirectUrl);
 
     if (router) {
       return router.push(finalRedirectUrl);
