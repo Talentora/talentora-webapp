@@ -11,7 +11,7 @@ type Company = Database['public']['Tables']['companies']['Row'];
 import { SignOut } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
-
+import { createClient } from '@/utils/supabase/client';
 const Profile = ({
   user,
   role,
@@ -24,6 +24,9 @@ const Profile = ({
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
+  const router = useRouter();
+  const supabase = createClient();
+  const companyData = company;
 
   const companyData = company;
   const router = useRouter();

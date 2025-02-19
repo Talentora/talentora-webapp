@@ -156,7 +156,7 @@ export const Splash: React.FC<SplashProps> = ({
         ) : (
           <Button
             onClick={handleReady}
-            className="w-full bg-primary-dark text-white rounded-lg hover:bg-accent font-medium"
+            className="w-full text-white rounded-lg font-medium"
           >
             Start Interview
           </Button>
