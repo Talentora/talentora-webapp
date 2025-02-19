@@ -20,8 +20,7 @@ export async function handleRequest(
     formData
     // , role
   );
-  console.log("reaches here ", redirectUrl);
-
+  
   if (router) {
     return router.push(redirectUrl);
   } else {
@@ -39,11 +38,11 @@ export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
 
   // Create client-side supabase client and call signInWithOAuth
   const supabase = createClient();
-  const redirectURL = getURL('/auth/callback');
+  const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL; 
   await supabase.auth.signInWithOAuth({
     provider: provider,
     options: {
-      redirectTo: redirectURL
+      redirectTo: redirectUrl,
     }
   });
 }
