@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { User, LogOut } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { type Database } from '@/types/types_db';
 type Company = Database['public']['Tables']['companies']['Row'];
@@ -21,13 +21,13 @@ const Profile = ({
   const userMenuRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
   const router = useRouter();
-  // const supabase = createClient();
   const companyData = company;
+  const pathname = usePathname();
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     queryClient.clear();
-
+    console.log('Signing out...');
     try {
       const response = await fetch('/api/auth/signout', {
         method: 'POST',
@@ -87,15 +87,18 @@ const Profile = ({
 
             <div className="h-[1px] bg-border" />
 
-            <Button
-              onClick={() => handleSignOut}
-              variant="ghost"
-              size="sm"
-              className="w-full justify-start text-[0.875em] text-foreground hover:text-foreground hover:bg-accent"
-            >
-              <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
-              Sign out
-            </Button>
+            <form onSubmit={handleSignOut}>
+              <input type="hidden" name="pathName" value={pathname} />
+              <Button 
+                type="submit" 
+                variant="ghost" 
+                size="sm"
+                className="w-full justify-start text-[0.875em] text-foreground hover:text-foreground hover:bg-accent"
+              >
+                <LogOut className="mr-[0.5em] h-[1em] w-[1em]" />
+                Sign out
+              </Button>
+            </form>
           </div>
         </div>
       )}

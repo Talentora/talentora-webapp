@@ -16,13 +16,13 @@ export async function handleRequest(
   const formData = new FormData(e.currentTarget);
   const role = formData.get('role') || 'applicant'; // Default to applicant
 
-  const redirectUrl: string = await requestFunc(
-    formData
-    // , role
-  );
+  const redirectUrl: string = await requestFunc(formData);
 
   if (router) {
-    return router.push(redirectUrl);
+    router.push(redirectUrl);
+    router.refresh();
+    console.log('meowww');
+    return true;
   } else {
     return await redirectToPath(
       `${redirectUrl}${redirectUrl.includes('?') ? '&' : '?'}role=${role}`
@@ -34,7 +34,8 @@ export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
   e.preventDefault();
   const formData = new FormData(e.currentTarget);
   const provider = String(formData.get('provider')).trim() as Provider;
-  const role = formData.get('role') || 'applicant'; // Get role from form
+
+  const supabase = createClient();
 
   const supabase = createClient();
   const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL;
@@ -44,20 +45,4 @@ export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
       redirectTo: redirectUrl
     }
   });
-}
-
-// Add a new function to check authentication state
-export async function checkAuthState() {
-  const supabase = createClient();
-  const {
-    data: { session },
-    error
-  } = await supabase.auth.getSession();
-
-  if (error) {
-    console.error('Auth state check error:', error);
-    return null;
-  }
-
-  return session;
 }

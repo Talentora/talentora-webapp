@@ -45,7 +45,11 @@ export default function PasswordSignIn({
       <h1 className="text-2xl font-bold mb-4 text-center">
         Sign in to your account
       </h1>
-      <form onSubmit={(e) => handleRequest(e, signInWithPassword, router)}>
+      <form
+        noValidate={true}
+        className="mb-4 grid gap-2"
+        onSubmit={handleSubmit}
+      >
         <input type="hidden" name="role" value={role || 'applicant'} />
         <div className="grid gap-1">
           <label htmlFor="email" className="text-muted-foreground">
