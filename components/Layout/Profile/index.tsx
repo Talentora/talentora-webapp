@@ -21,7 +21,6 @@ const Profile = ({
 }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
   const queryClient = useQueryClient();
   const router = useRouter();
   // const supabase = createClient();

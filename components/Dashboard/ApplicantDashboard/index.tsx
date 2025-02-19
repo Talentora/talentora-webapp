@@ -81,7 +81,7 @@ export default function JobPortal() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Thanks for choosing out Talentora! You currently have
+                    Thanks for choosing out Talentora! You currently have 
                     {sortedApplications?.length} applications. To prepare, train
                     your interview skills by practicing with our{' '}
                     <Link
