@@ -46,6 +46,7 @@ export function useSidebarData() {
     queryFn: () => getScouts()
   });
 
+
   const isInitialized = jobsFetched && applicationsFetched && scoutsFetched;
 
   return {

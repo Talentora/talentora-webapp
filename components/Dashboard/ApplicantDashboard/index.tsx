@@ -1,23 +1,25 @@
-'use client'
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import LoadingSkeleton from './ApplicantDashboardSkeleton'
-import { useApplicant } from '@/hooks/useApplicant'
-import Link from 'next/link'
-import { useUser } from '@/hooks/useUser'
-import { useMemo } from 'react'
-import AssessmentCard from './AssessmentCard'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import LoadingSkeleton from './ApplicantDashboardSkeleton';
+import { useApplicant } from '@/hooks/useApplicant';
+import Link from 'next/link';
+import { useUser } from '@/hooks/useUser';
+import { useMemo } from 'react';
+import AssessmentCard from './AssessmentCard';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function JobPortal() {
-  const {user} = useUser()
-  const { enrichedApplications, isLoading, error } = useApplicant()
+  const { user } = useUser();
+  const { enrichedApplications, isLoading, error } = useApplicant();
 
   // Memoize sorted applications
   const sortedApplications = useMemo(() => {
     if (!enrichedApplications) return [];
-    return [...enrichedApplications].sort((a, b) => 
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    return [...enrichedApplications].sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
   }, [enrichedApplications]);
 
@@ -44,30 +46,71 @@ export default function JobPortal() {
           </Alert>
         </div>
       ) : (
-        <main className="container px-4">
-          <div className="grid gap-6 md:grid-cols-2 px-10">
-            {sortedApplications?.length === 0 ? (
-              <Card className="border p-5 border-border shadow-sm relative">
+        <main className="container mx-auto">
+          {sortedApplications?.length === 0 ? (
+            <Card className="border p-5 border-border shadow-sm relative mt-6">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold">
+                  Welcome to Talentora!
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Thanks for checking out Talentora! You currently have no
+                  interview applications. In the meantime, train your interview
+                  skills by practicing with our{' '}
+                  <Link href="/demo" className="text-blue-500 hover:underline">
+                    demo scout
+                  </Link>
+                  !
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  <Link href="/about" className="hover:underline">
+                    Click here to learn more about our platform.
+                  </Link>
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              <Card className="border p-5 border-border shadow-sm relative mt-6">
                 <CardHeader>
-                  <CardTitle className="text-xl font-semibold">Welcome to Talentora!</CardTitle>
+                  <CardTitle className="text-xl font-semibold">
+                    Welcome to Talentora!
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Thanks for checking out Talentora. You have no interview applications currently!
+                    Thanks for choosing out Talentora! You currently have 
+                    {sortedApplications?.length} applications. To prepare, train
+                    your interview skills by practicing with our{' '}
+                    <Link
+                      href="/demo"
+                      className="text-blue-500 hover:underline"
+                    >
+                      demo scout
+                    </Link>
+                    !
                   </p>
                   <p className="text-sm text-muted-foreground mt-2">
-                    <Link href="/about" className="hover:underline">Click here to learn more about our platform</Link>
+                    <Link href="/about" className="hover:underline">
+                      Click here to learn more about our platform.
+                    </Link>
                   </p>
                 </CardContent>
               </Card>
-            ) : (
-              sortedApplications?.map((application) => (
-                <AssessmentCard key={application.id} application={application} />
-              ))
-            )}
-          </div>
+              <div className="grid gap-6 md:grid-cols-2 mt-6">
+                {sortedApplications?.map((application) => (
+                  <AssessmentCard
+                    key={application.id}
+                    application={application}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </main>
       )}
     </div>
-  )
+  );
 }

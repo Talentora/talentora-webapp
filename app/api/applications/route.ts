@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     console.error('Missing API credentials', { apiKey, accountToken });
     return NextResponse.json(
       { error: 'API credentials not found' },
-      { status: 500 }
+      { status: 510 }
     );
   }
 
@@ -122,7 +122,9 @@ export async function GET(request: Request) {
       })
     );
 
-    const validResults = combinedResults.filter(result => result !== null);
+    const validResults = combinedResults
+    // combinedResults.filter(result => result !== null);
+    console.log("Validresults in applications route", validResults);
     return NextResponse.json(validResults);
   } catch (error) {
     console.error('Error fetching data:', error);

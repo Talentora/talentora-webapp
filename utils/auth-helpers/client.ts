@@ -14,7 +14,8 @@ export async function handleRequest(
   e.preventDefault();
 
   const formData = new FormData(e.currentTarget);
-  const role = formData.get('role');
+  const role = formData.get('role') || 'applicant'; // Default to applicant
+
 
   const redirectUrl: string = await requestFunc(
     formData
@@ -31,13 +32,13 @@ export async function handleRequest(
 }
 
 export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
-  // Prevent default form submission refresh
   e.preventDefault();
   const formData = new FormData(e.currentTarget);
   const provider = String(formData.get('provider')).trim() as Provider;
-
-  // Create client-side supabase client and call signInWithOAuth
+  const role = formData.get('role') || 'applicant'; // Get role from form
+  
   const supabase = createClient();
+
   const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL; 
   await supabase.auth.signInWithOAuth({
     provider: provider,
@@ -45,4 +46,17 @@ export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
       redirectTo: redirectUrl,
     }
   });
+}
+
+// Add a new function to check authentication state
+export async function checkAuthState() {
+  const supabase = createClient();
+  const { data: { session }, error } = await supabase.auth.getSession();
+  
+  if (error) {
+    console.error('Auth state check error:', error);
+    return null;
+  }
+  
+  return session;
 }

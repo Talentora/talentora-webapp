@@ -15,6 +15,7 @@ export async function redirectToPath(path: string) {
   return redirect(path);
 }
 export async function SignOut() {
+
   const cookieStore = cookies();
   const supabase = createClient();
 
@@ -39,7 +40,7 @@ export async function SignOut() {
     cookieStore.delete(name);
   });
 
-  return '/';
+  return true;
 }
 
 

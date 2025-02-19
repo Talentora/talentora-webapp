@@ -2,7 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+
 import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2, ChevronDown, ChevronUp, Search, CreditCard, Box, Mail, BookOpen, Building2, Phone } from 'lucide-react';
+
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 
 
@@ -16,10 +18,22 @@ import {
   SidebarProvider,
   Sidebar as SidebarComponent
 } from '@/components/ui/sidebar';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
 import { useSidebarData } from '@/hooks/useSidebarData';
-import { Command, CommandInput, CommandList, CommandGroup, CommandItem, CommandDialog } from '@/components/ui/command';
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandGroup,
+  CommandItem,
+  CommandDialog
+} from '@/components/ui/command';
 import { ScoutWithJobs } from '@/types/custom';
 import { SidebarHeader as NewSidebarHeader } from './components/SidebarHeader';
 import { CommandSearch } from './components/CommandSearch';
@@ -83,7 +97,12 @@ const Sidebar = () => {
         { type: 'page', name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
         { type: 'page', name: 'Jobs', href: '/jobs', icon: BriefcaseIcon },
         { type: 'page', name: 'Applicants', href: '/applicants', icon: Users },
-        { type: 'page', name: 'Settings', href: '/settings', icon: SettingsIcon },
+        {
+          type: 'page',
+          name: 'Settings',
+          href: '/settings',
+          icon: SettingsIcon
+        },
         { type: 'page', name: 'Blog', href: '/blog', icon: BookOpen },
         { type: 'page', name: 'Contact', href: '/contact', icon: Mail },
         { type: 'page', name: 'Pricing', href: '/pricing', icon: CreditCard },
@@ -94,6 +113,7 @@ const Sidebar = () => {
     {
       group: 'Suggested',
       items: [
+
         ...(Array.isArray(jobs) && jobs.length > 0
           ? jobs.map((job: Job) => ({
               type: 'job',
@@ -124,13 +144,17 @@ const Sidebar = () => {
 
   const filteredItems = searchItems.flatMap(group =>
     group.items.filter(item =>
+
       item.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
         // setIsUserMenuOpen(false);
       }
     };
@@ -182,6 +206,7 @@ const Sidebar = () => {
           className="border-border text-white "
         />
         <CommandList className="bg-background">
+
           {searchItems.map((group) => {
             const groupFilteredItems = group.items.filter(item =>
               item.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -219,6 +244,7 @@ const Sidebar = () => {
               </CommandGroup>
             );
           })}
+
         </CommandList>
       </CommandDialog>
 
@@ -240,7 +266,12 @@ const Sidebar = () => {
               searchItems={searchItems}
             />
 
-            <SidebarLink href="/dashboard" icon={HomeIcon} isActive={pathname === '/dashboard'} isSidebarOpen={isSidebarOpen}>
+            <SidebarLink
+              href="/dashboard"
+              icon={HomeIcon}
+              isActive={pathname === '/dashboard'}
+              isSidebarOpen={isSidebarOpen}
+            >
               Dashboard
             </SidebarLink>
             <SidebarLink
@@ -256,6 +287,7 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isJobsOpen && (
               <div className="ml-4 mt-2 space-y-1 border-l-2 border-border">
+
                 {(() => {
                   if (!isInitialized || isLoading) {
                     return renderLoadingOrEmpty('jobs');
@@ -269,6 +301,7 @@ const Sidebar = () => {
                     ))
                   ) : renderLoadingOrEmpty('jobs');
                 })()}
+
               </div>
             )}
             <SidebarLink
@@ -284,6 +317,7 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isScoutsOpen && (
               <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-3">
+
                 {(() => {
                   if (!isInitialized || isLoading) {
                     return renderLoadingOrEmpty('scouts');
@@ -297,6 +331,7 @@ const Sidebar = () => {
                     ))
                   ) : renderLoadingOrEmpty('scouts');
                 })()}
+
               </div>
             )}
             <SidebarLink
@@ -312,6 +347,7 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isApplicantsOpen && (
               <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
+
                 {(() => {
                   if (!isInitialized || isLoading) {
                     return renderLoadingOrEmpty('applicants');
@@ -325,6 +361,7 @@ const Sidebar = () => {
                     ))
                   ) : renderLoadingOrEmpty('applicants');
                 })()}
+
               </div>
             )}
             <SidebarLink
@@ -340,6 +377,7 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isSettingsOpen && (
               <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
+
                 <SubLink href="/settings?tab=account">
                   Account
                 </SubLink>
@@ -352,6 +390,7 @@ const Sidebar = () => {
                 {/* <SubLink href="/settings?tab=team">
                   Team
                 </SubLink> */}
+
                 <SubLink href="/settings?tab=integrations">
                   Integration Status
                 </SubLink>
@@ -363,7 +402,6 @@ const Sidebar = () => {
         <SidebarFooter className="p-4">
           <ThemeToggle />
         </SidebarFooter>
-
       </SidebarComponent>
     </SidebarProvider>
   );

@@ -5,7 +5,15 @@ import { useState, useEffect } from 'react';
 import { ApplicantCandidate } from '@/types/merge';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const ApplicantCountCard = ({ factWindow, isLoading, applicants }: { factWindow: number, isLoading: boolean, applicants: ApplicantCandidate[] }) => {
+const ApplicantCountCard = ({
+  factWindow,
+  isLoading,
+  applicants
+}: {
+  factWindow: number;
+  isLoading: boolean;
+  applicants: ApplicantCandidate[];
+}) => {
   if (isLoading) {
     return (
       <Card className="max-h-[100px] group p-2 border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 transition duration-300 ease-in-out hover:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
@@ -38,9 +46,7 @@ const ApplicantCountCard = ({ factWindow, isLoading, applicants }: { factWindow:
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">0</div>
-          <p className="text-xs text-muted-foreground">
-            No applicants yet
-          </p>
+          <p className="text-xs text-muted-foreground">No applicants yet</p>
         </CardContent>
       </Card>
     );
@@ -50,10 +56,12 @@ const ApplicantCountCard = ({ factWindow, isLoading, applicants }: { factWindow:
   const factWindowDaysAgo = new Date();
   factWindowDaysAgo.setDate(factWindowDaysAgo.getDate() - factWindow);
 
-  const lastFactWindowDaysApplicants = applicants.filter((applicant) => {
-    const appliedDate = new Date(applicant.application.applied_at);
-    return appliedDate >= factWindowDaysAgo;
-  }).length;
+  const lastFactWindowDaysApplicants = Array.isArray(applicants)
+    ? applicants.filter((applicant) => {
+        const appliedDate = new Date(applicant.application.applied_at);
+        return appliedDate >= factWindowDaysAgo;
+      }).length
+    : [];
 
   const percentageChange = 0; // Since we're only looking at the last fact window days, there's no previous period to compare to.
 
@@ -70,8 +78,10 @@ const ApplicantCountCard = ({ factWindow, isLoading, applicants }: { factWindow:
         </Link>
       </CardHeader>
       <CardContent className="relative">
-      <div className="ml-4 -mt-6 text-lg sm:text-xl md:text-2xl font-bold">{lastFactWindowDaysApplicants}</div>
-      <div className="absolute right-2 -mt-4 text-sm text-gray-500">
+        <div className="ml-4 -mt-6 text-lg sm:text-xl md:text-2xl font-bold">
+          {lastFactWindowDaysApplicants}
+        </div>
+        <div className="absolute right-2 -mt-4 text-sm text-gray-500">
           {percentageChange >= 0 ? '' : ''}
           {percentageChange.toFixed(2)}%
         </div>

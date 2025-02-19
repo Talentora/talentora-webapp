@@ -134,6 +134,7 @@ export const updateCompany = async (
  * @returns A boolean indicating whether the deletion was successful.
  * @throws Error if the deletion operation fails.
  */
+
 export const deleteCompany = async (id: number): Promise<boolean> => {
   const supabase = createClient();
   const { error } = await supabase.from('companies').delete().eq('id', String(id));

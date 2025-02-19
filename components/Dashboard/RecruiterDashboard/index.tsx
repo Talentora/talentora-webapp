@@ -3,7 +3,14 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MessageSquareIcon, UserIcon, UsersIcon, Loader2, BarChart3, UserPlus } from 'lucide-react';
+import {
+  MessageSquareIcon,
+  UserIcon,
+  UsersIcon,
+  Loader2,
+  BarChart3,
+  UserPlus
+} from 'lucide-react';
 import { Job, ApplicantCandidate } from '@/types/merge';
 import ActiveJobsCard from './ActiveJobsCard';
 import RecentApplicantsCard from './RecentApplicantsCard';
@@ -30,6 +37,7 @@ const fetchApplications = async (): Promise<ApplicantCandidate[]> => {
 };
 
 const fetchJobs = async (): Promise<Job[]> => {
+  console.log('called fetchJobs');
   const response = await fetch('/api/jobs');
   if (!response.ok) throw new Error('Failed to fetch jobs');
   return response.json();
@@ -54,24 +62,26 @@ export default function RecruiterDashboard() {
   const { data: applicants = [], isLoading: applicantsLoading } = useQuery({
     queryKey: ['applications'],
     queryFn: fetchApplications,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000
   });
 
   const { data: mergeJobs = [], isLoading: jobsLoading } = useQuery({
     queryKey: ['jobs'],
     queryFn: fetchJobs,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000
   });
 
   const { data: supabaseJobs = [], isLoading: supabaseJobsLoading } = useQuery({
     queryKey: ['supabaseJobs'],
     queryFn: fetchSupabaseJobs,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000
   });
 
   const combinedJobs = useMemo(() => {
     return mergeJobs.map((mergeJob) => {
-      const supabaseJob = supabaseJobs.find((sJob) => sJob.merge_id === mergeJob.id);
+      const supabaseJob = supabaseJobs.find(
+        (sJob) => sJob.merge_id === mergeJob.id
+      );
       return { mergeJob, supabaseJob };
     });
   }, [mergeJobs, supabaseJobs]);
@@ -91,41 +101,60 @@ export default function RecruiterDashboard() {
                   <BarChart3 className="h-6 w-6 text-primary" />
                 </div>
               </div>
-              
+
               <div className="flex flex-col">
                 <h1 className="text-2xl font-bold">Recruiting Dashboard</h1>
                 <p className="text-sm text-gray-500">Welcome back, Team</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-4">
-              {applicantsLoading ? <Skeleton className="h-10 w-64" /> : <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} applicants={applicants} />}
-              <Button 
-                className="bg-primary text-white" 
+              {applicantsLoading ? (
+                <Skeleton className="h-10 w-64" />
+              ) : (
+                <SearchBar
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  applicants={applicants}
+                />
+              )}
+              <Button
+                className="bg-primary text-white"
                 onClick={() => setInviteModalOpen(true)}
                 disabled={jobsLoading || applicantsLoading}
               >
-                {(jobsLoading || applicantsLoading) ? (
+                {jobsLoading || applicantsLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   'Invite Candidates'
                 )}
               </Button>
               {inviteModalOpen && (
-                <Dialog open={inviteModalOpen} onOpenChange={setInviteModalOpen} >
+                <Dialog
+                  open={inviteModalOpen}
+                  onOpenChange={setInviteModalOpen}
+                >
                   <DialogContent>
-                    <InviteApplicants jobs={combinedJobs} singleJobFlag={false} applicants={applicants} />
+                    <InviteApplicants
+                      jobs={combinedJobs}
+                      singleJobFlag={false}
+                      applicants={applicants}
+                    />
                   </DialogContent>
                 </Dialog>
               )}
-              </div>
+            </div>
           </div>
 
           {/* <TimeRangeSelector /> */}
 
           {/* Fact Cards - Full width */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full">
-            <ApplicantCountCard factWindow={factWindow} isLoading={applicantsLoading} applicants={applicants} />
+            <ApplicantCountCard
+              factWindow={factWindow}
+              isLoading={applicantsLoading}
+              applicants={applicants}
+            />
             <InvitedCandidatesCard factWindow={factWindow} />
             <CompletedAssessmentsCard factWindow={factWindow} />
             <BotCountCard />
@@ -138,12 +167,19 @@ export default function RecruiterDashboard() {
               {/* Graph */}
               <Card className="max-h-[500px] mb-4 dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] p-5 border border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 w-full">
                 <CardContent>
-                  <ApplicationsGraph applicants={applicants} isLoading={applicantsLoading} hideHeader={false} />
+                  <ApplicationsGraph
+                    applicants={applicants}
+                    isLoading={applicantsLoading}
+                    hideHeader={false}
+                  />
                 </CardContent>
               </Card>
 
               {/* Recent Applicants */}
-              <RecentApplicantsCard applicants={applicants} isLoading={applicantsLoading} />
+              <RecentApplicantsCard
+                applicants={applicants}
+                isLoading={applicantsLoading}
+              />
             </div>
 
             {/* Right Column: Active Jobs + ChatBot + Settings */}

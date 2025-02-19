@@ -26,6 +26,7 @@ const applicantRoutes = [
   /^\/api(\/.*)?$/ // Matches '/api' and any subpath like '/api/*'
 ];
 
+
 const staticRoutes = [
   /^\/Videos(\/.*)?$/, // Matches '/Videos' and any subpath
   /^\/images(\/.*)?$/,
@@ -33,12 +34,28 @@ const staticRoutes = [
   /\.(ico|png|jpg|jpeg|gif|svg|mp4|webm)$/, // Matches common static file extensions
 ];
 
+
 // Combine unprotected and applicant routes
 export const allUnprotectedRoutes = [
   ...unprotectedRoutes, 
   ...applicantRoutes,
   ...staticRoutes
 ];
+
+// Add this new function to handle SAML redirects
+export async function handleSamlRedirect(request: NextRequest) {
+  const url = new URL(request.url);
+  const provider = url.searchParams.get('provider');
+  const samlResponse = url.searchParams.get('SAMLResponse');
+  
+  if (samlResponse && provider) {
+    // Ensure redirect happens to the production domain
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://talentora.io';
+    return NextResponse.redirect(`${siteUrl}/auth/callback`);
+  }
+  
+  return null;
+}
 
 export async function handleAuthRedirects(request: NextRequest, user: any) {
   const { pathname } = request.nextUrl;
@@ -106,6 +123,10 @@ export async function updateSession(request: NextRequest) {
 
   console.log('[Middleware] Got user:', user ? 'Present' : 'None');
   console.log('[Middleware] Final response cookies:', supabaseResponse.cookies.getAll());
+
+  // Add SAML redirect handling
+  const samlRedirect = await handleSamlRedirect(request);
+  if (samlRedirect) return samlRedirect;
 
   // Handle auth redirects
   const authRedirect = await handleAuthRedirects(request, user);
