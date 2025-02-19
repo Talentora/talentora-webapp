@@ -78,6 +78,9 @@ export default function VideoInterviewSession({
           <div className="flex-1 ">
             <AIInterviewer isReady={transportState === 'ready'} />
           </div>
+          <p>
+            {JSON.stringify(transcript)}
+          </p>
           <div className="flex basis-1/2 w-full overflow-y-auto">
             <TranscriptPanel transcript={transcript} />
           </div>

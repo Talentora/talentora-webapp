@@ -2,10 +2,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { RTVIClientAudio, RTVIClientProvider } from 'realtime-ai-react';
 import {
-  BotLLMTextData,
   LLMHelper,
   Participant,
-  RTVIActionRequestData,
   RTVIClient,
   RTVIEvent,
   RTVIMessage
@@ -16,8 +14,6 @@ import { Tables } from '@/types/types_db';
 import { Job as MergeJob } from '@/types/merge';
 import Splash from '@/components/Bot/Splash';
 import { BOT_READY_TIMEOUT, defaultLLMPrompt } from '@/utils/rtvi.config';
-import { defaultConfig } from '@/utils/rtvi.config';
-import { defaultServices } from '@/utils/rtvi.config';
 
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
