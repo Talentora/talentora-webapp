@@ -11,8 +11,6 @@ import { useSearchParams } from 'next/navigation';
 import { useUser } from '@/hooks/useUser';
 
 
-type Recruiter = Tables<'recruiters'>;
-type Company = Tables<'companies'>;
 
 export default function SettingsPage() {
   const searchParams = useSearchParams();
