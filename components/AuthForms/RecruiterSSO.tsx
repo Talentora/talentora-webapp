@@ -19,7 +19,7 @@ export default function RecruiterSSO() {
     console.log("[SSO] Starting SSO flow for domain:", domain);
 
     try {
-      const redirectTo = `${window.location.origin}/api/auth/callback`;
+      const redirectTo = process.env.NEXT_PUBLIC_SITE_URL;
       console.log("[SSO] Using callback URL:", redirectTo);
       
       const { data, error } = await supabase.auth.signInWithSSO({
