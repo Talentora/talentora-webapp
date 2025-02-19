@@ -45,7 +45,7 @@ export default function Mock({ params }: { params: { id: string } }) {
   const [isVisible, setIsVisible] = useState(false);
   const [scoutProps, setScoutProps] = useState<ScoutProps | null>(null);
 
-  const { applicant } = useApplicant();
+  // const { applicant } = useApplicant();
 
   useEffect(() => {
     const fetchAllData = async () => {
