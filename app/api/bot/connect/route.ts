@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     if (!isAuthenticated) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    if (!process.env.INTERVIEW_BOT_URL) {
+    if (!process.env.NEXT_PUBLIC_INTERVIEW_BOT_URL) {
       return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 
