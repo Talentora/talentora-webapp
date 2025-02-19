@@ -131,8 +131,8 @@ function CompanyMenu() {
             title="About"
             description="Learn about our mission and values"
           />
-          <NavigationLink
-            href="/team"
+          {/* <NavigationLink
+            href="/team" */}
           {/* <NavigationLink 
             href="/team" 
             icon={<Users className="h-5 w-5 mr-2 text-blue-600" />}
@@ -151,8 +151,8 @@ function CompanyMenu() {
           <NavigationLink
             href="/contact"
           /> */}
-          <NavigationLink 
-            href="/contact" 
+          <NavigationLink
+            href="/contact"
             icon={<Mail className="h-5 w-5 mr-2 text-orange-600" />}
             title="Contact"
             description="Get in touch with us"
