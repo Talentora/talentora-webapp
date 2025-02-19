@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-    if (!process.env.INTERVIEW_BOT_URL) {
+    if (!process.env.NEXT_PUBLIC_INTERVIEW_BOT_URL) {
       return NextResponse.json(
         { error: 'Internal Server Error' },
         { status: 500 }
