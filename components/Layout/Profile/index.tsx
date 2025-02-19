@@ -21,7 +21,7 @@ const Profile = ({
   const userMenuRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
   const router = useRouter();
-  const supabase = createClient();
+  // const supabase = createClient();
   const companyData = company;
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -31,9 +31,7 @@ const Profile = ({
     try {
       const response = await fetch('/api/auth/signout', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       });
       console.log('Sign out response:', response);
 
@@ -90,7 +88,7 @@ const Profile = ({
             <div className="h-[1px] bg-border" />
 
             <Button
-              onClick={handleSignOut}
+              onClick={() => handleSignOut}
               variant="ghost"
               size="sm"
               className="w-full justify-start text-[0.875em] text-foreground hover:text-foreground hover:bg-accent"
