@@ -9,6 +9,7 @@ export const unprotectedRoutes = [
   /^\/signin(\/.*)?$/, // Matches '/signin' and any subpath like '/signin/*'
   /^\/signin\/password_signin(\/.*)?$/, // Matches '/signin/password_signin' with query params
   /^\/password_signin(\/.*)?$/,
+  /^\/demo(\/.*)?$/,
   /^\/signup(\/.*)?$/,
   /^\/about$/, // Matches '/about'
   /^\/contact$/, // Matches '/contact'

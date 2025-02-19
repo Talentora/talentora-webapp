@@ -40,7 +40,7 @@ export async function SignOut() {
     cookieStore.delete(name);
   });
 
-  return true;
+  return '/';
 }
 
 
@@ -155,7 +155,7 @@ export async function signInWithPassword(formData: FormData) {
     email,
     password
   });
-  console.log("this in signinwithpassword", data);
+
   if (error) {
     redirectPath = getErrorRedirect(
       '/signin/password_signin',
