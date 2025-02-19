@@ -12,15 +12,14 @@ type Company = Database['public']['Tables']['companies']['Row'];
 import { SignOut } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-
+import { createClient } from '@/utils/supabase/client';
 const Profile = ({ user, role, company }: { user: any, role: string, company: Company | null }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
   const companyData = company;
 
   const handleSignOut = async () => {
