@@ -122,6 +122,5 @@ export async function updateSession(request: NextRequest) {
   supabaseResponse.headers.set('x-debug-request-path', request.nextUrl.pathname);
   supabaseResponse.headers.set('x-debug-message', 'Middleware executed');
 
-  console.log("here");
   return supabaseResponse;
 }
