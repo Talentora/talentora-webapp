@@ -1,19 +1,20 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import { RTVIClientAudio, RTVIClientProvider } from 'realtime-ai-react';
 import {
-  LLMHelper,
-  Participant,
-  RTVIClient,
-  RTVIEvent,
-  RTVIMessage
-} from 'realtime-ai';
+  RTVIClientProvider,
+  RTVIClientAudio,
+  useRTVIClient,
+} from "@pipecat-ai/client-react";
+import { RTVIClient } from "@pipecat-ai/client-js";
 import App from '@/components/Bot/App';
-import { DailyTransport } from '@daily-co/realtime-ai-daily';
+import { DailyTransport } from '@pipecat-ai/daily-transport';
 import { Tables } from '@/types/types_db';
 import { Job as MergeJob } from '@/types/merge';
 import Splash from '@/components/Bot/Splash';
 import { BOT_READY_TIMEOUT, defaultLLMPrompt } from '@/utils/rtvi.config';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+
 
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
@@ -49,15 +50,19 @@ type TranscriptData = {
   role: 'bot' | 'user';
 };
 
-import { useRouter } from 'next/navigation';
+type TransportState = 'disconnected' | 'initialized' | 'ready' | 'connecting' | 'connected' | 'error';
+
+
 
 export default function Bot(botProps: BotProps) {
   const [isUserReady, setIsUserReady] = useState(false);
-  const voiceClientRef = useRef(null);
-  const [transportState, setTransportState] = useState('disconnected');
+  const clientRef = useRef<RTVIClient | null>(null);
+  const [transportState, setTransportState] = useState<TransportState>('disconnected');
   const [showSplash, setShowSplash] = useState(true);
   const [transcript, setTranscript] = useState<TranscriptData[]>([]);
   const router = useRouter();
+  const mountedRef = useRef(false);
+  const { toast } = useToast();
 
   const {
     job,
@@ -76,37 +81,33 @@ export default function Bot(botProps: BotProps) {
   const description = scout.description;
   const prompts = scout.prompt;
   const emotion = scout.emotion;
-  const defaultEmotion = {
-    anger: 0,
-    speed: 0,
-    sadness: 0,
-    surprise: 0,
-    curiosity: 0,
-    positivity: 0
-  };
-  // const emotion = bot.emotion ? bot.emotion as typeof defaultEmotion : defaultEmotion;
 
-  // const callObject = dailyTransport.
+  // Set mounted ref on component mount
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
-  // callObject?.setMeetingSessionData({
-  //   data: {
-  //     jobId: mergeJob.id,
-  //     jobName: mergeJob.name,
-  //     jobDescription: mergeJob.description,
-  //     companyId: company.id,
-  //     companyName: company.name,
-  //     applicationId: application.id,
-  //     assessmentStartTime: new Date().toISOString()
-  //   }
-  // }, 'shallow-merge');
+  // Initialize client only once
+  useEffect(() => {
+    if (!showSplash || clientRef.current || !mountedRef.current) {
+      return;
+    }
 
-  function bootRTVI() {
+    console.log('[INIT] Creating new client instance');
+    
     const dailyTransport = new DailyTransport();
-
-    const rtviClient = new RTVIClient({
-      transport: dailyTransport as any,
+    const pipecatClient = new RTVIClient({
+      transport: dailyTransport,
+      enableMic: true, // Start with mic off until user explicitly enables
+      enableCam: true, // Start with camera off until user explicitly enables
       params: {
         baseUrl: '/api/bot',
+        endpoints: {
+          connect: '/connect',
+        },
         requestData: {
           data: {
             voice: voice,
@@ -121,100 +122,118 @@ export default function Bot(botProps: BotProps) {
             scoutTest: scoutTest,
             demo: demo
           }
-        }
+        },
+        timeout: BOT_READY_TIMEOUT
+      }
+    });
+
+    clientRef.current = pipecatClient;
+    console.log('[INIT] Client created successfully');
+
+    // Set up event listeners
+    const eventHandlers = {
+      transportStateChanged: (state: string) => {
+        console.log('[EVENT] Transport state:', state);
+        setTransportState(state as TransportState);
       },
-      timeout: BOT_READY_TIMEOUT,
-      enableMic: true,
-      enableCam: true
-    });
-
-    console.log(rtviClient);
-
-    const llmHelper = new LLMHelper({});
-    rtviClient.registerHelper('llm', llmHelper);
-
-    voiceClientRef.current = rtviClient as any;
-
-    console.log('[EVENT] Bot created');
-
-    return rtviClient;
-  }
-
-  bootRTVI();
-
-  useEffect(() => {
-    if (!showSplash || voiceClientRef.current) {
-      return;
-    }
-
-    const rtviClient = bootRTVI();
-
-    rtviClient.on(RTVIEvent.TransportStateChanged, (state: string) => {
-      console.log('[EVENT] Transport state:', state);
-      setTransportState(state);
-      if (state === 'ready' && isUserReady) {
-        rtviClient
-          .connect()
-          .catch((error: Error) => {
-            console.error('Failed to connect:', error);
-          })
-          .then((value) => {
-            console.log('Need to confirm recording state here');
-            console.log('Connected:', value);
-          });
+      error: (error: any) => {
+        console.error('[EVENT] Bot error:', error);
+        toast({
+          title: "Error",
+          description: error.message || 'An unknown error occurred',
+          variant: "destructive"
+        });
+      },
+      disconnected: () => {
+        console.log('[EVENT] Bot disconnected');
+        toast({
+          title: "Disconnected",
+          description: "Bot disconnected from session",
+          variant: "destructive"
+        });
       }
-    });
+    };
 
-    rtviClient.on(RTVIEvent.BotStartedSpeaking, () => {
-      console.log('[EVENT] Bot started speaking');
-    });
+    // // Attach event listeners
+    // Object.entries(eventHandlers).forEach(([event, handler]) => {
+    //   pipecatClient.on(event as any, handler);
+    // });
 
-    rtviClient.on(RTVIEvent.BotStoppedSpeaking, () => {
-      console.log('[EVENT] Bot stopped speaking');
-    });
+    // // Request media permissions early
+    // navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+    //   .catch((err) => {
+    //     console.error('[MEDIA] Error accessing media devices:', err);
+    //     toast({
+    //       title: "Media Access Error",
+    //       description: "Please allow camera and microphone access",
+    //       variant: "destructive"
+    //     });
+    //   });
 
-    rtviClient.on(RTVIEvent.BotTranscript, (transcript: any) => {
-      console.log('[EVENT] Bot transcript:', transcript);
-      setTranscript((prev) => [...prev, { ...transcript, role: 'bot' }]);
-    });
+    // // Cleanup function
+    // return () => {
+    //   console.log('[CLEANUP] Cleaning up client...');
+    //   if (clientRef.current) {
+    //     // Remove event listeners
+    //     Object.entries(eventHandlers).forEach(([event, handler]) => {
+    //       clientRef.current?.off(event as any, handler);
+    //     });
+        
+    //     try {
+    //       clientRef.current.disconnect();
+    //     } catch (err) {
+    //       console.warn('[CLEANUP] Error during disconnect:', err);
+    //     }
+    //     clientRef.current = null;
+    //   }
+    // };
+  }, [showSplash, voice, mergeJob, company, jobInterviewConfig, application, scout, companyContext, emotion, enableRecording, scoutTest, demo, toast]);
 
-    rtviClient.on(RTVIEvent.UserTranscript, (transcript: any) => {
-      console.log('[EVENT] User transcript:', transcript);
-      setTranscript((prev) => [...prev, { ...transcript, role: 'user' }]);
-    });
+  // // Handle connection when user is ready
+  // useEffect(() => {
+  //   if (!isUserReady || !clientRef.current || !mountedRef.current) {
+  //     return;
+  //   }
 
-    rtviClient.on(RTVIEvent.MessageError, (message: RTVIMessage) => {
-      console.error('[EVENT] Message error:', message);
-    });
+  //   console.log('[CONNECT] User is ready, attempting to connect...');
+  //   clientRef.current.connect()
+  //     .catch((error: Error) => {
+  //       console.error('[CONNECT] Failed to connect:', error);
+  //       toast({
+  //         title: "Connection Error",
+  //         description: error.message,
+  //         variant: "destructive"
+  //       });
+  //     });
 
-    rtviClient.on(RTVIEvent.Error, (message: RTVIMessage) => {
-      console.error('[EVENT] Bot error:', message);
-    });
-
-    rtviClient.on('disconnected', () => {
-      console.log('[EVENT] Bot disconnected');
-      // router.push('/assessment/conclusion');
-    });
-
-    rtviClient.on(
-      RTVIEvent.ParticipantConnected,
-      async (participant: Participant) => {
-        console.log('[EVENT] Participant connected:', participant);
-        // Greet the user when the bot joins
-      }
-    );
-  }, [botProps, isUserReady, showSplash]);
+  //   return () => {
+  //     if (clientRef.current && mountedRef.current) {
+  //       console.log('[CONNECT] Disconnecting due to user ready change');
+  //       try {
+  //         clientRef.current.disconnect();
+  //       } catch (err) {
+  //         console.warn('[CONNECT] Error during disconnect:', err);
+  //       }
+  //     }
+  //   };
+  // }, [isUserReady, toast]);
 
   if (showSplash) {
     return (
-      <Splash
-        handleReady={() => setShowSplash(false)}
-        company={company}
-        mergeJob={mergeJob}
-        enableRecording={enableRecording}
-        demo={demo}
-        scoutTest={scoutTest}
-      />
+      <>
+ 
+        <Splash
+          handleReady={() => {
+            setShowSplash(false);
+            setIsUserReady(true);
+          }}
+          company={company}
+          mergeJob={mergeJob}
+          enableRecording={enableRecording}
+          demo={demo}
+          scoutTest={scoutTest}
+        />
+      </>
     );
   }
 
@@ -222,15 +241,17 @@ export default function Bot(botProps: BotProps) {
     return null;
   }
 
-  if (!voiceClientRef.current) {
-    console.log('Waiting for voiceClient to be initialized...');
-    return null; // Prevents crashing if it's still null
+  if (!clientRef.current) {
+    console.log('Waiting for client to be initialized...');
+    return null;
   }
 
   return (
-    <RTVIClientProvider client={voiceClientRef.current!}>
-      <App {...botProps} transcript={transcript} />
-      <RTVIClientAudio />
-    </RTVIClientProvider>
+    <>
+      
+        <RTVIClientProvider client={clientRef.current}>
+          <App {...botProps} transcript={transcript} />
+        </RTVIClientProvider>
+    </>
   );
 }
