@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -12,8 +12,6 @@ import {
 import { useToast } from '@/components/Toasts/use-toast';
 import { OnboardingSteps } from './OnboardingSteps';
 import { OnboardingNavigation } from './OnboardingNavigation';
-import { Progress } from '@/components/ui/progress';
-import ProgressDots from '@/components/ui/progress-dots';
 import { updateCompany } from '@/utils/supabase/queries';
 import { useUser } from '@/hooks/useUser';
 
@@ -23,6 +21,21 @@ export default function OnboardingPage() {
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(
     new Set([1, 3, 4, 5, 7, 8])
   ); // Initialize step 1 and 4 as completed
+<<<<<<< HEAD
+=======
+  const { user, recruiter } = useUser();
+
+  console.log(recruiter.data)
+  if (!recruiter.data || !('company_id' in recruiter.data) || !recruiter.data.company_id) {
+    return <p>Error: Company ID is undefined. Please contact support.</p>;
+  }
+  const companyId = recruiter.data.company_id;
+  
+  const nextStep = async () => {
+    const newStep = Math.min(step + 1, totalSteps);
+    setStep(newStep);
+  };
+>>>>>>> origin/main
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, totalSteps));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
@@ -37,54 +50,17 @@ export default function OnboardingPage() {
       }
       return updated;
     });
+
+    // If completing final step, update company
+    if (stepNumber === totalSteps && isComplete) {
+      try {
+        await updateCompany(companyId, { configured: true });
+      } catch (error) {
+        console.error('Failed to update company configuration:', error);
+      }
+    }
   };
 
-  useEffect(() => {
-    // Optionally, you can add logic here to persist completedSteps to localStorage or a backend
-  }, [completedSteps]);
-  // const totalSteps = 7;
-  // const [step, setStep] = useState(1);
-  // const [completedSteps, setCompletedSteps] = useState<Set<number>>(
-  //   new Set([1, 3, 4, 5, 7])
-  // ); // Initialize step 1 and 4 as completed
-  // const { company } = useUser();
-  // const companyId = company?.id;
-  // if (!companyId) {
-  //   throw new Error('Company ID is undefined');
-  // }
-  // const { toast } = useToast();
-  // const nextStep = async () => {
-  //   const newStep = Math.min(step + 1, totalSteps);
-  //   setStep(newStep);
-
-  // };
-
-  // const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
-
-  // const handleStepCompletion = async (stepNumber: number, isComplete: boolean) => {
-  //   setCompletedSteps((prev) => {
-  //     const updated = new Set(prev);
-  //     if (isComplete) {
-  //       updated.add(stepNumber);
-  //     } else {
-  //       updated.delete(stepNumber);
-  //     }
-  //     return updated;
-  //   });
-
-  //   // If completing final step, update company
-  //   if (stepNumber === totalSteps && isComplete) {
-  //     try {
-  //       await updateCompany(companyId, { configured: true });
-  //     } catch (error) {
-  //       console.error('Failed to update company configuration:', error);
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   // Optionally, you can add logic here to persist completedSteps to localStorage or a backend
-  // }, [completedSteps]);
 
   return (
     <div className="container mx-auto py-10">

@@ -1,6 +1,7 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { type Database } from '@/types/types_db';
@@ -11,60 +12,74 @@ type Company = Database['public']['Tables']['companies']['Row'];
 type Applicant = Database['public']['Tables']['applicants']['Row'];
 
 interface UseUserReturn {
-  user: User | null;
-  recruiter: Recruiter | Applicant | null;
-  company: Company | null;
-  loading: boolean;
-  error: Error | null;
+  user: {
+    data: User | null;
+    loading: boolean;
+    error: Error | null;
+  };
+  recruiter: {
+    data: Recruiter | Applicant | null;
+    loading: boolean;
+    error: Error | null;
+  };
+  company: {
+    data: Company | null;
+    loading: boolean;
+    error: Error | null;
+  };
+  isRecruiter: boolean;
 }
 
 export function useUser(): UseUserReturn {
   const supabase = createClient();
+  const queryClient = useQueryClient();
 
-  // Fetch authenticated user data
+  // Fetch authenticated user data using React Query with proper error handling
   const {
     data: userData,
     error: userError,
     isLoading: userLoading
-  } = useQuery({
+  } = useQuery<User | null, Error>({
     queryKey: ['user'],
     queryFn: async () => {
-      const {
-        data: { user },
-        error
-      } = await supabase.auth.getUser();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        return null;
+      }
+
+      if (!session) {
+        console.log('No active session');
+        return null;
+      }
+
+      const { data: { user }, error } = await supabase.auth.getUser();
       if (error) throw error;
       return user;
-    }
+    },
+    retry: false, // Don't retry on auth errors
+    staleTime: 1000 * 60 * 5 // Cache for 5 minutes
   });
 
   const userId = userData?.id ?? '';
+  console.log("userdata in useuser", userData);
+  const role = userData?.identities?.[0].identity_data?.role == "applicant" ? "applicant" : "recruiter";  
 
-  // Query to get the user's role (as 'recruiter' or 'applicant')
-  const {
-    data: role,
-    isLoading: roleLoading,
-    error: roleError
-  } = useQuery({
-    queryKey: ['userRole', userId],
-    enabled: !!userId,
-    queryFn: async () => await getUserRole(supabase, userId)
-  });
-
-  // Derive the boolean from the role
   const isRecruiter = role === 'recruiter';
 
-  // Fetch recruiter data or applicant data based on the user's role
+  // Fetch recruiter or applicant data based on the user's role using React Query
   const {
     data: recruiterData,
     error: recruiterError,
     isLoading: recruiterLoading
-  } = useQuery({
+  } = useQuery<Recruiter | Applicant | null, Error>({
     queryKey: [isRecruiter ? 'recruiter' : 'applicants', userData?.id],
-    enabled: !!userData?.id && !roleLoading, // wait until the role is known
+    enabled: !!userData?.id, // wait until role is determined
     queryFn: async () => {
       if (!userData?.id) return null;
       if (isRecruiter) {
+        console.log("going to recruiters");
         const { data, error } = await supabase
           .from('recruiters')
           .select('*')
@@ -73,6 +88,7 @@ export function useUser(): UseUserReturn {
         if (error) throw error;
         return data;
       } else {
+        console.log("going to applicants");
         const { data, error } = await supabase
           .from('applicants')
           .select('*')
@@ -94,7 +110,7 @@ export function useUser(): UseUserReturn {
     data: companyData,
     error: companyError,
     isLoading: companyLoading
-  } = useQuery({
+  } = useQuery<Company | null, Error>({
     queryKey: ['company', recruiterRecord?.company_id],
     enabled: !!recruiterRecord?.company_id,
     queryFn: async () => {
@@ -109,39 +125,39 @@ export function useUser(): UseUserReturn {
     }
   });
 
-  // Optional: Set up an auth state listener
-  useQuery({
-    queryKey: ['authListener'],
-    queryFn: async () => {
-      const {
-        data: { subscription }
-      } = supabase.auth.onAuthStateChange(async (_event, _session) => {
-        // The other queries will automatically re-fetch when needed
-      });
-      return () => subscription.unsubscribe();
+
+
+  return {
+    user: {
+      data: userData || null,
+      loading: userLoading,
+      error:
+        userError instanceof Error
+          ? userError
+          : userError
+          ? new Error('Failed to fetch user data')
+          : null
     },
-    staleTime: Infinity
-  });
-
-  // Combine errors and loading states
-  const error = userError || roleError || recruiterError || companyError || null;
-  const loading = userLoading || roleLoading || recruiterLoading || companyLoading;
-
-  if (recruiterRecord == null) {
-    return {
-      user: userData || null,
-      recruiter: null,
-      company: null,
-      loading,
-      error: error instanceof Error ? error : error ? new Error('Failed to fetch data') : null
-    };
-  } else {
-    return { 
-      user: userData || null,
-      recruiter: recruiterData || null,
-      company: companyData || null,
-      loading,
-      error: error instanceof Error ? error : error ? new Error('Failed to fetch data') : null
-    };
-  }
+    recruiter: {
+      data: recruiterData || null,
+      loading: (!!userId && recruiterLoading),
+      error:
+        (recruiterError) instanceof Error
+          ? recruiterError
+          : recruiterError
+          ? new Error('Failed to fetch recruiter data')
+          : null
+    },
+    company: {
+      data: companyData || null,
+      loading: isRecruiter && !!recruiterRecord?.company_id && companyLoading,
+      error:
+        companyError instanceof Error
+          ? companyError
+          : companyError
+          ? new Error('Failed to fetch company data')
+          : null
+    },
+    isRecruiter
+  };
 }

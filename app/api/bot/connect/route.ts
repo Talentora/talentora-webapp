@@ -16,8 +16,22 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+    if (!process.env.NEXT_PUBLIC_INTERVIEW_BOT_URL) {
+      return NextResponse.json(
+        { error: 'Internal Server Error' },
+        { status: 500 }
+      );
+    }
+    if (!process.env.NEXT_PUBLIC_INTERVIEW_BOT_URL) {
+      return NextResponse.json(
+        { error: 'Internal Server Error' },
+        { status: 500 }
+      );
+    }
 
     const { data } = await request.json();
+
+    // console.log("received payload data", data)
 
     const voiceId = data.voice.id;
     const mergeJob = data.job;
@@ -26,30 +40,24 @@ export async function POST(request: NextRequest) {
     const application = data.application;
     const bot = data.bot;
     const companyContext = data.companyContext;
-    const enableRecording = data.enableRecording;
-    const mock = data.mock;
-    const scoutTest = data.scoutTest;
-    const demo = data.demo;
+    const questions = jobInterviewConfig.interview_questions
+      .map((obj: { question: string }) => obj.question)
+      .join(',');
 
     const payload = {
       voice_id: voiceId,
       interview_config: {
         bot_name: bot.name,
         company_name: company.name,
-        job_title: mergeJob ? mergeJob.name : '',
-        job_description: mergeJob ? mergeJob.description : '',
+        job_title: mergeJob.name,
+        job_description: mergeJob.description,
         company_context: `${companyContext.description} ${companyContext.culture} ${companyContext.goals} ${companyContext.history}`,
-        interview_questions: [
-          JSON.stringify(jobInterviewConfig.interview_questions)
-        ],
-        enable_recording: enableRecording,
-        mock: mock,
-        bot_test: scoutTest,
-        demo: demo
+        interview_questions: [questions]
       }
     };
 
-    const baseUrl = `${process.env.INTERVIEW_BOT_URL}/api/rooms/`;
+    const baseUrl = `${process.env.NEXT_PUBLIC_INTERVIEW_BOT_URL}/api/rooms/`;
+    // const baseUrl = "http://localhost:8000/api/rooms"
 
     const response = await fetch(baseUrl, {
       method: 'POST',
@@ -66,14 +74,11 @@ export async function POST(request: NextRequest) {
     const roomUrl = botData.room_url;
     const roomName = roomUrl.split('/').pop();
 
-    if (enableRecording) {
-      const aiSummaryResponse = await createAISummaryRecord(
-        roomName,
-        application.id
-      );
-      console.log('AI summary response:', aiSummaryResponse);
-      // await updateApplicationWithAISummaryId(application.id, aiSummaryResponse.id);
-    }
+    const aiSummaryResponse = await createAISummaryRecord(
+      roomName,
+      application.id
+    );
+    // await updateApplicationWithAISummaryId(application.id, aiSummaryResponse.id);
 
     return NextResponse.json(botData);
   } catch (error) {

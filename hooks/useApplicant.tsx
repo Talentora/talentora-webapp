@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/client';
 import { useUser } from './useUser';
 import { getAccountTokenFromApplication } from '@/utils/supabase/queries';
 import { Application as MergeApplication, Job as MergeJob } from '@/types/merge';
+import { getURL } from '@/utils/helpers';
 
 // Hook to fetch applicant data
 const useApplicantData = (userId: string | undefined): {
@@ -78,7 +79,7 @@ const useApplications = (applicantId: string | undefined) => {
 // Helper function to fetch job details
 export const fetchJobDetails = async (jobId: string, token: string): Promise<MergeJob | null> => {
   try {
-    const response = await fetch(`/api/jobs/${jobId}`, {
+    const response = await fetch(getURL(`api/jobs/${jobId}`), {
       headers: { 'X-Account-Token': token }
     });
     if (response.ok) {
@@ -93,7 +94,7 @@ export const fetchJobDetails = async (jobId: string, token: string): Promise<Mer
 
 export const fetchApplicationData = async (applicationId: string, token: string): Promise<MergeApplication | null> => {
   try {
-    const response = await fetch(`/api/applications/${applicationId}`, {
+    const response = await fetch(getURL(`api/applications/${applicationId}`), {
       headers: { 'X-Account-Token': token }
     });
     if (response.ok) {
@@ -120,7 +121,7 @@ export const useApplicant = () => {
   const [accountTokens, setAccountTokens] = useState<{[key: string]: string | null}>({});
   const [enrichedApplications, setEnrichedApplications] = useState<EnrichedApplication[] | null>(null);
   
-  const { applicant, error: applicantError } = useApplicantData(user?.id);
+  const { applicant, error: applicantError } = useApplicantData(user.data?.id);
   const { applications, error: applicationsError } = useApplications(applicant?.id);
 
   useEffect(() => {
@@ -174,10 +175,9 @@ export const useApplicant = () => {
   }, [applications]);
 
   return {
-    applications,
-    isLoading,
-    error: applicantError || applicationsError,
-    applicant,
-    enrichedApplications
+    isLoading: isLoading || user.loading,
+    accountTokens,
+    enrichedApplications,
+    error: applicantError || applicationsError
   };
 };

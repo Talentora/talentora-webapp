@@ -11,6 +11,14 @@ import {
   BarChart3,
   UserPlus
 } from 'lucide-react';
+import {
+  MessageSquareIcon,
+  UserIcon,
+  UsersIcon,
+  Loader2,
+  BarChart3,
+  UserPlus
+} from 'lucide-react';
 import { Job, ApplicantCandidate } from '@/types/merge';
 import ActiveJobsCard from './ActiveJobsCard';
 import RecentApplicantsCard from './RecentApplicantsCard';

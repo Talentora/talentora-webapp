@@ -7,16 +7,37 @@ import { getUserRole } from '@/utils/supabase/queries';
 export async function GET() {
   try {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    
+    // Add debug logging for auth
+    const authResponse = await supabase.auth.getUser();
+    console.log('Auth Response:', authResponse);
 
-    if (!user) {
+    
+
+    if (!authResponse.data || !authResponse.data.user) {
+      console.error('No user found in auth response:', authResponse);
       return NextResponse.json(
-        { error: 'Unauthorized - User not found' },
+        { error: 'Unauthorized - User not authenticated' },
+        { status: 4012 }
+      );
+    }
+
+    const user = authResponse.data.user;
+    console.log('User found:', user.id);
+
+    // Verify the session is valid
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
+      console.error('Session error:', sessionError);
+      return NextResponse.json(
+        { error: 'Invalid or expired session' },
         { status: 401 }
       );
     }
 
     const role = await getUserRole(supabase, user.id);
+    console.log('User role:', role);
+
     let accountToken = null;
     const baseURL = `https://api.merge.dev/api/ats/v1`;
     const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
@@ -58,7 +79,7 @@ export async function GET() {
     }
 
     const jobsData = await jobsResponse.json();
-    const jobs = jobsData.results;
+    const jobs = Array.isArray(jobsData.results) ? jobsData.results : [];
 
     console.log('\n=== API Response Structure ===');
     console.log('Sample Job Structure:', JSON.stringify(jobs[0], null, 2));
@@ -85,10 +106,11 @@ export async function GET() {
     const allOffices = officesResponse.ok ? (await officesResponse.json()).results : [];
 
     console.log('\n=== Department Data ===');
-    console.log('All departments:', JSON.stringify(allDepartments.map((d: any) => ({ id: d.id, name: d.name })), null, 2));
+    // console.log('All departments:', JSON.stringify(allDepartments.map((d: any) => ({ id: d.id, name: d.name })), null, 2));
 
     // Enrich jobs with their specific departments and offices
     const enrichedJobs = jobs.map((job: any) => {
+
       console.log(`\n=== Processing Job: ${job.name} ===`);
       console.log('Job departments array:', JSON.stringify(job.departments, null, 2));
       
@@ -102,11 +124,13 @@ export async function GET() {
         offices: jobOffices
       };
 
-      console.log('Enriched job departments:', JSON.stringify(enrichedJob.departments.map((d: any) => ({ id: d.id, name: d.name })), null, 2));
+      // console.log('Enriched job departments:', JSON.stringify(enrichedJob.departments.map((d: any) => ({ id: d.id, name: d.name })), null, 2));
       return enrichedJob;
     });
 
-    return NextResponse.json(enrichedJobs, { status: 200 });
+    return NextResponse.json(enrichedJobs, {
+      status: 200,
+    });
   } catch (error) {
     console.error('Error in /api/jobs:', error);
     return NextResponse.json(

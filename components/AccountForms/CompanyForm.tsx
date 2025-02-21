@@ -20,13 +20,13 @@ import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton componen
 const CompanyForm = () => {
   const [showApiKey, setShowApiKey] = useState(false);
 
-  const { company, loading }: { company: Company | null; loading: boolean } = useUser();
+  const { data, loading }: { data: Company | null; loading: boolean } = useUser().company;
 
 
 
   if (loading) return <CompanyFormSkeleton />; // Display skeleton while loading
 
-  if (!company) return null;
+  if (!data) return null;
   else {
     return (
     <Card className="my-8 text-card-foreground border-none">
@@ -44,13 +44,13 @@ const CompanyForm = () => {
               alt={company.name}
             /> */}
             <AvatarFallback>
-              {company?.name?.slice(0, 2).toUpperCase() || 'CO'}
+              {data?.name?.slice(0, 2).toUpperCase() || 'CO'}
             </AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="text-2xl font-bold ">{company.name}</h2>
+            <h2 className="text-2xl font-bold ">{data.name}</h2>
             <Badge variant="outline" className="mt-1 bg-primary text-white">
-              {company.industry}
+              {data.industry}
             </Badge>
           </div>
         </div>
@@ -60,14 +60,14 @@ const CompanyForm = () => {
             <h3 className="font-semibold text-sm text-muted-foreground">
               Location
             </h3>
-            <p className="mt-1">{company.location || 'N/A'}</p>
+            <p className="mt-1">{data.location || 'N/A'}</p>
           </div>
           <div className="col-span-2">
             <h3 className="font-semibold text-sm text-muted-foreground">
               Description
             </h3>
             <p className="mt-1">
-              {company.description || 'No description available.'}
+              {data.description || 'No description available.'}
             </p>
           </div>
         </div>
@@ -84,7 +84,7 @@ const CompanyForm = () => {
               {showApiKey ? (
                 <>
                   <span>
-                    {company.merge_account_token || 'No API key available'}
+                    {data.merge_account_token || 'No API key available'}
                   </span>
                   {/* <EyeOffIcon className="w-4 h-4 inline-block ml-2" /> */}
                 </>

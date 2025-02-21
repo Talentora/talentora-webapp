@@ -14,23 +14,35 @@ function isValidEmail(email: string) {
 export async function redirectToPath(path: string) {
   return redirect(path);
 }
+export async function SignOut() {
 
-export async function SignOut(formData: FormData) {
-  const pathName = String(formData.get('pathName')).trim();
-
+  const cookieStore = cookies();
   const supabase = createClient();
-  const { error } = await supabase.auth.signOut();
+
+  const { error } = await supabase.auth.signOut({
+    scope: 'global'
+  });
 
   if (error) {
-    return getErrorRedirect(
-      pathName,
-      'Hmm... Something went wrong.',
-      'You could not be signed out.'
-    );
+    console.error('Sign out error:', error);
+    throw error;
   }
+
+  // Clear all auth-related cookies
+  const cookiesToClear = [
+    'sb-access-token',
+    'sb-refresh-token',
+    'sb-auth-token',
+    'supabase-auth-token',
+  ];
+
+  cookiesToClear.forEach(name => {
+    cookieStore.delete(name);
+  });
 
   return '/';
 }
+
 
 export async function signInWithEmail(formData: FormData) {
   const cookieStore = cookies();

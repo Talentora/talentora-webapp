@@ -13,15 +13,16 @@ import { updateName } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/client';
 import { getUser, getRecruiter } from '@/utils/supabase/queries';
 import { useUser } from '@/hooks/useUser';
+import { User } from '@supabase/supabase-js';
+
 
 export default function NameForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user } = useUser();
-  const userName = user?.user_metadata.full_name;
+  const { data } = useUser().user;
+  const userName = data?.user_metadata?.full_name;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true);
@@ -49,8 +50,8 @@ export default function NameForm() {
             type="text"
             name="fullName"
             className="w-full p-3 rounded-md bg-input text-input-foreground"
-            defaultValue={user?.user_metadata.full_name}
-            placeholder={user?.user_metadata.full_name}
+            defaultValue={userName}
+            placeholder={userName}
             maxLength={64}
           />
         </form>

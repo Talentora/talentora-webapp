@@ -17,25 +17,27 @@ export default function PasswordSignIn({
   allowEmail,
   redirectMethod,
   role
-  // userType
 }: PasswordSignInProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setIsSubmitting(true);
-    const formData = new FormData(e.currentTarget);
-    formData.append('role', role);
-    e.currentTarget = e.currentTarget.cloneNode(true) as HTMLFormElement;
-    e.currentTarget.appendChild(
-      Object.assign(document.createElement('input'), {
-        type: 'hidden',
-        name: 'role',
-        value: role
-      })
-    );
-    await handleRequest(e, signInWithPassword, router);
-    setIsSubmitting(false);
+    
+    try {
+      const formData = new FormData(e.currentTarget);
+      formData.append('role', role);
+      
+      await handleRequest(e, signInWithPassword, router);
+      
+      // Force a hard refresh after successful sign-in
+      window.location.href = '/dashboard';
+    } catch (error) {
+      console.error('Sign in error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -44,10 +46,10 @@ export default function PasswordSignIn({
         Sign in to your account
       </h1>
       <form
-        noValidate={true}
-        className="mb-4 grid gap-2"
-        onSubmit={(e) => handleSubmit(e)}
-      >
+          noValidate={true}
+          className="mb-4 grid gap-2"
+          onSubmit={handleSubmit}      >
+        <input type="hidden" name="role" value={role || 'applicant'} />
         <div className="grid gap-1">
           <label htmlFor="email" className="text-muted-foreground">
             Email
@@ -78,9 +80,9 @@ export default function PasswordSignIn({
           variant="default"
           type="submit"
           className="mt-1 w-full"
-          // loading={isSubmitting}
+          disabled={isSubmitting}
         >
-          Sign in
+          {isSubmitting ? 'Signing in...' : 'Sign in'}
         </Button>
       </form>
       <p>

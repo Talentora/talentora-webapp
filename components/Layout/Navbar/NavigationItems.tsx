@@ -43,6 +43,19 @@ export function NavigationItems({
             </Link>
           </NavigationMenuItem>
         )}
+        {!isUser && (
+          <NavigationMenuItem>
+            <Link
+              href="/demo"
+              className={cn(
+                navigationMenuTriggerStyle(),
+                'bg-transparent text-purple-500'
+              )}
+            >
+              Demo Interview
+            </Link>
+          </NavigationMenuItem>
+        )}
         <SolutionsMenu />
         <ResourcesMenu />
         <CompanyMenu />

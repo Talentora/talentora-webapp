@@ -26,8 +26,8 @@ export default function Navbar({ visible }: { visible: boolean }) {
   return (
     <nav
       className={cn(
-        "sticky top-0 z-40 transition-all duration-150 h-16 md:h-20 bg-background/80 backdrop-blur-sm border-b border-border",
-        "w-full relative"
+        'sticky top-0 z-40 transition-all duration-150 h-16 md:h-20 bg-background/80 backdrop-blur-sm border-b border-border',
+        'w-full relative'
       )}
       style={{ opacity }}
     >

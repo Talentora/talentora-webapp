@@ -1,10 +1,3 @@
-import { Metadata } from 'next';
-import Footer from '@/components/Layout/Footer';
-import Navbar from '@/components/Layout/Navbar';
-import Sidebar from '@/components/Layout/Sidebar';
-import { Toaster } from '@/components/Toasts/toaster';
-import { PropsWithChildren, Suspense } from 'react';
-import { getURL } from '@/utils/helpers';
 import '@/styles/main.css';
 import Loading from '@/components/Layout/Loading';
 import NextTopLoader from 'nextjs-toploader'; // Import NextTopLoader
@@ -20,8 +13,6 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import PasswordSignIn from '@/components/AuthForms/PasswordSignIn';
 import EmailSignIn from '@/components/AuthForms/EmailSignIn';
-import Separator from '@/components/AuthForms/Separator';
-import OauthSignIn from '@/components/AuthForms/OauthSignIn';
 import ForgotPassword from '@/components/AuthForms/ForgotPassword';
 import UpdatePassword from '@/components/AuthForms/UpdatePassword';
 import SignUp from '@/components/AuthForms/Signup';

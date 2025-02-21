@@ -20,10 +20,13 @@ import { useUser } from '@/hooks/useUser';
 export const CompanyInfoStep: React.FC<{
   onCompletion: (isComplete: boolean) => void;
 }> = ({ onCompletion }) => {
-  const { recruiter, loading } = useUser();
-  const hasCompany = recruiter && 'company_id' in recruiter && recruiter.company_id ? true : false;
-  const { user } = useUser();
-  const { company } = useUser();
+  const { recruiter, user, company } = useUser();
+
+  const recruiterData = recruiter.data;
+  const userData = user.data;
+  const companyData = company.data;
+
+  const hasCompany = recruiterData && 'company_id' in recruiterData && recruiterData.company_id ? true : false;
 
   useEffect(() => {
     onCompletion(hasCompany);
@@ -51,47 +54,31 @@ export const CompanyInfoStep: React.FC<{
       subscription_id: null,
       website_url: null,
       merge_account_token: null,
-      billing_address: null, // Added to match expected type
-      payment_method: null // Added to match expected type
-      // user: user
+      billing_address: null,
+      payment_method: null
     };
 
     try {
-      let savedCompany;
-      if (hasCompany && company?.id && user) {
-        console.log('updating company', company?.id);
-        console.log('companyData', companyData);
-        savedCompany = await updateCompany(company?.id, companyData);
-      } else {
-        savedCompany = await createCompany(companyData, user?.id || '');
+      if (!user.data?.id) {
+        throw new Error('User not found');
       }
 
-      if (!savedCompany) {
-        throw new Error('Failed to save company information');
-      }
+      await createCompany(companyData, user.data.id);
 
       toast({
-        title: 'Success!',
-        description: `Company information ${hasCompany ? 'updated' : 'saved'} successfully`,
-        duration: 5000
+        title: 'Success',
+        description: 'Company information saved successfully.',
       });
-      onCompletion(true); // Mark step as complete and navigate to next step
-      // Optionally reset form fields or redirect
     } catch (error) {
-      console.error('Error:', error);
       toast({
         variant: 'destructive',
         title: 'Error',
-        description:
-          error instanceof Error
-            ? error.message
-            : 'Failed to save company information. Please try again.',
-        action: <ToastAction altText="Try again">Try again</ToastAction>
+        description: error instanceof Error ? error.message : 'Failed to save company information',
       });
     }
   };
 
-  if (loading) {
+  if (recruiter.loading) {
     return <Loader2 />; // Loading icon
   }
 
@@ -113,7 +100,7 @@ export const CompanyInfoStep: React.FC<{
           id="company"
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
-          placeholder={company?.name || 'Enter your company name'}
+          placeholder={companyData?.name || 'Enter your company name'}
           required
         />
       </div>
@@ -125,7 +112,7 @@ export const CompanyInfoStep: React.FC<{
           value={headquarters}
           onChange={(e) => setHeadquarters(e.target.value)}
           placeholder={
-            company?.location || 'Enter your company headquarters location'
+            companyData?.location || 'Enter your company headquarters location'
           }
           required
         />
@@ -137,7 +124,7 @@ export const CompanyInfoStep: React.FC<{
           id="industry"
           value={industry}
           onChange={(e) => setIndustry(e.target.value)}
-          placeholder={company?.industry || 'Enter your company industry'}
+          placeholder={companyData?.industry || 'Enter your company industry'}
           required
         />
       </div>

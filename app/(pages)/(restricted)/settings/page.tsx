@@ -2,26 +2,23 @@
 
 import { Tables } from '@/types/types_db';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import CustomerPortalForm from '@/components/AccountForms/CustomerPortalForm';
-import EmailForm from '@/components/AccountForms/EmailForm';
 import NameForm from '@/components/AccountForms/NameForm';
 import CompanyForm from '@/components/AccountForms/CompanyForm';
 import Link from 'next/link';
-import InvitePage from '@/components/Invite';
 import IntegrationStatus from '@/components/AccountForms/IntegrationStatus';
 import { useSearchParams } from 'next/navigation';
+import { useUser } from '@/hooks/useUser';
 
 
-
-type Recruiter = Tables<'recruiters'>;
-type Company = Tables<'companies'>;
 
 export default function SettingsPage() {
   const searchParams = useSearchParams();
   const tab = searchParams.get('tab') || 'account';
+
+  const { user } = useUser();
+  const isRecruiter = user?.data?.user_metadata?.role === "applicant" ? false : true;
+
 
   const tabs = [
     {
@@ -29,39 +26,37 @@ export default function SettingsPage() {
       value: 'account',
       component: (
         <div className="flex flex-row gap-4 w-1/2"> 
-      
-            <NameForm />
-              {/* <EmailForm /> */}
+          <NameForm />
+          {/* <EmailForm /> */}
         </div>
       )
     },
-    {
-      label: 'Company', 
-      value: 'company',
-      component: (
-        <div>
-            <CompanyForm />
-            <div className="mt-4">
-              <h2 className="text-lg font-semibold text-foreground mb-2">Company Onboarding</h2>
-              <Link href="/settings/onboarding">
-                <Button size="sm">Continue Onboarding</Button>
-              </Link>
-            </div>
-          </div>
-      )
-    },
-    // {
-    //   label: 'Billing',
-    //   value: 'billing',
-    //   component: <CustomerPortalForm />
-    // },
+    ...(isRecruiter
+      ? [
+          {
+            label: 'Company', 
+            value: 'company',
+            component: (
+              <div>
+                <CompanyForm />
+                <div className="mt-4">
+                  <h2 className="text-lg font-semibold text-foreground mb-2">Company Onboarding</h2>
+                  <Link href="/settings/onboarding">
+                    <Button size="sm">Continue Onboarding</Button>
+                  </Link>
+                </div>
+              </div>
+            )
+          },
+          {
+            label: 'Integration Status',
+            value: 'integrations',
+            component: <IntegrationStatus />
+          }
+        ]
+      : []),
+  ];
   
-    {
-      label: 'Integration Status',
-      value: 'integrations',
-      component: <IntegrationStatus />
-    }
-  ]
 
   return (
     <section className="p-6">

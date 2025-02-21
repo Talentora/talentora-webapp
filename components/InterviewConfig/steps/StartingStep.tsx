@@ -12,7 +12,8 @@ export const StartingStep: React.FC<{
   onCompletion: (isComplete: boolean) => void;
   job: Job;
 }> = ({ onCompletion, job }) => {
-  const { recruiter } = useUser() as { recruiter: Recruiter };
+  const { recruiter } = useUser();
+  const recruiterData = recruiter.data as Recruiter;
 
   const mergeJobId = job?.id;
 
@@ -39,12 +40,12 @@ export const StartingStep: React.FC<{
           setState({ loading: false, error: 'Error fetching job, proceeding to create a new job.' });
         }
 
-        if (!existingJob && recruiter?.company_id) {
+        if (!existingJob && recruiterData?.company_id) {
           const { data: newJob, error: jobError } = await supabase
             .from('jobs')
             .insert({
               merge_id: mergeJobId,
-              company_id: recruiter.company_id,
+              company_id: recruiterData.company_id,
             })
             .select()
             .single();
@@ -66,9 +67,9 @@ export const StartingStep: React.FC<{
     };
 
     checkAndCreateJob();
-  }, [recruiter, job, mergeJobId, onCompletion, state.loading]);
+  }, [recruiterData, job, mergeJobId, onCompletion, state.loading]);
 
-  if (state.loading) {
+  if (state.loading || recruiter.loading) {
     return (
       <div className="flex items-center justify-center">
         <Loader2 className="h-6 w-6 animate-spin" />
