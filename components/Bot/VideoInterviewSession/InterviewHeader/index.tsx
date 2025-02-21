@@ -21,7 +21,7 @@ export default function InterviewHeader(props: interviewHeaderProps) {
   const { job, company, demo } = props;
   if (!demo) {
     return (
-      <header className="rounded-lg border-2 bg-white p-4 shadow flex items-center justify-between max-w-7xl mx-auto">
+      <header className="rounded-lg border-2 bg-background p-4 shadow flex items-center justify-between max-w-7xl mx-auto">
         <h1 className="text-2xl font-bold text-gray-800">
           AI Candidate Assessment
         </h1>
@@ -51,7 +51,7 @@ export default function InterviewHeader(props: interviewHeaderProps) {
                 <DialogHeader>
                   <DialogTitle>Job Description</DialogTitle>
                 </DialogHeader>
-                <div className="mt-4 prose prose-sm">
+                <div className="prose prose-sm">
                   <div
                     dangerouslySetInnerHTML={{
                       __html: job?.description || 'No description available'

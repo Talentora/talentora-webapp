@@ -12,6 +12,8 @@ import ControlPanel from './ControlPanel';
 import MediaDevicePopup from './MediaDevicePopup';
 import { Job as MergeJob } from '@/types/merge';
 import { Tables } from '@/types/types_db';
+import { TranscriptData } from '@pipecat-ai/client-js';
+import { InterviewTranscript } from '@/types/transcript';
 
 type Company = Tables<'companies'>;
 
@@ -20,14 +22,8 @@ interface VideoInterviewSessionProps {
   startAudioOff?: boolean;
   job: MergeJob | null;
   company: Company;
-  transcript: {
-    text: string;
-    final: boolean;
-    timestamp: string;
-    user_id: string;
-    role: 'bot' | 'user';
-  }[];
   demo: boolean;
+  transcript: TranscriptData[];
 }
 
 export default function VideoInterviewSession({
@@ -35,8 +31,8 @@ export default function VideoInterviewSession({
   startAudioOff = false,
   job,
   company,
-  transcript,
-  demo
+  demo,
+  transcript
 }: VideoInterviewSessionProps) {
   const client = useRTVIClient()!;
   const transportState = useRTVIClientTransportState();
@@ -89,7 +85,7 @@ export default function VideoInterviewSession({
             <AIInterviewer isReady={transportState === 'ready'} />
           </div>
           <div className="flex basis-1/2 w-full overflow-y-auto">
-            <TranscriptPanel transcripts={transcript} />
+            <TranscriptPanel transcripts={transcript as InterviewTranscript} />
           </div>
         </div>
         {/* Main Content */}

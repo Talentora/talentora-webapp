@@ -1,19 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { TranscriptData } from '@pipecat-ai/client-js';
 import { useRTVIClient } from '@pipecat-ai/client-react';
-
-interface TranscriptEntry {
-  text: string;
-  final: boolean;
-  timestamp: string;
-  user_id: string;
-  role: 'bot' | 'user';
-}
+import { InterviewTranscript } from '@/types/transcript';
 
 interface TranscriptPanelProps {
-  transcripts: TranscriptEntry[];
+  transcripts: InterviewTranscript;
 }
 
 export default function TranscriptPanel({ transcripts }: TranscriptPanelProps) {
@@ -50,20 +42,22 @@ export default function TranscriptPanel({ transcripts }: TranscriptPanelProps) {
                 return null;
               }
               
+              const isBot = entry.role === 'bot';
+              
               return (
                 <div key={`${entry.timestamp}-${index}`} className="flex items-start space-x-2">
                   <Avatar>
                     <AvatarImage
-                      src={entry.role === 'bot' ? '/placeholder-avatar.jpg' : '/placeholder.svg'}
-                      alt={entry.role === 'bot' ? 'AI' : 'You'}
+                      src={isBot ? '/placeholder-avatar.jpg' : '/placeholder.svg'}
+                      alt={isBot ? 'AI' : 'You'}
                     />
                     <AvatarFallback>
-                      {entry.role === 'bot' ? 'AI' : 'You'}
+                      {isBot ? 'AI' : 'You'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="rounded-lg bg-gray-100 p-2">
                     <p className="text-sm font-semibold text-gray-800">
-                      {entry.role === 'bot' ? 'AI' : 'You'}
+                      {isBot ? 'AI' : 'You'}
                     </p>
                     <p className="text-sm text-gray-600">{entry.text}</p>
                   </div>

@@ -2,25 +2,21 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import {
-  RTVIClientProvider,
-  RTVIClientAudio,
   useRTVIClient,
   useRTVIClientTransportState,
 } from "@pipecat-ai/client-react";
-import { RTVIClient, RTVIEvent, RTVIMessage, RTVIError } from "@pipecat-ai/client-js";
+import { RTVIEvent, RTVIMessage, RTVIError } from "@pipecat-ai/client-js";
 import { useRouter } from 'next/navigation';
-import { Ear, Loader2 } from 'lucide-react';
 import { Alert } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tables } from '@/types/types_db';
 import { Job as MergeJob } from '@/types/merge';
 import Configure from './Setup';
 import VideoInterviewSession from './VideoInterviewSession';
 import { useUser } from '@/hooks/useUser';
-import { Progress } from '@/components/ui/progress';
 import { BotLLMTextData } from '@pipecat-ai/client-js';
-
+import { TranscriptData } from '@pipecat-ai/client-js';
+import { InterviewTranscript } from '@/types/transcript';
 type ScoutConfig = Tables<'bots'>;
 type JobInterviewConfig = Tables<'job_interview_config'>;
 type CompanyContext = Tables<'company_context'>;
@@ -35,58 +31,13 @@ interface ScoutProps {
   job: Job | null;
   company: Company;
   mergeJob: MergeJob | null;
-  transcript: TranscriptEntry[];
+  transcript: InterviewTranscript;
   application: Application | null;
   enableRecording: boolean;
   demo: boolean;
   scoutTest: boolean;
 }
 
-interface TranscriptEntry {
-  text: string;
-  final: boolean;
-  timestamp: string;
-  user_id: string;
-  role: 'bot' | 'user';
-}
-
-type TransportState = 'initialized' | 'disconnected' | 'authenticating' | 'connecting' | 'connected' | 'ready' | 'disconnecting' | 'initializing' | 'error';
-
-const status_text: Record<TransportState, string> = {
-  initialized: 'Start',
-  authenticating: 'Requesting bot...',
-  connecting: 'Connecting...',
-  connected: 'Connected',
-  disconnected: 'Start',
-  disconnecting: 'Disconnecting...',
-  initializing: 'Initializing...',
-  ready: 'Ready',
-  error: 'Error'
-};
-
-const transportStateToProgress: Record<TransportState, number> = {
-  initialized: 100,
-  disconnected: 0,
-  authenticating: 50,
-  connecting: 75,
-  connected: 90,
-  ready: 100,
-  disconnecting: 0,
-  initializing: 25,
-  error: 0
-};
-
-const transportStateToStep: Record<TransportState, number> = {
-  initialized: 1,
-  disconnected: 1,
-  authenticating: 2,
-  connecting: 3,
-  connected: 4,
-  ready: 4,
-  disconnecting: 1,
-  initializing: 1,
-  error: 0
-};
 
 export default function App({
   scout,
@@ -107,7 +58,6 @@ export default function App({
 
   const voiceClient = useRTVIClient()!;
   const transportState = useRTVIClientTransportState();
-  const [transcripts, setTranscripts] = useState<TranscriptEntry[]>(initialTranscript || []);
   const [appState, setAppState] = useState<'idle' | 'ready' | 'connecting' | 'connected'>('idle');
   const [error, setError] = useState<string | null>(null);
   const [startAudioOff, setStartAudioOff] = useState(false);
@@ -183,13 +133,8 @@ export default function App({
     if (!voiceClient) return;
 
     const handleTranscript = (data: BotLLMTextData) => {
-      setTranscripts(prev => [...prev, {
-        text: data.text,
-        final: true,
-        timestamp: new Date().toISOString(),
-        user_id: 'bot',
-        role: 'bot'
-      }]);
+      // Transcript handling is now done in the Bot component
+      console.log('[TRANSCRIPT] Bot transcript received:', data);
     };
 
     voiceClient.on(RTVIEvent.BotTranscript, handleTranscript);
@@ -251,7 +196,7 @@ export default function App({
           job={mergeJob}
           company={company}
           startAudioOff={startAudioOff}
-          transcript={transcripts}
+          transcript={initialTranscript}
           demo={demo}
         />
       </div>

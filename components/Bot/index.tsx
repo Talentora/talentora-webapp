@@ -2,8 +2,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   RTVIClientProvider,
-  RTVIClientAudio,
-  useRTVIClient,
 } from "@pipecat-ai/client-react";
 import { RTVIClient } from "@pipecat-ai/client-js";
 import App from '@/components/Bot/App';
@@ -11,10 +9,10 @@ import { DailyTransport } from '@pipecat-ai/daily-transport';
 import { Tables } from '@/types/types_db';
 import { Job as MergeJob } from '@/types/merge';
 import Splash from '@/components/Bot/Splash';
-import { BOT_READY_TIMEOUT, defaultLLMPrompt } from '@/utils/rtvi.config';
+import { BOT_READY_TIMEOUT } from '@/utils/rtvi.config';
 import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
-
+import { TranscriptData } from '@pipecat-ai/client-js';
+import { InterviewTranscript, InterviewTranscriptEntry } from '@/types/transcript';
 
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
@@ -32,24 +30,6 @@ interface BotProps {
   scoutTest: boolean;
 }
 
-type voice = {
-  id: string;
-  name: string;
-  gender: string;
-  language: string;
-  embedding: number[];
-  is_public: boolean;
-  api_status: string;
-  created_at: string;
-  description: string;
-};
-
-type TranscriptData = {
-  // speaker: string;
-  text: string;
-  role: 'bot' | 'user';
-};
-
 type TransportState = 'disconnected' | 'initialized' | 'ready' | 'connecting' | 'connected' | 'error';
 
 
@@ -59,8 +39,7 @@ export default function Bot(botProps: BotProps) {
   const clientRef = useRef<RTVIClient | null>(null);
   const [transportState, setTransportState] = useState<TransportState>('disconnected');
   const [showSplash, setShowSplash] = useState(true);
-  const [transcript, setTranscript] = useState<TranscriptData[]>([]);
-  const router = useRouter();
+  const [transcript, setTranscript] = useState<InterviewTranscript>([]);
   const mountedRef = useRef(false);
   const { toast } = useToast();
 
@@ -74,12 +53,10 @@ export default function Bot(botProps: BotProps) {
     companyContext,
     enableRecording,
     demo,
-    scoutTest
+    scoutTest,
   } = botProps;
 
   const voice = scout.voice;
-  const description = scout.description;
-  const prompts = scout.prompt;
   const emotion = scout.emotion;
 
   // Set mounted ref on component mount
@@ -136,6 +113,22 @@ export default function Bot(botProps: BotProps) {
         console.log('[EVENT] Transport state:', state);
         setTransportState(state as TransportState);
       },
+      onUserTranscript: (data: TranscriptData) => {
+        const userEntry: InterviewTranscriptEntry = {
+          ...data,
+          role: 'user',
+          timestamp: new Date().toISOString()
+        };
+        setTranscript(prev => [...prev, userEntry]);
+      },
+      onBotTranscript: (data: TranscriptData) => {
+        const botEntry: InterviewTranscriptEntry = {
+          ...data,
+          role: 'bot',
+          timestamp: new Date().toISOString()
+        };
+        setTranscript(prev => [...prev, botEntry]);
+      },
       error: (error: any) => {
         console.error('[EVENT] Bot error:', error);
         toast({
@@ -154,69 +147,22 @@ export default function Bot(botProps: BotProps) {
       }
     };
 
-    // // Attach event listeners
-    // Object.entries(eventHandlers).forEach(([event, handler]) => {
-    //   pipecatClient.on(event as any, handler);
-    // });
+    // Attach event handlers
+    Object.entries(eventHandlers).forEach(([event, handler]) => {
+      pipecatClient.on(event as any, handler);
+    });
 
-    // // Request media permissions early
-    // navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-    //   .catch((err) => {
-    //     console.error('[MEDIA] Error accessing media devices:', err);
-    //     toast({
-    //       title: "Media Access Error",
-    //       description: "Please allow camera and microphone access",
-    //       variant: "destructive"
-    //     });
-    //   });
+    // Cleanup event handlers
+    return () => {
+      if (pipecatClient) {
+        Object.entries(eventHandlers).forEach(([event, handler]) => {
+          pipecatClient.off(event as any, handler);
+        });
+      }
+    };
 
-    // // Cleanup function
-    // return () => {
-    //   console.log('[CLEANUP] Cleaning up client...');
-    //   if (clientRef.current) {
-    //     // Remove event listeners
-    //     Object.entries(eventHandlers).forEach(([event, handler]) => {
-    //       clientRef.current?.off(event as any, handler);
-    //     });
-        
-    //     try {
-    //       clientRef.current.disconnect();
-    //     } catch (err) {
-    //       console.warn('[CLEANUP] Error during disconnect:', err);
-    //     }
-    //     clientRef.current = null;
-    //   }
-    // };
   }, [showSplash, voice, mergeJob, company, jobInterviewConfig, application, scout, companyContext, emotion, enableRecording, scoutTest, demo, toast]);
 
-  // // Handle connection when user is ready
-  // useEffect(() => {
-  //   if (!isUserReady || !clientRef.current || !mountedRef.current) {
-  //     return;
-  //   }
-
-  //   console.log('[CONNECT] User is ready, attempting to connect...');
-  //   clientRef.current.connect()
-  //     .catch((error: Error) => {
-  //       console.error('[CONNECT] Failed to connect:', error);
-  //       toast({
-  //         title: "Connection Error",
-  //         description: error.message,
-  //         variant: "destructive"
-  //       });
-  //     });
-
-  //   return () => {
-  //     if (clientRef.current && mountedRef.current) {
-  //       console.log('[CONNECT] Disconnecting due to user ready change');
-  //       try {
-  //         clientRef.current.disconnect();
-  //       } catch (err) {
-  //         console.warn('[CONNECT] Error during disconnect:', err);
-  //       }
-  //     }
-  //   };
-  // }, [isUserReady, toast]);
 
   if (showSplash) {
     return (
