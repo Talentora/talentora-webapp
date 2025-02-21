@@ -19,6 +19,7 @@ import Configure from './Setup';
 import VideoInterviewSession from './VideoInterviewSession';
 import { useUser } from '@/hooks/useUser';
 import { Progress } from '@/components/ui/progress';
+import { BotLLMTextData } from '@pipecat-ai/client-js';
 
 type ScoutConfig = Tables<'bots'>;
 type JobInterviewConfig = Tables<'job_interview_config'>;
@@ -34,17 +35,20 @@ interface ScoutProps {
   job: Job | null;
   company: Company;
   mergeJob: MergeJob | null;
-  transcript: TranscriptData[];
+  transcript: TranscriptEntry[];
   application: Application | null;
   enableRecording: boolean;
   demo: boolean;
   scoutTest: boolean;
 }
 
-type TranscriptData = {
+interface TranscriptEntry {
   text: string;
+  final: boolean;
+  timestamp: string;
+  user_id: string;
   role: 'bot' | 'user';
-};
+}
 
 type TransportState = 'initialized' | 'disconnected' | 'authenticating' | 'connecting' | 'connected' | 'ready' | 'disconnecting' | 'initializing' | 'error';
 
@@ -91,7 +95,7 @@ export default function App({
   job,
   company,
   mergeJob,
-  transcript,
+  transcript: initialTranscript,
   application,
   enableRecording,
   demo,
@@ -103,7 +107,7 @@ export default function App({
 
   const voiceClient = useRTVIClient()!;
   const transportState = useRTVIClientTransportState();
-
+  const [transcripts, setTranscripts] = useState<TranscriptEntry[]>(initialTranscript || []);
   const [appState, setAppState] = useState<'idle' | 'ready' | 'connecting' | 'connected'>('idle');
   const [error, setError] = useState<string | null>(null);
   const [startAudioOff, setStartAudioOff] = useState(false);
@@ -174,6 +178,26 @@ export default function App({
     }
   }, [transportState]);
 
+  // Handle transcript updates from the voice client
+  useEffect(() => {
+    if (!voiceClient) return;
+
+    const handleTranscript = (data: BotLLMTextData) => {
+      setTranscripts(prev => [...prev, {
+        text: data.text,
+        final: true,
+        timestamp: new Date().toISOString(),
+        user_id: 'bot',
+        role: 'bot'
+      }]);
+    };
+
+    voiceClient.on(RTVIEvent.BotTranscript, handleTranscript);
+    return () => {
+      voiceClient.off(RTVIEvent.BotTranscript, handleTranscript);
+    };
+  }, [voiceClient]);
+
   const start = useCallback(async () => {
     if (!voiceClient || !mountedRef.current) return;
 
@@ -227,7 +251,7 @@ export default function App({
           job={mergeJob}
           company={company}
           startAudioOff={startAudioOff}
-          transcript={transcript}
+          transcript={transcripts}
           demo={demo}
         />
       </div>

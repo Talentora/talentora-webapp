@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Camera,
@@ -16,18 +16,25 @@ interface ControlPanelProps {
 export default function ControlPanel({ onLeave }: ControlPanelProps) {
   const client = useRTVIClient();
   const { selectedMic, selectedCam, updateMic, updateCam } = useRTVIClientMediaDevices();
+  const [isMicMuted, setIsMicMuted] = useState(client?.isMicEnabled);
+  const [isCamOff, setIsCamOff] = useState(client?.isCamEnabled);
 
   const toggleMic = () => {
     if (client) {
       client.enableMic(!client.isMicEnabled);
+      setIsMicMuted(!client.isMicEnabled);
     }
+    setIsMicMuted(client?.isMicEnabled);
   };
 
   const toggleCamera = () => {
     if (selectedCam && client) {
       client.enableCam(!client.isCamEnabled);
+      setIsCamOff(!client.isCamEnabled);
     }
   };
+
+
 
   return (
     <footer className="p-4 shadow-t">
@@ -36,15 +43,15 @@ export default function ControlPanel({ onLeave }: ControlPanelProps) {
           <div className="relative">
             <Button
               variant="outline"
-              className={`${!client?.isMicEnabled ? 'bg-red-100 hover:bg-red-200' : ''}`}
+              className={`${isMicMuted ? 'bg-red-100 hover:bg-red-200' : ''}`}
               onClick={toggleMic}
             >
-              {client?.isMicEnabled ? (
-                <Mic className="mr-2 h-4 w-4" />
-              ) : (
+              {isMicMuted ? (
                 <MicOff className="mr-2 h-4 w-4" />
+              ) : (
+                <Mic className="mr-2 h-4 w-4" />
               )}
-              {client?.isMicEnabled ? 'Mute' : 'Unmute'} Mic
+              {isMicMuted ? 'Unmute' : 'Mute'} Mic
             </Button>
             {/* Subtle voice visualizer overlay */}
             <div className="absolute bottom-0 left-0 right-0 h-1 overflow-hidden opacity-50">
@@ -60,15 +67,15 @@ export default function ControlPanel({ onLeave }: ControlPanelProps) {
           </div>
           <Button
             variant="outline"
-            className={`${!client?.isCamEnabled ? 'bg-red-100 hover:bg-red-200' : ''}`}
+            className={`${!isCamOff ? 'bg-red-100 hover:bg-red-200' : ''}`}
             onClick={toggleCamera}
           >
-            {client?.isCamEnabled ? (
-              <Camera className="mr-2 h-4 w-4" />
-            ) : (
+            {!isCamOff ? (
               <CameraOff className="mr-2 h-4 w-4" />
+            ) : (
+              <Camera className="mr-2 h-4 w-4" />
             )}
-            {client?.isCamEnabled ? 'Turn Off' : 'Turn On'} Camera
+            {!isCamOff ? 'Turn On' : 'Turn Off'} Camera
           </Button>
         </div>
         <Button variant="destructive" onClick={onLeave}>
