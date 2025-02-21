@@ -9,6 +9,7 @@ import AIInterviewer from './AIInterviewer';
 import CandidateVideo from './CandidateVideo';
 import TranscriptPanel from './TranscriptPanel';
 import ControlPanel from './ControlPanel';
+import MediaDevicePopup from './MediaDevicePopup';
 import { Job as MergeJob } from '@/types/merge';
 import { Tables } from '@/types/types_db';
 
@@ -19,7 +20,13 @@ interface VideoInterviewSessionProps {
   startAudioOff?: boolean;
   job: MergeJob | null;
   company: Company;
-  transcript: { role: 'bot' | 'user'; text: string }[];
+  transcript: {
+    text: string;
+    final: boolean;
+    timestamp: string;
+    user_id: string;
+    role: 'bot' | 'user';
+  }[];
   demo: boolean;
 }
 
@@ -82,7 +89,7 @@ export default function VideoInterviewSession({
             <AIInterviewer isReady={transportState === 'ready'} />
           </div>
           <div className="flex basis-1/2 w-full overflow-y-auto">
-            <TranscriptPanel transcript={transcript} />
+            <TranscriptPanel transcripts={transcript} />
           </div>
         </div>
         {/* Main Content */}
@@ -94,6 +101,9 @@ export default function VideoInterviewSession({
       <footer className="basis-1/6">
         <ControlPanel onLeave={onLeave} />
       </footer>
+
+      {/* Media Device Settings Popup */}
+      <MediaDevicePopup />
     </div>
   );
 }

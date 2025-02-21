@@ -54,7 +54,7 @@ export default function ControlPanel({ onLeave }: ControlPanelProps) {
               {isMicMuted ? 'Unmute' : 'Mute'} Mic
             </Button>
             {/* Subtle voice visualizer overlay */}
-            <div className="absolute bottom-0 left-0 right-0 h-1 overflow-hidden opacity-50">
+            {/* <div className="absolute bottom-0 left-0 right-0 h-1 overflow-hidden opacity-50">
               <VoiceVisualizer
                 participantType="local"
                 backgroundColor="transparent"
@@ -63,7 +63,7 @@ export default function ControlPanel({ onLeave }: ControlPanelProps) {
                 barWidth={3}
                 barMaxHeight={4}
               />
-            </div>
+            </div> */}
           </div>
           <Button
             variant="outline"
