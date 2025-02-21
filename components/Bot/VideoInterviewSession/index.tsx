@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useRTVIClient, useRTVIClientTransportState, useRTVIClientMediaDevices } from "@pipecat-ai/client-react";
 import { usePermissions } from '@daily-co/daily-react';
-
+import DailyIframe from '@daily-co/daily-js';
 import InterviewHeader from './InterviewHeader';
 import AIInterviewer from './AIInterviewer';
 import CandidateVideo from './CandidateVideo';
@@ -35,6 +35,14 @@ export default function VideoInterviewSession({
   const transportState = useRTVIClientTransportState();
   const { availableMics, availableCams, selectedMic, selectedCam, updateMic, updateCam } = useRTVIClientMediaDevices();
 
+  function startRecording() {
+    const callInstance = DailyIframe.getCallInstance();
+    console.log('[RECORDING] Call instance:', callInstance);
+    if (callInstance) {
+      callInstance.startRecording();
+    }
+  }
+  
   // Initialize devices when they become available
   useEffect(() => {
     if (transportState === 'connected') {
@@ -47,6 +55,7 @@ export default function VideoInterviewSession({
         console.log('[DEVICES] Setting default camera:', availableCams[0].label);
         updateCam(availableCams[0].deviceId);
       }
+      startRecording();
 
       // Enable/disable devices based on props
       client.enableMic(!startAudioOff);
