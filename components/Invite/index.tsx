@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -21,7 +21,7 @@ import {
 // import { inviteRecruiter } from '@/utils/supabase/queries';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Job } from '@/types/merge';
-import { inviteRecruiter } from '@/utils/supabase/queries';
+import { inviteCandidate, inviteRecruiter } from '@/utils/supabase/queries';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface InvitePageProps {
@@ -31,7 +31,8 @@ interface InvitePageProps {
 
 export default function InvitePage({ jobs, isLoading }: InvitePageProps) {
   const [emails, setEmails] = useState('');
-  const [selectedJob, setSelectedJob] = useState('');
+  const [names, setNames] = useState('');
+  const [selectedJobId, setSelectedJobId] = useState('');
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -44,10 +45,14 @@ export default function InvitePage({ jobs, isLoading }: InvitePageProps) {
     return { validEmails, invalidEmails };
   };
 
+  useEffect(() => {
+    console.log('Jobs received in InvitePage:', jobs);
+  }, [jobs]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedJob) {
+    if (!selectedJobId) {
       setStatus('error');
       setErrorMessage('Please select a job before sending invitations.');
       return;
@@ -64,14 +69,19 @@ export default function InvitePage({ jobs, isLoading }: InvitePageProps) {
       return;
     }
 
-    try {
-      for (const email of validEmails) {
-        const {data, error} = await inviteRecruiter("", email);
+    const nameList = names.split('\n').filter((name) => name.trim() !== '');
 
+    try {
+      for (const [index, email] of validEmails.entries()) {
+        const name = nameList[index] || 'Unnamed Candidate';
+        const { data, error } = await inviteCandidate(
+          name,
+          email,
+          selectedJobId
+        );
         if (!data) {
           throw new Error(`Failed to send invitation to ${email}`);
         }
-
       }
 
       setStatus('success');
@@ -103,13 +113,13 @@ export default function InvitePage({ jobs, isLoading }: InvitePageProps) {
             {isLoading ? (
               <Skeleton className="h-10 w-full rounded-md" />
             ) : (
-              <Select onValueChange={setSelectedJob} value={selectedJob}>
+              <Select onValueChange={setSelectedJobId} value={selectedJobId}>
                 <SelectTrigger id="job-select">
                   <SelectValue placeholder="Select a job" />
                 </SelectTrigger>
                 <SelectContent>
                   {jobs.map((job) => (
-                    <SelectItem key={job.id} value={String(job.id)}>
+                    <SelectItem key={job.id} value={job.id}>
                       {job.name}
                     </SelectItem>
                   ))}
@@ -129,6 +139,21 @@ export default function InvitePage({ jobs, isLoading }: InvitePageProps) {
               placeholder="Enter email addresses (separated by commas or new lines)"
               value={emails}
               onChange={(e) => setEmails(e.target.value)}
+              className="min-h-[150px]"
+            />
+          </div>
+          <div className="space-y-2">
+            <label
+              htmlFor="name-textarea"
+              className="text-sm font-medium text-black"
+            >
+              Candidate Name
+            </label>
+            <Textarea
+              id="name-textarea"
+              placeholder="Enter name"
+              value={names}
+              onChange={(e) => setNames(e.target.value)}
               className="min-h-[150px]"
             />
           </div>
