@@ -18,7 +18,7 @@ export const OnboardingNavigation: React.FC<OnboardingNavigationProps> = ({
 }) => {
   return (
     <div className="flex flex-col w-full gap-5">
-      <div className="flex justify-between mt-4">
+      <div className="flex justify-between ">
         {step > 1 && (
           <Button variant="outline" onClick={prevStep}>
             Previous

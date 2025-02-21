@@ -4,12 +4,16 @@ import { createClient } from '@/utils/supabase/client';
 import { useUser } from '@/hooks/useUser';
 import { Loader2 } from 'lucide-react';
 import { Job } from '@/types/merge';
+import { type Database } from '@/types/types_db';
+
+type Recruiter = Database['public']['Tables']['recruiters']['Row'];
 
 export const StartingStep: React.FC<{
   onCompletion: (isComplete: boolean) => void;
   job: Job;
 }> = ({ onCompletion, job }) => {
-  const { recruiter } = useUser();
+  const { recruiter } = useUser() as { recruiter: Recruiter };
+
   const mergeJobId = job?.id;
 
   const [state, setState] = useState<{ loading: boolean; error: string | null }>({

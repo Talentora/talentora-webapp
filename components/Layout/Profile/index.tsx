@@ -8,15 +8,19 @@ import { User, LogOut } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { useUser } from '@/hooks/useUser';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { SignOut } from '@/utils/auth-helpers/server';
 import { handleRequest } from '@/utils/auth-helpers/client';
 import { getRedirectMethod } from '@/utils/auth-helpers/settings';
+import { getUserRole } from '@/utils/supabase/queries';
+import { createClient } from '@/utils/supabase/client';
 
-const Profile = () => {
+const Profile = ({ role }: { role: string }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const queryClient = useQueryClient();
 
   const { user, company } = useUser();
   const router = useRouter();
@@ -24,6 +28,8 @@ const Profile = () => {
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (getRedirectMethod() === 'client') {
+      // Clear all React Query cache before signing out
+      queryClient.clear();
       await handleRequest(e, SignOut, router);
     }
   };
@@ -48,7 +54,7 @@ const Profile = () => {
               </h4>
               <div className="flex items-center gap-[0.5em] mt-[0.25em]">
                 <Link href="/settings?tab=account" className="inline-flex items-center rounded-full bg-primary px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-accent-foreground capitalize hover:bg-accent/80">
-                  {user?.user_metadata?.role || 'User'}
+                  {role || 'Error'}
                 </Link>
                 {company?.name && (
                   <Link href="/settings?tab=company" className="inline-flex items-center rounded-full bg-secondary px-[0.5em] py-[0.125em] text-[0.75em] font-medium text-accent-foreground capitalize hover:bg-accent/80">

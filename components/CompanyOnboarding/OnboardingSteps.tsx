@@ -3,7 +3,6 @@ import { CompanyInfoStep } from './steps/CompanyInfo';
 import { CompanyContext } from './steps/CompanyContext';
 import { CompanyContext2 } from './steps/CompanyContext2';
 import { CompanyContext3 } from './steps/CompanyContext3';
-import { TeamMembersStep } from './steps/TeamMemberStep';
 import { CompletionStep } from './steps/CompletionStep';
 import { StartingStep } from './steps/StartingStep';
 import MergeLink from './steps/MergeLink';
@@ -31,8 +30,7 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
     case 6:
       return <MergeLink onCompletion={onCompletion} />;
     case 7:
-      return <TeamMembersStep onCompletion={onCompletion} />;
-    case 8:
+
       return <CompletionStep />;
     default:
       return null;

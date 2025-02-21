@@ -39,7 +39,10 @@ export default function PasswordSignIn({
   };
 
   return (
-    <div className="my-8">
+    <div className="my-8 w-1/3 mx-auto border shadow-lg rounded-xl p-10">
+      <h1 className="text-2xl font-bold mb-4 text-center">
+        Sign in to your account
+      </h1>
       <form
         noValidate={true}
         className="mb-4 grid gap-2"

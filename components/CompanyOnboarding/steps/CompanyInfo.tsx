@@ -21,7 +21,7 @@ export const CompanyInfoStep: React.FC<{
   onCompletion: (isComplete: boolean) => void;
 }> = ({ onCompletion }) => {
   const { recruiter, loading } = useUser();
-  const hasCompany = recruiter?.company_id ? true : false;
+  const hasCompany = recruiter && 'company_id' in recruiter && recruiter.company_id ? true : false;
   const { user } = useUser();
   const { company } = useUser();
 

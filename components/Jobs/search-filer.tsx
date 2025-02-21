@@ -2,7 +2,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '../ui/button';
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
-import { EnrichedJob } from './JobList';
+import { EnrichedJob } from './types';
 import { useRouter } from 'next/navigation';
 
 interface SearchFilterProps {
@@ -62,9 +62,7 @@ export function SearchFilter({ jobs, searchTerm, onSearch }: SearchFilterProps) 
           onKeyDown={handleKeyDown}
           className="max-w-sm"
         />
-        <Button variant="outline" size="icon">
-          <Search className="h-4 w-4" />
-        </Button>
+       
       </div>
 
       {showPreview && filteredJobs.length > 0 && (

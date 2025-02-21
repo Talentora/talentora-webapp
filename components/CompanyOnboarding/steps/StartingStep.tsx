@@ -8,12 +8,12 @@ export const StartingStep: React.FC<{
 }> = ({ onCompletion }) => {
   return (
     <div className="flex justify-between">
-      <div className="p-3">
-        <ul className="list-disc list-inside mt-4 space-y-1">
-          <li>Company info</li>
-          <li>ATS integration</li>
-          <li>Invite your team</li>
-          <li>Get Started!</li>
+      <div className="p-3 overflow-auto max-h-[300px]">
+        <ul className="list-disc list-inside space-y-2 text-pretty">
+          <li className="leading-relaxed">Company info - Tell us about your organization and hiring needs</li>
+          <li className="leading-relaxed">ATS integration - Connect your existing recruiting tools</li>
+          <li className="leading-relaxed">Invite your team - Add hiring managers and recruiters</li>
+          <li className="leading-relaxed">Get Started! - Begin finding great candidates</li>
         </ul>
       </div>
       <div className="w-1/2 rounded-lg">

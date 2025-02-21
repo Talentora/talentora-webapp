@@ -364,19 +364,19 @@ export async function updateName(formData: FormData) {
 
   if (error) {
     return getErrorRedirect(
-      '/account',
+      '/settings?tab=account',
       'Your name could not be updated.',
       error.message
     );
   } else if (data.user) {
     return getStatusRedirect(
-      '/account',
+      '/settings?tab=account',
       'Success!',
       'Your name has been updated.'
     );
   } else {
     return getErrorRedirect(
-      '/account',
+      '/settings?tab=account',
       'Hmm... Something went wrong.',
       'Your name could not be updated.'
     );

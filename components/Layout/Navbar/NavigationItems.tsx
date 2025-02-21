@@ -1,7 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { BarChart2, Users, FileText, MessageSquare, BookOpen, HelpCircle, Building2, Mail, CreditCard } from 'lucide-react';
+import {
+  BarChart2,
+  Users,
+  FileText,
+  MessageSquare,
+  BookOpen,
+  HelpCircle,
+  Building2,
+  Mail,
+  CreditCard
+} from 'lucide-react';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -13,14 +23,22 @@ import {
 import { cn } from '@/utils/cn';
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 
-
-export function NavigationItems({ isUser, isRecruiter }: { isUser: boolean; isRecruiter: boolean }) {
+export function NavigationItems({
+  isUser,
+  isRecruiter
+}: {
+  isUser: boolean;
+  isRecruiter: boolean;
+}) {
   return (
     <NavigationMenu>
       <NavigationMenuList>
         {isUser && !isRecruiter && (
           <NavigationMenuItem>
-            <Link href="/dashboard" className={cn(navigationMenuTriggerStyle(), "bg-transparent")}>
+            <Link
+              href="/dashboard"
+              className={cn(navigationMenuTriggerStyle(), 'bg-transparent')}
+            >
               Dashboard
             </Link>
           </NavigationMenuItem>
@@ -115,18 +133,26 @@ function CompanyMenu() {
           />
           <NavigationLink
             href="/team"
+          {/* <NavigationLink 
+            href="/team" 
             icon={<Users className="h-5 w-5 mr-2 text-blue-600" />}
             title="Team"
             description="Meet the people behind Talentora"
           />
           <NavigationLink
             href="/pricing"
+          /> */}
+          {/* <NavigationLink 
+            href="/pricing" 
             icon={<CreditCard className="h-5 w-5 mr-2 text-green-600" />}
             title="Pricing"
             description="View our pricing plans"
           />
           <NavigationLink
             href="/contact"
+          /> */}
+          <NavigationLink 
+            href="/contact" 
             icon={<Mail className="h-5 w-5 mr-2 text-orange-600" />}
             title="Contact"
             description="Get in touch with us"
@@ -162,4 +188,4 @@ function NavigationLink({
       <p className="text-sm text-muted-foreground">{description}</p>
     </Link>
   );
-} 
+}
