@@ -28,7 +28,7 @@ export function SidebarHeader({ isSidebarOpen, setIsSidebarOpen }: SidebarHeader
           </h1>
         )}
       </Link>
-      <TooltipProvider>
+      {/* <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -47,7 +47,7 @@ export function SidebarHeader({ isSidebarOpen, setIsSidebarOpen }: SidebarHeader
             {isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
           </TooltipContent>
         </Tooltip>
-      </TooltipProvider>
+      </TooltipProvider> */}
     </div>
   );
 }
