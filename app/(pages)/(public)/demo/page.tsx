@@ -28,6 +28,8 @@ type ScoutProps = {
   scoutTest: boolean;
 };
 
+const DEFAULT_INTERVIEW_DURATION = 60 * 5; // 30 minutes in seconds
+
 export default function Demo({ params }: { params: { id: string } }) {
   //   const applicationId = params.id;
   const [isLoading, setIsLoading] = useState(true);
@@ -155,7 +157,8 @@ export default function Demo({ params }: { params: { id: string } }) {
 
         var jobInterviewConfig = {
           interview_questions: 'Tell me about your past experiences',
-          sample_response: 'a great answer should sound genuine and show detail'
+          sample_response: 'a great answer should sound genuine and show detail',
+          duration: DEFAULT_INTERVIEW_DURATION
         };
 
         setScoutProps({

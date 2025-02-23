@@ -12,8 +12,8 @@ import ControlPanel from './ControlPanel';
 import MediaDevicePopup from './MediaDevicePopup';
 import { Job as MergeJob } from '@/types/merge';
 import { Tables } from '@/types/types_db';
-import { TranscriptData } from '@pipecat-ai/client-js';
 import { InterviewTranscript } from '@/types/transcript';
+import { useToast } from '@/hooks/use-toast';
 
 type Company = Tables<'companies'>;
 
@@ -23,7 +23,7 @@ interface VideoInterviewSessionProps {
   job: MergeJob | null;
   company: Company;
   demo: boolean;
-  transcript: TranscriptData[];
+  transcript: InterviewTranscript;
 }
 
 export default function VideoInterviewSession({
@@ -37,6 +37,7 @@ export default function VideoInterviewSession({
   const client = useRTVIClient()!;
   const transportState = useRTVIClientTransportState();
   const { availableMics, availableCams, selectedMic, selectedCam, updateMic, updateCam } = useRTVIClientMediaDevices();
+  const { toast } = useToast();
 
   function startRecording() {
     const callInstance = DailyIframe.getCallInstance();
@@ -72,6 +73,14 @@ export default function VideoInterviewSession({
     }
   }, [transportState, onLeave]);
 
+  const handleTimeUp = () => {
+    toast({
+      title: "Interview Time Up",
+      description: "The interview time has ended. Please wrap up your conversation.",
+      variant: "default"
+    });
+  };
+
   return (
     <div className="flex flex-col h-screen w-screen">
       <div className="basis-1/6">
@@ -81,11 +90,11 @@ export default function VideoInterviewSession({
       <main className="flex basis-1/3 gap-4 p-4 m-5">
         {/* Sidebar */}
         <div className="flex flex-col h-full w-1/3 gap-5">
-          <div className="flex-1 ">
+          <div className="flex-1">
             <AIInterviewer isReady={transportState === 'ready'} />
           </div>
           <div className="flex basis-1/2 w-full overflow-y-auto">
-            <TranscriptPanel transcripts={transcript as InterviewTranscript} />
+            <TranscriptPanel transcripts={transcript} />
           </div>
         </div>
         {/* Main Content */}
@@ -95,7 +104,7 @@ export default function VideoInterviewSession({
       </main>
 
       <footer className="basis-1/6">
-        <ControlPanel onLeave={onLeave} />
+        <ControlPanel onLeave={onLeave} onTimeUp={handleTimeUp} />
       </footer>
 
       {/* Media Device Settings Popup */}
