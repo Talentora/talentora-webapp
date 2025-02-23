@@ -89,8 +89,8 @@ export default function RecruiterDashboard() {
   const factWindow = 90;
 
   return (
-    <div className="w-screen mx-auto">
-      <main className="w-full pr-80 flex p-8">
+    <div className="w-full mx-auto overflow-x-hidden">
+      <main className="w-full flex p-8">
         <div className="flex flex-col gap-6 w-full">
           {/* Header */}
           <div className="flex items-center justify-between gap-4 w-full p-4 rounded-lg">
