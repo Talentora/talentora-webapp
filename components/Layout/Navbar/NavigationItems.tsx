@@ -23,7 +23,7 @@ import {
 import { cn } from '@/utils/cn';
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 
-<<<<<<< HEAD
+
 export function NavigationItems({
   isUser,
   isRecruiter
@@ -31,11 +31,6 @@ export function NavigationItems({
   isUser: boolean;
   isRecruiter: boolean;
 }) {
-=======
-
-export function NavigationItems({ isUser, isRecruiter }: { isUser: boolean; isRecruiter: boolean }) {
-
->>>>>>> f2d88cc (fixed navbar, settings page, applicant sorting)
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -77,13 +72,8 @@ function SolutionsMenu() {
         Solutions
       </NavigationMenuTrigger>
       <NavigationMenuContent>
-<<<<<<< HEAD
         <div className="grid gap-3 p-2 w-[400px] md:w-[500px] lg:w-[600px] bg-popover rounded-lg shadow-md">
           <div className="grid grid-cols-2 gap-2 text-black">
-=======
-        <div className="grid gap-3 p-6 w-[400px] md:w-[500px] lg:w-[600px] bg-white rounded-lg">
-          <div className="grid grid-cols-2 gap-4">
->>>>>>> 14dcb55 (added mock/test/demo rooms)
             <NavigationLink
               href="/product#ai-interviews"
               icon={<BarChart2 className="h-5 w-5 mr-2 text-purple-600" />}

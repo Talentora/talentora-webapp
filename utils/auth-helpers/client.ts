@@ -36,8 +36,6 @@ export async function signInWithOAuth(e: React.FormEvent<HTMLFormElement>) {
   const provider = String(formData.get('provider')).trim() as Provider;
 
   const supabase = createClient();
-
-  const supabase = createClient();
   const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL;
   await supabase.auth.signInWithOAuth({
     provider: provider,
