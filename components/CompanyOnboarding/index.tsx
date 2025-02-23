@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -15,12 +14,11 @@ import { OnboardingSteps } from './OnboardingSteps';
 import { OnboardingNavigation } from './OnboardingNavigation';
 import { updateCompany } from '@/utils/supabase/queries';
 import { useUser } from '@/hooks/useUser';
-
 export default function OnboardingPage() {
-  const totalSteps = 8;
+  const totalSteps = 7;
   const [step, setStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(
-    new Set([1, 3, 4, 5, 7, 8])
+    new Set([1, 3, 4, 5, 7])
   ); // Initialize step 1 and 4 as completed
   const { user, recruiter } = useUser();
 
@@ -39,10 +37,12 @@ export default function OnboardingPage() {
     setStep(newStep);
   };
 
-  const nextStep = () => setStep((prev) => Math.min(prev + 1, totalSteps));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
-  const handleStepCompletion = (stepNumber: number, isComplete: boolean) => {
+  const handleStepCompletion = async (
+    stepNumber: number,
+    isComplete: boolean
+  ) => {
     setCompletedSteps((prev) => {
       const updated = new Set(prev);
       if (isComplete) {
@@ -52,9 +52,17 @@ export default function OnboardingPage() {
       }
       return updated;
     });
+
+    // If completing final step, update company
+    if (stepNumber === totalSteps && isComplete) {
+      try {
+        await updateCompany(companyId, { configured: true });
+      } catch (error) {
+        console.error('Failed to update company configuration:', error);
+      }
+    }
   };
 
->>>>>>> ab0fa06 (consistency in merge)
   return (
     <div className="container mx-auto py-10">
       <div className="max-w-2xl mx-auto gap-3">
