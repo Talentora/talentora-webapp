@@ -27,7 +27,7 @@ export default function RecruiterSSO() {
       const { data, error } = await supabase.auth.signInWithSSO({
         domain: domain,
         options: { 
-          redirectTo
+          redirectTo: redirectTo
         }
       });
 
@@ -40,6 +40,7 @@ export default function RecruiterSSO() {
       if (data?.url) {
         console.log("[SSO] Redirecting to SSO URL:", data.url);
         window.location.href = data.url;
+        // window.location.reload();
       } else {
         console.error("[SSO] No URL returned from signInWithSSO");
       }
