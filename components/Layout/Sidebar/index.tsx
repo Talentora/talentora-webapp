@@ -2,11 +2,30 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-
-import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2, ChevronDown, ChevronUp, Search, CreditCard, Box, Mail, BookOpen, Building2, Phone } from 'lucide-react';
-
+import {
+  BriefcaseIcon,
+  Users,
+  User,
+  Sparkles,
+  HomeIcon,
+  LogOut,
+  SettingsIcon,
+  ChevronLeft,
+  ChevronRight,
+  Sun,
+  Moon,
+  Loader2,
+  ChevronDown,
+  ChevronUp,
+  Search,
+  CreditCard,
+  Box,
+  Mail,
+  BookOpen,
+  Building2,
+  Phone
+} from 'lucide-react';
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
-
 
 import {
   SidebarHeader,
@@ -74,7 +93,8 @@ const Sidebar = () => {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
-  const { jobs, applications, scouts, isLoading, isError, isInitialized } = useSidebarData();
+  const { jobs, applications, scouts, isLoading, isError, isInitialized } =
+    useSidebarData();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isRouteLoading, setIsRouteLoading] = useState(false);
 
@@ -113,38 +133,30 @@ const Sidebar = () => {
     {
       group: 'Suggested',
       items: [
-
-        ...(Array.isArray(jobs) && jobs.length > 0
-          ? jobs.map((job: Job) => ({
-              type: 'job',
-              name: job.name || 'Untitled Position',
-              href: `/jobs/${job.id}`,
-              icon: BriefcaseIcon
-            }))
-          : []),
-        ...(Array.isArray(applications) && applications.length > 0
-          ? applications.map((app: ApplicationWithCandidate) => ({
-              type: 'applicant',
-              name: `${app.candidate?.first_name || ''} ${app.candidate?.last_name || ''}`.trim() || 'No Applicant Name',
-              href: `/applicants/${app.application.id}`,
-              icon: User
-            }))
-          : []),
-        ...(Array.isArray(scouts) && scouts.length > 0
-          ? scouts.map((scout: ScoutWithJobs) => ({
-              type: 'scout',
-              name: scout.name || 'Untitled scout',
-              href: `/scouts/${scout.id}`,
-              icon: Sparkles
-            }))
-          : [])
+        ...(jobs?.map((job: Job) => ({
+          type: 'job',
+          name: job.name || 'Untitled Position',
+          href: `/jobs/${job.id}`,
+          icon: BriefcaseIcon
+        })) || []),
+        ...(applications?.map((app: ApplicationWithCandidate) => ({
+          type: 'applicant',
+          name: `${app.candidate?.first_name} ${app.candidate?.last_name}`,
+          href: `/applicants/${app.application.id}`,
+          icon: User
+        })) || []),
+        ...(scouts?.map((scout: ScoutWithJobs) => ({
+          type: 'scout',
+          name: scout.name || 'Untitled scout',
+          href: `/scouts/${scout.id}`,
+          icon: Sparkles
+        })) || [])
       ]
     }
   ];
 
-  const filteredItems = searchItems.flatMap(group =>
-    group.items.filter(item =>
-
+  const filteredItems = searchItems.flatMap((group) =>
+    group.items.filter((item) =>
       item.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
@@ -194,7 +206,9 @@ const Sidebar = () => {
     };
 
     return (
-      <div className="px-2 py-1 text-sm text-muted-foreground">{messages[type]}</div>
+      <div className="px-2 py-1 text-sm text-muted-foreground">
+        {messages[type]}
+      </div>
     );
   };
 
@@ -206,52 +220,43 @@ const Sidebar = () => {
           className="border-border text-white "
         />
         <CommandList className="bg-background">
-
-          {searchItems.map((group) => {
-            const groupFilteredItems = group.items.filter(item =>
-              item.name.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-            return (
-              <CommandGroup
-                key={group.group}
-                heading={group.group}
-                className="text-white bg-background"
-              >
-                {groupFilteredItems.length > 0 ? (
-                  groupFilteredItems.map((item, index) => {
-                    const Icon = item.icon;
-                    return (
-                      <CommandItem
-                        key={index}
-                        onSelect={() => handleNavigation(item.href)}
-                        className=" hover:bg-accent text-white flex items-center justify-between"
-                      >
-                        <div className="flex items-center">
-                          <Icon className="mr-2 h-4 w-4 text-muted-foreground" />
-                          <span className="text-white">{item.name}</span>
-                        </div>
-                        {isRouteLoading && item.href === pathname && (
-                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground ml-2" />
-                        )}
-                      </CommandItem>
-                    );
-                  })
-                ) : (
-                  <CommandItem disabled className="cursor-default text-muted-foreground">
-                    {group.group === 'Suggested' ? 'No suggestions available' : 'No items available'}
-                  </CommandItem>
-                )}
-              </CommandGroup>
-            );
-          })}
-
+          {searchItems.map((group) => (
+            <CommandGroup
+              key={group.group}
+              heading={group.group}
+              className="text-foreground bg-background"
+            >
+              {group.items
+                .filter((item) =>
+                  item.name.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                .map((item, index) => {
+                  const Icon = item.icon;
+                  return (
+                    <CommandItem
+                      key={index}
+                      onSelect={() => handleNavigation(item.href)}
+                      className="hover:bg-accent text-foreground flex items-center justify-between"
+                    >
+                      <div className="flex items-center">
+                        <Icon className="mr-2 h-4 w-4 text-muted-foreground" />
+                        <span className="text-foreground">{item.name}</span>
+                      </div>
+                      {isRouteLoading && item.href === pathname && (
+                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground ml-2" />
+                      )}
+                    </CommandItem>
+                  );
+                })}
+            </CommandGroup>
+          ))}
         </CommandList>
       </CommandDialog>
 
       <SidebarComponent
         className={cn(
-          "bg-sidebar text-white border-r border-border transition-all duration-300 ease-in-out z-50",
-          isSidebarOpen ? "w-50" : "w-20"
+          'bg-background text-foreground border-r border-border transition-all duration-300 ease-in-out z-50',
+          isSidebarOpen ? 'w-50' : 'w-20'
         )}
       >
         <NewSidebarHeader
@@ -287,21 +292,21 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isJobsOpen && (
               <div className="ml-4 mt-2 space-y-1 border-l-2 border-border">
-
                 {(() => {
                   if (!isInitialized || isLoading) {
                     return renderLoadingOrEmpty('jobs');
                   }
-                  const jobItems = filteredItems.filter(item => item.type === 'job');
-                  return jobItems.length > 0 ? (
-                    jobItems.map((job, index) => (
-                      <SubLink key={index} href={job.href}>
-                        {job.name}
-                      </SubLink>
-                    ))
-                  ) : renderLoadingOrEmpty('jobs');
+                  const jobItems = filteredItems.filter(
+                    (item) => item.type === 'job'
+                  );
+                  return jobItems.length > 0
+                    ? jobItems.map((job, index) => (
+                        <SubLink key={index} href={job.href}>
+                          {job.name}
+                        </SubLink>
+                      ))
+                    : renderLoadingOrEmpty('jobs');
                 })()}
-
               </div>
             )}
             <SidebarLink
@@ -317,21 +322,21 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isScoutsOpen && (
               <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-3">
-
                 {(() => {
                   if (!isInitialized || isLoading) {
                     return renderLoadingOrEmpty('scouts');
                   }
-                  const scoutItems = filteredItems.filter(item => item.type === 'scout');
-                  return scoutItems.length > 0 ? (
-                    scoutItems.map((scout, index) => (
-                      <SubLink key={index} href={scout.href}>
-                        {scout.name}
-                      </SubLink>
-                    ))
-                  ) : renderLoadingOrEmpty('scouts');
+                  const scoutItems = filteredItems.filter(
+                    (item) => item.type === 'scout'
+                  );
+                  return scoutItems.length > 0
+                    ? scoutItems.map((scout, index) => (
+                        <SubLink key={index} href={scout.href}>
+                          {scout.name}
+                        </SubLink>
+                      ))
+                    : renderLoadingOrEmpty('scouts');
                 })()}
-
               </div>
             )}
             <SidebarLink
@@ -347,21 +352,21 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isApplicantsOpen && (
               <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
-
                 {(() => {
                   if (!isInitialized || isLoading) {
                     return renderLoadingOrEmpty('applicants');
                   }
-                  const applicantItems = filteredItems.filter(item => item.type === 'applicant');
-                  return applicantItems.length > 0 ? (
-                    applicantItems.map((applicant, index) => (
-                      <SubLink key={index} href={applicant.href}>
-                        {applicant.name}
-                      </SubLink>
-                    ))
-                  ) : renderLoadingOrEmpty('applicants');
+                  const applicantItems = filteredItems.filter(
+                    (item) => item.type === 'applicant'
+                  );
+                  return applicantItems.length > 0
+                    ? applicantItems.map((applicant, index) => (
+                        <SubLink key={index} href={applicant.href}>
+                          {applicant.name}
+                        </SubLink>
+                      ))
+                    : renderLoadingOrEmpty('applicants');
                 })()}
-
               </div>
             )}
             <SidebarLink
@@ -377,20 +382,10 @@ const Sidebar = () => {
             </SidebarLink>
             {isSidebarOpen && isSettingsOpen && (
               <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
-
-                <SubLink href="/settings?tab=account">
-                  Account
-                </SubLink>
-                <SubLink href="/settings?tab=company">
-                  Company
-                </SubLink>
-                {/* <SubLink href="/settings?tab=billing">
-                  Billing
-                </SubLink> */}
-                {/* <SubLink href="/settings?tab=team">
-                  Team
-                </SubLink> */}
-
+                <SubLink href="/settings?tab=account">Account</SubLink>
+                <SubLink href="/settings?tab=company">Company</SubLink>
+                <SubLink href="/settings?tab=billing">Billing</SubLink>
+                <SubLink href="/settings?tab=team">Team</SubLink>
                 <SubLink href="/settings?tab=integrations">
                   Integration Status
                 </SubLink>

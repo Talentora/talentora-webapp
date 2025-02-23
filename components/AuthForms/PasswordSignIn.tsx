@@ -24,13 +24,13 @@ export default function PasswordSignIn({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       const formData = new FormData(e.currentTarget);
       formData.append('role', role);
-      
+
       await handleRequest(e, signInWithPassword, router);
-      
+
       // Force a hard refresh after successful sign-in
       window.location.href = '/dashboard';
     } catch (error) {
@@ -46,12 +46,15 @@ export default function PasswordSignIn({
         Sign in to your account
       </h1>
       <form
-          noValidate={true}
-          className="mb-4 grid gap-2"
-          onSubmit={handleSubmit}      >
+        noValidate={true}
+        className="mb-4 grid gap-2"
+        onSubmit={handleSubmit}
+      >
         <input type="hidden" name="role" value={role || 'applicant'} />
         <div className="grid gap-1">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email" className="text-muted-foreground">
+            Email
+          </label>
           <input
             id="email"
             placeholder="name@example.com"
@@ -60,16 +63,18 @@ export default function PasswordSignIn({
             autoCapitalize="none"
             autoComplete="email"
             autoCorrect="off"
-            className="w-full p-3 text-foreground  rounded-md bg-input"
+            className="w-full p-3 bg-background text-foreground rounded-md border border-input"
           />
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password" className="text-muted-foreground">
+            Password
+          </label>
           <input
             id="password"
             placeholder="Password"
             type="password"
             name="password"
             autoComplete="current-password"
-            className="w-full p-3 text-foreground rounded-md  bg-input"
+            className="w-full p-3 bg-background text-foreground rounded-md border border-input"
           />
         </div>
         <Button
@@ -84,7 +89,7 @@ export default function PasswordSignIn({
       <p>
         <Link
           href={`/signin/forgot_password?role=${role}`}
-          className="font-light text-sm"
+          className="font-light text-sm text-muted-foreground"
         >
           Forgot your password?
         </Link>
@@ -92,7 +97,7 @@ export default function PasswordSignIn({
       <p>
         <Link
           href={`/signin/signup?role=${role}`}
-          className="font-light text-sm"
+          className="font-light text-sm text-muted-foreground"
         >
           Don&apos;t have an account? Sign up
         </Link>

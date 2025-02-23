@@ -11,7 +11,6 @@ import { useSearchParams } from 'next/navigation';
 import { useUser } from '@/hooks/useUser';
 
 
-
 export default function SettingsPage() {
   const searchParams = useSearchParams();
   const tab = searchParams.get('tab') || 'account';

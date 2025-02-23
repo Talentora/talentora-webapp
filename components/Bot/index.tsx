@@ -2,8 +2,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { RTVIClientAudio, RTVIClientProvider } from 'realtime-ai-react';
 import {
+  BotLLMTextData,
   LLMHelper,
   Participant,
+  RTVIActionRequestData,
   RTVIClient,
   RTVIEvent,
   RTVIMessage

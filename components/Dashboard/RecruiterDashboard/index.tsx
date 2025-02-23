@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,6 +29,7 @@ import { Tables } from '@/types/types_db';
 import { createClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
+import InvitePage from '@/components/Invite';
 
 const fetchApplications = async (): Promise<ApplicantCandidate[]> => {
   const response = await fetch('/api/applications');
@@ -82,8 +83,18 @@ export default function RecruiterDashboard() {
       const supabaseJob = supabaseJobs.find(
         (sJob) => sJob.merge_id === mergeJob.id
       );
-      return { mergeJob, supabaseJob };
+      return {
+        ...mergeJob,
+        ...supabaseJob,
+        id: mergeJob.id,
+        supabaseId: supabaseJob?.id
+      };
     });
+  }, [mergeJobs, supabaseJobs]);
+
+  useEffect(() => {
+    console.log('mergeJobs:', mergeJobs);
+    console.log('supabaseJobs:', supabaseJobs);
   }, [mergeJobs, supabaseJobs]);
 
   const factWindow = 90;
@@ -135,10 +146,9 @@ export default function RecruiterDashboard() {
                   onOpenChange={setInviteModalOpen}
                 >
                   <DialogContent>
-                    <InviteApplicants
+                    <InvitePage
                       jobs={combinedJobs}
-                      singleJobFlag={false}
-                      applicants={applicants}
+                      isLoading={jobsLoading || supabaseJobsLoading}
                     />
                   </DialogContent>
                 </Dialog>
@@ -184,7 +194,7 @@ export default function RecruiterDashboard() {
 
             {/* Right Column: Active Jobs + ChatBot + Settings */}
             <div className="flex flex-col gap-6 w-full">
-              <ActiveJobsCard jobs={mergeJobs} isLoading={jobsLoading} />
+              <ActiveJobsCard jobs={combinedJobs} isLoading={jobsLoading} />
               <BotCard />
               <SettingsCard />
             </div>
