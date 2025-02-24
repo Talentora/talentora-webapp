@@ -52,7 +52,6 @@ const ApplicantCountCard = ({
     );
   }
 
-  const currentMonth = new Date().getMonth();
   const factWindowDaysAgo = new Date();
   factWindowDaysAgo.setDate(factWindowDaysAgo.getDate() - factWindow);
 

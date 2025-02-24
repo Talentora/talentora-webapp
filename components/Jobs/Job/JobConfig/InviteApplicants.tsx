@@ -9,15 +9,10 @@ import { useToast } from '@/components/Toasts/use-toast';
 import { ApplicantCandidate, Job } from '@/types/merge';
 import { Sparkles, Search, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tables } from '@/types/types_db';
 
-type CombinedJob = {
-  mergeJob: Job;
-  supabaseJob?: Tables<'jobs'>;
-};
 
 interface InviteApplicantsProps {
-  jobs?: CombinedJob[] | null;
+  jobs?: any[];
   singleJobFlag?: boolean;
   applicants: ApplicantCandidate[];
 }
@@ -28,7 +23,7 @@ const InviteApplicants = ({ jobs, singleJobFlag, applicants }: InviteApplicantsP
   const [searchTerm, setSearchTerm] = useState('');
   const [isInviting, setIsInviting] = useState(false);
 
-  const numberOfJobs = jobs && jobs.length > 0 ? jobs.length : 0;
+  // const numberOfJobs = jobs && jobs.length > 0 ? jobs.length : 0;
   const [selectedJobId, setSelectedJobId] = useState<string>(jobs?.[0]?.mergeJob.id ?? '');
   const { toast } = useToast();
 

@@ -17,7 +17,8 @@ export default function ApplicantList() {
     const fetchApplicantCandidates = async () => {
       try {
         const response = await fetch(`/api/applications`, {
-          cache: 'no-store'
+          cache: 'force-cache',
+          next: { revalidate: 1800 }
         });
         const data: ApplicantCandidate[] = await response.json();
         setApplicantCandidates(data);

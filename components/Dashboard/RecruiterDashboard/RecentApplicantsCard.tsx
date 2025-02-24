@@ -8,24 +8,6 @@ import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
 
 export default function RecentApplicantsCard({ applicants, isLoading }: { applicants: ApplicantCandidate[], isLoading: boolean }) {
-  // const [applicants, setApplicants] = useState<ApplicantCandidate[]>([]);
-  // const [isLoading, setIsLoading] = useState(true);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const applicationsResponse = await fetch(
-  //       `/api/applications`
-  //     );
-
-  //     if (applicationsResponse.ok) {
-  //       const applicantsData = await applicationsResponse.json();
-  //       setApplicants(applicantsData);
-  //     }
-  //     setIsLoading(false);
-  //   };
-
-  //   fetchData();
-  // }, []);
 
   return (
     <Card className="p-5 rounded-2xl bg-background shadow-md shadow-[#5650F0]/20 dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
