@@ -1,53 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
-import { getScouts } from '@/utils/supabase/queries';
-import { getURL } from '@/utils/helpers';
+import { fetchJobsData, fetchApplicationsData, fetchScoutsData } from '@/server/functions';
 
 export function useSidebarData() {
   const { data: jobs, error: jobsError, isLoading: jobsLoading, isFetched: jobsFetched } = useQuery({
     queryKey: ['jobs'],
-    queryFn: async () => {
-      const response = await fetch(getURL('api/jobs'), {
-        credentials: 'include', // Include cookies for auth
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        cache: 'force-cache',
-        next: { revalidate: 1800 },
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Jobs fetch failed: ${response.status}`);
-      }
-      
-      return response.json();
-    }
+    queryFn: fetchJobsData
   });
 
   const { data: applications, error: applicationsError, isLoading: applicationsLoading, isFetched: applicationsFetched } = useQuery({
     queryKey: ['applications'],
-    queryFn: async () => {
-      const response = await fetch(getURL('api/applications'), {
-        credentials: 'include', // Include cookies for auth
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        cache: 'force-cache',
-        next: { revalidate: 1800 },
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Applications fetch failed: ${response.status}`);
-      }
-      
-      return response.json();
-    }
+    queryFn: fetchApplicationsData
   });
 
   const { data: scouts, error: scoutsError, isLoading: scoutsLoading, isFetched: scoutsFetched } = useQuery({
     queryKey: ['scouts'],
-    queryFn: () => getScouts()
+    queryFn: fetchScoutsData
   });
-
 
   const isInitialized = jobsFetched && applicationsFetched && scoutsFetched;
 

@@ -18,7 +18,13 @@ export function useJob(jobId: string) {
     setJobLoading(true);
     try {
       console.log('Fetching job:', jobId); // Debug log
-      const response = await fetch(getURL(`api/jobs/${jobId}`));
+
+      const response = await fetch(
+        getURL(`api/jobs/${jobId}`), {
+        cache: 'force-cache',
+        next: { revalidate: 7200 },
+      });
+
       console.log('Job response status:', response.status); // Debug log
       
       if (!response.ok) {
@@ -49,7 +55,12 @@ export function useJob(jobId: string) {
     setApplicantsLoading(true);
     try {
       console.log('Fetching applicants for job:', jobId); // Debug log
-      const response = await fetch(getURL(`api/applications?jobId=${jobId}`));
+      const response = await fetch(
+        getURL(`api/applications?jobId=${jobId}`), {
+        cache: 'force-cache',
+        next: { revalidate: 3600 },
+      });
+      
       console.log('Applicants response status:', response.status); // Debug log
       
       if (!response.ok) {
