@@ -1,15 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ApplicantCandidate } from '@/types/merge';
 import InviteApplicantsTable from '@/components/Applicants/InviteApplicantsTable';
-import SearchBar from '@/components/Applicants/Searchbar';
 import { Loader2 } from 'lucide-react';
-import { fetchApplicationsData } from '@/server/applications';
+import { fetchJoinedApplicantsData } from '@/server/applications';
 import { fetchJobsData } from '@/server/jobs';
 
 export default function ApplicantList() {
-  const [applicantCandidates, setApplicantCandidates] = useState<ApplicantCandidate[]>([]);
+  const [applicantCandidates, setApplicantCandidates] = useState<any[]>([]);
   const [jobs, setJobs] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
@@ -17,11 +15,24 @@ export default function ApplicantList() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch both applicants and jobs data
+        // Fetch both joined applicants and jobs data
         const [applicantsData, jobsData] = await Promise.all([
-          fetchApplicationsData(),
+          fetchJoinedApplicantsData(),
           fetchJobsData()
         ]);
+        
+        // Log data to inspect AI summary structure
+        console.log("Applicants data:", applicantsData);
+        console.log("Jobs data:", jobsData);
+        
+        // Check for AI summary data
+        applicantsData.forEach((app: any, index: number) => {
+          console.log(`Applicant ${index}:`, {
+            hasAISummary: !!app.AI_summary,
+            AI_summary: app.AI_summary,
+            isEmptyArray: Array.isArray(app.AI_summary) && app.AI_summary.length === 0
+          });
+        });
         
         setApplicantCandidates(applicantsData);
         setJobs(jobsData);
@@ -36,7 +47,13 @@ export default function ApplicantList() {
   }, []);
 
   const filteredApplicants = applicantCandidates.filter(
-    (app: ApplicantCandidate) => {
+    (app: any) => {
+      // If there's no search term, show all applicants
+      if (!searchTerm) return true;
+      
+      // If there's a search term but no candidate data, can't search by name
+      if (!app.candidate) return false;
+      
       const fullName = `${app.candidate.first_name} ${app.candidate.last_name}`.toLowerCase();
       return fullName.includes(searchTerm.toLowerCase());
     }

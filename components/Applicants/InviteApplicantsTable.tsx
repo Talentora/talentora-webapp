@@ -1,103 +1,75 @@
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import type { ApplicantCandidate } from "@/types/merge";
-import { Loader2, Search, Filter, Check, SlidersHorizontal } from 'lucide-react';
+import {
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SlidersHorizontal } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
 import { inviteCandidate } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
-import { Badge } from "@/components/ui/badge";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 
-// Global variable for max rows per page
-const MAX_ROWS_PER_PAGE = 10;
+// Import subcomponents
+import ApplicantTableHeader from './ApplicantTableHeader';
+import ApplicantFilters from './ApplicantFilters';
+import ApplicantJobInfo from './ApplicantJobInfo';
+import ApplicantTablePagination from './ApplicantTablePagination';
+import { getApplicantColumns } from './ApplicantTableColumns';
 
 interface InviteApplicantsTableProps {
-  applicants: ApplicantCandidate[];
+  applicants: any[];
   jobs?: any[];
 }
 
-// Helper function to determine if an applicant has completed an interview
-const hasCompletedInterview = (applicant: ApplicantCandidate): boolean => {
-  // Check if there's an AI_summary property or related data
-  return Boolean((applicant as any).AI_summary);
-};
-
-// Helper function to determine if an applicant has been invited
-const hasBeenInvited = (applicant: ApplicantCandidate): boolean => {
-  // Check if there's an invitation_sent property in the application
-  return Boolean((applicant.application as any).invitation_sent);
-};
-
-// Helper function to get status badge
-const getStatusBadge = (applicant: ApplicantCandidate) => {
-  if (hasCompletedInterview(applicant)) {
-    return <Badge variant="success">Interview Completed</Badge>;
-  } else if (hasBeenInvited(applicant)) {
-    return <Badge variant="warning">Invited</Badge>;
-  } else {
-    return <Badge variant="outline">Not Invited</Badge>;
-  }
-};
-
 const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps) => {
-  const [selectedApplicants, setSelectedApplicants] = useState<ApplicantCandidate[]>([]);
+  const [selectedApplicants, setSelectedApplicants] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedJobId, setSelectedJobId] = useState<string>("all");
   const [isInviting, setIsInviting] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const availableColumns = ['select', 'name', 'appliedFor', 'email', 'status', 'action'];
-  const [selectedColumns, setSelectedColumns] = useState<string[]>(availableColumns);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    status: false,
+    dataStatus: false
+  });
+  const [rowSelection, setRowSelection] = useState({});
   const { toast } = useToast();
   const router = useRouter();
 
-  // Filter applicants based on search term and selected job
-  const filteredApplicants = applicants.filter(applicant => {
-    const matchesSearch = 
-      applicant.candidate.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      applicant.candidate.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      applicant.candidate.email_addresses[0].value.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    // If "all" is selected, show all applicants that match the search
-    if (selectedJobId === "all") {
-      return matchesSearch;
+  // Additional filters
+  const [invitationStatus, setInvitationStatus] = useState<string>("all");
+  const [interviewStatus, setInterviewStatus] = useState<string>("all");
+  const [scoreThreshold, setScoreThreshold] = useState<number[]>([0, 100]);
+
+  const handleViewApplicant = (applicant: any) => {
+    // Check if application ID exists
+    if (!applicant.application?.id) {
+      toast({
+        title: 'Error',
+        description: 'Cannot view details: No application ID available',
+        variant: 'destructive'
+      });
+      return;
     }
-    
-    // Otherwise, filter by the selected job
-    const jobId = applicant.job?.id;
-    return matchesSearch && jobId === selectedJobId;
-  });
-
-  // Calculate the total number of pages
-  const totalPages = Math.ceil(filteredApplicants.length / MAX_ROWS_PER_PAGE);
-
-  // Reset selected applicants when filter changes
-  useEffect(() => {
-    setSelectedApplicants([]);
-  }, [selectedJobId]);
-
-  // Reset to first page when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedJobId, searchTerm]);
-
-  const handleSelectApplicant = (applicant: ApplicantCandidate) => {
-    setSelectedApplicants(prev =>
-      prev.includes(applicant)
-        ? prev.filter(a => a !== applicant)
-        : [...prev, applicant]
-    );
-  };
-
-  const handleViewApplicant = (applicant: ApplicantCandidate) => {
     router.push(`/applicants/${applicant.application.id}`);
   };
 
@@ -114,8 +86,28 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
     setIsInviting(true);
     try {
       for (const applicant of selectedApplicants) {
+        // Skip if no candidate data
+        if (!applicant.candidate) {
+          toast({
+            title: 'Error',
+            description: 'Cannot invite applicant without candidate data',
+            variant: 'destructive'
+          });
+          continue;
+        }
+        
         const name = `${applicant.candidate.first_name} ${applicant.candidate.last_name}`;
-        const email = applicant.candidate.email_addresses[0].value;
+        const email = applicant.candidate.email_addresses?.[0]?.value;
+        
+        if (!email) {
+          toast({
+            title: 'Error',
+            description: `No email found for ${name}`,
+            variant: 'destructive'
+          });
+          continue;
+        }
+        
         const { error } = await inviteCandidate(name, email, selectedJobId);
         
         if (error) {
@@ -133,6 +125,7 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
         }
       }
       setSelectedApplicants([]);
+      setRowSelection({});
     } catch (error) {
       toast({
         title: 'Error',
@@ -144,251 +137,233 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
     }
   };
 
-  // Get job name by ID
-  const getJobNameById = (jobId: string): string => {
-    if (!jobs) return "Unknown Job";
-    if (jobId === "all") return "All Jobs";
-    
-    for (const job of jobs) {
-      const id = job.mergeJob?.id || job.id;
-      const name = job.mergeJob?.name || job.name;
-      
-      if (id === jobId) {
-        return name || "Unknown Job";
-      }
-    }
-    
-    return "Unknown Job";
-  };
+  // Define columns for the data table
+  const columns = useMemo(() => 
+    getApplicantColumns({ 
+      selectedJobId, 
+      handleViewApplicant, 
+      setSelectedApplicants 
+    }), 
+    [selectedJobId]
+  );
 
-  // Function to toggle a column selection
-  const toggleColumnSelection = (column: string) => {
-    if (column === 'select' || column === 'name' || column === 'action') {
-      return;
-    }
-    if (selectedColumns.includes(column)) {
-      setSelectedColumns(selectedColumns.filter(c => c !== column));
-    } else {
-      setSelectedColumns([...selectedColumns, column]);
-    }
-  };
+  // Filter applicants based on search term and selected job
+  const filteredApplicants = useMemo(() => {
+    return applicants.filter(applicant => {
+      // For search term filtering
+      let matchesSearch = true;
+      if (searchTerm) {
+        if (applicant.candidate) {
+          const fullName = `${applicant.candidate.first_name} ${applicant.candidate.last_name}`.toLowerCase();
+          matchesSearch = fullName.includes(searchTerm.toLowerCase()) ||
+            (applicant.candidate.email_addresses && 
+             applicant.candidate.email_addresses[0]?.value.toLowerCase().includes(searchTerm.toLowerCase()));
+        } else {
+          // If no candidate data but there's a search term, can't match
+          matchesSearch = false;
+        }
+      }
+      
+      // For job filtering
+      let matchesJob = true;
+      if (selectedJobId !== "all") {
+        const jobId = applicant.job?.id;
+        matchesJob = jobId === selectedJobId;
+      }
+      
+      // For invitation status filtering
+      let matchesInvitationStatus = true;
+      if (invitationStatus !== "all") {
+        const isInvited = Boolean(applicant.application?.invitation_sent);
+        matchesInvitationStatus = (invitationStatus === "invited" && isInvited) || 
+                                 (invitationStatus === "not_invited" && !isInvited);
+      }
+      
+      // For interview status filtering
+      let matchesInterviewStatus = true;
+      if (interviewStatus !== "all") {
+        // Check if there's a valid AI_summary property
+        const hasInterview = Boolean(applicant.AI_summary) && 
+          !(Array.isArray(applicant.AI_summary) && applicant.AI_summary.length === 0);
+          
+        matchesInterviewStatus = (interviewStatus === "completed" && hasInterview) || 
+                                (interviewStatus === "not_completed" && !hasInterview);
+      }
+      
+      // For score threshold filtering
+      let matchesScoreThreshold = true;
+      let score = null;
+      
+      // Extract score from AI_summary
+      if (applicant.AI_summary) {
+        if (Array.isArray(applicant.AI_summary)) {
+          if (applicant.AI_summary.length > 0 && 
+              applicant.AI_summary[0]?.overall_summary?.score) {
+            score = applicant.AI_summary[0].overall_summary.score;
+          }
+        } else if (applicant.AI_summary?.overall_summary?.score) {
+          score = applicant.AI_summary.overall_summary.score;
+        }
+      }
+      
+      if (score !== null) {
+        const numScore = parseFloat(score);
+        if (!isNaN(numScore)) {
+          matchesScoreThreshold = numScore >= scoreThreshold[0] && numScore <= scoreThreshold[1];
+        }
+      } else if (scoreThreshold[0] > 0) {
+        // If we're filtering for scores above 0 but this applicant has no score
+        matchesScoreThreshold = false;
+      }
+      
+      return matchesSearch && matchesJob && matchesInvitationStatus && 
+             matchesInterviewStatus && matchesScoreThreshold;
+    });
+  }, [applicants, searchTerm, selectedJobId, invitationStatus, interviewStatus, scoreThreshold]);
+
+  // Reset selected applicants when filter changes
+  useEffect(() => {
+    setSelectedApplicants([]);
+    setRowSelection({});
+  }, [selectedJobId, invitationStatus, interviewStatus, scoreThreshold]);
+
+  // Initialize the table
+  const table = useReactTable({
+    data: filteredApplicants,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+  });
+
+  // Count active filters
+  const activeFilterCount = [
+    selectedJobId !== "all" ? 1 : 0,
+    invitationStatus !== "all" ? 1 : 0,
+    interviewStatus !== "all" ? 1 : 0,
+    scoreThreshold[0] > 0 || scoreThreshold[1] < 100 ? 1 : 0,
+    Object.keys(columnVisibility).length > 0 ? 1 : 0
+  ].reduce((a, b) => a + b, 0);
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-          <Input
-            placeholder="Search candidates..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8"
-          />
-        </div>
-        <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-          {/* Combined filter popup */}
-          <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
-                <SlidersHorizontal className="h-4 w-4" />
-                <span>Filters</span>
-                {(selectedJobId !== "all" || selectedColumns.length !== availableColumns.length) && (
-                  <Badge variant="secondary" className="ml-1 h-5 w-5 rounded-full p-0 flex items-center justify-center">
-                    {(selectedJobId !== "all" ? 1 : 0) + (selectedColumns.length !== availableColumns.length ? 1 : 0)}
-                  </Badge>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80 p-4 bg-background">
-              <div className="space-y-4">
-                <h4 className="font-medium">Filter Options</h4>
-                
-                {/* Job filter */}
-                <div className="space-y-2">
-                  <h5 className="text-sm font-medium">Job</h5>
-                  <Select 
-                    value={selectedJobId} 
-                    onValueChange={(value) => {
-                      setSelectedJobId(value);
-                    }}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select job" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Jobs</SelectItem>
-                      {jobs?.map((job) => {
-                        const jobId = job.mergeJob?.id || job.id;
-                        const jobName = job.mergeJob?.name || job.name;
-                        
-                        if (!jobId || !jobName) return null;
-                        
-                        return (
-                          <SelectItem key={jobId} value={jobId}>
-                            {jobName}
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <Separator />
-                
-                {/* Column selector */}
-                <div className="space-y-2">
-                  <h5 className="text-sm font-medium">Visible Columns</h5>
-                  <div className="grid grid-cols-2 gap-2">
-                    {availableColumns.map((column) => (
-                      <div key={column} className="flex items-center space-x-2">
-                        <Checkbox 
-                          id={`column-${column}`} 
-                          checked={selectedColumns.includes(column)}
-                          onCheckedChange={() => toggleColumnSelection(column)}
-                          disabled={column === 'select' || column === 'name' || column === 'action'}
-                        />
-                        <Label htmlFor={`column-${column}`} className="cursor-pointer text-sm">
-                          {column.charAt(0).toUpperCase() + column.slice(1)}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="flex justify-between pt-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => {
-                      setSelectedColumns(availableColumns);
-                      setSelectedJobId("all");
-                    }}
-                  >
-                    Reset
-                  </Button>
-                  <Button 
-                    size="sm"
-                    onClick={() => setIsFilterOpen(false)}
-                  >
-                    Apply
-                  </Button>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-          
-          <Button 
-            onClick={handleInvite} 
-            disabled={selectedApplicants.length === 0 || isInviting || selectedJobId === "all"}
-            className="whitespace-nowrap"
-          >
-            {isInviting ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            ) : null}
-            Invite ({selectedApplicants.length})
-          </Button>
-        </div>
-      </div>
+    <div className="space-y-4 relative">
+      {/* Table header with search, filter and invite buttons */}
+      <ApplicantTableHeader
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        selectedApplicants={selectedApplicants}
+        isInviting={isInviting}
+        handleInvite={handleInvite}
+        selectedJobId={selectedJobId}
+        setIsFilterOpen={setIsFilterOpen}
+        activeFilterCount={activeFilterCount}
+      />
       
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-500">
-          {filteredApplicants.length} candidate{filteredApplicants.length !== 1 ? 's' : ''} found
-        </div>
-        {selectedJobId !== "all" && (
-          <div className="text-sm">
-            Inviting to: <span className="font-medium">{getJobNameById(selectedJobId)}</span>
+      {/* Filter popup positioned in the center of the screen */}
+      <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+        <ApplicantFilters
+          isFilterOpen={isFilterOpen}
+          setIsFilterOpen={setIsFilterOpen}
+          selectedJobId={selectedJobId}
+          setSelectedJobId={setSelectedJobId}
+          invitationStatus={invitationStatus}
+          setInvitationStatus={setInvitationStatus}
+          interviewStatus={interviewStatus}
+          setInterviewStatus={setInterviewStatus}
+          scoreThreshold={scoreThreshold}
+          setScoreThreshold={setScoreThreshold}
+          jobs={jobs}
+          table={table}
+          activeFilterCount={activeFilterCount}
+        >
+          <div className="pointer-events-auto">
+            {/* This is just a placeholder for the PopoverTrigger */}
+            <span className="hidden" />
           </div>
-        )}
+        </ApplicantFilters>
       </div>
       
-      <Table className="border border-transparent rounded-lg">
-        <TableHeader>
-          <TableRow>
-            {selectedColumns.map((column) => (
-              <TableHead key={column}>{column.charAt(0).toUpperCase() + column.slice(1)}</TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredApplicants.slice((currentPage - 1) * MAX_ROWS_PER_PAGE, currentPage * MAX_ROWS_PER_PAGE).map((applicant) => (
-            <TableRow key={applicant.application.id} className="cursor-pointer">
-              {selectedColumns.map((column) => (
-                column === 'select' ? (
-                  <TableCell key={column} onClick={(e) => {
-                    e.stopPropagation();
-                    handleSelectApplicant(applicant);
-                  }}>
-                    <input
-                      type="checkbox"
-                      checked={selectedApplicants.includes(applicant)}
-                      onChange={() => {}}
-                      className="rounded border-gray-300"
-                      disabled={selectedJobId !== "all" && applicant.job?.id !== selectedJobId}
-                    />
-                  </TableCell>
-                ) : column === 'name' ? (
-                  <TableCell key={column} onClick={() => handleViewApplicant(applicant)}>
-                    {applicant.candidate.first_name} {applicant.candidate.last_name}
-                  </TableCell>
-                ) : column === 'appliedFor' ? (
-                  <TableCell key={column} onClick={() => handleViewApplicant(applicant)}>
-                    {applicant.job?.name || "No job specified"}
-                  </TableCell>
-                ) : column === 'email' ? (
-                  <TableCell key={column} onClick={() => handleViewApplicant(applicant)}>
-                    {applicant.candidate.email_addresses?.[0]?.value || "No email address"}
-                  </TableCell>
-                ) : column === 'status' ? (
-                  <TableCell key={column} onClick={() => handleViewApplicant(applicant)}>
-                    {getStatusBadge(applicant)}
-                  </TableCell>
-                ) : column === 'action' ? (
-                  <TableCell key={column}>
-                    <Button 
-                      variant="link" 
-                      onClick={() => handleViewApplicant(applicant)}
-                      className="p-0 h-auto font-normal underline"
-                    >
-                      View Details
-                    </Button>
-                  </TableCell>
-                ) : null
-              ))}
-            </TableRow>
-          ))}
-          {filteredApplicants.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={selectedColumns.length} className="text-center py-8 text-gray-500">
-                No candidates found
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+      {/* Job info and candidate count */}
+      <ApplicantJobInfo
+        selectedJobId={selectedJobId}
+        jobs={jobs}
+        filteredApplicantsCount={filteredApplicants.length}
+      />
       
-      {totalPages > 1 && (
-        <div className="flex justify-center mt-4 items-center">
-          <Button 
-            onClick={() => setCurrentPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="mr-2"
-            variant="outline"
-            size="sm"
-          >
-            Previous
-          </Button>
-          <span className="text-sm text-gray-500">{currentPage} of {totalPages}</span>
-          <Button 
-            onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="ml-2"
-            variant="outline"
-            size="sm"
-          >
-            Next
-          </Button>
+      {/* Table */}
+      <div className="rounded-md border overflow-hidden">
+        <div className="overflow-x-auto w-full">
+          <Table className="w-full table-fixed">
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    const width = header.column.getSize();
+                    return (
+                      <TableHead 
+                        key={header.id} 
+                        className="whitespace-normal break-words"
+                        style={{ width: width ? `${width}px` : 'auto' }}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    )
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="cursor-pointer"
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      const width = cell.column.getSize();
+                      return (
+                        <TableCell 
+                          key={cell.id} 
+                          className="whitespace-normal break-words"
+                          style={{ width: width ? `${width}px` : 'auto' }}
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      )
+                    })}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                    No candidates found
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
-      )}
+      </div>
+      
+      {/* Pagination */}
+      <ApplicantTablePagination table={table} />
     </div>
   );
 };
