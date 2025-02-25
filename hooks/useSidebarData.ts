@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchJobsData, fetchApplicationsData, fetchScoutsData } from '@/server/functions';
+import { fetchJobsData } from '@/server/jobs';
+import { fetchApplicationsData } from '@/server/applications';
+import { fetchScoutsData } from '@/server/scouts';
 
 export function useSidebarData() {
   const { data: jobs, error: jobsError, isLoading: jobsLoading, isFetched: jobsFetched } = useQuery({
