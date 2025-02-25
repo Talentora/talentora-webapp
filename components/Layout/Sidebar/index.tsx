@@ -35,7 +35,7 @@ import { ScoutWithJobs } from '@/types/custom';
 import { SidebarHeader as NewSidebarHeader } from './components/SidebarHeader';
 import { CommandSearch } from './components/CommandSearch';
 import { SidebarLink, SubLink } from './components/SidebarLink';
-import { fetchJobsData, fetchApplicationsData } from '@/server/functions';
+import { fetchApplicationsData } from '@/server/applications';
 
 
 interface Job {

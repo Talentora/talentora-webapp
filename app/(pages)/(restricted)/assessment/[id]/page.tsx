@@ -19,10 +19,9 @@ import {
   getApplication
 } from '@/utils/supabase/queries';
 import {
-  fetchJobDetails,
-  fetchApplicationData,
   useApplicant
 } from '@/hooks/useApplicant';
+import { fetchJobById } from '@/server/jobs';
 
 type ScoutProps = {
   scout: ScoutConfig;
@@ -77,7 +76,7 @@ export default function Assessment({ params }: { params: { id: string } }) {
         const [config, job, mergeJob] = await Promise.all([
           getJobInterviewConfig(jobId),
           getJob(jobId),
-          fetchJobDetails(jobId, account_token)
+          fetchJobById(jobId)
         ]);
 
         if (!config || !job || !mergeJob) {
