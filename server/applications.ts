@@ -39,6 +39,7 @@ export async function fetchApplicationData(mergeApplicationId: string) {
   }
 
 
+// Fetch application data with AI summary. The applicaiton Id is merge id
 export async function fetchApplicationAISummary(mergeApplicationId: string) {
     const accountToken = await getMergeApiKey();
     if (!accountToken) {
