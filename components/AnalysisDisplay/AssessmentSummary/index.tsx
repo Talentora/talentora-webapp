@@ -7,27 +7,23 @@ interface AssessmentSummaryProps {
 }
 
 const Page = ({ aiSummary }: AssessmentSummaryProps) => {
-    const typedSummary = aiSummary ? {
-        text_eval: aiSummary.text_eval as unknown as TextEvaluation,
-        emotion_eval: aiSummary.emotion_eval as unknown as EmotionEvaluation,
-        overall_summary: aiSummary.overall_summary as unknown as OverallSummary,
-        interview_summary: aiSummary.transcript_summary ? {
-            content: aiSummary.transcript_summary
-        } : undefined,
-        recording_id: aiSummary.recording_id
-    } : null;
-    const overallSummary = typedSummary?.overall_summary;
+    // Type guard to check if overall_summary exists and has explanation property
+    const hasExplanation = (summary: any): summary is { overall_summary: { explanation: string } } => {
+        return summary?.overall_summary && typeof summary.overall_summary.explanation === 'string';
+    };
 
     return (
         <div className="space-y-4">
             <h2 className="text-2xl font-semibold">Assessment Summary</h2>
             <div className="p-4">
-                {!typedSummary || !overallSummary ? (
+                {!aiSummary ? (
                     <div>No summary available</div>
-                ) : (
+                ) : hasExplanation(aiSummary) ? (
                     <div className="space-y-4">
-                        <p className="text-gray-700">{overallSummary.explanation}</p>
+                        <p className="text-gray-700">{aiSummary.overall_summary.explanation}</p>
                     </div>
+                ) : (
+                    <div>Invalid summary format</div>
                 )}
             </div>
         </div>

@@ -4,17 +4,17 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { ApplicantCandidate } from "@/types/merge";
-import { Loader2, Search, Filter, Check } from 'lucide-react';
+import { Loader2, Search, Filter, Check, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { inviteCandidate } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 // Global variable for max rows per page
 const MAX_ROWS_PER_PAGE = 10;
@@ -50,12 +50,12 @@ const getStatusBadge = (applicant: ApplicantCandidate) => {
 const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps) => {
   const [selectedApplicants, setSelectedApplicants] = useState<ApplicantCandidate[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  // Single job selector that serves both as filter and invitation target
   const [selectedJobId, setSelectedJobId] = useState<string>("all");
   const [isInviting, setIsInviting] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1); // Added for pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const availableColumns = ['select', 'name', 'appliedFor', 'email', 'status', 'action'];
-  const [selectedColumns, setSelectedColumns] = useState<string[]>(availableColumns); // All selected by default
+  const [selectedColumns, setSelectedColumns] = useState<string[]>(availableColumns);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -83,6 +83,11 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
   useEffect(() => {
     setSelectedApplicants([]);
   }, [selectedJobId]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedJobId, searchTerm]);
 
   const handleSelectApplicant = (applicant: ApplicantCandidate) => {
     setSelectedApplicants(prev =>
@@ -158,14 +163,13 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
 
   // Function to toggle a column selection
   const toggleColumnSelection = (column: string) => {
-    if (column === 'select') {
-      setSelectedColumns([column, ...selectedColumns.filter(c => c !== column)]);
+    if (column === 'select' || column === 'name' || column === 'action') {
+      return;
+    }
+    if (selectedColumns.includes(column)) {
+      setSelectedColumns(selectedColumns.filter(c => c !== column));
     } else {
-      setSelectedColumns(prev => 
-        prev.includes(column)
-          ? prev.filter(c => c !== column)
-          : [column, ...prev]
-      );
+      setSelectedColumns([...selectedColumns, column]);
     }
   };
 
@@ -182,55 +186,93 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
           />
         </div>
         <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-          {/* Combined job selector */}
-          {jobs && jobs.length > 0 && (
-            <div className="flex items-center gap-2">
-              {/* <Filter className="h-4 w-4 text-gray-500" /> */}
-              <Select value={selectedJobId} onValueChange={setSelectedJobId}>
-                <SelectTrigger className="w-full md:w-[200px]">
-                  <SelectValue placeholder="Select job" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Jobs</SelectItem>
-                  {jobs.map((job) => {
-                    const jobId = job.mergeJob?.id || job.id;
-                    const jobName = job.mergeJob?.name || job.name;
-                    
-                    if (!jobId || !jobName) return null;
-                    
-                    return (
-                      <SelectItem key={jobId} value={jobId}>
-                        {jobName}
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-          
-          {/* Column selector */}
-          <Popover>
+          {/* Combined filter popup */}
+          <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
             <PopoverTrigger asChild>
               <Button variant="outline" className="flex items-center gap-2">
-                <Filter className="h-4 w-4" />
-                <span>Columns ({selectedColumns.length})</span>
+                <SlidersHorizontal className="h-4 w-4" />
+                <span>Filters</span>
+                {(selectedJobId !== "all" || selectedColumns.length !== availableColumns.length) && (
+                  <Badge variant="secondary" className="ml-1 h-5 w-5 rounded-full p-0 flex items-center justify-center">
+                    {(selectedJobId !== "all" ? 1 : 0) + (selectedColumns.length !== availableColumns.length ? 1 : 0)}
+                  </Badge>
+                )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-4 bg-background">
-              <div className="space-y-2">
-                {availableColumns.map((column) => (
-                  <div key={column} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`column-${column}`} 
-                      checked={selectedColumns.includes(column)}
-                      onCheckedChange={() => toggleColumnSelection(column)}
-                    />
-                    <Label htmlFor={`column-${column}`} className="cursor-pointer">
-                      {column.charAt(0).toUpperCase() + column.slice(1)}
-                    </Label>
+            <PopoverContent className="w-80 p-4 bg-background">
+              <div className="space-y-4">
+                <h4 className="font-medium">Filter Options</h4>
+                
+                {/* Job filter */}
+                <div className="space-y-2">
+                  <h5 className="text-sm font-medium">Job</h5>
+                  <Select 
+                    value={selectedJobId} 
+                    onValueChange={(value) => {
+                      setSelectedJobId(value);
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select job" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Jobs</SelectItem>
+                      {jobs?.map((job) => {
+                        const jobId = job.mergeJob?.id || job.id;
+                        const jobName = job.mergeJob?.name || job.name;
+                        
+                        if (!jobId || !jobName) return null;
+                        
+                        return (
+                          <SelectItem key={jobId} value={jobId}>
+                            {jobName}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <Separator />
+                
+                {/* Column selector */}
+                <div className="space-y-2">
+                  <h5 className="text-sm font-medium">Visible Columns</h5>
+                  <div className="grid grid-cols-2 gap-2">
+                    {availableColumns.map((column) => (
+                      <div key={column} className="flex items-center space-x-2">
+                        <Checkbox 
+                          id={`column-${column}`} 
+                          checked={selectedColumns.includes(column)}
+                          onCheckedChange={() => toggleColumnSelection(column)}
+                          disabled={column === 'select' || column === 'name' || column === 'action'}
+                        />
+                        <Label htmlFor={`column-${column}`} className="cursor-pointer text-sm">
+                          {column.charAt(0).toUpperCase() + column.slice(1)}
+                        </Label>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+                
+                <div className="flex justify-between pt-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      setSelectedColumns(availableColumns);
+                      setSelectedJobId("all");
+                    }}
+                  >
+                    Reset
+                  </Button>
+                  <Button 
+                    size="sm"
+                    onClick={() => setIsFilterOpen(false)}
+                  >
+                    Apply
+                  </Button>
+                </div>
               </div>
             </PopoverContent>
           </Popover>
@@ -285,19 +327,19 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
                     />
                   </TableCell>
                 ) : column === 'name' ? (
-                  <TableCell key={column}>
+                  <TableCell key={column} onClick={() => handleViewApplicant(applicant)}>
                     {applicant.candidate.first_name} {applicant.candidate.last_name}
                   </TableCell>
                 ) : column === 'appliedFor' ? (
-                  <TableCell key={column}>
+                  <TableCell key={column} onClick={() => handleViewApplicant(applicant)}>
                     {applicant.job?.name || "No job specified"}
                   </TableCell>
                 ) : column === 'email' ? (
-                  <TableCell key={column}>
+                  <TableCell key={column} onClick={() => handleViewApplicant(applicant)}>
                     {applicant.candidate.email_addresses?.[0]?.value || "No email address"}
                   </TableCell>
                 ) : column === 'status' ? (
-                  <TableCell key={column}>
+                  <TableCell key={column} onClick={() => handleViewApplicant(applicant)}>
                     {getStatusBadge(applicant)}
                   </TableCell>
                 ) : column === 'action' ? (
@@ -323,23 +365,30 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
           )}
         </TableBody>
       </Table>
-      <div className="flex justify-center mt-4 items-center">
-        <Button 
-          onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="mr-2"
-        >
-          Previous
-        </Button>
-        <span className="text-sm text-gray-500">{currentPage} of {totalPages}</span>
-        <Button 
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="ml-2"
-        >
-          Next
-        </Button>
-      </div>
+      
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-4 items-center">
+          <Button 
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="mr-2"
+            variant="outline"
+            size="sm"
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-gray-500">{currentPage} of {totalPages}</span>
+          <Button 
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="ml-2"
+            variant="outline"
+            size="sm"
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
