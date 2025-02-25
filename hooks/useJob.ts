@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { EnrichedJob } from '@/components/Jobs/types';
 import { ApplicantCandidate } from '@/types/merge';
-import { getURL } from '@/utils/helpers';
+import { fetchJobById } from '@/server/jobs';
+import { fetchApplicationsData } from '@/server/applications';
 
 export function useJob(jobId: string) {
   const [job, setJob] = useState<EnrichedJob | null>(null);
@@ -17,22 +18,12 @@ export function useJob(jobId: string) {
     
     setJobLoading(true);
     try {
-      console.log('Fetching job:', jobId); // Debug log
-      const response = await fetch(getURL(`api/jobs/${jobId}`));
-      console.log('Job response status:', response.status); // Debug log
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch job: ${response.statusText}`);
-      }
-      
-      const jobData = await response.json();
-      console.log('Job data received:', jobData); // Debug log
-      
+      const jobData = await fetchJobById(jobId);
       if (isMounted.current) {
         setJob(jobData);
       }
     } catch (err) {
-      console.error('Error fetching job:', err); // Debug log
+      console.error('Error fetching job:', err);
       if (isMounted.current) {
         setError(err instanceof Error ? err.message : 'Failed to fetch job');
       }
@@ -48,23 +39,13 @@ export function useJob(jobId: string) {
     
     setApplicantsLoading(true);
     try {
-      console.log('Fetching applicants for job:', jobId); // Debug log
-      const response = await fetch(getURL(`api/applications?jobId=${jobId}`));
-      console.log('Applicants response status:', response.status); // Debug log
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch applicants: ${response.statusText}`);
-      }
-      
-      const applicantsData = await response.json();
-      console.log('Applicants data received:', applicantsData); // Debug log
-      
+      const allApps = await fetchApplicationsData();
+      const filteredApps = allApps.filter((app: ApplicantCandidate) => app.job.id === jobId);
       if (isMounted.current) {
-        setApplicants(applicantsData);
+        setApplicants(filteredApps);
       }
     } catch (err) {
       console.error('Error fetching applicants:', err);
-      // Don't set error state for applicants failure
     } finally {
       if (isMounted.current) {
         setApplicantsLoading(false);
@@ -75,7 +56,6 @@ export function useJob(jobId: string) {
   useEffect(() => {
     isMounted.current = true;
     
-    // Only fetch if we have a jobId
     if (jobId) {
       fetchJob();
       fetchApplicants();
@@ -95,7 +75,6 @@ export function useJob(jobId: string) {
     jobLoading,
     applicantsLoading,
     error,
-    // Add refetch functions for manual retries
     refetchJob: fetchJob,
     refetchApplicants: fetchApplicants
   }), [job, applicants, jobLoading, applicantsLoading, error, fetchJob, fetchApplicants]);

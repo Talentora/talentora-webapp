@@ -27,21 +27,8 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import InviteApplicants from '@/components/Jobs/Job/JobConfig/InviteApplicants';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
-
-const fetchApplications = async (): Promise<ApplicantCandidate[]> => {
-  const response = await fetch('/api/applications');
-  if (!response.ok) throw new Error('Failed to fetch applications');
-  return response.json();
-};
-
-
-const fetchJobs = async (): Promise<Job[]> => {
-  console.log('called fetchJobs');
-  const response = await fetch('/api/jobs');
-  if (!response.ok) throw new Error('Failed to fetch jobs');
-  return response.json();
-};
-
+import { fetchApplicationsData } from '@/server/applications';
+import { fetchJobsData } from '@/server/jobs';
 
 export default function RecruiterDashboard() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
@@ -49,13 +36,13 @@ export default function RecruiterDashboard() {
 
   const { data: applicants = [], isLoading: applicantsLoading } = useQuery({
     queryKey: ['applications'],
-    queryFn: fetchApplications,
+    queryFn: fetchApplicationsData,
     staleTime: 5 * 60 * 1000
   });
 
   const { data: mergeJobs = [], isLoading: jobsLoading } = useQuery({
     queryKey: ['jobs'],
-    queryFn: fetchJobs,
+    queryFn: fetchJobsData,
     staleTime: 5 * 60 * 1000
   });
 
@@ -119,8 +106,6 @@ export default function RecruiterDashboard() {
             </div>
           </div>
 
-          {/* <TimeRangeSelector /> */}
-
           {/* Fact Cards - Full width */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full">
             <ApplicantCountCard
@@ -167,3 +152,6 @@ export default function RecruiterDashboard() {
     </div>
   );
 }
+
+
+

@@ -12,6 +12,7 @@ import InterviewQuestions from './InterviewQuestions';
 import { ApplicantCandidate, Job } from '@/types/merge';
 import { createClient } from '@/utils/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
+import { fetchJobById } from '@/server/jobs';
 
 type InterviewConfig = Tables<'job_interview_config'>;
 type Bot = Tables<'bots'>;
@@ -116,11 +117,9 @@ export default function JobConfig({
   useEffect(() => {
     const fetchJobData = async () => {
       try {
-        const supabase = createClient();
-        
-        const jobResponse = await fetch(`/api/jobs/${jobId}`);
-        const mergeJob = await jobResponse.json();
+        const mergeJob = await fetchJobById(jobId);
 
+        const supabase = createClient();
         const { data: supabaseJob } = await supabase
           .from('jobs')
           .select('*')

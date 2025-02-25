@@ -7,12 +7,9 @@ import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, C
 
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 
-
 import {
-  SidebarHeader,
   SidebarContent,
   SidebarFooter,
-  SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarProvider,
@@ -38,6 +35,8 @@ import { ScoutWithJobs } from '@/types/custom';
 import { SidebarHeader as NewSidebarHeader } from './components/SidebarHeader';
 import { CommandSearch } from './components/CommandSearch';
 import { SidebarLink, SubLink } from './components/SidebarLink';
+import { fetchApplicationsData } from '@/server/applications';
+
 
 interface Job {
   id: string;

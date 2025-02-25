@@ -10,6 +10,8 @@ import { createClient } from '@/utils/supabase/client';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '../ui/skeleton';
 import { useRouter } from 'next/navigation';
+import { fetchJobById } from '@/server/jobs';
+
 interface BotInfoProps {
   scout: Bot;
 }
@@ -31,17 +33,16 @@ export const ScoutInfo: React.FC<BotInfoProps> = ({ scout }) => {
           console.error('Error fetching job interview configurations:', jobIdsError);
           return;
         }
-        console.log("jobIds", jobIds)
+
         const jobData = await Promise.all(jobIds.map(async (jobId) => {
-          const jobResponse = await fetch(`/api/jobs/${jobId.job_id}`);
-          if (!jobResponse.ok) {
-            console.error(`Failed to fetch job with id ${jobId}`);
+          try {
+            return await fetchJobById(jobId.job_id);
+          } catch (error) {
+            console.error(`Failed to fetch job with id ${jobId.job_id}`, error);
             return null;
           }
-          return jobResponse.json();
         }));
 
-        console.log("jobData", jobData)
         setJobInterviewConfigs(jobData);
         setIsLoading(false);
       } catch (err) {
