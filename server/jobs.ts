@@ -41,7 +41,7 @@ export async function fetchJobById(jobId: string) {
 
 
 
-// fetch job configuration data
+// fetch job configuration data, and the job. Job ID is supabase/merge
 export async function fetchJobConfigurationData(jobId: string) {
    const accountToken = await getMergeApiKey();
       if (!accountToken) {
