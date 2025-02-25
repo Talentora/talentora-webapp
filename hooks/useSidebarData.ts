@@ -1,5 +1,3 @@
-'use client';
-
 import { useQuery } from '@tanstack/react-query';
 import { getScouts } from '@/utils/supabase/queries';
 import { getURL } from '@/utils/helpers';
@@ -12,7 +10,9 @@ export function useSidebarData() {
         credentials: 'include', // Include cookies for auth
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
+        cache: 'force-cache',
+        next: { revalidate: 1800 },
       });
       
       if (!response.ok) {
@@ -30,7 +30,9 @@ export function useSidebarData() {
         credentials: 'include', // Include cookies for auth
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
+        cache: 'force-cache',
+        next: { revalidate: 1800 },
       });
       
       if (!response.ok) {
