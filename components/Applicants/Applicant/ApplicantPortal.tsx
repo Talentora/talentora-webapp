@@ -5,6 +5,8 @@ import { portalProps } from '@/app/(pages)/(restricted)/applicants/[id]/page';
 import AnalysisDisplay from '@/components/AnalysisDisplay';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import ResumeViewer from '@/components/AnalysisDisplay/ResumeViewer';
+
 interface ApplicantPortalProps {
   portalProps: portalProps;
 }
@@ -40,10 +42,7 @@ const PlaceholderAnalysis = () => (
       <h2 className="text-lg font-semibold mb-2">Video Transcript</h2>
       <Skeleton className="h-64 w-full" />
     </div>
-    <div>
-      <h2 className="text-lg font-semibold mb-2">Resume</h2>
-      <Skeleton className="h-64 w-full" />
-    </div>
+   
     <div>
       <h2 className="text-lg font-semibold mb-2">Emotional Analysis</h2>
       <Skeleton className="h-64 w-full" />
@@ -96,11 +95,11 @@ export default function ApplicantPortal({
                 <ApplicantActions portalProps={portalProps} />
               </div>
             </div>
+            <ResumeViewer portalProps={portalProps} />
 
             {AI_summary ? (
               <div>
-             
-              <AnalysisDisplay portalProps={portalProps} />
+                <AnalysisDisplay portalProps={portalProps} />
               </div>
             ) : (
               <>
@@ -114,17 +113,11 @@ export default function ApplicantPortal({
                     <PlaceholderAnalysis />
                   </div>
                 ) : (
-                  <div className="rounded-lg bg-accent/10 border border-accent/20 p-4 mb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex-shrink-0">
-                        <span className="text-2xl">📝</span>
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-accent">Not Yet Invited</h4>
-                        <p className="text-muted-foreground">This candidate hasn't been invited to complete an assessment yet. Send an invitation to begin the evaluation process.</p>
-                      </div>
-                    </div>
-                  </div>
+                  <Alert intent="info" title="Not Yet Invited">
+                    <AlertDescription>
+                      This candidate hasn't been invited to complete an assessment yet. Send an invitation to begin the evaluation process.
+                    </AlertDescription>
+                  </Alert>
                 )}
               </>
             )}

@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import type { ApplicantCandidate } from "@/types/merge"
 import ApplicantPortal from "@/components/Applicants/Applicant/ApplicantPortal"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { Loader2 } from 'lucide-react'; // Added for loading indicator
 
 interface ApplicantTableProps {
   applicants: ApplicantCandidate[]
@@ -15,10 +16,13 @@ interface ApplicantTableProps {
 
 export default function ApplicantTable({ applicants, disablePortal = false, title }: ApplicantTableProps) {
   const [selectedApplicant, setSelectedApplicant] = useState<ApplicantCandidate | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false) // Added for loading state
   const router = useRouter()
 
-  const handleSelectApplicant = (applicant: ApplicantCandidate) => {
-    router.push(`/applicants/${applicant.application.id}`)
+  const handleSelectApplicant = async (applicant: ApplicantCandidate) => {
+    setIsLoading(true) // Start loading indicator
+    await router.push(`/applicants/${applicant.application.id}`)
+    setIsLoading(false) // Stop loading indicator
   }
 
   return (
@@ -62,6 +66,11 @@ export default function ApplicantTable({ applicants, disablePortal = false, titl
           ))}
         </TableBody>
       </Table>
+      {isLoading && (
+        <div className="flex justify-center items-center h-screen">
+          <Loader2 className="animate-spin" />
+        </div>
+      )}
     </div>
   )
 }

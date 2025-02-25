@@ -4,7 +4,6 @@ import NewLexicalAnalysis from "./NewLexicalAnalysis";
 import EmotionalAnalysis from "./EmotionalAnalysis";
 import AssessmentScores from "./AssessmentScores";
 import AssessmentSummary from "./AssessmentSummary";
-import ResumeViewer from "./ResumeViewer";
 
 interface AnalysisDisplayProps {
     portalProps: portalProps;
@@ -24,7 +23,6 @@ const AnalysisSkeleton = () => {
             </div>
 
             <VideoTranscriptSkeleton />
-            <ResumeViewer.Skeleton />
             <EmotionalAnalysis.Skeleton />
             <NewLexicalAnalysis.Skeleton />
         </div>
@@ -47,7 +45,6 @@ const Page = ({ portalProps }: AnalysisDisplayProps) => {
                 </div>
             </div>
             <VideoTranscript portalProps={portalProps} />
-            <ResumeViewer portalProps={portalProps} />
             <EmotionalAnalysis aiSummary={AI_summary} />
             <NewLexicalAnalysis aiSummary={AI_summary} />
         </div>

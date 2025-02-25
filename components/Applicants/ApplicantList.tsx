@@ -2,32 +2,40 @@
 
 import { useState, useEffect } from 'react';
 import { ApplicantCandidate } from '@/types/merge';
-import ApplicantTable from '@/components/Applicants/ApplicantTable';
+import InviteApplicantsTable from '@/components/Applicants/InviteApplicantsTable';
 import SearchBar from '@/components/Applicants/Searchbar';
 import { Loader2 } from 'lucide-react';
 import { fetchApplicationsData } from '@/server/applications';
+import { fetchJobsData } from '@/server/jobs';
 
 export default function ApplicantList() {
-  const [ApplicantCandidates, setApplicantCandidates] = useState<ApplicantCandidate[]>([]);
+  const [applicantCandidates, setApplicantCandidates] = useState<ApplicantCandidate[]>([]);
+  const [jobs, setJobs] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchApplicantCandidates = async () => {
+    const fetchData = async () => {
       try {
-        const data: ApplicantCandidate[] = await fetchApplicationsData();
-        setApplicantCandidates(data);
+        // Fetch both applicants and jobs data
+        const [applicantsData, jobsData] = await Promise.all([
+          fetchApplicationsData(),
+          fetchJobsData()
+        ]);
+        
+        setApplicantCandidates(applicantsData);
+        setJobs(jobsData);
       } catch (error) {
-        console.error('Error fetching ApplicantCandidates:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchApplicantCandidates();
+    fetchData();
   }, []);
 
-  const filteredApplicants = ApplicantCandidates.filter(
+  const filteredApplicants = applicantCandidates.filter(
     (app: ApplicantCandidate) => {
       const fullName = `${app.candidate.first_name} ${app.candidate.last_name}`.toLowerCase();
       return fullName.includes(searchTerm.toLowerCase());
@@ -36,18 +44,18 @@ export default function ApplicantList() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="px-4 lg:px-6 h-14 flex items-center border-b">
+      <header className="h-14 flex items-center">
         <h1 className="text-lg font-semibold">Applicant Dashboard</h1>
       </header>
-      <main className="flex-1 p-4 lg:p-6">
+      <main className="flex-1 pr-10">
         <div className="space-y-4">
-          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} applicants={ApplicantCandidates} />
+          {/* <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} applicants={applicantCandidates} /> */}
           {isLoading ? (
             <div className="flex justify-center items-center h-full">
               <Loader2 className="animate-spin" />
             </div>
           ) : (
-            <ApplicantTable applicants={filteredApplicants} disablePortal={false} title={''} />
+            <InviteApplicantsTable applicants={filteredApplicants} jobs={jobs} />
           )}
         </div>
       </main>
