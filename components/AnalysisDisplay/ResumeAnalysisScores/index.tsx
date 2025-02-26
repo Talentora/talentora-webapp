@@ -1,21 +1,20 @@
-import { portalProps } from '@/app/(pages)/(restricted)/applicants/[id]/page';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface ResumeAnalysisScoresProps {
-  portalProps: portalProps;
+  portalProps: any;
 }
 
-const ScoreBadge = ({ score }: { score: number | null }) => {
-  if (score === null) return <div className="circle bg-gray-400 p-2 rounded-2xl">N/A</div>;
+const ScoreCircle = ({ score }: { score: number | null }) => {
+  if (score === null) return <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-400 text-white">N/A</div>;
   
   let backgroundColor = "bg-gray-400"; // Default color
   if (score >= 80) backgroundColor = "bg-green-500"; // Success
   else if (score >= 60) backgroundColor = "bg-yellow-500"; // Warning
   else backgroundColor = "bg-red-500"; // Destructive
   
-  return <div className={`circle ${backgroundColor} p-2 rounded-2xl`}>{score}</div>;
+  return <div className={`w-12 h-12 flex items-center justify-center rounded-full ${backgroundColor} text-white`}>{score}</div>;
 };
 
 export default function ResumeAnalysisScores({ portalProps }: ResumeAnalysisScoresProps) {
@@ -52,19 +51,19 @@ export default function ResumeAnalysisScores({ portalProps }: ResumeAnalysisScor
         <div className="grid grid-cols-4 gap-4">
           <div className="flex flex-col items-center">
             <h3 className="text-sm font-medium mb-2">Overall</h3>
-            <ScoreBadge score={resumeScore} />
+            <ScoreCircle score={resumeScore} />
           </div>
           <div className="flex flex-col items-center">
             <h3 className="text-sm font-medium mb-2">Communication</h3>
-            <ScoreBadge score={communicationScore} />
+            <ScoreCircle score={communicationScore} />
           </div>
           <div className="flex flex-col items-center">
             <h3 className="text-sm font-medium mb-2">Technical</h3>
-            <ScoreBadge score={technicalScore} />
+            <ScoreCircle score={technicalScore} />
           </div>
           <div className="flex flex-col items-center">
             <h3 className="text-sm font-medium mb-2">Culture Fit</h3>
-            <ScoreBadge score={cultureFitScore} />
+            <ScoreCircle score={cultureFitScore} />
           </div>
         </div>
         

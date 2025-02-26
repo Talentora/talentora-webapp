@@ -566,7 +566,7 @@ export default function JobPromptPage() {
         const data = await response.json();
         
         if (isMounted) {
-          setJob(data);
+        setJob(data);
           setLoading(false);
           
           // Load saved flow after job data is loaded
@@ -574,8 +574,8 @@ export default function JobPromptPage() {
         }
       } catch (err) {
         if (isMounted) {
-          setError(err instanceof Error ? err.message : 'An error occurred');
-          setLoading(false);
+        setError(err instanceof Error ? err.message : 'An error occurred');
+        setLoading(false);
         }
       }
     };
@@ -1172,8 +1172,8 @@ export default function JobPromptPage() {
 
       // Process the edges to ensure they have the correct format
       const processedEdges = data.edges.map((edge: any) => ({
-        id: edge.id,
-        source: edge.source,
+          id: edge.id,
+          source: edge.source,
         target: edge.target,
         type: edge.type || 'smoothstep'
       }));

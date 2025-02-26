@@ -27,7 +27,7 @@ const LexicalAnalysisSkeleton = () => {
 const NewLexicalAnalysis = ({ aiSummary }: AssessmentSummaryProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const typedSummary = aiSummary as unknown as AISummaryApplicant;
-    const textEval = typedSummary?.text_eval;
+    const textEval = typedSummary[0]?.text_eval;
     
     return (
         <div className="space-y-4">

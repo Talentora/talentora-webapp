@@ -7,6 +7,17 @@ interface AssessmentScoresProps {
     portalProps: portalProps;
 }
 
+const ScoreCircle = ({ score }: { score: number | null }) => {
+  if (score === null) return <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-400 text-white">N/A</div>;
+  
+  let backgroundColor = "bg-gray-400"; // Default color
+  if (score >= 80) backgroundColor = "bg-green-500"; // Success
+  else if (score >= 60) backgroundColor = "bg-yellow-500"; // Warning
+  else backgroundColor = "bg-red-500"; // Destructive
+  
+  return <div className={`w-20 h-20 flex items-center justify-center rounded-full ${backgroundColor} text-white`}>{score}</div>;
+};
+
 const Page = ({ portalProps }: AssessmentScoresProps) => {
     const { AI_summary } = portalProps;
     
@@ -31,9 +42,7 @@ const Page = ({ portalProps }: AssessmentScoresProps) => {
             <CardContent>
                 <div className="grid grid-cols-2 gap-6">
                     <div className="flex flex-col items-center">
-                        <Badge color={overallScore >= 80 ? "green" : overallScore >= 60 ? "yellow" : "red"}>
-                            {overallScore}%
-                        </Badge>
+                        <ScoreCircle score={overallScore} />
                     </div>
                 </div>
             </CardContent>

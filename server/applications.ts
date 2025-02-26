@@ -381,7 +381,9 @@ export async function fetchAllEnrichedApplicants() {
                 emotion_eval, 
                 text_eval,
                 transcript_summary,
-                resume_analysis
+                resume_analysis,
+                recording_id,
+                batch-processor_transcript_id
               )
             )
           `);
@@ -512,11 +514,16 @@ export async function fetchEnrichedApplicantByMergeId(mergeApplicationId: string
               overall_summary,
               emotion_eval, 
               text_eval,
-              transcript_summary
+              transcript_summary,
+              recording_id,
+              batch-processor_transcript_id
             )
           )
         `)
-        .eq('merge_applicant_id', mergeApplicationId);
+        .eq('merge_applicant_id', mergeApplicationId)
+        .single();
+
+      console.log("applejuice applicantData", applicantData);
 
       if (applicantError) {
         console.error('Error fetching applicant from Supabase:', applicantError);
@@ -536,15 +543,15 @@ export async function fetchEnrichedApplicantByMergeId(mergeApplicationId: string
 
       // Flatten the data structure to match expected format
       supabaseData = {
-        id: applicantData?.[0]?.applications?.[0]?.id,
-        job_id: applicantData?.[0]?.applications?.[0]?.job_id,
-        applicant_id: applicantData?.[0]?.id,
-        created_at: applicantData?.[0]?.applications?.[0]?.created_at,
+        id: applicantData?.applications?.[0]?.id,
+        job_id: applicantData?.applications?.[0]?.job_id,
+        applicant_id: applicantData?.id,
+        created_at: applicantData?.applications?.[0]?.created_at,
         applicants: {
-          id: applicantData?.[0]?.id,
-          merge_applicant_id: applicantData?.[0]?.merge_applicant_id
+          id: applicantData?.id,
+          merge_applicant_id: applicantData?.merge_applicant_id
         },
-        AI_summary: applicantData?.[0]?.applications?.[0]?.AI_summary
+        AI_summary: applicantData?.applications?.[0]?.AI_summary
       };
 
     } catch (supabaseError) {

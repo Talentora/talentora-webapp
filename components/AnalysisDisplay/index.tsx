@@ -51,10 +51,12 @@ const Page = ({ portalProps }: AnalysisDisplayProps) => {
                 <div className="grid grid-cols-1 gap-6">
                     <ResumeAnalysisScores portalProps={portalProps} />
                 </div>
+                <div className="grid grid-cols-1 gap-6 w-3/4">
+                    <VideoTranscript portalProps={portalProps} />
+                    <EmotionalAnalysis aiSummary={AI_summary} />
+                    <NewLexicalAnalysis aiSummary={AI_summary} />
+                </div>
                 
-                <VideoTranscript portalProps={portalProps} />
-                <EmotionalAnalysis portalProps={portalProps} />
-                <NewLexicalAnalysis portalProps={portalProps} />
             </div>
         </div>
     );
