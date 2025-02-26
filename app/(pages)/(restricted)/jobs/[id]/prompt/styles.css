@@ -1,0 +1,53 @@
+.react-flow__handle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #555;
+  border: 2px solid white;
+  transition: background-color 0.2s, transform 0.2s;
+  outline: none;
+  box-shadow: none;
+}
+
+.react-flow__handle:hover {
+  background-color: #0096ff;
+  transform: scale(1.2);
+}
+
+/* Update handle positions for left/right instead of top/bottom */
+.react-flow__handle-left {
+  left: -5px;
+}
+
+.react-flow__handle-right {
+  right: -5px;
+}
+
+/* Make the connection line more visible */
+.react-flow__edge-path {
+  stroke-width: 2;
+}
+
+/* Highlight nodes when selected */
+.react-flow__node.selected {
+  box-shadow: 0 0 0 2px #0096ff;
+}
+
+/* Fix for the black line around handles */
+.react-flow__handle-connecting {
+  background: #ff6060;
+}
+
+.react-flow__handle-valid {
+  background: #55dd99;
+}
+
+/* Remove any default styling that might cause the black line */
+.react-flow__node {
+  outline: none;
+}
+
+.react-flow__handle::after,
+.react-flow__handle::before {
+  display: none;
+} 

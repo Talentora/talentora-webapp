@@ -47,8 +47,8 @@ const VideoTranscript = ({ portalProps }: VideoTranscriptProps) => {
     const { AI_summary: aiSummary } = portalProps;
     const typedSummary = aiSummary as AISummaryApplicant;
     const transcriptSummary = typedSummary?.transcript_summary;
-    const transcriptId = typedSummary?.["batch-processor_transcript_id"];
-    const recordingId = typedSummary?.recording_id;
+    const transcriptId = typedSummary[0]?.["batch-processor_transcript_id"];
+    const recordingId = typedSummary[0]?.recording_id;
 
     // Fetch recording data
     const { data: recording, isLoading: isRecordingLoading } = useQuery({
