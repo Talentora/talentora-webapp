@@ -318,7 +318,8 @@ export type Database = {
           job_id: string
           min_qual: Json[] | null
           preferred_qual: Json[] | null
-          type: string | null
+          type: string | null,
+          prompt_graph: Json | null
         }
         Insert: {
           bot_id?: number | null
@@ -332,6 +333,7 @@ export type Database = {
           min_qual?: Json[] | null
           preferred_qual?: Json[] | null
           type?: string | null
+          prompt_graph?: Json | null
         }
         Update: {
           bot_id?: number | null
@@ -345,6 +347,7 @@ export type Database = {
           min_qual?: Json[] | null
           preferred_qual?: Json[] | null
           type?: string | null
+          prompt_graph?: Json | null
         }
         Relationships: [
           {

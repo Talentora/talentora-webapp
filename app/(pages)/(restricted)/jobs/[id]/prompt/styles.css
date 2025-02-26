@@ -50,4 +50,36 @@
 .react-flow__handle::after,
 .react-flow__handle::before {
   display: none;
+}
+
+/* Add styles for the handles */
+.handle-left, .handle-right, .handle-top, .handle-bottom {
+  width: 8px;
+  height: 8px;
+  background: #555;
+  border: 1px solid #fff;
+  border-radius: 50%;
+}
+
+.handle-left {
+  left: -4px;
+}
+
+.handle-right {
+  right: -4px;
+}
+
+.handle-top {
+  top: -4px;
+}
+
+.handle-bottom {
+  bottom: -4px;
+}
+
+/* Make handles more visible on hover */
+.react-flow__handle:hover {
+  background: #0080ff;
+  transform: scale(1.2);
+  transition: all 0.2s ease;
 } 

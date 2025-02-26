@@ -26,6 +26,7 @@ import NodeFormModal from './components/NodeFormModal';
 import ControlPanel from './components/ControlPanel';
 import toast, { Toaster } from 'react-hot-toast';
 import ConfirmationModal from './components/ConfirmationModal';
+import { createClient } from '@/utils/supabase/client';
 
 const initialNodes = [
   {
@@ -385,13 +386,87 @@ const validateFlow = (nodes: any[], edges: Edge[]): { valid: boolean; message: s
   return { valid: true, message: 'Flow is valid!' };
 };
 
+// Update the custom node components to include handles on all sides
+const InputNode = ({ data }: any) => {
+  return (
+    <div className="input-node">
+      <div className="node-header bg-green-500 text-white p-2 rounded-t">
+        <div className="text-sm font-bold">{data.label}</div>
+      </div>
+      <div className="node-content p-2 text-sm">
+        {data.content}
+      </div>
+      <Handle type="source" position={Position.Right} id="right" className="handle-right" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="handle-bottom" />
+      <Handle type="source" position={Position.Top} id="top" className="handle-top" />
+      <Handle type="source" position={Position.Left} id="left" className="handle-left" />
+    </div>
+  );
+};
+
+const QuestionNode = ({ data }: any) => {
+  return (
+    <div className="question-node">
+      <div className="node-header bg-blue-500 text-white p-2 rounded-t">
+        <div className="text-sm font-bold">{data.label}</div>
+      </div>
+      <div className="node-content p-2 text-sm">
+        {data.content}
+        {data.criteria && (
+          <div className="criteria mt-2 text-xs bg-blue-50 p-1 rounded">
+            <span className="font-bold">Criteria:</span> {data.criteria}
+          </div>
+        )}
+      </div>
+      <Handle type="target" position={Position.Left} id="left" className="handle-left" />
+      <Handle type="source" position={Position.Right} id="right" className="handle-right" />
+      <Handle type="target" position={Position.Top} id="top" className="handle-top" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="handle-bottom" />
+    </div>
+  );
+};
+
+const SectionNode = ({ data }: any) => {
+  return (
+    <div className="section-node">
+      <div className="node-header bg-yellow-500 text-white p-2 rounded-t">
+        <div className="text-sm font-bold">{data.label}</div>
+      </div>
+      <div className="node-content p-2 text-sm">
+        {data.content}
+      </div>
+      <Handle type="target" position={Position.Left} id="left" className="handle-left" />
+      <Handle type="source" position={Position.Right} id="right" className="handle-right" />
+      <Handle type="target" position={Position.Top} id="top" className="handle-top" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="handle-bottom" />
+    </div>
+  );
+};
+
+const ConclusionNode = ({ data }: any) => {
+  return (
+    <div className="conclusion-node">
+      <div className="node-header bg-purple-500 text-white p-2 rounded-t">
+        <div className="text-sm font-bold">{data.label}</div>
+      </div>
+      <div className="node-content p-2 text-sm">
+        {data.content}
+      </div>
+      <Handle type="target" position={Position.Left} id="left" className="handle-left" />
+      <Handle type="target" position={Position.Top} id="top" className="handle-top" />
+      <Handle type="target" position={Position.Bottom} id="bottom" className="handle-bottom" />
+      <Handle type="target" position={Position.Right} id="right" className="handle-right" />
+    </div>
+  );
+};
+
 export default function JobPromptPage() {
   const params = useParams();
   const jobId = params.id as string;
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+  const supabase = createClient()
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -414,29 +489,106 @@ export default function JobPromptPage() {
   // Add state for confirmation modal
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
 
-  // Fetch job data
+  // Add state for edge deletion confirmation
+  const [edgeToDelete, setEdgeToDelete] = useState<Edge | null>(null);
+  const [edgeDeleteModalOpen, setEdgeDeleteModalOpen] = useState(false);
+
+  // Add state for default graph confirmation
+  const [showDefaultGraphModal, setShowDefaultGraphModal] = useState(false);
+
+  // Add state to track if we've already checked for a saved flow
+  const [checkedForSavedFlow, setCheckedForSavedFlow] = useState(false);
+
+  // Update the loadSavedFlow function to only run once
+  const loadSavedFlow = useCallback(async () => {
+    // If we've already checked for a saved flow or the modal is already showing, don't proceed
+    if (checkedForSavedFlow || showDefaultGraphModal) return;
+    
+    try {
+      console.log('Checking for saved flow...');
+      const { data, error } = await supabase
+        .from('job_interview_config')
+        .select('prompt_graph')
+        .eq('job_id', jobId)
+        .single();
+      
+      // Mark that we've checked for a saved flow
+      setCheckedForSavedFlow(true);
+      
+      if (error) {
+        if (error.code === 'PGRST116') { // Not found
+          console.log('No saved flow found, asking user about default');
+          setShowDefaultGraphModal(true);
+          return;
+        }
+        console.error('Error loading saved flow:', error);
+        return;
+      }
+      
+      // Check if data exists and has valid nodes and edges
+      if (data?.prompt_graph && 
+          data.prompt_graph.nodes && 
+          Array.isArray(data.prompt_graph.nodes) && 
+          data.prompt_graph.nodes.length > 0 &&
+          data.prompt_graph.edges && 
+          Array.isArray(data.prompt_graph.edges)) {
+        
+        console.log('Loaded saved flow:', data.prompt_graph);
+        setNodes(data.prompt_graph.nodes);
+        setEdges(data.prompt_graph.edges);
+        toast.success('Saved flow loaded');
+      } else {
+        // If prompt_graph is missing, empty, or invalid
+        console.log('Invalid or empty prompt_graph, showing default options');
+        setShowDefaultGraphModal(true);
+      }
+    } catch (error) {
+      console.error('Error loading saved flow:', error);
+      setShowDefaultGraphModal(true);
+    }
+  }, [jobId, setNodes, setEdges, showDefaultGraphModal, checkedForSavedFlow]);
+
+  // Update the useEffect to only fetch job data once
   useEffect(() => {
-    const fetchJob = async () => {
+    if (!jobId || checkedForSavedFlow) return;
+    
+    let isMounted = true;
+    
+    const fetchJobData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/jobs/${jobId}`, {
-          next: { revalidate: 3600 } // Cache for 1 hour (3600 seconds)
-        });
+        const response = await fetch(`/api/jobs/${jobId}`);
+        
         if (!response.ok) {
-          throw new Error('Failed to fetch job');
+          throw new Error('Failed to fetch job data');
         }
+        
         const data = await response.json();
-        setJob(data);
+        
+        if (isMounted) {
+          setJob(data);
+          setLoading(false);
+          
+          // Load saved flow after job data is loaded
+          loadSavedFlow();
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : 'An error occurred');
+          setLoading(false);
+        }
       }
     };
 
-    fetchJob();
-  }, [jobId]);
+    fetchJobData();
+    
+    // Cleanup function to prevent state updates if component unmounts
+    return () => {
+      isMounted = false;
+    };
+  }, [jobId, loadSavedFlow, checkedForSavedFlow]);
 
+  // Update the onConnect function to handle multi-directional connections
   const onConnect = useCallback((params: Connection) => {
     // Check if this is a direct connection from start to conclusion
     const isStartNode = nodes.find(node => node.id === params.source)?.type === 'input';
@@ -447,18 +599,28 @@ export default function JobPromptPage() {
       return;
     }
     
-    // Check if the source node already has an outgoing connection
-    const sourceHasOutgoing = edges.some(edge => edge.source === params.source);
+    // Check if the source node already has an outgoing connection from this handle
+    const sourceHasOutgoingFromHandle = edges.some(
+      edge => edge.source === params.source && edge.sourceHandle === params.sourceHandle
+    );
     
-    // Check if the target node already has an incoming connection
-    const targetHasIncoming = edges.some(edge => edge.target === params.target);
+    // Check if the target node already has an incoming connection to this handle
+    const targetHasIncomingToHandle = edges.some(
+      edge => edge.target === params.target && edge.targetHandle === params.targetHandle
+    );
     
-    // Only allow the connection if neither condition is true
-    if (!sourceHasOutgoing && !targetHasIncoming) {
-      setEdges(eds => addEdge(params, eds));
+    // Allow the connection if neither condition is true
+    if (!sourceHasOutgoingFromHandle && !targetHasIncomingToHandle) {
+      // Create the edge with the specified handles
+      setEdges(eds => addEdge({
+        ...params,
+        type: 'smoothstep',
+        animated: false,
+        style: { stroke: '#555' }
+      }, eds));
     } else {
-      // Optionally show a notification that the connection was not allowed
-      toast.error('Nodes can only have one incoming and one outgoing connection');
+      // Show a notification that the connection was not allowed
+      toast.error('This connection point is already in use');
     }
   }, [nodes, edges, setEdges]);
 
@@ -575,51 +737,72 @@ export default function JobPromptPage() {
     }
   };
 
-  const saveFlow = () => {
-    if (!reactFlowInstance) return;
-    
-    const flow = reactFlowInstance.toObject();
-    
+  // Update the saveFlow function to properly save to the database
+  const saveFlow = useCallback(async () => {
     // Validate the flow before saving
-    const validation = validateFlow(flow.nodes, flow.edges);
-    
+    const validation = validateFlow(nodes, edges);
     if (!validation.valid) {
-      toast.error(validation.message);
+      toast.error(`Cannot save: ${validation.message}`);
       return;
     }
     
-    // Transform the flow into the desired JSON format
-    const interviewConfig = {
-      interview_flow: {
-        nodes: flow.nodes.map((node: any) => ({
-          id: node.id,
-          type: node.type,
-          data: node.data,
-        })),
-        edges: flow.edges.map((edge: any) => ({
-          id: edge.id,
-          source: edge.source,
-          target: edge.target
-        }))
+    try {
+      // Prepare the data to save - stringify to ensure it's stored as JSON
+      const flowData = {
+        nodes,
+        edges
+      };
+      
+      console.log('Saving flow data:', flowData);
+      
+      // Check if the job_interview_config record exists first
+      const { data: existingConfig, error: checkError } = await supabase
+        .from('job_interview_config')
+        .select('*')
+        .eq('job_id', jobId)
+        .single();
+      
+      if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found" error
+        console.error('Error checking config:', checkError);
+        throw checkError;
       }
-    };
-    
-    // You can send this to your API or download it
-    console.log(interviewConfig);
-    
-    // Optional: Download as JSON file
-    const dataStr = JSON.stringify(interviewConfig, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = `interview-config-${jobId}.json`;
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-    
-    toast.success('Interview flow saved successfully!');
-  };
+      
+      let result;
+      
+      if (existingConfig) {
+        // Update existing record
+        result = await supabase
+          .from('job_interview_config')
+          .update({
+            prompt_graph: flowData,
+            // modified_at: new Date().toISOString()
+          })
+          .eq('job_id', jobId);
+      } else {
+        // Insert new record
+        result = await supabase
+          .from('job_interview_config')
+          .insert({
+            job_id: jobId,
+            prompt_graph: flowData,
+            // created_at: new Date().toISOString(),
+            // modified_at: new Date().toISOString()
+          });
+      }
+      
+      if (result.error) {
+        console.error('Supabase error:', result.error);
+        throw result.error;
+      }
+      
+      console.log('Save result:', result);
+      toast.success('Flow saved successfully');
+      
+    } catch (error) {
+      console.error('Error saving flow:', error);
+      toast.error('Failed to save flow. Please try again.');
+    }
+  }, [nodes, edges, jobId, validateFlow]);
 
   // Fix the edge connection issue by specifying connection line style
   const connectionLineStyle = { stroke: '#888', strokeWidth: 2 };
@@ -692,6 +875,35 @@ export default function JobPromptPage() {
       }
     });
     
+    // Determine the flow order by following connections from start
+    const flowOrder = [];
+    const visited = new Set();
+    
+    // Helper function to traverse the graph
+    const traverseGraph = (nodeId) => {
+      if (visited.has(nodeId)) return;
+      visited.add(nodeId);
+      flowOrder.push(nodeId);
+      
+      // Get children of this node
+      const children = nodeMap.get(nodeId)?.children || [];
+      children.forEach(childId => {
+        traverseGraph(childId);
+      });
+    };
+    
+    // Start traversal from the start node
+    if (startNode) {
+      traverseGraph(startNode.id);
+    }
+    
+    // Add any nodes that weren't visited
+    nodes.forEach(node => {
+      if (!visited.has(node.id)) {
+        flowOrder.push(node.id);
+      }
+    });
+    
     // Calculate positions
     const newNodes = [...nodes];
     const startX = 50;
@@ -699,71 +911,138 @@ export default function JobPromptPage() {
     const questionSpacingY = 150; // Vertical spacing between questions
     const centerY = 300; // Center Y position
     
-    // Position the start node
-    const startNodeIndex = newNodes.findIndex(node => node.id === startNode.id);
-    if (startNodeIndex !== -1) {
-      newNodes[startNodeIndex] = {
-        ...newNodes[startNodeIndex],
-        position: { x: startX, y: centerY }
-      };
-    }
+    // Position nodes based on flow order
+    let currentX = startX;
+    let lastType = null;
     
-    // Position sections horizontally
-    let currentX = startX + sectionSpacingX;
-    sections.forEach(section => {
-      const sectionIndex = newNodes.findIndex(node => node.id === section.id);
-      if (sectionIndex !== -1) {
-        newNodes[sectionIndex] = {
-          ...newNodes[sectionIndex],
-          position: { x: currentX, y: centerY }
-        };
-        
-        // Position questions for this section vertically
-        const questionIds = sectionQuestions.get(section.id) || [];
-        let questionY = centerY - ((questionIds.length - 1) * questionSpacingY / 2);
-        
-        questionIds.forEach(questionId => {
-          const questionIndex = newNodes.findIndex(node => node.id === questionId);
-          if (questionIndex !== -1) {
-            newNodes[questionIndex] = {
-              ...newNodes[questionIndex],
-              position: { x: currentX + 200, y: questionY }
-            };
-            questionY += questionSpacingY;
+    flowOrder.forEach(nodeId => {
+      const node = nodes.find(n => n.id === nodeId);
+      if (!node) return;
+      
+      const nodeIndex = newNodes.findIndex(n => n.id === nodeId);
+      if (nodeIndex === -1) return;
+      
+      // Position based on node type
+      switch (node.type) {
+        case 'input': // Start node
+          newNodes[nodeIndex] = {
+            ...newNodes[nodeIndex],
+            position: { x: currentX, y: centerY }
+          };
+          currentX += 250;
+          break;
+          
+        case 'section': // Section node
+          // Add some extra space after the previous node if it wasn't a section
+          if (lastType !== 'section' && lastType !== 'input') {
+            currentX += 100;
           }
-        });
-        
-        currentX += sectionSpacingX;
+          
+          newNodes[nodeIndex] = {
+            ...newNodes[nodeIndex],
+            position: { x: currentX, y: centerY }
+          };
+          
+          // Position questions for this section vertically
+          const questionIds = sectionQuestions.get(nodeId) || [];
+          let questionY = centerY - ((questionIds.length - 1) * questionSpacingY / 2);
+          
+          questionIds.forEach(questionId => {
+            const questionIndex = newNodes.findIndex(n => n.id === questionId);
+            if (questionIndex !== -1) {
+              newNodes[questionIndex] = {
+                ...newNodes[questionIndex],
+                position: { x: currentX + 200, y: questionY }
+              };
+              questionY += questionSpacingY;
+              
+              // Remove this question from the flow order since we've positioned it
+              const qIndex = flowOrder.indexOf(questionId);
+              if (qIndex > -1) {
+                flowOrder.splice(qIndex, 1);
+              }
+            }
+          });
+          
+          currentX += 400; // Move to the next section position
+          break;
+          
+        case 'question': // Question node (only those not associated with a section)
+          if (!sectionMap.has(nodeId)) {
+            newNodes[nodeIndex] = {
+              ...newNodes[nodeIndex],
+              position: { x: currentX, y: centerY }
+            };
+            currentX += 250;
+          }
+          break;
+          
+        case 'conclusion': // Conclusion node
+          // Add some extra space before the conclusion
+          currentX += 100;
+          newNodes[nodeIndex] = {
+            ...newNodes[nodeIndex],
+            position: { x: currentX, y: centerY }
+          };
+          break;
+          
+        default:
+          // Other node types
+          newNodes[nodeIndex] = {
+            ...newNodes[nodeIndex],
+            position: { x: currentX, y: centerY }
+          };
+          currentX += 250;
       }
-    });
-    
-    // Position the conclusion node
-    if (conclusionNode) {
-      const conclusionIndex = newNodes.findIndex(node => node.id === conclusionNode.id);
-      if (conclusionIndex !== -1) {
-        newNodes[conclusionIndex] = {
-          ...newNodes[conclusionIndex],
-          position: { x: currentX, y: centerY }
-        };
-      }
-    }
-    
-    // Handle any orphaned questions (not associated with a section)
-    const orphanedQuestions = questions.filter(q => !sectionMap.has(q.id));
-    let orphanY = centerY + 300;
-    orphanedQuestions.forEach(question => {
-      const questionIndex = newNodes.findIndex(node => node.id === question.id);
-      if (questionIndex !== -1) {
-        newNodes[questionIndex] = {
-          ...newNodes[questionIndex],
-          position: { x: startX + sectionSpacingX, y: orphanY }
-        };
-        orphanY += questionSpacingY;
-      }
+      
+      lastType = node.type;
     });
     
     // Update the nodes state
     setNodes(newNodes);
+    
+    // After positioning all nodes, update the edges to use the appropriate handles
+    const newEdges = [...edges].map(edge => {
+      const sourceNode = newNodes.find(n => n.id === edge.source);
+      const targetNode = newNodes.find(n => n.id === edge.target);
+      
+      if (!sourceNode || !targetNode) return edge;
+      
+      // Calculate the positions of the nodes
+      const sourceX = sourceNode.position.x + 125; // Assuming node width is 250
+      const sourceY = sourceNode.position.y + 75;  // Assuming node height is 150
+      const targetX = targetNode.position.x + 125;
+      const targetY = targetNode.position.y + 75;
+      
+      // Determine the best handles to use based on relative positions
+      let sourceHandle = 'right';
+      let targetHandle = 'left';
+      
+      // If target is above source
+      if (targetY < sourceY - 100) {
+        sourceHandle = 'top';
+        targetHandle = 'bottom';
+      } 
+      // If target is below source
+      else if (targetY > sourceY + 100) {
+        sourceHandle = 'bottom';
+        targetHandle = 'top';
+      }
+      // If target is to the left of source
+      else if (targetX < sourceX) {
+        sourceHandle = 'left';
+        targetHandle = 'right';
+      }
+      
+      return {
+        ...edge,
+        sourceHandle,
+        targetHandle
+      };
+    });
+    
+    // Update the edges state
+    setEdges(newEdges);
     
     // After layout is applied, fit the view
     setTimeout(() => {
@@ -771,7 +1050,7 @@ export default function JobPromptPage() {
         reactFlowInstance.fitView({ padding: 0.2 });
       }
     }, 50);
-  }, [nodes, edges, reactFlowInstance, setNodes]);
+  }, [nodes, edges, reactFlowInstance, setNodes, setEdges]);
 
   // Add this function to handle edge removal
   const onEdgeUpdate = useCallback(
@@ -793,6 +1072,33 @@ export default function JobPromptPage() {
       setEdges((edges) => edges.filter((e) => e.id !== edge.id));
     }
   }, [setEdges]);
+
+  // Update the onEdgeDoubleClick handler to open the confirmation modal
+  const onEdgeDoubleClick = useCallback((event: React.MouseEvent, edge: Edge) => {
+    // Prevent the event from propagating to other handlers
+    event.stopPropagation();
+    
+    // Set the edge to delete and open the confirmation modal
+    setEdgeToDelete(edge);
+    setEdgeDeleteModalOpen(true);
+  }, []);
+
+  // Add a function to handle the actual deletion after confirmation
+  const handleEdgeDeleteConfirm = useCallback(() => {
+    if (edgeToDelete) {
+      // Delete the edge
+      setEdges((eds) => eds.filter((e) => e.id !== edgeToDelete.id));
+      
+      // Show a notification
+      toast.success('Connection deleted');
+      
+      // Reset the state
+      setEdgeToDelete(null);
+    }
+    
+    // Close the modal
+    setEdgeDeleteModalOpen(false);
+  }, [edgeToDelete, setEdges]);
 
   // Update the generateWithAI function to properly process node types
   const generateWithAI = useCallback(async () => {
@@ -1010,6 +1316,44 @@ export default function JobPromptPage() {
     toast.success('Debug info logged to console');
   }, [nodes, edges]);
 
+  // Add a function to handle using the default graph
+  const useDefaultGraph = useCallback(() => {
+    // Set the nodes and edges to the initial values
+    setNodes(initialNodes);
+    setEdges(initialEdges);
+    setShowDefaultGraphModal(false);
+    toast.success('Default interview flow loaded');
+  }, [setNodes, setEdges]);
+
+  // Add a function to handle starting with an empty graph
+  const useEmptyGraph = useCallback(() => {
+    // Create a minimal graph with just start and conclusion
+    const startNode = {
+      id: 'start',
+      type: 'input',
+      data: { 
+        label: 'Interview Start',
+        content: 'Welcome the candidate and introduce yourself. Explain the interview process and set expectations.'
+      },
+      position: { x: 50, y: 150 },
+    };
+    
+    const conclusionNode = {
+      id: 'conclusion',
+      type: 'conclusion',
+      data: { 
+        label: 'Interview Conclusion',
+        content: 'Thank the candidate for their time. Ask if they have any questions about the role or company. Explain next steps in the hiring process.'
+      },
+      position: { x: 750, y: 150 },
+    };
+    
+    setNodes([startNode, conclusionNode]);
+    setEdges([]);
+    setShowDefaultGraphModal(false);
+    toast.success('Empty interview flow created');
+  }, [setNodes, setEdges]);
+
   if (loading) {
     return <div className="p-8">Loading job information...</div>;
   }
@@ -1040,6 +1384,7 @@ export default function JobPromptPage() {
           onNodeDoubleClick={onNodeDoubleClick}
           onEdgeUpdate={onEdgeUpdate}
           onEdgeClick={onEdgeClick}
+          onEdgeDoubleClick={onEdgeDoubleClick}
           nodeTypes={nodeTypes}
           connectionLineStyle={connectionLineStyle}
           defaultEdgeOptions={defaultEdgeOptions}
@@ -1051,6 +1396,7 @@ export default function JobPromptPage() {
           edgesUpdatable={true}
           edgesFocusable={true}
           selectNodesOnDrag={false}
+          connectionRadius={20}
         >
           <Controls />
           <MiniMap />
@@ -1092,6 +1438,28 @@ export default function JobPromptPage() {
         cancelText="Cancel"
         onConfirm={handleClearConfirm}
         onCancel={() => setConfirmModalOpen(false)}
+      />
+
+      {/* Confirmation Modal for Edge Deletion */}
+      <ConfirmationModal
+        isOpen={edgeDeleteModalOpen}
+        title="Delete Connection"
+        message="Are you sure you want to delete this connection between nodes?"
+        confirmText="Delete Connection"
+        cancelText="Cancel"
+        onConfirm={handleEdgeDeleteConfirm}
+        onCancel={() => setEdgeDeleteModalOpen(false)}
+      />
+
+      {/* Confirmation Modal for Default Graph */}
+      <ConfirmationModal
+        isOpen={showDefaultGraphModal}
+        title="Interview Flow Setup"
+        message="No saved interview flow found for this job. Would you like to use the default template or start with a minimal flow?"
+        confirmText="Use Default Template"
+        cancelText="Start Minimal"
+        onConfirm={useDefaultGraph}
+        onCancel={useEmptyGraph}
       />
     </div>
   );
