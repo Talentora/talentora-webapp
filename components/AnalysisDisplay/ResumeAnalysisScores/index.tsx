@@ -34,7 +34,7 @@ export default function ResumeAnalysisScores({ portalProps }: ResumeAnalysisScor
   }
   
   // Extract resume analysis data
-  const resumeAnalysis = AI_summary[0].resume_analysis || {};
+  const resumeAnalysis = AI_summary.resume_analysis || {};
   
   // Get scores with fallbacks
   const resumeScore = resumeAnalysis.resumeScore || null;

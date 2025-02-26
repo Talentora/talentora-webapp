@@ -198,10 +198,14 @@ export async function fetchJoinedApplicantsData() {
             created_at,
             AI_summary (
               id,
+              created_at,
               overall_summary,
               emotion_eval, 
               text_eval,
-              transcript_summary
+              transcript_summary,
+              resume_analysis,
+              recording_id,
+              batch-processor_transcript_id
             )
           )
         `)
@@ -377,6 +381,7 @@ export async function fetchAllEnrichedApplicants() {
               created_at,
               AI_summary (
                 id,
+                created_at,
                 overall_summary,
                 emotion_eval, 
                 text_eval,
@@ -511,10 +516,12 @@ export async function fetchEnrichedApplicantByMergeId(mergeApplicationId: string
             created_at,
             AI_summary (
               id,
+              created_at,
               overall_summary,
               emotion_eval, 
               text_eval,
               transcript_summary,
+              resume_analysis,
               recording_id,
               batch-processor_transcript_id
             )
