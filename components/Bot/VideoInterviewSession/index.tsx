@@ -1,7 +1,11 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { useRTVIClient, useRTVIClientTransportState, useRTVIClientMediaDevices } from "@pipecat-ai/client-react";
+import {
+  useRTVIClient,
+  useRTVIClientTransportState,
+  useRTVIClientMediaDevices
+} from '@pipecat-ai/client-react';
 import { usePermissions } from '@daily-co/daily-react';
 import DailyIframe from '@daily-co/daily-js';
 import InterviewHeader from './InterviewHeader';
@@ -36,7 +40,14 @@ export default function VideoInterviewSession({
 }: VideoInterviewSessionProps) {
   const client = useRTVIClient()!;
   const transportState = useRTVIClientTransportState();
-  const { availableMics, availableCams, selectedMic, selectedCam, updateMic, updateCam } = useRTVIClientMediaDevices();
+  const {
+    availableMics,
+    availableCams,
+    selectedMic,
+    selectedCam,
+    updateMic,
+    updateCam
+  } = useRTVIClientMediaDevices();
   const { toast } = useToast();
 
   function startRecording() {
@@ -46,17 +57,20 @@ export default function VideoInterviewSession({
       callInstance.startRecording();
     }
   }
-  
+
   // Initialize devices when they become available
   useEffect(() => {
-    if (transportState === 'connected') {
+    if (transportState === 'ready') {
       // Set default devices if none selected
       if (availableMics.length > 0 && !selectedMic) {
         console.log('[DEVICES] Setting default mic:', availableMics[0].label);
         updateMic(availableMics[0].deviceId);
       }
       if (availableCams.length > 0 && !selectedCam) {
-        console.log('[DEVICES] Setting default camera:', availableCams[0].label);
+        console.log(
+          '[DEVICES] Setting default camera:',
+          availableCams[0].label
+        );
         updateCam(availableCams[0].deviceId);
       }
       startRecording();
@@ -65,7 +79,17 @@ export default function VideoInterviewSession({
       client.enableMic(!startAudioOff);
       client.enableCam(true);
     }
-  }, [transportState, availableMics, availableCams, selectedMic, selectedCam, updateMic, updateCam, client, startAudioOff]);
+  }, [
+    transportState,
+    availableMics,
+    availableCams,
+    selectedMic,
+    selectedCam,
+    updateMic,
+    updateCam,
+    client,
+    startAudioOff
+  ]);
 
   useEffect(() => {
     if (transportState === 'error') {
@@ -75,9 +99,10 @@ export default function VideoInterviewSession({
 
   const handleTimeUp = () => {
     toast({
-      title: "Interview Time Up",
-      description: "The interview time has ended. Please wrap up your conversation.",
-      variant: "default"
+      title: 'Interview Time Up',
+      description:
+        'The interview time has ended. Please wrap up your conversation.',
+      variant: 'default'
     });
   };
 
@@ -86,7 +111,6 @@ export default function VideoInterviewSession({
       <div className="basis-1/6">
         <InterviewHeader job={job} company={company} demo={demo} />
       </div>
-
       <main className="flex basis-1/3 gap-4 p-4 m-5">
         {/* Sidebar */}
         <div className="flex flex-col h-full w-1/3 gap-5">
@@ -102,11 +126,9 @@ export default function VideoInterviewSession({
           <CandidateVideo />
         </div>
       </main>
-
       <footer className="basis-1/6">
         <ControlPanel onLeave={onLeave} onTimeUp={handleTimeUp} />
       </footer>
-
       {/* Media Device Settings Popup */}
       <MediaDevicePopup />
     </div>

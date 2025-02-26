@@ -49,8 +49,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const baseUrl = `${process.env.NEXT_PUBLIC_INTERVIEW_BOT_URL}/api/rooms/`;
-    // const baseUrl = "http://localhost:8000/api/rooms"
+    // const baseUrl = `${process.env.NEXT_PUBLIC_INTERVIEW_BOT_URL}/api/rooms/`;
+    const baseUrl = "http://localhost:8000/api/rooms"
 
     const response = await fetch(baseUrl, {
       method: "POST",
@@ -73,6 +73,8 @@ export async function POST(request: NextRequest) {
       console.log("AI summary response:", aiSummaryResponse);
       // await updateApplicationWithAISummaryId(application.id, aiSummaryResponse.id);
     }
+
+    console.log("RESPONSE: ", botData)
 
     return NextResponse.json(botData);
   } catch (error) {
