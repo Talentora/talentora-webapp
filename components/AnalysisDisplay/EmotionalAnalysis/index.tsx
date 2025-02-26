@@ -34,7 +34,7 @@ const EmotionalAnalysisSkeleton = () => {
 const EmotionalAnalysis = ({ aiSummary }: EmotionalAnalysisProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const typedSummary = aiSummary as unknown as AISummaryApplicant;
-    const emotionalAnalysis = typedSummary[0]?.emotion_eval;
+    const emotionalAnalysis = typedSummary?.emotion_eval;
 
     return (
         <div>

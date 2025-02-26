@@ -23,6 +23,20 @@ export default function VideoPlayer({ recording }: VideoPlayerProps) {
       setIsLoading(true);
       setError(null);
       
+      // Check if we have a cached result for this recording
+      const cachedData = localStorage.getItem(`video_url_${recording.id}`);
+      if (cachedData) {
+        const { videoLink, timestamp } = JSON.parse(cachedData);
+        // Check if cache is still valid (less than 12 hours old)
+        const cacheAge = Date.now() - timestamp;
+        if (cacheAge < 12 * 60 * 60 * 1000) {
+          console.log('Using cached video URL');
+          setVideoUrl(videoLink);
+          setIsLoading(false);
+          return;
+        }
+      }
+      
       // First get the recording details
       const recordingResponse = await fetch(`/api/bot/recordings/${recording.id}`);
       if (!recordingResponse.ok) throw new Error('Failed to fetch recording details');
@@ -40,10 +54,19 @@ export default function VideoPlayer({ recording }: VideoPlayerProps) {
       const data = await response.json();
       console.log('Video access data:', data); // Debug log
 
-      if (data.download_link) {
-        setVideoUrl(data.download_link);
+      // Use streaming_link or download_link for video playback
+      if (data.streaming_link || data.download_link) {
+        // Prefer streaming_link if available, otherwise use download_link
+        const videoLink = data.streaming_link || data.download_link;
+        setVideoUrl(videoLink);
+        
+        // Cache the result
+        localStorage.setItem(`video_url_${recording.id}`, JSON.stringify({
+          videoLink,
+          timestamp: Date.now()
+        }));
       } else {
-        throw new Error('No download link in response');
+        throw new Error('No video link in response');
       }
     } catch (error) {
       console.error('Error fetching video:', error);
@@ -109,7 +132,6 @@ export default function VideoPlayer({ recording }: VideoPlayerProps) {
         {videoUrl ? (
           <video
             ref={videoRef}
-            src={videoUrl}
             controls
             className="w-full h-full rounded-lg"
             preload="auto"
@@ -117,6 +139,7 @@ export default function VideoPlayer({ recording }: VideoPlayerProps) {
             crossOrigin="anonymous"
             playsInline
           >
+            {/* Use type="video/mp4" for better browser compatibility */}
             <source src={videoUrl} type="video/mp4" />
             Your browser does not support the video tag.
           </video>

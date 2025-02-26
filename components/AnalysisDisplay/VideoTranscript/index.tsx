@@ -46,9 +46,9 @@ export const VideoTranscriptSkeleton = () => (
 const VideoTranscript = ({ portalProps }: VideoTranscriptProps) => {
     const { AI_summary: aiSummary } = portalProps;
     const typedSummary = aiSummary as AISummaryApplicant;
-    const transcriptSummary = typedSummary[0]?.transcript_summary;
-    const transcriptId = typedSummary[0]?.["batch-processor_transcript_id"];
-    const recordingId = typedSummary[0]?.recording_id;
+    const transcriptSummary = typedSummary?.transcript_summary;
+    const transcriptId = typedSummary?.["batch-processor_transcript_id"]
+    const recordingId = typedSummary?.recording_id;
 
     // Fetch recording data
     const [recording, setRecording] = useState(null);
