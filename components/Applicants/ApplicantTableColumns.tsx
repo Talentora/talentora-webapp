@@ -10,48 +10,41 @@ import {
   InterviewStatus 
 } from './ApplicantStatusBadges';
 import { Badge } from '@/components/ui/badge';
+
 // Helper function to get resume analysis scores
 const getResumeAnalysisScore = (applicant: any, scoreType: string): number | null => {
   if (!applicant.AI_summary) return null;
   
-  // Handle if it's an array
-  if (Array.isArray(applicant.AI_summary)) {
-    if (applicant.AI_summary.length > 0 && applicant.AI_summary[0]?.resume_analysis) {
-      return applicant.AI_summary[0].resume_analysis[scoreType] || null;
-    }
-    return null;
+  if (Array.isArray(applicant.AI_summary) && applicant.AI_summary.length > 0) {
+    const sortedSummaries = [...applicant.AI_summary].sort((a, b) => 
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+    
+    const latestSummary = sortedSummaries[0];
+    return latestSummary?.resume_analysis?.[scoreType] || 
+           latestSummary?.overall_summary?.[scoreType] || 
+           null;
   }
   
-  // Handle if it's an object with resume_analysis property
-  if (applicant.AI_summary.resume_analysis) {
-    return applicant.AI_summary.resume_analysis[scoreType] || null;
-  }
-  
-  // Handle if AI_summary itself contains the scores directly
-  return applicant.AI_summary[scoreType] || null;
+  return applicant.AI_summary.resume_analysis?.[scoreType] || 
+         applicant.AI_summary.overall_summary?.[scoreType] || 
+         applicant.AI_summary[scoreType] || 
+         null;
 };
 
 // Score badge component for resume scores
 export const ResumeScoreBadge = ({ score }: { score: number | null }) => {
-  if (score === null) {
-    return <span className="text-gray-500">N/A</span>;
-  }
+  if (score === null) return <span className="text-gray-500">N/A</span>;
   
-  // Determine color based on score value (0-100 scale)
-  let badgeVariant = "outline";
-  let textColor = "text-gray-700";
-  let bgColor = "";
+  let badgeVariant, textColor, bgColor;
   
   if (score >= 80) {
-    badgeVariant = "success";
     textColor = "text-white font-semibold";
     bgColor = "bg-green-600";
   } else if (score >= 60) {
-    badgeVariant = "warning";
     textColor = "text-yellow-900 font-semibold";
     bgColor = "bg-yellow-400";
   } else {
-    badgeVariant = "destructive";
     textColor = "text-white font-semibold";
     bgColor = "bg-red-600";
   }
@@ -76,18 +69,16 @@ export const getApplicantColumns = ({
 }: GetColumnsProps): ColumnDef<any>[] => [
   {
     id: "select",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
-        >
-          Status
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
+      >
+        Status
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
       const applicant = row.original;
       const isInvited = hasBeenInvited(applicant);
@@ -104,11 +95,11 @@ export const getApplicantColumns = ({
           checked={row.getIsSelected()}
           onCheckedChange={(value) => {
             row.toggleSelected(!!value);
-            if (value) {
-              setSelectedApplicants((prev: any[]) => [...prev, applicant]);
-            } else {
-              setSelectedApplicants((prev: any[]) => prev.filter((a: any) => a !== applicant));
-            }
+            setSelectedApplicants(prev => 
+              value 
+                ? [...prev, applicant] 
+                : prev.filter(a => a !== applicant)
+            );
           }}
           disabled={isDisabled}
           aria-label="Select row"
@@ -116,31 +107,25 @@ export const getApplicantColumns = ({
       );
     },
     enableSorting: true,
-    sortingFn: (rowA, rowB) => {
-      const a = hasBeenInvited(rowA.original) ? 1 : 0;
-      const b = hasBeenInvited(rowB.original) ? 1 : 0;
-      return a - b;
-    },
+    sortingFn: (rowA, rowB) => hasBeenInvited(rowA.original) - hasBeenInvited(rowB.original),
     size: 100,
   },
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
-        >
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
+      >
+        Name
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
-      const applicant = row.original;
-      return applicant.candidate ? 
-        `${applicant.candidate.first_name} ${applicant.candidate.last_name}` : 
+      const { candidate } = row.original;
+      return candidate ? 
+        `${candidate.first_name} ${candidate.last_name}` : 
         "Unknown Candidate";
     },
     enableSorting: true,
@@ -153,22 +138,17 @@ export const getApplicantColumns = ({
   },
   {
     accessorKey: "appliedFor",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
-        >
-          Applied For
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const applicant = row.original;
-      return applicant.job?.name || "No job specified";
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
+      >
+        Applied For
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => row.original.job?.name || "No job specified",
     enableSorting: true,
     sortingFn: (rowA, rowB) => {
       const a = rowA.original.job?.name || '';
@@ -179,68 +159,67 @@ export const getApplicantColumns = ({
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const applicant = row.original;
-      return applicant.candidate?.email_addresses?.[0]?.value || "No email address";
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
+      >
+        Email
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => row.original.candidate?.email_addresses?.[0]?.value || "No email address",
     enableSorting: true,
     size: 200,
   },
   {
     accessorKey: "interviewConducted",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
-        >
-          Interview
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const applicant = row.original;
-      return <InterviewStatus applicant={applicant} />;
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
+      >
+        Interview
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => <InterviewStatus applicant={row.original} />,
     enableSorting: true,
     size: 120,
-    sortingFn: (rowA, rowB) => {
-      const a = hasCompletedInterview(rowA.original) ? 1 : 0;
-      const b = hasCompletedInterview(rowB.original) ? 1 : 0;
-      return a - b;
-    },
+    sortingFn: (rowA, rowB) => hasCompletedInterview(rowA.original) - hasCompletedInterview(rowB.original),
   },
   {
     accessorKey: "score",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
-        >
-          Score
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
+      >
+        Score
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
       const applicant = row.original;
-      return <ScoreBadge applicant={applicant} />;
+      let score = null;
+      
+      if (applicant.AI_summary) {
+        if (Array.isArray(applicant.AI_summary) && applicant.AI_summary.length > 0) {
+          const sortedSummaries = [...applicant.AI_summary].sort((a, b) => 
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          );
+          score = sortedSummaries[0]?.overall_summary?.score;
+        } else {
+          score = applicant.AI_summary?.overall_summary?.score;
+        }
+      }
+      
+      return score !== null && !isNaN(parseFloat(score)) 
+        ? <ResumeScoreBadge score={score} />
+        : <span className="text-gray-400">N/A</span>;
     },
     enableSorting: true,
     size: 80,
@@ -257,21 +236,18 @@ export const getApplicantColumns = ({
   },
   {
     accessorKey: "resumeScore",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
-        >
-          Resume Score
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
+      >
+        Resume Score
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
-      const applicant = row.original;
-      const score = getResumeAnalysisScore(applicant, 'resumeScore');
+      const score = getResumeAnalysisScore(row.original, 'resumeScore');
       return (
         <div className="flex justify-center">
           {score === null ? (
@@ -299,22 +275,18 @@ export const getApplicantColumns = ({
   },
   {
     accessorKey: "communicationScore",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
-        >
-          Communication
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
+      >
+        Communication
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
-      const applicant = row.original;
-      const score = getResumeAnalysisScore(applicant, 'communicationScore');
-      
+      const score = getResumeAnalysisScore(row.original, 'communicationScore');
       return (
         <div className="flex justify-center">
           {score === null ? (
@@ -340,21 +312,18 @@ export const getApplicantColumns = ({
   },
   {
     accessorKey: "technicalScore",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
-        >
-          Technical
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
+      >
+        Technical
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
-      const applicant = row.original;
-      const score = getResumeAnalysisScore(applicant, 'technicalScore');
+      const score = getResumeAnalysisScore(row.original, 'technicalScore');
       return (
         <div className="flex justify-center">
           {score === null ? (
@@ -382,21 +351,18 @@ export const getApplicantColumns = ({
   },
   {
     accessorKey: "cultureFitScore",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
-        >
-          Culture Fit
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
+      >
+        Culture Fit
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
-      const applicant = row.original;
-      const score = getResumeAnalysisScore(applicant, 'cultureFitScore');
+      const score = getResumeAnalysisScore(row.original, 'cultureFitScore');
       return (
         <div className="flex justify-center">
           {score === null ? (
@@ -425,18 +391,15 @@ export const getApplicantColumns = ({
   {
     id: "actions",
     header: "Action",
-    cell: ({ row }) => {
-      const applicant = row.original;
-      return (
-        <Button 
-          variant="link" 
-          onClick={() => applicant.application?.id && handleViewApplicant(applicant)}
-          className="p-0 h-auto font-normal underline"
-        >
-          View Details
-        </Button>
-      );
-    },
+    cell: ({ row }) => (
+      <Button 
+        variant="link" 
+        onClick={() => row.original.application?.id && handleViewApplicant(row.original)}
+        className="p-0 h-auto font-normal underline"
+      >
+        View Details
+      </Button>
+    ),
     enableSorting: false,
     size: 100,
   },

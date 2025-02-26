@@ -194,15 +194,45 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
       let matchesScoreThreshold = true;
       let score = null;
       
-      // Extract score from AI_summary
+      // Extract score from AI_summary, always using the most recent one if it's an array
+      let resumeScore = null;
+      let technicalScore = null;
+      let cultureFitScore = null;
+      let communicationScore = null;
+      
       if (applicant.AI_summary) {
         if (Array.isArray(applicant.AI_summary)) {
-          if (applicant.AI_summary.length > 0 && 
-              applicant.AI_summary[0]?.overall_summary?.score) {
-            score = applicant.AI_summary[0].overall_summary.score;
+          if (applicant.AI_summary.length > 0) {
+            // Sort by created_at date in descending order to get the most recent
+            const sortedSummaries = [...applicant.AI_summary].sort((a, b) => 
+              new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            );
+            
+            // Use the most recent summary's score
+            if (sortedSummaries[0]?.overall_summary?.score) {
+              score = sortedSummaries[0].overall_summary.score;
+              // Extract additional scores
+              resumeScore = sortedSummaries[0].overall_summary?.resumeScore || null;
+              technicalScore = sortedSummaries[0].overall_summary?.technicalScore || null;
+              cultureFitScore = sortedSummaries[0].overall_summary?.cultureFitScore || null;
+              communicationScore = sortedSummaries[0].overall_summary?.communicationScore || null;
+            } else if (sortedSummaries[0]?.resume_analysis) {
+              // If no overall score but resume analysis exists, don't filter out
+              matchesScoreThreshold = true;
+              return matchesSearch && matchesJob && matchesInvitationStatus && matchesInterviewStatus && matchesScoreThreshold;
+            }
           }
         } else if (applicant.AI_summary?.overall_summary?.score) {
           score = applicant.AI_summary.overall_summary.score;
+          // Extract additional scores
+          resumeScore = applicant.AI_summary.overall_summary?.resumeScore || null;
+          technicalScore = applicant.AI_summary.overall_summary?.technicalScore || null;
+          cultureFitScore = applicant.AI_summary.overall_summary?.cultureFitScore || null;
+          communicationScore = applicant.AI_summary.overall_summary?.communicationScore || null;
+        } else if (applicant.AI_summary?.resume_analysis) {
+          // If no overall score but resume analysis exists, don't filter out
+          matchesScoreThreshold = true;
+          return matchesSearch && matchesJob && matchesInvitationStatus && matchesInterviewStatus && matchesScoreThreshold;
         }
       }
       
