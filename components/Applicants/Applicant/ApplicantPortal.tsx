@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, AlertTriangle } from "lucide-react";
 import ResumeViewer from '@/components/AnalysisDisplay/ResumeViewer';
+import ApplicationTimeline from './ApplicationTimeline';
 
 interface ApplicantPortalProps {
   portalProps: portalProps;
@@ -106,6 +107,12 @@ export default function ApplicantPortal({
                 <ApplicantActions portalProps={portalProps} />
               </div>
             </div>
+            
+            {mergeApplicant.job && mergeApplicant.application && (
+              <div className="mt-6 bg-card rounded-lg">
+                <ApplicationTimeline portalProps={portalProps} />
+              </div>
+            )}
             
             {mergeApplicant.job && <ResumeViewer portalProps={portalProps} />}
            
