@@ -21,6 +21,7 @@ export type Database = {
           room_name: string | null
           text_eval: Json | null
           transcript_summary: string | null
+          resume_analysis: Json | null // Added resume_analysis json to the ai_summary table
         }
         Insert: {
           application_id?: string | null
@@ -33,6 +34,7 @@ export type Database = {
           room_name?: string | null
           text_eval?: Json | null
           transcript_summary?: string | null
+          resume_analysis?: Json | null // Added resume_analysis json to the ai_summary table
         }
         Update: {
           application_id?: string | null
@@ -45,6 +47,7 @@ export type Database = {
           room_name?: string | null
           text_eval?: Json | null
           transcript_summary?: string | null
+          resume_analysis?: Json | null // Added resume_analysis json to the ai_summary table
         }
         Relationships: [
           {
@@ -684,4 +687,3 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
-

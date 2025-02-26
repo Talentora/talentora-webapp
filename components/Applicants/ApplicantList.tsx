@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import InviteApplicantsTable from '@/components/Applicants/InviteApplicantsTable';
 import { Loader2 } from 'lucide-react';
-import { fetchJoinedApplicantsData } from '@/server/applications';
+import { fetchAllEnrichedApplicants } from '@/server/applications';
 import { fetchJobsData } from '@/server/jobs';
 
 export default function ApplicantList() {
@@ -17,7 +17,7 @@ export default function ApplicantList() {
       try {
         // Fetch both joined applicants and jobs data
         const [applicantsData, jobsData] = await Promise.all([
-          fetchJoinedApplicantsData(),
+          fetchAllEnrichedApplicants(),
           fetchJobsData()
         ]);
         
@@ -36,9 +36,9 @@ export default function ApplicantList() {
         
         setApplicantCandidates(applicantsData);
         setJobs(jobsData);
+        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
         setIsLoading(false);
       }
     };

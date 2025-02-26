@@ -1,56 +1,58 @@
 import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
-import { AISummaryApplicant } from "@/types/analysis";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface AssessmentScoresProps {
-    aiSummary: portalProps['AI_summary'] | null;
+    portalProps: portalProps;
 }
 
-interface OverallSummary {
-    score: number;
-    summary: string;
-}
-
-const Page = ({ aiSummary }: AssessmentScoresProps) => {
-    const typedSummary = aiSummary as unknown as AISummaryApplicant;
-    const overallSummary = typedSummary?.overall_summary as unknown as OverallSummary;
-    const overallScore = overallSummary?.score;
+const Page = ({ portalProps }: AssessmentScoresProps) => {
+    const { AI_summary } = portalProps;
+    
+    if (!AI_summary) return <Skeleton className="h-[300px]" />;
+    
+    // Handle both array and object formats for backward compatibility
+    const isArray = Array.isArray(AI_summary);
+    
+    // Extract scores safely with fallbacks
+    const overallSummary = isArray 
+        ? AI_summary[0]?.overall_summary 
+        : AI_summary.overall_summary;
+        
+    // Get scores with fallbacks
+    const overallScore = overallSummary?.score || null;
 
     return (
-        <div>
-            <div className="text-center">
-                <h2 className="text-2xl font-semibold">Overall Score</h2>
-            </div>
-            <div className="p-8 flex justify-center items-center">
-                <div 
-                    className="w-32 h-32 rounded-full flex items-center justify-center"
-                    style={{
-                        background: overallScore < 50 
-                            ? 'rgb(255, 0, 0)' // Red for scores below 50
-                            : `hsl(${(overallScore - 50) * 2.4}, 100%, 45%)`, // Gradient from red (0) through yellow (60) to green (120)
-                        boxShadow: '0 0 20px rgba(0,0,0,0.1)'
-                    }}
-                >
-                    <div className="text-5xl font-bold text-white">
-                        {overallScore}%
+        <Card className="border-none">
+            <CardHeader>
+                <CardTitle className="text-lg font-semibold">Assessment Scores</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="grid grid-cols-2 gap-6">
+                    <div className="flex flex-col items-center">
+                        <Badge color={overallScore >= 80 ? "green" : overallScore >= 60 ? "yellow" : "red"}>
+                            {overallScore}%
+                        </Badge>
                     </div>
                 </div>
-            </div>
-        </div>
-    )
-}
-
-const AssessmentScoresSkeleton = () => {
-    return (
-        <div className="space-y-4">
-            <h2 className="text-2xl font-semibold">Overall Score</h2>
-            <div className="flex justify-center">
-                <Skeleton className="h-32 w-32 rounded-full" />
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 };
 
-Page.Skeleton = AssessmentScoresSkeleton;
+// Add Skeleton component for loading state
+Page.Skeleton = function AssessmentScoresSkeleton() {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="text-sm font-medium">Assessment Scores</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Skeleton className="h-[200px] w-full" />
+            </CardContent>
+        </Card>
+    );
+};
 
 export default Page;

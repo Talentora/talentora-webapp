@@ -257,7 +257,7 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
   ].reduce((a, b) => a + b, 0);
 
   return (
-    <div className="space-y-4 relative">
+    <div className="space-y-4 relative w-3/5">
       {/* Table header with search, filter and invite buttons */}
       <ApplicantTableHeader
         searchTerm={searchTerm}
@@ -302,9 +302,9 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
       />
       
       {/* Table */}
-      <div className="rounded-md border overflow-hidden">
-        <div className="overflow-x-auto w-full">
-          <Table className="w-full table-fixed">
+      <div className="border rounded-lg">
+        <div className="overflow-x-auto">
+          <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
@@ -313,7 +313,7 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
                     return (
                       <TableHead 
                         key={header.id} 
-                        className="whitespace-normal break-words"
+                        className="whitespace-nowrap" 
                         style={{ width: width ? `${width}px` : 'auto' }}
                       >
                         {header.isPlaceholder
@@ -329,19 +329,15 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
               ))}
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows?.length ? (
+              {table.getRowModel().rows.length > 0 ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                    className="cursor-pointer"
-                  >
+                  <TableRow key={row.id} data-state={row.getIsSelected() ? "selected" : undefined}>
                     {row.getVisibleCells().map((cell) => {
                       const width = cell.column.getSize();
                       return (
                         <TableCell 
                           key={cell.id} 
-                          className="whitespace-normal break-words"
+                          className="overflow-hidden text-ellipsis"
                           style={{ width: width ? `${width}px` : 'auto' }}
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}

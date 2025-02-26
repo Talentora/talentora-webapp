@@ -31,11 +31,8 @@ export function JobTable({
   loading,
   visibleColumns
 }: JobTableProps) {
-  // Calculate minimum width based on visible columns with reduced width per column
-  const minTableWidth = visibleColumns.length * 150; // Reduced from 200px to 150px per column
-
   return (
-    <div style={{ minWidth: `${minTableWidth}px` }}>
+    <div className="w-full overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
