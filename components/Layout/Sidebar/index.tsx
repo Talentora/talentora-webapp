@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2, ChevronDown, ChevronUp, Search, CreditCard, Box, Mail, BookOpen, Building2, Phone } from 'lucide-react';
+import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2, ChevronDown, ChevronUp, Search, CreditCard, Box, Mail, BookOpen, Building2, Phone, ListChecks } from 'lucide-react';
 
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 
@@ -68,6 +68,7 @@ const Sidebar = () => {
   const [isJobsOpen, setIsJobsOpen] = useState(false);
   const [isApplicantsOpen, setIsApplicantsOpen] = useState(false);
   const [isScoutsOpen, setIsScoutsOpen] = useState(false);
+  const [isStagesOpen, setIsStagesOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -392,6 +393,24 @@ const Sidebar = () => {
 
                 <SubLink href="/settings?tab=integrations">
                   Integration Status
+                </SubLink>
+              </div>
+            )}
+            <SidebarLink
+              href="/job-interview-stages"
+              icon={ListChecks}
+              isActive={pathname === '/job-interview-stages'}
+              isSidebarOpen={isSidebarOpen}
+              hasDropdown={true}
+              isDropdownOpen={isStagesOpen}
+              onDropdownClick={() => setIsStagesOpen(!isStagesOpen)}
+            >
+              Interview Stages
+            </SidebarLink>
+            {isSidebarOpen && isStagesOpen && (
+              <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-3">
+                <SubLink href="/job-interview-stages">
+                  All Stages
                 </SubLink>
               </div>
             )}

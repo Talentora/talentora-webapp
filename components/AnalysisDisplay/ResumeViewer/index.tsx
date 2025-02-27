@@ -87,11 +87,11 @@ const ResumeViewer = ({ portalProps }: ResumeViewerProps) => {
 
     if (!resumeData) {
         return (
-            <div className="space-y-4">
+            <div className="space-y-4 mb-5">
                 <div className="flex items-center justify-between">
                     <h2 className="text-2xl font-semibold">Resume</h2>
                 </div>
-                <Alert intent="danger" title="No Resume Available">
+                <Alert intent="info" title="No Resume Available">
                     <AlertDescription>
                         No resume was found for this applicant.
                     </AlertDescription>
