@@ -12,7 +12,7 @@ export type Database = {
       AI_summary: {
         Row: {
           application_id: string | null
-          batch_processor_transcript_id: string | null
+          "batch-processor_transcript_id": string | null
           created_at: string
           emotion_eval: Json | null
           id: string
@@ -21,11 +21,10 @@ export type Database = {
           room_name: string | null
           text_eval: Json | null
           transcript_summary: string | null
-          resume_analysis: Json | null // Added resume_analysis json to the ai_summary table
         }
         Insert: {
           application_id?: string | null
-          batch_processor_transcript_id?: string | null
+          "batch-processor_transcript_id"?: string | null
           created_at?: string
           emotion_eval?: Json | null
           id?: string
@@ -34,7 +33,6 @@ export type Database = {
           room_name?: string | null
           text_eval?: Json | null
           transcript_summary?: string | null
-          resume_analysis?: Json | null // Added resume_analysis json to the ai_summary table
         }
         Update: {
           application_id?: string | null
@@ -47,7 +45,6 @@ export type Database = {
           room_name?: string | null
           text_eval?: Json | null
           transcript_summary?: string | null
-          resume_analysis?: Json | null // Added resume_analysis json to the ai_summary table
         }
         Relationships: [
           {
@@ -318,8 +315,7 @@ export type Database = {
           job_id: string
           min_qual: Json[] | null
           preferred_qual: Json[] | null
-          type: string | null,
-          prompt_graph: Json | null
+          type: string | null
         }
         Insert: {
           bot_id?: number | null
@@ -333,7 +329,6 @@ export type Database = {
           min_qual?: Json[] | null
           preferred_qual?: Json[] | null
           type?: string | null
-          prompt_graph?: Json | null
         }
         Update: {
           bot_id?: number | null
@@ -347,7 +342,6 @@ export type Database = {
           min_qual?: Json[] | null
           preferred_qual?: Json[] | null
           type?: string | null
-          prompt_graph?: Json | null
         }
         Relationships: [
           {
@@ -690,3 +684,4 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
