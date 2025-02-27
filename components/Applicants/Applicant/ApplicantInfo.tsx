@@ -50,7 +50,7 @@ export default function ApplicantInfo({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="flex flex-row justify-between">
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4" />
             <span className="text-sm">{email}</span>
@@ -66,12 +66,12 @@ export default function ApplicantInfo({
               {appliedAt}
             </span>
           </div>
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <span className="text-sm font-medium">Current Stage: </span>
             <span className="text-sm font-bold">
               {ApplicantCandidate.interviewStages.name}
             </span>
-          </div>
+          </div> */}
         </div>
       </CardContent>
     </Card>

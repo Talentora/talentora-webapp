@@ -1,10 +1,10 @@
-import { createBrowserClient } from '@supabase/ssr';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { Database } from '@/types/types_db';
 
-// Define a function to create a Supabase client for client-side operations
-export const createClient = () =>
-  createBrowserClient<Database>(
-    // Pass Supabase URL and anonymous key from the environment to the client
+// Create a single supabase client for the entire application
+export const createClient = () => {
+  return createSupabaseClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
+};

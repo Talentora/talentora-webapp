@@ -3,7 +3,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   const id = params.id;
-  const DAILY_API_KEY = process.env.NEXT_PUBLIC_DAILY_BOT_API_KEY;
+  const DAILY_API_KEY = process.env.NEXT_PUBLIC_DAILY_API_KEY;
 
   if (!DAILY_API_KEY) {
     console.error('DAILY_API_KEY is missing');

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import ApplicantTable from '@/components/Applicants/ApplicantTable';
+import InviteApplicantsTable from '@/components/Applicants/InviteApplicantsTable';
 import { Button } from '@/components/ui/button';
 import ApplicationsGraph from './ApplicantStatistics/ApplicationsGraph';
 import { ApplicantCandidate, Job } from '@/types/merge';
@@ -60,7 +60,7 @@ export function RecentApplicants({ applicants, jobs, isLoading }: RecentApplican
           )}>
             <ApplicationsGraph applicants={applicants} />
             <div className="mt-6">
-              <ApplicantTable applicants={applicants} disablePortal={true} title={''} />
+              <InviteApplicantsTable applicants={applicants} jobs={jobs} />
             </div>
           </Card>
         </CardContent>

@@ -1,48 +1,56 @@
 import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
-import { AISummaryApplicant, OverallSummary, TextEvaluation, EmotionEvaluation } from "@/types/analysis";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface AssessmentSummaryProps {
-    aiSummary: portalProps['AI_summary'];
+    portalProps: portalProps;
 }
 
-const Page = ({ aiSummary }: AssessmentSummaryProps) => {
-    const typedSummary = aiSummary ? {
-        text_eval: aiSummary.text_eval as unknown as TextEvaluation,
-        emotion_eval: aiSummary.emotion_eval as unknown as EmotionEvaluation,
-        overall_summary: aiSummary.overall_summary as unknown as OverallSummary,
-        interview_summary: aiSummary.transcript_summary ? {
-            content: aiSummary.transcript_summary
-        } : undefined,
-        recording_id: aiSummary.recording_id
-    } : null;
-    const overallSummary = typedSummary?.overall_summary;
+const Page = ({ portalProps }: AssessmentSummaryProps) => {
+    const { AI_summary } = portalProps;
+    
+    if (!AI_summary) return <Skeleton className="h-[300px]" />;
+    
+    // Handle both array and object formats for backward compatibility
+    const isArray = Array.isArray(AI_summary);
+    
+    // Extract data safely with fallbacks
+    const explanation = isArray 
+        ? AI_summary[0]?.overall_summary?.explanation 
+        : AI_summary.overall_summary?.explanation;
 
+    
     return (
-        <div className="space-y-4">
-            <h2 className="text-2xl font-semibold">Assessment Summary</h2>
-            <div className="p-4">
-                {!typedSummary || !overallSummary ? (
-                    <div>No summary available</div>
-                ) : (
-                    <div className="space-y-4">
-                        <p className="text-gray-700">{overallSummary.explanation}</p>
-                    </div>
-                )}
-            </div>
-        </div>
-    )
-}
-
-const AssessmentSummarySkeleton = () => {
-    return (
-        <div className="space-y-4">
-            <h2 className="text-2xl font-semibold">Assessment Summary</h2>
-            <Skeleton className="h-[200px] w-full" />
-        </div>
+        <Card className="p-4 border-none">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                <CardTitle className="text-lg font-semibold">Assessment Summary</CardTitle>
+            </CardHeader>
+            <CardContent >
+                <div className="text-base">
+                    {explanation ? (
+                        <p className="whitespace-pre-line">{explanation}</p>
+                    ) : (
+                        <p className="text-muted-foreground">No summary available</p>
+                    )}
+                </div>
+            </CardContent>
+        </Card>
     );
 };
 
-Page.Skeleton = AssessmentSummarySkeleton;
+// Add Skeleton component for loading state
+Page.Skeleton = function AssessmentSummarySkeleton() {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="text-sm font-medium">Assessment Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Skeleton className="h-[200px] w-full" />
+            </CardContent>
+        </Card>
+    );
+};
 
 export default Page;
