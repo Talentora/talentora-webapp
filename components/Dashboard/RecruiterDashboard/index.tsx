@@ -136,6 +136,7 @@ export default function RecruiterDashboard() {
               {/* Recent Applicants */}
               <RecentApplicantsCard
                 applicants={applicants}
+                jobs={mergeJobs}
                 isLoading={applicantsLoading}
               />
             </div>

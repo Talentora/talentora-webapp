@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { CalendarClock, UserPlus } from "lucide-react";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { portalProps } from '@/app/(pages)/(restricted)/applicants/[id]/page';
 import {
   Tooltip,
@@ -18,6 +18,17 @@ interface ApplicantActionsProps {
 const ApplicantActions = ({ portalProps }: ApplicantActionsProps) => {
   const { AI_summary, application, job_interview_config } = portalProps;
 
+  // Format date safely
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return isValid(date) ? format(date, 'MMMM do, yyyy') : 'Unknown date';
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Unknown date';
+    }
+  };
+
   // If there's an AI summary, show completion status
   if (AI_summary) {
     return (
@@ -31,7 +42,9 @@ const ApplicantActions = ({ portalProps }: ApplicantActionsProps) => {
           🎉 Assessment Completed! 🎉
         </Button>
         <div className="text-center text-sm text-gray-500">
-          Completed on {format(new Date(AI_summary.created_at), 'MMMM do, yyyy')}
+          {AI_summary.created_at ? 
+            formatDate(AI_summary.created_at) : 
+            'Assessment completed'}
         </div>
       </div>
     );
@@ -50,7 +63,9 @@ const ApplicantActions = ({ portalProps }: ApplicantActionsProps) => {
           Invitation Sent
         </Button>
         <div className="text-center text-sm text-gray-500">
-          Invited on {format(new Date(application.created_at), 'MMMM do, yyyy')}
+          {application.created_at ? 
+            formatDate(application.created_at) : 
+            'Invitation sent'}
         </div>
       </div>
     );
