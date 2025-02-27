@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import ApplicantPortal from '@/components/Applicants/Applicant/ApplicantPortal';
 import { Skeleton } from '@/components/ui/skeleton';
-import { fetchEnrichedApplicantByMergeId, fetchAllEnrichedApplicants } from '@/server/applications';
+import { fetchAllEnrichedApplicants, fetchApplicationAISummary } from '@/server/applications';
 import { createClient } from '@/utils/supabase/client';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
@@ -73,7 +73,9 @@ export default function ApplicantPage({
         // First try to fetch the specific applicant
         try {
           // Fetch enriched applicant data
-          const enrichedData = await fetchEnrichedApplicantByMergeId(params.id);
+          // const enrichedData = await fetchEnrichedApplicantByMergeId(params.id);
+          const enrichedData = await fetchApplicationAISummary(params.id);
+          console.log("meow", enrichedData)
           console.log("Enriched applicant data:", enrichedData);
           
           // Fetch job interview config if we have a job ID
@@ -110,51 +112,53 @@ export default function ApplicantPage({
         } catch (specificError) {
           console.error('Error fetching specific applicant:', specificError);
           
+
           // If specific fetch fails, try to find the applicant in the full list
-          const allApplicants = await fetchAllEnrichedApplicants();
-          const matchingApplicant = allApplicants.find(
-            (app: any) => app.application?.id === params.id || 
-                         app.applicant?.merge_applicant_id === params.id
-          );
+          // const allApplicants = await fetchAllEnrichedApplicants();
+          // const matchingApplicant = allApplicants.find(
+          //   (app: any) => app.application?.id === params.id || 
+          //                app.applicant?.merge_applicant_id === params.id
+          // );
+
           
-          if (matchingApplicant) {
-            console.log("Found applicant in full list:", matchingApplicant);
+          // if (matchingApplicant) {
+          //   console.log("Found applicant in full list:", matchingApplicant);
             
-            // Fetch job interview config if we have a job ID
-            let jobConfig = null;
-            if (matchingApplicant.job?.id) {
-              const supabase = createClient();
-              const { data: jobConfigData } = await supabase
-                .from('job_interview_config')
-                .select('*')
-                .eq('job_id', matchingApplicant.job.id)
-                .single();
+          //   // Fetch job interview config if we have a job ID
+          //   let jobConfig = null;
+          //   if (matchingApplicant.job?.id) {
+          //     const supabase = createClient();
+          //     const { data: jobConfigData } = await supabase
+          //       .from('job_interview_config')
+          //       .select('*')
+          //       .eq('job_id', matchingApplicant.job.id)
+          //       .single();
               
-              jobConfig = jobConfigData;
-            }
+          //     jobConfig = jobConfigData;
+          //   }
             
-            // Set portal props from the matching applicant
-            setPortalProps({
-              AI_summary: matchingApplicant.AI_summary,
-              application: matchingApplicant.application,
-              job_interview_config: jobConfig,
-              mergeApplicant: {
-                application: matchingApplicant.application,
-                candidate: matchingApplicant.candidate,
-                job: matchingApplicant.job,
-                interviewStages: matchingApplicant.interviewStages
-              },
-              candidate: matchingApplicant.candidate,
-              job: matchingApplicant.job,
-              interviewStages: matchingApplicant.interviewStages,
-              hasSupabaseData: matchingApplicant.hasSupabaseData,
-              hasMergeData: matchingApplicant.hasMergeData,
-              hasAISummary: matchingApplicant.hasAISummary
-            });
-          } else {
-            // If we still can't find the applicant, set an error
-            setError('Applicant not found. The ID may be invalid or the applicant has been removed.');
-          }
+          //   // Set portal props from the matching applicant
+          //   setPortalProps({
+          //     AI_summary: matchingApplicant.AI_summary,
+          //     application: matchingApplicant.application,
+          //     job_interview_config: jobConfig,
+          //     mergeApplicant: {
+          //       application: matchingApplicant.application,
+          //       candidate: matchingApplicant.candidate,
+          //       job: matchingApplicant.job,
+          //       interviewStages: matchingApplicant.interviewStages
+          //     },
+          //     candidate: matchingApplicant.candidate,
+          //     job: matchingApplicant.job,
+          //     interviewStages: matchingApplicant.interviewStages,
+          //     hasSupabaseData: matchingApplicant.hasSupabaseData,
+          //     hasMergeData: matchingApplicant.hasMergeData,
+          //     hasAISummary: matchingApplicant.hasAISummary
+          //   });
+          // } else {
+          //   // If we still can't find the applicant, set an error
+          //   setError('Applicant not found. The ID may be invalid or the applicant has been removed.');
+          // }
         }
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -189,7 +193,7 @@ export default function ApplicantPage({
   if (error) {
     return (
       <div className="max-w-6xl mx-auto p-4">
-        <Alert variant="danger" className="mb-6">
+        <Alert className="mb-6 bg-destructive text-destructive-foreground">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
