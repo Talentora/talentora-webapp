@@ -42,6 +42,7 @@ export async function fetchApplicationData(mergeApplicationId: string) {
 // Fetch application data with AI summary. The applicaiton Id is merge id
 export async function fetchApplicationAISummary(mergeApplicationId: string) {
     const accountToken = await getMergeApiKey();
+
     if (!accountToken) {
         throw new Error('Account token not found');
     }
@@ -68,3 +69,33 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
     
     return response.json();
   }
+
+
+  export async function fetchApplicationId(jobId: string, candidateId: string) {
+    const accountToken = await getMergeApiKey();
+
+    if (!accountToken) {
+        throw new Error('Account token not found');
+    }
+    
+    const params = new URLSearchParams({
+        account_token: accountToken
+    });
+    
+    const url = `${API_URL}application-id/${jobId}/${candidateId}?${params.toString()}`;
+    
+    const response = await fetch(url, {
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        cache: 'no-store'
+    });
+    
+    if (!response.ok) {
+        throw new Error(`Failed to fetch application ID: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data.application_id;
+}
