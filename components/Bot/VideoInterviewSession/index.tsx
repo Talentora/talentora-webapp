@@ -1,17 +1,19 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRTVIClient, useRTVIClientTransportState } from 'realtime-ai-react';
+import React, { useEffect } from 'react';
+import { useRTVIClient, useRTVIClientTransportState, useRTVIClientMediaDevices } from "@pipecat-ai/client-react";
 import { usePermissions } from '@daily-co/daily-react';
-
+import DailyIframe from '@daily-co/daily-js';
 import InterviewHeader from './InterviewHeader';
 import AIInterviewer from './AIInterviewer';
 import CandidateVideo from './CandidateVideo';
 import TranscriptPanel from './TranscriptPanel';
 import ControlPanel from './ControlPanel';
+import MediaDevicePopup from './MediaDevicePopup';
 import { Job as MergeJob } from '@/types/merge';
 import { Tables } from '@/types/types_db';
-import { RTVIClient } from 'realtime-ai';
+import { InterviewTranscript } from '@/types/transcript';
+import { useToast } from '@/hooks/use-toast';
 
 type Company = Tables<'companies'>;
 
@@ -20,8 +22,8 @@ interface VideoInterviewSessionProps {
   startAudioOff?: boolean;
   job: MergeJob | null;
   company: Company;
-  transcript: { role: 'bot' | 'user'; text: string }[];
   demo: boolean;
+  transcript: InterviewTranscript;
 }
 
 export default function VideoInterviewSession({
@@ -29,24 +31,41 @@ export default function VideoInterviewSession({
   startAudioOff = false,
   job,
   company,
-  transcript,
-  demo
+  demo,
+  transcript
 }: VideoInterviewSessionProps) {
-  const voiceClient: RTVIClient = useRTVIClient()!;
+  const client = useRTVIClient()!;
   const transportState = useRTVIClientTransportState();
-  const [isMuted, setMuted] = useState(startAudioOff);
-  const [isCameraOn, setIsCameraOn] = useState(true);
+  const { availableMics, availableCams, selectedMic, selectedCam, updateMic, updateCam } = useRTVIClientMediaDevices();
+  const { toast } = useToast();
 
-  // Initialize devices when component mounts
+  function startRecording() {
+    const callInstance = DailyIframe.getCallInstance();
+    console.log('[RECORDING] Call instance:', callInstance);
+    if (callInstance) {
+      callInstance.startRecording();
+    }
+  }
+  
+  // Initialize devices when they become available
   useEffect(() => {
     if (transportState === 'connected') {
-      // Set initial states based on startAudioOff prop
-      voiceClient.enableMic(!startAudioOff);
-      voiceClient.enableCam(true);
-      setMuted(startAudioOff);
-      setIsCameraOn(true);
+      // Set default devices if none selected
+      if (availableMics.length > 0 && !selectedMic) {
+        console.log('[DEVICES] Setting default mic:', availableMics[0].label);
+        updateMic(availableMics[0].deviceId);
+      }
+      if (availableCams.length > 0 && !selectedCam) {
+        console.log('[DEVICES] Setting default camera:', availableCams[0].label);
+        updateCam(availableCams[0].deviceId);
+      }
+      startRecording();
+
+      // Enable/disable devices based on props
+      client.enableMic(!startAudioOff);
+      client.enableCam(true);
     }
-  }, [transportState, startAudioOff, voiceClient]);
+  }, [transportState, availableMics, availableCams, selectedMic, selectedCam, updateMic, updateCam, client, startAudioOff]);
 
   useEffect(() => {
     if (transportState === 'error') {
@@ -54,16 +73,12 @@ export default function VideoInterviewSession({
     }
   }, [transportState, onLeave]);
 
-  const handleMicToggle = () => {
-    const newMutedState = !isMuted;
-    voiceClient.enableMic(!newMutedState);
-    setMuted(newMutedState);
-  };
-
-  const handleCameraToggle = () => {
-    const newCameraState = !isCameraOn;
-    voiceClient.enableCam(newCameraState);
-    setIsCameraOn(newCameraState);
+  const handleTimeUp = () => {
+    toast({
+      title: "Interview Time Up",
+      description: "The interview time has ended. Please wrap up your conversation.",
+      variant: "default"
+    });
   };
 
   return (
@@ -75,33 +90,25 @@ export default function VideoInterviewSession({
       <main className="flex basis-1/3 gap-4 p-4 m-5">
         {/* Sidebar */}
         <div className="flex flex-col h-full w-1/3 gap-5">
-          <div className="flex-1 ">
+          <div className="flex-1">
             <AIInterviewer isReady={transportState === 'ready'} />
           </div>
-          <p>
-            {JSON.stringify(transcript)}
-          </p>
           <div className="flex basis-1/2 w-full overflow-y-auto">
-            <TranscriptPanel transcript={transcript} />
+            <TranscriptPanel transcripts={transcript} />
           </div>
         </div>
         {/* Main Content */}
         <div className="w-2/3 h-full">
-          <CandidateVideo isCameraOn={isCameraOn && voiceClient.isCamEnabled} />
+          <CandidateVideo />
         </div>
       </main>
 
       <footer className="basis-1/6">
-        <ControlPanel
-          // isMuted={isMuted || !voiceClient.isMicEnabled}
-          isMuted={isMuted}
-          isCameraOn={isCameraOn}
-          // isCameraOn={isCameraOn && voiceClient.isCamEnabled}
-          onMicToggle={handleMicToggle}
-          onCameraToggle={handleCameraToggle}
-          onLeave={onLeave}
-        />
+        <ControlPanel onLeave={onLeave} onTimeUp={handleTimeUp} />
       </footer>
+
+      {/* Media Device Settings Popup */}
+      <MediaDevicePopup />
     </div>
   );
 }

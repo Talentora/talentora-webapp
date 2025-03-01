@@ -5,6 +5,7 @@ import { useUser } from './useUser';
 import { getAccountTokenFromApplication } from '@/utils/supabase/queries';
 import { Application as MergeApplication, Job as MergeJob } from '@/types/merge';
 import { getURL } from '@/utils/helpers';
+import { fetchJobById } from '@/server/jobs';
 
 // Hook to fetch applicant data
 const useApplicantData = (userId: string | undefined): {
@@ -76,37 +77,6 @@ const useApplications = (applicantId: string | undefined) => {
   return { applications, error };
 };
 
-// Helper function to fetch job details
-export const fetchJobDetails = async (jobId: string, token: string): Promise<MergeJob | null> => {
-  try {
-    const response = await fetch(getURL(`api/jobs/${jobId}`), {
-      headers: { 'X-Account-Token': token }
-    });
-    if (response.ok) {
-      return await response.json();
-    }
-    return null;
-  } catch (error) {
-    console.error('Error fetching job data:', error);
-    return null;
-  }
-};
-
-export const fetchApplicationData = async (applicationId: string, token: string): Promise<MergeApplication | null> => {
-  try {
-    const response = await fetch(getURL(`api/applications/${applicationId}`), {
-      headers: { 'X-Account-Token': token }
-    });
-    if (response.ok) {
-      return await response.json();
-    }
-    return null;
-  } catch (error) {
-    console.error('Error fetching job data:', error);
-    return null;
-  }
-};
-
 export type EnrichedApplication = MergeJob & {
   company: Tables<'companies'> | null;
   application_data: Tables<'applications'>;
@@ -140,17 +110,15 @@ export const useApplicant = () => {
           const aiSummary = (application as any).ai_summaries?.[0] || null;
           const status = aiSummary ? 'complete' : 'incomplete';
 
-          if (token) {
-            const jobDetails = await fetchJobDetails(application.job_id, token);
-            if (jobDetails) {
-              enriched.push({
-                ...jobDetails, 
-                company, 
-                application_data: application,
-                ai_summary: aiSummary,
-                status
-              });
-            }
+          const jobDetails = await fetchJobById(application.job_id); // using functions.ts instead
+          if (jobDetails) {
+            enriched.push({
+              ...jobDetails, 
+              company, 
+              application_data: application,
+              ai_summary: aiSummary,
+              status
+            });
           } else {
             enriched.push({
               ...application as unknown as MergeJob, 

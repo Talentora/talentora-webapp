@@ -22,13 +22,9 @@ import {
 } from '@/components/ui/select';
 import { Tables } from '@/types/types_db';
 
-type CombinedJob = {
-  mergeJob: Job;
-  supabaseJob?: Tables<'jobs'>;
-};
 
 interface InviteApplicantsProps {
-  jobs?: CombinedJob[] | null;
+  jobs?: any[];
   singleJobFlag?: boolean;
   applicants: ApplicantCandidate[];
 }

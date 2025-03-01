@@ -35,6 +35,15 @@ importers:
       '@mergeapi/react-merge-link':
         specifier: ^2.1.2
         version: 2.2.1
+      '@pipecat-ai/client-js':
+        specifier: ^0.3.2
+        version: 0.3.2
+      '@pipecat-ai/client-react':
+        specifier: ^0.3.2
+        version: 0.3.2(@pipecat-ai/client-js@0.3.2)(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@pipecat-ai/daily-transport':
+        specifier: ^0.3.5
+        version: 0.3.5(@pipecat-ai/client-js@0.3.2)
       '@radix-ui/react-accordion':
         specifier: ^1.2.0
         version: 1.2.3(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -224,12 +233,6 @@ importers:
       react-sparklines:
         specifier: ^1.7.0
         version: 1.7.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      realtime-ai:
-        specifier: 0.2.0
-        version: 0.2.0
-      realtime-ai-react:
-        specifier: 0.2.0
-        version: 0.2.0(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(realtime-ai@0.2.0)
       recharts:
         specifier: ^2.12.7
         version: 2.15.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -316,7 +319,7 @@ importers:
         specifier: ^29.2.5
         version: 29.2.5(@babel/core@7.26.9)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.9))(jest@29.7.0(@types/node@20.17.19))(typescript@5.7.3)
       typescript:
-        specifier: ^5.7.2
+        specifier: ^5.7.3
         version: 5.7.3
       webpack:
         specifier: ^5.95.0
@@ -1313,6 +1316,21 @@ packages:
   '@opentelemetry/api@1.9.0':
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
     engines: {node: '>=8.0.0'}
+
+  '@pipecat-ai/client-js@0.3.2':
+    resolution: {integrity: sha512-psunOVrJjPka2SWlq53vxVWCA0Vt8pSXsXtn8pOLC0YTKFsUx+b7Z6quYUJcDZjCe1aAg9cKETek3Xal3Co8Tg==}
+
+  '@pipecat-ai/client-react@0.3.2':
+    resolution: {integrity: sha512-Vmo6JgNINGwCJXJmvQs1WvtNhoANl0+B8WF5ZTASjf9V5rmvr71EwWSam2C6QuRLsL8T4Yqs/pqQVdWe28nO0g==}
+    peerDependencies:
+      '@pipecat-ai/client-js': '*'
+      react: '>=18'
+      react-dom: '>=18'
+
+  '@pipecat-ai/daily-transport@0.3.5':
+    resolution: {integrity: sha512-nJ0TvWPCqXPmU81U8cXOqk5mUEEvEuI06Mis+N0jN8KZUrNy1pP08iWbs07ObmIXdnQcoL+kQmHOerT4q/bF0w==}
+    peerDependencies:
+      '@pipecat-ai/client-js': ~0.3.2
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -5156,16 +5174,6 @@ packages:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
 
-  realtime-ai-react@0.2.0:
-    resolution: {integrity: sha512-Ogf71eLyMLKLAcBZltTFWJrLtGUNeEPEcxP+MPnQUK4E1GEVUPqiP2BLxV/1nKqo9xhhnjAGf+lZF3XKkXTqiA==}
-    peerDependencies:
-      react: '>=18'
-      react-dom: '>=18'
-      realtime-ai: '*'
-
-  realtime-ai@0.2.0:
-    resolution: {integrity: sha512-lr+8X8zyZe8/2eL6gfK6FKEivBl6TjpSyE0JgaMi9N/2MbTltXO9wzsnd3SrlMHKojbjbx+xHe8AMbv3MlnVSg==}
-
   realtime-ai@0.2.2:
     resolution: {integrity: sha512-mwq1pUOnimWca1TW0JswX4HpOHb9Rp9y0eQ/zD5PLas0jWB3xpHiu9C8BS08fAKDUC7eEYHyVJWooXnd/KwgmQ==}
 
@@ -7287,6 +7295,28 @@ snapshots:
   '@nolyfill/is-core-module@1.0.39': {}
 
   '@opentelemetry/api@1.9.0': {}
+
+  '@pipecat-ai/client-js@0.3.2':
+    dependencies:
+      '@types/events': 3.0.3
+      clone-deep: 4.0.1
+      events: 3.3.0
+      typed-emitter: 2.1.0
+      uuid: 10.0.0
+
+  '@pipecat-ai/client-react@0.3.2(@pipecat-ai/client-js@0.3.2)(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@pipecat-ai/client-js': 0.3.2
+      jotai: 2.12.1(@types/react@18.3.18)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    transitivePeerDependencies:
+      - '@types/react'
+
+  '@pipecat-ai/daily-transport@0.3.5(@pipecat-ai/client-js@0.3.2)':
+    dependencies:
+      '@daily-co/daily-js': 0.73.0
+      '@pipecat-ai/client-js': 0.3.2
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -9425,8 +9455,8 @@ snapshots:
       '@typescript-eslint/parser': 6.21.0(eslint@8.57.1)(typescript@5.7.3)
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.8.2(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1)
-      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-typescript@3.8.2(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-import-resolver-typescript: 3.8.2(eslint-plugin-import@2.31.0)(eslint@8.57.1)
+      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-typescript@3.8.2)(eslint@8.57.1)
       eslint-plugin-jsx-a11y: 6.10.2(eslint@8.57.1)
       eslint-plugin-react: 7.37.4(eslint@8.57.1)
       eslint-plugin-react-hooks: 5.0.0-canary-7118f5dd7-20230705(eslint@8.57.1)
@@ -9449,7 +9479,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.8.2(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1):
+  eslint-import-resolver-typescript@3.8.2(eslint-plugin-import@2.31.0)(eslint@8.57.1):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.4.0
@@ -9460,22 +9490,22 @@ snapshots:
       stable-hash: 0.0.4
       tinyglobby: 0.2.11
     optionalDependencies:
-      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-typescript@3.8.2(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-plugin-import: 2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-typescript@3.8.2)(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.8.2(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.8.2(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       '@typescript-eslint/parser': 6.21.0(eslint@8.57.1)(typescript@5.7.3)
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.8.2(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1)
+      eslint-import-resolver-typescript: 3.8.2(eslint-plugin-import@2.31.0)(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-typescript@3.8.2(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1):
+  eslint-plugin-import@2.31.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-typescript@3.8.2)(eslint@8.57.1):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.8
@@ -9486,7 +9516,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.8.2(eslint-plugin-import@2.31.0(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.7.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.8.2(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -11703,23 +11733,6 @@ snapshots:
   readdirp@3.6.0:
     dependencies:
       picomatch: 2.3.1
-
-  realtime-ai-react@0.2.0(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(realtime-ai@0.2.0):
-    dependencies:
-      jotai: 2.12.1(@types/react@18.3.18)(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      realtime-ai: 0.2.0
-    transitivePeerDependencies:
-      - '@types/react'
-
-  realtime-ai@0.2.0:
-    dependencies:
-      '@types/events': 3.0.3
-      clone-deep: 4.0.1
-      events: 3.3.0
-      typed-emitter: 2.1.0
-      uuid: 10.0.0
 
   realtime-ai@0.2.2:
     dependencies:

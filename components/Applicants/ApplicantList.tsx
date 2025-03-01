@@ -5,21 +5,17 @@ import { ApplicantCandidate } from '@/types/merge';
 import ApplicantTable from '@/components/Applicants/ApplicantTable';
 import SearchBar from '@/components/Applicants/Searchbar';
 import { Loader2 } from 'lucide-react';
+import { fetchApplicationsData } from '@/server/applications';
 
 export default function ApplicantList() {
-  const [ApplicantCandidates, setApplicantCandidates] = useState<
-    ApplicantCandidate[]
-  >([]);
+  const [ApplicantCandidates, setApplicantCandidates] = useState<ApplicantCandidate[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchApplicantCandidates = async () => {
       try {
-        const response = await fetch(`/api/applications`, {
-          cache: 'no-store'
-        });
-        const data: ApplicantCandidate[] = await response.json();
+        const data: ApplicantCandidate[] = await fetchApplicationsData();
         setApplicantCandidates(data);
       } catch (error) {
         console.error('Error fetching ApplicantCandidates:', error);
@@ -32,9 +28,8 @@ export default function ApplicantList() {
   }, []);
 
   const filteredApplicants = ApplicantCandidates.filter(
-    (ApplicantCandidate: ApplicantCandidate) => {
-      const fullName =
-        `${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`.toLowerCase();
+    (app: ApplicantCandidate) => {
+      const fullName = `${app.candidate.first_name} ${app.candidate.last_name}`.toLowerCase();
       return fullName.includes(searchTerm.toLowerCase());
     }
   );
@@ -46,19 +41,13 @@ export default function ApplicantList() {
       </header>
       <main className="flex-1 p-4 lg:p-6">
         <div className="space-y-4">
-          <SearchBar
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            applicants={ApplicantCandidates}
-          />
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} applicants={ApplicantCandidates} />
           {isLoading ? (
             <div className="flex justify-center items-center h-full">
               <Loader2 className="animate-spin" />
             </div>
           ) : (
-            <ApplicantTable
-                applicants={filteredApplicants}
-                disablePortal={false} title={''}            />
+            <ApplicantTable applicants={filteredApplicants} disablePortal={false} title={''} />
           )}
         </div>
       </main>

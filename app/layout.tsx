@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import Navbar from '@/components/Layout/Navbar';
-import Sidebar from '@/components/Layout/Sidebar';
 import BreadcrumbsContainer from '@/components/Layout/BreadcrumbsContainer';
 import { Toaster } from '@/components/Toasts/toaster';
 import { PropsWithChildren, Suspense } from 'react';
@@ -13,6 +12,7 @@ import ReactQueryProvider from '@/components/Providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { getUserRole } from '@/utils/supabase/queries';
 import DynamicSidebar from '@/components/Layout/Sidebar/DynamicSidebar';
+import AuthListener from '@/components/AuthListener';
 
 const title = 'Talentora';
 const description = 'Talentora is a platform for creating and managing AI-powered interviews.';
@@ -42,6 +42,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen w-full bg-gradient-to-br from-purple-500/[0.1] via-background to-pink-500/[0.1] p-0">
+        {!isSidebarVisible && role !== 'applicant' && <AuthListener />}
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -51,12 +52,12 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <NextTopLoader />
           <ReactQueryProvider>
             <div className="flex min-h-screen">
-              {<DynamicSidebar />}
+              {isSidebarVisible && <DynamicSidebar/>}
               <main
                 id="skip"
                 className={`flex-1 min-h-screen`}
               >
-                <div className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur">
+                <div className="sticky top-0 z-[9999] w-full bg-background/95 backdrop-blur">
                   <Navbar visible={isSidebarVisible} />
                   {isSidebarVisible && <BreadcrumbsContainer />}
                 </div>

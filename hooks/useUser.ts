@@ -69,7 +69,7 @@ export function useUser(): UseUserReturn {
   });
 
   const userId = userData?.id ?? '';
-  console.log('userdata in useuser', userData);
+  // console.log("userdata in useuser", userData);
   const role =
     userData?.identities?.[0].identity_data?.role == 'applicant'
       ? 'applicant'

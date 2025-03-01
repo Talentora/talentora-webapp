@@ -5,8 +5,9 @@ import ApplicantPortal from '@/components/Applicants/Applicant/ApplicantPortal';
 import { ApplicantCandidate } from '@/types/merge';
 import { ArrowLeft } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-import {Tables} from "@/types/types_db";
+import { Tables } from '@/types/types_db';
 import { createClient } from '@/utils/supabase/client';
+import { fetchApplicationData } from '@/server/applications';
 
 export type portalProps = {
   AI_summary: Tables<'AI_summary'> | null; 
@@ -55,13 +56,9 @@ export default function ApplicantPage({
   });
 
   const fetchMergeData = async () => {
-    const response = await fetch(`/api/applications/${params.id}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch applicant data');
-    }
-    const data = await response.json();
-    setPortalProps(prev => ({...prev, mergeApplicant: data}));
-    return data;
+    const application = await fetchApplicationData(params.id);
+    setPortalProps(prev => ({...prev, mergeApplicant: application}));
+    return application;
   };
 
   const fetchJobConfig = async (merge_job_id: string) => {
@@ -78,21 +75,22 @@ export default function ApplicantPage({
 
   const fetchApplication = async (merge_applicant_id: string) => {
     const supabase = createClient();
-    const {data: applicationData} = await supabase
+    const { data: applicationData } = await supabase
       .from('applications')
       .select(`
         *,
-        applicants(*)
+        applicants!inner(*)
       `)
       .eq('applicants.merge_applicant_id', merge_applicant_id)
       .single();
 
-    setPortalProps(prev => ({...prev, application: applicationData || null}));
+    setPortalProps(prev => ({ ...prev, application: applicationData || null }));
     return applicationData;
   };
 
   const fetchAISummary = async (application_id: string) => {
     const supabase = createClient();
+    console.log("meoww", application_id)
     const {data: aiSummaryData} = await supabase
       .from('AI_summary')
       .select('*')

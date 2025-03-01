@@ -36,6 +36,9 @@
     "@hookform/resolvers": "^3.9.1",
     "@mergeapi/merge-node-client": "^1.0.11",
     "@mergeapi/react-merge-link": "^2.1.2",
+    "@pipecat-ai/client-js": "^0.3.2",
+    "@pipecat-ai/client-react": "^0.3.2",
+    "@pipecat-ai/daily-transport": "^0.3.5",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-checkbox": "^1.1.1",
@@ -99,8 +102,6 @@
     "react-merge-refs": "^2.1.1",
     "react-quill": "^2.0.0",
     "react-sparklines": "^1.7.0",
-    "realtime-ai": "0.2.0",
-    "realtime-ai-react": "0.2.0",
     "recharts": "^2.12.7",
     "stripe": "^14.25.0",
     "tailwind-merge": "^2.3.0",
@@ -131,7 +132,7 @@
     "supabase": "^1.226.4",
     "tailwindcss": "^3.4.12",
     "ts-jest": "^29.2.5",
-    "typescript": "^5.7.2",
+    "typescript": "^5.7.3",
     "webpack": "^5.95.0"
   },
   "proxy": "https://api.merge.dev"

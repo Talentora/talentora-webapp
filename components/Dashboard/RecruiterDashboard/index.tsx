@@ -25,8 +25,6 @@ import InvitedCandidatesCard from './FactCards/InvitedCandidates';
 import SearchBar from '@/components/Applicants/Searchbar';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import InviteApplicants from '@/components/Jobs/Job/JobConfig/InviteApplicants';
-import { Tables } from '@/types/types_db';
-import { createClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import InvitePage from '@/components/Invite';
@@ -62,13 +60,13 @@ export default function RecruiterDashboard() {
 
   const { data: applicants = [], isLoading: applicantsLoading } = useQuery({
     queryKey: ['applications'],
-    queryFn: fetchApplications,
+    queryFn: fetchApplicationsData,
     staleTime: 5 * 60 * 1000
   });
 
   const { data: mergeJobs = [], isLoading: jobsLoading } = useQuery({
     queryKey: ['jobs'],
-    queryFn: fetchJobs,
+    queryFn: fetchJobsData,
     staleTime: 5 * 60 * 1000
   });
 
@@ -108,8 +106,8 @@ export default function RecruiterDashboard() {
   const factWindow = 90;
 
   return (
-    <div className="w-screen mx-auto">
-      <main className="w-full pr-80 flex p-8">
+    <div className="w-full mx-auto overflow-x-hidden">
+      <main className="w-full flex p-8">
         <div className="flex flex-col gap-6 w-full">
           {/* Header */}
           <div className="flex items-center justify-between gap-4 w-full p-4 rounded-lg">
@@ -155,7 +153,7 @@ export default function RecruiterDashboard() {
                 >
                   <DialogContent>
                     <InviteApplicants
-                      jobs={combinedJobs}
+                      jobs={mergeJobs}
                       singleJobFlag={false}
                       applicants={applicants}
                     />
@@ -164,8 +162,6 @@ export default function RecruiterDashboard() {
               )}
             </div>
           </div>
-
-          {/* <TimeRangeSelector /> */}
 
           {/* Fact Cards - Full width */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full">
@@ -213,3 +209,6 @@ export default function RecruiterDashboard() {
     </div>
   );
 }
+
+
+
