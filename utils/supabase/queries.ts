@@ -265,50 +265,41 @@ export async function inviteRecruiter(
 export async function inviteCandidate(
   name: string,
   email: string,
-  job_id: string
+  job_id: string,
+  merge_applicant_id: string
 ): Promise<{ data?: any; error?: string | null }> {
   try {
     const supabase = createClient();
 
-    // Check if user already exists in auth.users
-    const { data: existingUser, error: userCheckError } =
+    // Check if the user already exists
+    const { data: existingUsers, error: userCheckError } =
       await listUsersAdmin();
-    const userExists = existingUser?.users?.some(
+    if (userCheckError) {
+      console.error('Error checking existing users:', userCheckError);
+      return { data: null, error: 'Failed to check if user exists' };
+    }
+
+    const userExists = existingUsers?.users?.some(
       (user) => user.email === email
     );
-
-    if (userCheckError) {
-      console.error('Error checking existing user:', userCheckError);
-      return {
-        data: null,
-        error: 'Failed to check if user exists'
-      };
-    }
-
     if (userExists) {
-      console.log('User with this email already exists');
+      console.log(`User with email ${email} already exists.`);
     }
 
-    const { data: candidate, error } = await inviteCandidateAdmin(name, email);
-
-    if (error) {
-      console.error('Error inviting candidate:', error);
-      return {
-        data: null,
-        error: 'Failed to invite candidate'
-      };
+    // Invite the candidate via Supabase Admin API
+    const { data: candidate, error: candidateError } =
+      await inviteCandidateAdmin(name, email);
+    if (candidateError) {
+      console.error('Error inviting candidate:', candidateError);
+      return { data: null, error: 'Failed to invite candidate' };
     }
 
     const candidateId = candidate?.user?.id;
-
     if (!candidateId) {
-      return {
-        data: null,
-        error: 'Failed to get candidate ID'
-      };
+      return { data: null, error: 'Failed to retrieve candidate ID' };
     }
 
-    // Check if applicant already exists in applicants table
+    // check if the applicant already exists in the `applicants` table
     const { data: existingApplicant } = await supabase
       .from('applicants')
       .select('*')
@@ -316,30 +307,34 @@ export async function inviteCandidate(
       .single();
 
     if (!existingApplicant) {
-      // Insert into applicants table
-      const { data: applicant, error: applicantError } = await supabase
+      // insert the applicant into the `applicants` table
+      const { data: newApplicant, error: applicantInsertError } = await supabase
         .from('applicants')
         .insert({
           id: candidateId,
-          email: email,
+          email,
           full_name: name,
+          merge_applicant_id,
           user_id: candidateId
         })
         .select()
         .single();
 
-      if (applicantError) {
-        console.error('Error inserting into applicants table:', applicantError);
+      if (applicantInsertError) {
+        console.error(
+          'Error inserting into applicants table:',
+          applicantInsertError
+        );
         return {
           data: null,
           error: 'Failed to add candidate to applicants table'
         };
       }
     } else {
-      console.log('Applicant already exists:', existingApplicant);
+      console.log(`Applicant with ID ${candidateId} already exists.`);
     }
 
-    // Check if job exists
+    // check if job exists in the `jobs` table
     const { data: jobExists, error: jobCheckError } = await supabase
       .from('jobs')
       .select('merge_id')
@@ -347,45 +342,47 @@ export async function inviteCandidate(
       .single();
 
     if (jobCheckError || !jobExists) {
-      return {
-        data: null,
-        error: 'Invalid job ID - job does not exist'
-      };
+      return { data: null, error: 'Invalid job ID - job does not exist' };
     }
 
-    // Create application record
-    const { data: application, error: applicationError } = await supabase
+    // create a new application record in the `applications` table
+    const { data: application, error: applicationInsertError } = await supabase
       .from('applications')
       .insert({
         applicant_id: candidateId,
-        job_id: job_id // this is the merge job id
+        job_id // This is the Merge job ID
       })
       .select()
       .single();
 
-    if (applicationError) {
-      console.error('Error creating application:', applicationError);
-      return {
-        data: null,
-        error: applicationError.message
-      };
+    if (applicationInsertError) {
+      console.error(
+        'Error creating application record:',
+        applicationInsertError
+      );
+      return { data: null, error: applicationInsertError.message };
     }
 
+    // Success response with candidate and application details
     return {
       data: {
-        candidate: candidate,
-        application: application
+        candidate,
+        application
       },
       error: null
     };
   } catch (err) {
-    console.error('Error in inviteCandidate:', err);
+    console.error('Unexpected error in inviteCandidate:', err);
     return {
       data: null,
-      error: err instanceof Error ? err.message : 'Unknown error occurred'
+      error:
+        err instanceof Error
+          ? err.message
+          : 'An unknown error occurred while inviting the candidate'
     };
   }
 }
+
 
 
 

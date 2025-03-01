@@ -78,17 +78,25 @@ export default function RecruiterDashboard() {
     staleTime: 5 * 60 * 1000
   });
 
+  // const combinedJobs = useMemo(() => {
+  //   return mergeJobs.map((mergeJob) => {
+  //     const supabaseJob = supabaseJobs.find(
+  //       (sJob) => sJob.merge_id === mergeJob.id
+  //     );
+  //     return {
+  //       ...mergeJob,
+  //       ...supabaseJob,
+  //       id: mergeJob.id,
+  //       supabaseId: supabaseJob?.id
+  //     };
+  //   });
+  // }, [mergeJobs, supabaseJobs]);
   const combinedJobs = useMemo(() => {
     return mergeJobs.map((mergeJob) => {
       const supabaseJob = supabaseJobs.find(
         (sJob) => sJob.merge_id === mergeJob.id
       );
-      return {
-        ...mergeJob,
-        ...supabaseJob,
-        id: mergeJob.id,
-        supabaseId: supabaseJob?.id
-      };
+      return { mergeJob, supabaseJob };
     });
   }, [mergeJobs, supabaseJobs]);
 
@@ -146,9 +154,10 @@ export default function RecruiterDashboard() {
                   onOpenChange={setInviteModalOpen}
                 >
                   <DialogContent>
-                    <InvitePage
+                    <InviteApplicants
                       jobs={combinedJobs}
-                      isLoading={jobsLoading || supabaseJobsLoading}
+                      singleJobFlag={false}
+                      applicants={applicants}
                     />
                   </DialogContent>
                 </Dialog>
@@ -194,7 +203,7 @@ export default function RecruiterDashboard() {
 
             {/* Right Column: Active Jobs + ChatBot + Settings */}
             <div className="flex flex-col gap-6 w-full">
-              <ActiveJobsCard jobs={combinedJobs} isLoading={jobsLoading} />
+              <ActiveJobsCard jobs={mergeJobs} isLoading={jobsLoading} />
               <BotCard />
               <SettingsCard />
             </div>

@@ -70,14 +70,17 @@ export default function InvitePage({ jobs, isLoading }: InvitePageProps) {
     }
 
     const nameList = names.split('\n').filter((name) => name.trim() !== '');
+    
 
     try {
       for (const [index, email] of validEmails.entries()) {
         const name = nameList[index] || 'Unnamed Candidate';
+        const mergeApplicantId = ;
         const { data, error } = await inviteCandidate(
           name,
           email,
-          selectedJobId
+          selectedJobId,
+          merge_applicant_id
         );
         if (!data) {
           throw new Error(`Failed to send invitation to ${email}`);
