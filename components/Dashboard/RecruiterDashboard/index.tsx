@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,32 +27,8 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import InviteApplicants from '@/components/Jobs/Job/JobConfig/InviteApplicants';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
-import InvitePage from '@/components/Invite';
-
-const fetchApplications = async (): Promise<ApplicantCandidate[]> => {
-  const response = await fetch('/api/applications');
-  if (!response.ok) throw new Error('Failed to fetch applications');
-  return response.json();
-};
-
-const fetchJobs = async (): Promise<Job[]> => {
-  console.log('called fetchJobs');
-  const response = await fetch('/api/jobs');
-  if (!response.ok) throw new Error('Failed to fetch jobs');
-  return response.json();
-};
-
-const fetchSupabaseJobs = async (): Promise<Tables<'jobs'>[]> => {
-  const supabase = createClient();
-  const { data, error } = await supabase.from('jobs').select('*');
-  if (error) throw error;
-  return data || [];
-};
-
-interface CombinedJob {
-  mergeJob: Job;
-  supabaseJob: Tables<'jobs'> | undefined;
-}
+import { fetchApplicationsData } from '@/server/applications';
+import { fetchJobsData } from '@/server/jobs';
 
 export default function RecruiterDashboard() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
@@ -69,39 +45,6 @@ export default function RecruiterDashboard() {
     queryFn: fetchJobsData,
     staleTime: 5 * 60 * 1000
   });
-
-  const { data: supabaseJobs = [], isLoading: supabaseJobsLoading } = useQuery({
-    queryKey: ['supabaseJobs'],
-    queryFn: fetchSupabaseJobs,
-    staleTime: 5 * 60 * 1000
-  });
-
-  // const combinedJobs = useMemo(() => {
-  //   return mergeJobs.map((mergeJob) => {
-  //     const supabaseJob = supabaseJobs.find(
-  //       (sJob) => sJob.merge_id === mergeJob.id
-  //     );
-  //     return {
-  //       ...mergeJob,
-  //       ...supabaseJob,
-  //       id: mergeJob.id,
-  //       supabaseId: supabaseJob?.id
-  //     };
-  //   });
-  // }, [mergeJobs, supabaseJobs]);
-  const combinedJobs = useMemo(() => {
-    return mergeJobs.map((mergeJob) => {
-      const supabaseJob = supabaseJobs.find(
-        (sJob) => sJob.merge_id === mergeJob.id
-      );
-      return { mergeJob, supabaseJob };
-    });
-  }, [mergeJobs, supabaseJobs]);
-
-  useEffect(() => {
-    console.log('mergeJobs:', mergeJobs);
-    console.log('supabaseJobs:', supabaseJobs);
-  }, [mergeJobs, supabaseJobs]);
 
   const factWindow = 90;
 
@@ -209,6 +152,5 @@ export default function RecruiterDashboard() {
     </div>
   );
 }
-
 
 

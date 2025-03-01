@@ -75,12 +75,12 @@ export default function InvitePage({ jobs, isLoading }: InvitePageProps) {
     try {
       for (const [index, email] of validEmails.entries()) {
         const name = nameList[index] || 'Unnamed Candidate';
-        const mergeApplicantId = ;
+        const mergeApplicantId = 'hihihi';
         const { data, error } = await inviteCandidate(
           name,
           email,
           selectedJobId,
-          merge_applicant_id
+          mergeApplicantId
         );
         if (!data) {
           throw new Error(`Failed to send invitation to ${email}`);
