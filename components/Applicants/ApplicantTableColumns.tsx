@@ -56,6 +56,42 @@ export const ResumeScoreBadge = ({ score }: { score: number | null }) => {
   );
 };
 
+// Add this new component near the top with other components
+const ApplicationStatusBadge = ({ applicant }: { applicant: any }) => {
+  if (!applicant.ai_summary && !applicant.applicant) {
+    return (
+      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-slate-500"></span>
+        </span>
+        Not Invited
+      </div>
+    );
+  }
+
+  if (!applicant.ai_summary && applicant.applicant) {
+    return (
+      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+        </span>
+        In Progress
+      </div>
+    );
+  } else {
+    return (
+      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors">
+        <span className="relative flex h-2 w-2">
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        Review Ready
+      </div>
+    );
+  }
+};
+
 interface GetColumnsProps {
   selectedJobId: string;
   handleViewApplicant: (applicant: any) => void;
@@ -69,16 +105,7 @@ export const getApplicantColumns = ({
 }: GetColumnsProps): ColumnDef<any>[] => [
   {
     id: "select",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
-      >
-        Status
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
+
     cell: ({ row }) => {
       const applicant = row.original;
       const isInvited = hasBeenInvited(applicant);
@@ -107,7 +134,7 @@ export const getApplicantColumns = ({
       );
     },
     enableSorting: true,
-    sortingFn: (rowA, rowB) => hasBeenInvited(rowA.original) - hasBeenInvited(rowB.original),
+    sortingFn: (rowA, rowB) => Number(hasBeenInvited(rowA.original)) - Number(hasBeenInvited(rowB.original)),
     size: 100,
   },
   {
@@ -181,14 +208,23 @@ export const getApplicantColumns = ({
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
       >
-        Interview
+        Status
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => <InterviewStatus applicant={row.original} />,
+    cell: ({ row }) => <ApplicationStatusBadge applicant={row.original} />,
     enableSorting: true,
-    size: 120,
-    sortingFn: (rowA, rowB) => hasCompletedInterview(rowA.original) - hasCompletedInterview(rowB.original),
+    size: 160,
+    sortingFn: (rowA, rowB) => {
+      const getStatusPriority = (row: any) => {
+        if (!row.original.AI_summary && !row.original.applicant) return 0;
+        if (row.original.AI_summary && row.original.applicant) {
+          return hasCompletedInterview(row.original) ? 2 : 1;
+        }
+        return 0;
+      };
+      return getStatusPriority(rowA) - getStatusPriority(rowB);
+    },
   },
   {
     accessorKey: "score",
@@ -233,6 +269,26 @@ export const getApplicantColumns = ({
       
       return parseFloat(scoreA) - parseFloat(scoreB);
     },
+  },
+  {
+    id: "actions",
+    header: "Action",
+    cell: ({ row }) => {
+
+      return row.original.ai_summary ? (
+        <Button 
+          variant="link" 
+          onClick={() => handleViewApplicant(row.original)}
+          className="p-0 h-auto font-normal underline"
+        >
+          View Details
+        </Button>
+      ) : (
+        <span className="text-gray-500">Detail not available</span>
+      );
+    },
+    enableSorting: false,
+    size: 100,
   },
   {
     accessorKey: "resumeScore",
@@ -387,20 +443,5 @@ export const getApplicantColumns = ({
       
       return scoreA - scoreB;
     },
-  },
-  {
-    id: "actions",
-    header: "Action",
-    cell: ({ row }) => (
-      <Button 
-        variant="link" 
-        onClick={() => row.original.application?.id && handleViewApplicant(row.original)}
-        className="p-0 h-auto font-normal underline"
-      >
-        View Details
-      </Button>
-    ),
-    enableSorting: false,
-    size: 100,
   },
 ]; 

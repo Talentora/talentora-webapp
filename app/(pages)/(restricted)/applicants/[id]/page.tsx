@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import ApplicantPortal from '@/components/Applicants/Applicant/ApplicantPortal';
 import { Skeleton } from '@/components/ui/skeleton';
-import { fetchAllEnrichedApplicants, fetchApplicationAISummary } from '@/server/applications';
+import { fetchApplicationAISummary, fetchApplicationMergeId } from '@/server/applications';
 import { createClient } from '@/utils/supabase/client';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
@@ -18,8 +18,6 @@ export type portalProps = {
   job: any | null;
   interviewStages: any | null;
   hasSupabaseData: boolean;
-  hasMergeData: boolean;
-  hasAISummary: boolean;
 }
 
 interface emotion_eval {
@@ -63,8 +61,6 @@ export default function ApplicantPage({
     job: null,
     interviewStages: null,
     hasSupabaseData: false,
-    hasMergeData: false,
-    hasAISummary: false
   });
 
   useEffect(() => {
@@ -73,29 +69,30 @@ export default function ApplicantPage({
         // First try to fetch the specific applicant
         try {
           // Fetch enriched applicant data
-          // const enrichedData = await fetchEnrichedApplicantByMergeId(params.id);
-          const enrichedData = await fetchApplicationAISummary(params.id);
-          console.log("meow", enrichedData)
-          console.log("Enriched applicant data:", enrichedData);
-          
-          // Fetch job interview config if we have a job ID
-          let jobConfig = null;
-          if (enrichedData.job?.id) {
-            const supabase = createClient();
-            const { data: jobConfigData } = await supabase
-              .from('job_interview_config')
-              .select('*')
-              .eq('job_id', enrichedData.job.id)
-              .single();
-            
-            jobConfig = jobConfigData;
+          const supabase = createClient();
+           
+          const { data: jobConfigData } = await supabase
+          .from('applications')
+          .select('*')
+          .eq('id', params.id)
+          .single();
+
+          console.log(jobConfigData, "meow", params.id)
+
+          if (!jobConfigData?.job_id || !jobConfigData?.applicant_id) {
+            throw new Error('Missing job_id or applicant_id');
           }
-          
+          // const merge_applicaiton_id = await fetchApplicationMergeId(jobConfigData.job_id, jobConfigData.applicant_id);
+          // console.log(merge_applicaiton_id, "meow")
+
+          const enrichedData = await fetchApplicationAISummary(jobConfigData.merge_applicaiton_id);
+
+  
           // Set portal props
           setPortalProps({
             AI_summary: enrichedData.AI_summary,
             application: enrichedData.application,
-            job_interview_config: jobConfig,
+            job_interview_config: null,
             mergeApplicant: {
               application: enrichedData.application,
               candidate: enrichedData.candidate,
@@ -106,8 +103,6 @@ export default function ApplicantPage({
             job: enrichedData.job,
             interviewStages: enrichedData.interviewStages,
             hasSupabaseData: enrichedData.hasSupabaseData,
-            hasMergeData: enrichedData.hasMergeData,
-            hasAISummary: enrichedData.hasAISummary
           });
         } catch (specificError) {
           console.error('Error fetching specific applicant:', specificError);

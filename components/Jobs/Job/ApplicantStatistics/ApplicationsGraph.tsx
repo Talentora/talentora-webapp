@@ -1,4 +1,3 @@
-import { TrendingUp } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -33,6 +32,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
   // Get unique job names for the filter dropdown
   const jobOptions = useMemo(() => {
     const uniqueJobs = new Set<string>();
+    console.log(applicants, "maaaa")
     applicants.forEach(applicant => {
       uniqueJobs.add(applicant.job.name);
     });

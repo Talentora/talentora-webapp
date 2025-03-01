@@ -3,27 +3,30 @@
 import { useState, useEffect } from 'react';
 import InviteApplicantsTable from '@/components/Applicants/InviteApplicantsTable';
 import { Loader2 } from 'lucide-react';
-import { fetchAllEnrichedApplicants } from '@/server/applications';
 import { fetchJobsData } from '@/server/jobs';
+import { fetchAllApplications } from '@/server/applications';
 
 export default function ApplicantList() {
   const [applicantCandidates, setApplicantCandidates] = useState<any[]>([]);
   const [jobs, setJobs] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
+  const [sortField, setSortField] = useState<string>('');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch both joined applicants and jobs data
         const [applicantsData, jobsData] = await Promise.all([
-          fetchAllEnrichedApplicants(),
-          fetchJobsData()
+          await fetchAllApplications(),
+          await fetchJobsData()
         ]);
         
-        // Log data to inspect AI summary structure
-        console.log("Applicants data:", applicantsData);
-        console.log("Jobs data:", jobsData);
+        if (!Array.isArray(applicantsData)) {
+          console.error('Applicants data is not an array:', applicantsData);
+          return;
+        }
         
         // Check for AI summary data
         applicantsData.forEach((app: any, index: number) => {
@@ -46,8 +49,15 @@ export default function ApplicantList() {
     fetchData();
   }, []);
 
-  const filteredApplicants = applicantCandidates.filter(
-    (app: any) => {
+  // Helper function to get status priority for sorting
+  const getStatusPriority = (applicant: any): number => {
+    if (!applicant.AI_summary && !applicant.applicant) return 0; // Not invited
+    if (!applicant.AI_summary && applicant.applicant) return 1;  // In progress
+    return 2; // Review ready
+  };
+
+  const filteredApplicants = applicantCandidates
+    .filter((app: any) => {
       // If there's no search term, show all applicants
       if (!searchTerm) return true;
       
@@ -56,8 +66,17 @@ export default function ApplicantList() {
       
       const fullName = `${app.candidate.first_name} ${app.candidate.last_name}`.toLowerCase();
       return fullName.includes(searchTerm.toLowerCase());
-    }
-  );
+    })
+    .sort((a: any, b: any) => {
+      if (sortField === 'status') {
+        const statusA = getStatusPriority(a);
+        const statusB = getStatusPriority(b);
+        return sortDirection === 'asc' 
+          ? statusA - statusB
+          : statusB - statusA;
+      }
+      return 0;
+    });
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -72,7 +91,20 @@ export default function ApplicantList() {
               <Loader2 className="animate-spin" />
             </div>
           ) : (
-            <InviteApplicantsTable applicants={filteredApplicants} jobs={jobs} />
+            <InviteApplicantsTable 
+              applicants={filteredApplicants} 
+              jobs={jobs}
+              onSort={(field) => {
+                if (sortField === field) {
+                  setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+                } else {
+                  setSortField(field);
+                  setSortDirection('asc');
+                }
+              }}
+              sortField={sortField}
+              sortDirection={sortDirection}
+            />
           )}
         </div>
       </main>

@@ -70,7 +70,7 @@ export function JobTable({
             {visibleColumns.includes('configured') && (
               <TableHead className="w-[140px] whitespace-nowrap">
                 <Button variant="ghost" onClick={() => onSort('configured')} className="w-full justify-start">
-                  AI Bot Configured
+                  Ora Scout Configured
                   {sortField === 'configured' && <ArrowUpDown className="ml-2 h-4 w-4" />}
                 </Button>
               </TableHead>

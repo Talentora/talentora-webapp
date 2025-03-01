@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Sidebar from '@/components/Layout/Sidebar';
 import { useUser } from '@/hooks/useUser';
 
+
 export default function DynamicSidebar() {
     const [isRecruiter, setIsRecruiter] = useState(false);
 

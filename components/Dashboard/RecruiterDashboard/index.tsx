@@ -18,7 +18,6 @@ import SettingsCard from './SettingsCard';
 import ApplicantCountCard from './FactCards/ApplicantCount';
 import CompletedAssessmentsCard from './FactCards/CompletedAssessments';
 import BotCard from './BotCard';
-import TimeRangeSelector from '@/components/Jobs/Job/ApplicantStatistics/TimeRangeSelector';
 import ApplicationsGraph from '@/components/Jobs/Job/ApplicantStatistics/ApplicationsGraph';
 import BotCountCard from './FactCards/BotCountCard';
 import InvitedCandidatesCard from './FactCards/InvitedCandidates';
@@ -27,20 +26,21 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import InviteApplicants from '@/components/Jobs/Job/JobConfig/InviteApplicants';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
-import { fetchApplicationsData } from '@/server/applications';
+import { fetchAllApplications } from '@/server/applications';
 import { fetchJobsData } from '@/server/jobs';
 
 export default function RecruiterDashboard() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { data: applicants = [], isLoading: applicantsLoading } = useQuery({
+  const { data: applicants = [], isLoading: applicantsLoading } = useQuery<ApplicantCandidate[]>({
     queryKey: ['applications'],
-    queryFn: fetchApplicationsData,
-    staleTime: 5 * 60 * 1000
+    queryFn: fetchAllApplications,
   });
 
-  const { data: mergeJobs = [], isLoading: jobsLoading } = useQuery({
+  console.log(applicants, "applicants2")
+
+  const { data: mergeJobs = [], isLoading: jobsLoading } = useQuery<Job[]>({
     queryKey: ['jobs'],
     queryFn: fetchJobsData,
     staleTime: 5 * 60 * 1000

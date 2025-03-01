@@ -12,7 +12,7 @@ type scout = Tables<'bots'>;
 type AI_Summary = Tables<'AI_summary'>;
 import { inviteRecruiterAdmin, inviteCandidateAdmin, listUsersAdmin } from '@/utils/supabase/admin';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { fetchApplicationId } from '@/server/applications';
+import { fetchApplicationMergeId } from '@/server/applications';
 // CRUD operations for the company table
 
 /**
@@ -262,6 +262,7 @@ export async function inviteCandidate(
   email: string,
   job_id: string
 ): Promise<{ data?: any; error?: string | null }> {
+
   try {
     // Check if user already exists in auth.users
     const supabase = createClient();
@@ -337,12 +338,12 @@ export async function inviteCandidate(
 
 
     // merge application id
-    const application_id = await fetchApplicationId(job_id, candidateId);
+    const application_id = await fetchApplicationMergeId(job_id, candidateId);
 
     const { data: application, error: applicationError } = await supabase
       .from('applications')
       .insert({
-        id: application_id,
+        merge_application_id: application_id,
         applicant_id: candidateId,
         // job_id: job.id // this is the supabase job id, not the merge job id
         job_id: job_id // this is the merge job id

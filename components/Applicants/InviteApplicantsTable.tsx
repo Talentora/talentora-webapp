@@ -36,10 +36,13 @@ import { getApplicantColumns } from './ApplicantTableColumns';
 
 interface InviteApplicantsTableProps {
   applicants: any[];
-  jobs?: any[];
+  jobs: any[];
+  onSort?: (field: string) => void;
+  sortField?: string;
+  sortDirection?: 'asc' | 'desc';
 }
 
-const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps) => {
+const InviteApplicantsTable = ({ applicants, jobs, onSort, sortField, sortDirection }: InviteApplicantsTableProps) => {
   const [selectedApplicants, setSelectedApplicants] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedJobId, setSelectedJobId] = useState<string>("all");
@@ -70,7 +73,7 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
       });
       return;
     }
-    router.push(`/applicants/${applicant.application.id}`);
+    router.push(`/applicants/${applicant.application.supabase_application_id}`);
   };
 
   const handleInvite = async () => {
@@ -138,14 +141,35 @@ const InviteApplicantsTable = ({ applicants, jobs }: InviteApplicantsTableProps)
   };
 
   // Define columns for the data table
-  const columns = useMemo(() => 
-    getApplicantColumns({ 
+  const columns = useMemo(() => {
+    const cols = getApplicantColumns({ 
       selectedJobId, 
-      handleViewApplicant, 
+      handleViewApplicant,
       setSelectedApplicants 
-    }), 
-    [selectedJobId]
-  );
+    });
+
+    // Find the status column and add custom sorting
+    const statusColumn = cols.find(col => {
+      return 'accessorKey' in col && col.accessorKey === 'status';
+    });
+
+    if (statusColumn && 'accessorKey' in statusColumn) {
+      statusColumn.sortingFn = (rowA: any, rowB: any) => {
+        const statusOrder: Record<string, number> = {
+          'not_invited': 0,
+          'in_progress': 1,
+          'review_ready': 2
+        };
+        
+        const statusA = (rowA.getValue('status') || 'not_invited') as string;
+        const statusB = (rowB.getValue('status') || 'not_invited') as string;
+        
+        return statusOrder[statusA] - statusOrder[statusB];
+      };
+    }
+
+    return cols;
+  }, [selectedJobId]);
 
   // Filter applicants based on search term and selected job
   const filteredApplicants = useMemo(() => {
