@@ -4,8 +4,9 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import {
   useRTVIClient,
   useRTVIClientTransportState,
-} from "@pipecat-ai/client-react";
-import { RTVIEvent, RTVIMessage, RTVIError } from "@pipecat-ai/client-js";
+  useRTVIClientEvent
+} from '@pipecat-ai/client-react';
+import { RTVIEvent, RTVIMessage, RTVIError } from '@pipecat-ai/client-js';
 import { useRouter } from 'next/navigation';
 import { Alert } from '@/components/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,7 +16,6 @@ import Configure from './Setup';
 import VideoInterviewSession from './VideoInterviewSession';
 import { useUser } from '@/hooks/useUser';
 import { BotLLMTextData } from '@pipecat-ai/client-js';
-import { TranscriptData } from '@pipecat-ai/client-js';
 import { InterviewTranscript } from '@/types/transcript';
 type ScoutConfig = Tables<'bots'>;
 type JobInterviewConfig = Tables<'job_interview_config'>;
@@ -38,7 +38,6 @@ interface ScoutProps {
   scoutTest: boolean;
 }
 
-
 export default function App({
   scout,
   jobInterviewConfig,
@@ -58,7 +57,17 @@ export default function App({
 
   const voiceClient = useRTVIClient()!;
   const transportState = useRTVIClientTransportState();
-  const [appState, setAppState] = useState<'idle' | 'ready' | 'connecting' | 'connected'>('idle');
+  const [appState, setAppState] = useState<
+    | 'disconnected'
+    | 'initializing'
+    | 'initialized'
+    | 'authenticating'
+    | 'connecting'
+    | 'connected'
+    | 'ready'
+    | 'disconnecting'
+    | 'error'
+  >('disconnected');
   const [error, setError] = useState<string | null>(null);
   const [startAudioOff, setStartAudioOff] = useState(false);
   const mountedRef = useRef(false);
@@ -84,7 +93,7 @@ export default function App({
   // Initialize devices when component mounts
   useEffect(() => {
     if (!voiceClient || initializingRef.current) return;
-    
+
     initializingRef.current = true;
     const initializeDevices = async () => {
       try {
@@ -108,23 +117,32 @@ export default function App({
   useEffect(() => {
     console.log('Transport state:', transportState);
     switch (transportState) {
+      case 'initializing':
+        setAppState('initializing');
+        break;
       case 'initialized':
-      case 'disconnected':
-        setAppState('ready');
+        setAppState('initialized');
         break;
       case 'authenticating':
+        setAppState('authenticating');
+        break;
       case 'connecting':
         setAppState('connecting');
         break;
       case 'connected':
-      case 'ready':
         setAppState('connected');
         break;
+      case 'ready':
+        setAppState('ready');
+        break;
       case 'disconnecting':
-        // Handle disconnecting state
+        setAppState('disconnecting');
+        break;
+      case 'error':
+        setAppState('error');
         break;
       default:
-        setAppState('idle');
+        setAppState('disconnected');
     }
   }, [transportState]);
 
@@ -143,6 +161,53 @@ export default function App({
     };
   }, [voiceClient]);
 
+  // useEffect(() => {
+  //   if (!voiceClient) return;
+
+  //   voiceClient.on(RTVIEvent.BotConnected, () => {
+  //     console.log('EEE OOO EEE OOO');
+  //   });
+  //   return () => {
+  //     voiceClient.off(RTVIEvent.BotConnected, () => {
+  //       console.log('*...POWER OFF...*');
+  //     });
+  //   };
+  // }, [voiceClient]);
+
+  // useEffect(() => {
+  //   if (!voiceClient) return;
+
+  //   voiceClient.on(RTVIEvent.Connected, () => {
+  //     console.log('YEA YEA WE OUT HERE');
+  //   });
+  //   return () => {
+  //     voiceClient.off(RTVIEvent.Connected, () => {
+  //       console.log('NAH FUCK THIS WE OUT');
+  //     });
+  //   };
+  // }, [voiceClient]);
+
+  // useRTVIClientEvent(
+  //   RTVIEvent.BotReady,
+  //   useCallback(() => {
+  //     console.log(`LETS FUCKING GO`);
+  //   }, [voiceClient])
+  // );
+
+  // useRTVIClientEvent(
+  //   RTVIEvent.UserStartedSpeaking,
+  //   useCallback(() => {
+  //     console.log(`TALK YO SHIT GANG`);
+  //   }, [voiceClient])
+  // );
+
+  // useRTVIClientEvent(
+  //   RTVIEvent.UserStoppedSpeaking,
+  //   useCallback(() => {
+  //     console.log(`NAH NAH KEEP TALKIN`);
+  //   }, [voiceClient])
+  // );
+
   const start = useCallback(async () => {
     if (!voiceClient || !mountedRef.current) return;
 
@@ -152,14 +217,17 @@ export default function App({
       await voiceClient.connect();
     } catch (e) {
       const error = e as RTVIError;
+      console.log(error);
       setError(error.message || 'Unknown error occurred');
       voiceClient.disconnect();
     }
+
+    console.log('SUCCESS');
   }, [voiceClient]);
 
   const leave = useCallback(async () => {
     if (!voiceClient) return;
-    
+
     try {
       await voiceClient.disconnect();
       if (demo) {
@@ -188,7 +256,7 @@ export default function App({
   }
 
   // Connected: show session view
-  if (appState === 'connected') {
+  if (appState === 'ready' && mountedRef.current) {
     return (
       <div>
         <VideoInterviewSession
@@ -204,7 +272,7 @@ export default function App({
   }
 
   // Default: show setup view
-  const isReady = appState === 'ready' && mountedRef.current;
+  // const isReady = appState === 'ready' ;
 
   return (
     <Card className="animate-appear max-w-lg mx-auto mt-8 bg-background p-5">

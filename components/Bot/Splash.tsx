@@ -34,7 +34,7 @@ export const Splash: React.FC<SplashProps> = ({
   return (
     <Card className="w-full bg-background max-w-md mx-auto mt-8 border border-border p-5">
       <CardHeader>
-        {demo ? (
+        {!demo ? (
           <CardTitle>Welcome to your AI Interview</CardTitle>
         ) : (
           <CardTitle>Welcome to your Demo AI Interview</CardTitle>
