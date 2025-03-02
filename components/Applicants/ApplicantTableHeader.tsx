@@ -26,46 +26,53 @@ const ApplicantTableHeader = ({
   activeFilterCount
 }: ApplicantTableHeaderProps) => {
   return (
-    <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-      <div className="relative flex-1 max-w-md">
-        <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+    <div className="flex flex-col space-y-1">
+      {/* Search bar */}
+      <div className="w-full">
         <Input
-          placeholder="Search candidates..."
+          placeholder="Search applicants..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-8"
+          className="max-w-sm"
         />
       </div>
-      <div className="flex flex-row gap-2">
-        {/* Filter button */}
-        <Button 
-          variant="outline" 
-          className="flex items-center gap-2"
-          onClick={() => setIsFilterOpen(true)}
-        >
-          <SlidersHorizontal className="h-4 w-4" />
-          <span>Filters</span>
-          {activeFilterCount > 0 && (
-            <Badge variant="secondary" className="ml-1 bg-background h-5 w-5 rounded-full p-0 flex items-center justify-center">
-              {activeFilterCount}
-            </Badge>
-          )}
-        </Button>
-        
-        {/* Invite button */}
-        <Button 
-          onClick={handleInvite} 
-          disabled={selectedApplicants.length === 0 || isInviting || selectedJobId === "all"}
-          className="whitespace-nowrap"
-        >
-          {isInviting ? (
-            <Loader2 className="h-4 w-4 animate-spin mr-2" />
-          ) : null}
-          Invite ({selectedApplicants.length})
-        </Button>
+
+      {/* Buttons row */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={handleInvite}
+            disabled={selectedApplicants.length === 0 || selectedJobId === "all" || isInviting}
+          >
+            {isInviting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Inviting...
+              </>
+            ) : (
+              'Invite Selected'
+            )}
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setIsFilterOpen(true)}
+            className="relative"
+          >
+            <SlidersHorizontal className="h-4 w-4" />
+            {activeFilterCount > 0 && (
+              <Badge 
+                variant="secondary" 
+                className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center"
+              >
+                {activeFilterCount}
+              </Badge>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );
 };
 
-export default ApplicantTableHeader; 
+export default ApplicantTableHeader;

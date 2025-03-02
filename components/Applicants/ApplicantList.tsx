@@ -79,32 +79,33 @@ export default function ApplicantList() {
     });
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="h-14 flex items-center">
+    <div className="flex flex-col h-screen overflow-hidden">
+      <header className="h-14 flex items-center px-6 border-b shrink-0">
         <h1 className="text-lg font-semibold">Applicant Dashboard</h1>
       </header>
-      <main className="flex-1 pr-10">
-        <div className="space-y-4">
-          {/* <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} applicants={applicantCandidates} /> */}
+      <main className="flex-1 p-4 overflow-hidden">
+        <div className="h-full flex justify-center">
           {isLoading ? (
             <div className="flex justify-center items-center h-full">
               <Loader2 className="animate-spin" />
             </div>
           ) : (
-            <InviteApplicantsTable 
-              applicants={filteredApplicants} 
-              jobs={jobs}
-              onSort={(field) => {
-                if (sortField === field) {
-                  setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-                } else {
-                  setSortField(field);
-                  setSortDirection('asc');
-                }
-              }}
-              sortField={sortField}
-              sortDirection={sortDirection}
-            />
+            <div className="w-full max-w-[1200px] h-full">
+              <InviteApplicantsTable 
+                applicants={filteredApplicants} 
+                jobs={jobs}
+                onSort={(field) => {
+                  if (sortField === field) {
+                    setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+                  } else {
+                    setSortField(field);
+                    setSortDirection('asc');
+                  }
+                }}
+                sortField={sortField}
+                sortDirection={sortDirection}
+              />
+            </div>
           )}
         </div>
       </main>

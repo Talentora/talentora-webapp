@@ -311,20 +311,28 @@ const InviteApplicantsTable = ({ applicants, jobs, onSort, sortField, sortDirect
   ].reduce((a, b) => a + b, 0);
 
   return (
-    <div className="space-y-4 relative w-3/5">
-      {/* Table header with search, filter and invite buttons */}
-      <ApplicantTableHeader
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        selectedApplicants={selectedApplicants}
-        isInviting={isInviting}
-        handleInvite={handleInvite}
-        selectedJobId={selectedJobId}
-        setIsFilterOpen={setIsFilterOpen}
-        activeFilterCount={activeFilterCount}
-      />
+    <div className="flex flex-col h-full space-y-1">
+      {/* Header sections with reduced spacing */}
+      <div className="space-y-1">
+        <ApplicantTableHeader
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          selectedApplicants={selectedApplicants}
+          isInviting={isInviting}
+          handleInvite={handleInvite}
+          selectedJobId={selectedJobId}
+          setIsFilterOpen={setIsFilterOpen}
+          activeFilterCount={activeFilterCount}
+        />
+        
+        <ApplicantJobInfo
+          selectedJobId={selectedJobId}
+          jobs={jobs}
+          filteredApplicantsCount={filteredApplicants.length}
+        />
+      </div>
       
-      {/* Filter popup positioned in the center of the screen */}
+      {/* Filter popup */}
       <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
         <ApplicantFilters
           isFilterOpen={isFilterOpen}
@@ -348,61 +356,46 @@ const InviteApplicantsTable = ({ applicants, jobs, onSort, sortField, sortDirect
         </ApplicantFilters>
       </div>
       
-      {/* Job info and candidate count */}
-      <ApplicantJobInfo
-        selectedJobId={selectedJobId}
-        jobs={jobs}
-        filteredApplicantsCount={filteredApplicants.length}
-      />
-      
-      {/* Table */}
-      <div className="border rounded-lg">
-        <div className="overflow-x-auto">
-          <Table>
+      {/* Scrollable table section with constrained width */}
+      <div className="flex-1 border rounded-lg overflow-hidden" style={{ maxHeight: 'calc(100vh - 300px)' }}>
+        <div className="overflow-auto h-full w-[calc(100vw-80px)] max-w-[1100px]">
+          <Table className="w-full">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    const width = header.column.getSize();
-                    return (
-                      <TableHead 
-                        key={header.id} 
-                        className="whitespace-nowrap" 
-                        style={{ width: width ? `${width}px` : 'auto' }}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </TableHead>
-                    )
-                  })}
+                <TableRow key={headerGroup.id} className="border-b">
+                  {headerGroup.headers.map((header) => (
+                    <TableHead 
+                      key={header.id} 
+                      className="whitespace-nowrap py-2 px-3"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  ))}
                 </TableRow>
               ))}
             </TableHeader>
             <TableBody>
               {table.getRowModel().rows.length > 0 ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() ? "selected" : undefined}>
-                    {row.getVisibleCells().map((cell) => {
-                      const width = cell.column.getSize();
-                      return (
-                        <TableCell 
-                          key={cell.id} 
-                          className="overflow-hidden text-ellipsis"
-                          style={{ width: width ? `${width}px` : 'auto' }}
-                        >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      )
-                    })}
+                  <TableRow key={row.id} className="border-b last:border-0">
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell 
+                        key={cell.id} 
+                        className="py-2 px-3 truncate max-w-[200px]"
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                  <TableCell colSpan={columns.length} className="h-16 text-center">
                     No candidates found
                   </TableCell>
                 </TableRow>
@@ -412,8 +405,10 @@ const InviteApplicantsTable = ({ applicants, jobs, onSort, sortField, sortDirect
         </div>
       </div>
       
-      {/* Pagination */}
-      <ApplicantTablePagination table={table} />
+      {/* Pagination with less padding */}
+      <div className="py-1">
+        <ApplicantTablePagination table={table} />
+      </div>
     </div>
   );
 };

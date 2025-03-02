@@ -29,7 +29,13 @@ const ResumeViewer = ({ portalProps }: ResumeViewerProps) => {
     const candidateAttachments = mergeApplicant?.candidate?.attachments || [];
 
     // Find resume attachments if they exist
-    const resumeAttachments = candidateAttachments.filter(attachmentId => {
+    interface Attachment {
+        id: string;
+        file_type?: string;
+        name?: string;
+    }
+
+    const resumeAttachments: string[] = candidateAttachments.filter((attachmentId: string) => {
         return attachmentId;
     });
 

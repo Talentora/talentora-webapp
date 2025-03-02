@@ -67,24 +67,9 @@ export default function ApplicantPage({
     const fetchData = async () => {
       try {
         // Fetch enriched applicant data
-        const supabase = createClient();
-          
-        const { data: jobConfigData } = await supabase
-        .from('applications')
-        .select('*')
-        .eq('id', params.id)
-        .single();
-
-
-        if (!jobConfigData?.job_id || !jobConfigData?.applicant_id) {
-          throw new Error('Missing job_id or applicant_id');
-        }
-        // const merge_applicaiton_id = await fetchApplicationMergeId(jobConfigData.job_id, jobConfigData.applicant_id);
-        console.log(params.id);
         
-        const enrichedData = await fetchApplicationAISummary(params.id);
-
-        console.log(enrichedData, "meow")
+        const temp = await fetchApplicationAISummary(params.id);
+        const enrichedData = temp.data;
 
         // Set portal props
         setPortalProps({

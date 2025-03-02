@@ -70,7 +70,7 @@ const ApplicationStatusBadge = ({ applicant }: { applicant: any }) => {
     );
   }
 
-  if (!applicant.ai_summary && applicant.applicant) {
+  if (!applicant.ai_summary && applicant.application.supabase_application_id) {
     return (
       <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors">
         <span className="relative flex h-2 w-2">
