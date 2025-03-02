@@ -105,37 +105,22 @@ export const getApplicantColumns = ({
 }: GetColumnsProps): ColumnDef<any>[] => [
   {
     id: "select",
-
-    cell: ({ row }) => {
-      const applicant = row.original;
-      const isInvited = hasBeenInvited(applicant);
-      const isDisabled = isInvited || 
-        (selectedJobId !== "all" && applicant.job?.id !== selectedJobId) || 
-        !applicant.candidate;
-      
-      return isInvited ? (
-        <div className="flex items-center text-green-600">
-          <Check className="h-4 w-4" />
-        </div>
-      ) : (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => {
-            row.toggleSelected(!!value);
-            setSelectedApplicants(prev => 
-              value 
-                ? [...prev, applicant] 
-                : prev.filter(a => a !== applicant)
-            );
-          }}
-          disabled={isDisabled}
-          aria-label="Select row"
-        />
-      );
-    },
-    enableSorting: true,
-    sortingFn: (rowA, rowB) => Number(hasBeenInvited(rowA.original)) - Number(hasBeenInvited(rowB.original)),
-    size: 100,
+    header: ({ table }: any) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }: any) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     accessorKey: "name",
@@ -227,6 +212,26 @@ export const getApplicantColumns = ({
     },
   },
   {
+    id: "actions",
+    header: "Action",
+    cell: ({ row }) => {
+
+      return row.original.ai_summary ? (
+        <Button 
+          variant="link" 
+          onClick={() => handleViewApplicant(row.original)}
+          className="p-0 h-auto font-normal underline"
+        >
+          View Details
+        </Button>
+      ) : (
+        <span className="text-gray-500">Detail not available</span>
+      );
+    },
+    enableSorting: false,
+    size: 100,
+  },
+  {
     accessorKey: "score",
     header: ({ column }) => (
       <Button
@@ -270,26 +275,7 @@ export const getApplicantColumns = ({
       return parseFloat(scoreA) - parseFloat(scoreB);
     },
   },
-  {
-    id: "actions",
-    header: "Action",
-    cell: ({ row }) => {
-
-      return row.original.ai_summary ? (
-        <Button 
-          variant="link" 
-          onClick={() => handleViewApplicant(row.original)}
-          className="p-0 h-auto font-normal underline"
-        >
-          View Details
-        </Button>
-      ) : (
-        <span className="text-gray-500">Detail not available</span>
-      );
-    },
-    enableSorting: false,
-    size: 100,
-  },
+  
   {
     accessorKey: "resumeScore",
     header: ({ column }) => (
@@ -444,4 +430,4 @@ export const getApplicantColumns = ({
       return scoreA - scoreB;
     },
   },
-]; 
+];

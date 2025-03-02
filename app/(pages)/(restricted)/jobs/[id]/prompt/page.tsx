@@ -1,4 +1,6 @@
-// 'use client';
+'use client';
+
+import { NextPage } from 'next';
 
 // import { useEffect, useState, useCallback, useRef } from 'react';
 // import ReactFlow, {
@@ -460,7 +462,7 @@
 //   );
 // };
 
-// export default function JobPromptPage() {
+// const JobPromptPage: NextPage = () => {
 //   const params = useParams();
 //   const jobId = params.id as string;
 //   const [job, setJob] = useState<Job | null>(null);
@@ -1464,3 +1466,5 @@
 //     </div>
 //   );
 // }
+
+// export default JobPromptPage;

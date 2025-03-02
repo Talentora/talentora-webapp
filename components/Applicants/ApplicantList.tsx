@@ -90,7 +90,7 @@ export default function ApplicantList() {
               <Loader2 className="animate-spin" />
             </div>
           ) : (
-            <div className="w-full max-w-[1200px] h-full">
+            <div className="w-full max-w-[1200px] h-full flex flex-col">
               <InviteApplicantsTable 
                 applicants={filteredApplicants} 
                 jobs={jobs}
