@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import { RTVIClientProvider } from '@pipecat-ai/client-react';
+import { RTVIClientProvider, RTVIClientAudio } from '@pipecat-ai/client-react';
 import { RTVIClient } from '@pipecat-ai/client-js';
 import App from '@/components/Bot/App';
 import { DailyTransport } from '@pipecat-ai/daily-transport';
@@ -33,14 +33,16 @@ interface BotProps {
 
 type TransportState =
   | 'disconnected'
+  | 'initializing'
   | 'initialized'
-  | 'ready'
+  | 'authenticating'
   | 'connecting'
   | 'connected'
+  | 'ready'
+  | 'disconnecting'
   | 'error';
 
 export default function Bot(botProps: BotProps) {
-  const [isUserReady, setIsUserReady] = useState(false);
   const clientRef = useRef<RTVIClient | null>(null);
   const [transportState, setTransportState] =
     useState<TransportState>('disconnected');
@@ -191,7 +193,6 @@ export default function Bot(botProps: BotProps) {
         <Splash
           handleReady={() => {
             setShowSplash(false);
-            setIsUserReady(true);
           }}
           company={company}
           mergeJob={mergeJob}
@@ -216,6 +217,7 @@ export default function Bot(botProps: BotProps) {
     <>
       <RTVIClientProvider client={clientRef.current}>
         <App {...botProps} transcript={transcript} />
+        <RTVIClientAudio />
       </RTVIClientProvider>
     </>
   );

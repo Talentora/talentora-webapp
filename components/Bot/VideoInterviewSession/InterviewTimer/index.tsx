@@ -13,7 +13,7 @@ export default function InterviewTimer({ onTimeUp }: InterviewTimerProps) {
 
   // Get the interview duration from the request data
   const requestData = client?.params.requestData as any;
-  const interviewConfig = requestData?.jobInterviewConfig;
+  const interviewConfig = requestData?.data.jobInterviewConfig;
   const interviewDuration = interviewConfig?.duration;
 
   const [timeRemaining, setTimeRemaining] = useState(interviewDuration);
