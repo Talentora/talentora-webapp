@@ -1,4 +1,4 @@
-import ExpiryTimer from '@/components/Bot/Header/ExpiryTimer';
+// import ExpiryTimer from '@/components/Bot/Header/ExpiryTimer';
 
 import { Logo } from './logo';
 
@@ -28,7 +28,7 @@ export function Header() {
           </a>
         </nav>
       </div>
-      <ExpiryTimer />
+      {/* <ExpiryTimer /> */}
     </header>
   );
 }
