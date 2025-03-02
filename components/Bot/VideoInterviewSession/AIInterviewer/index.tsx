@@ -1,7 +1,10 @@
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import WaveForm from './waveform';
-import { useRTVIClientMediaTrack, VoiceVisualizer } from "@pipecat-ai/client-react";
+import {
+  useRTVIClientMediaTrack,
+  VoiceVisualizer
+} from '@pipecat-ai/client-react';
 import { Loader2 } from 'lucide-react';
 
 interface AIInterviewerProps {
@@ -9,8 +12,10 @@ interface AIInterviewerProps {
 }
 
 export default function AIInterviewer({ isReady }: AIInterviewerProps) {
-  const botAudioTrack = useRTVIClientMediaTrack("audio", "bot");  
+  const botAudioTrack = useRTVIClientMediaTrack('audio', 'bot');
   const audioStream = botAudioTrack ? new MediaStream([botAudioTrack]) : null;
+
+  console.log(audioStream);
 
   return (
     <div className="bg-gradient-to-b from-primary to-secondary rounded-lg flex items-center justify-center h-full p-3">
@@ -22,7 +27,7 @@ export default function AIInterviewer({ isReady }: AIInterviewerProps) {
           </div>
         ) : (
           <>
-            <VoiceVisualizer participantType="bot" barColor='white'/>
+            <VoiceVisualizer participantType="bot" barColor="white" />
           </>
         )}
       </div>
