@@ -1,6 +1,13 @@
 'use client';
 
 import { NextPage } from 'next';
+interface JobPageProps {
+    params: { id: string };
+  }
+  
+export default function Page({ params }: JobPageProps) {
+    return <div>{params.id}</div>
+}
 
 // import { useEffect, useState, useCallback, useRef } from 'react';
 // import ReactFlow, {

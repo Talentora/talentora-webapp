@@ -1,6 +1,10 @@
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { Job } from '@/types/merge';
-import Markdown from 'react-markdown';
+import dynamic from 'next/dynamic';
+
+const Markdown = dynamic(() => import('react-markdown'), {
+  ssr: false,
+});
 
 interface JobInfoPanelProps {
   job: Job | null;

@@ -17,8 +17,8 @@ const Page = ({ portalProps }: AssessmentSummaryProps) => {
     
     // Extract data safely with fallbacks
     const explanation = isArray 
-        ? AI_summary[0]?.overall_summary?.explanation 
-        : AI_summary.overall_summary?.explanation;
+        ? (AI_summary[0] as any)?.overall_summary?.explanation 
+        : typeof AI_summary.overall_summary === 'object' ? (AI_summary.overall_summary as any)?.explanation : undefined;
 
     
     return (

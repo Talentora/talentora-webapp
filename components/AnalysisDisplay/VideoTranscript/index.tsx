@@ -78,7 +78,7 @@ const VideoTranscript = ({ portalProps }: VideoTranscriptProps) => {
     }, [recordingId]);
 
     // Fetch and parse transcript data
-    const [transcript, setTranscript] = useState(null);
+    const [transcript, setTranscript] = useState<{ speaker: string; text: string; }[] | null>(null);
     const [isTranscriptLoading, setIsTranscriptLoading] = useState(false);
 
     useEffect(() => {
