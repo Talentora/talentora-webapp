@@ -31,11 +31,8 @@ export function JobTable({
   loading,
   visibleColumns
 }: JobTableProps) {
-  // Calculate minimum width based on visible columns with reduced width per column
-  const minTableWidth = visibleColumns.length * 150; // Reduced from 200px to 150px per column
-
   return (
-    <div style={{ minWidth: `${minTableWidth}px` }}>
+    <div className="w-full overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
@@ -73,7 +70,7 @@ export function JobTable({
             {visibleColumns.includes('configured') && (
               <TableHead className="w-[140px] whitespace-nowrap">
                 <Button variant="ghost" onClick={() => onSort('configured')} className="w-full justify-start">
-                  AI Bot Configured
+                  Ora Scout Configured
                   {sortField === 'configured' && <ArrowUpDown className="ml-2 h-4 w-4" />}
                 </Button>
               </TableHead>

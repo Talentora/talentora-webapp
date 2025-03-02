@@ -1,3 +1,5 @@
+'use client'
+
 import { Loader2, BarChart } from 'lucide-react';
 import { Tables } from '@/types/types_db';
 import { Badge } from '@/components/ui/badge';

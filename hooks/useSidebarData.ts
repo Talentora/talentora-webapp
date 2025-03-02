@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchJobsData } from '@/server/jobs';
-import { fetchApplicationsData } from '@/server/applications';
 import { fetchScoutsData } from '@/server/scouts';
+import { fetchAllApplications } from '@/server/applications';
 
 export function useSidebarData() {
   const { data: jobs, error: jobsError, isLoading: jobsLoading, isFetched: jobsFetched } = useQuery({
@@ -11,7 +11,7 @@ export function useSidebarData() {
 
   const { data: applications, error: applicationsError, isLoading: applicationsLoading, isFetched: applicationsFetched } = useQuery({
     queryKey: ['applications'],
-    queryFn: fetchApplicationsData
+    queryFn: fetchAllApplications
   });
 
   const { data: scouts, error: scoutsError, isLoading: scoutsLoading, isFetched: scoutsFetched } = useQuery({
@@ -23,7 +23,11 @@ export function useSidebarData() {
 
   return {
     jobs: Array.isArray(jobs) ? jobs.slice(0, 3) : [],
-    applications: Array.isArray(applications) ? applications.slice(0, 3) : [],
+    applications: Array.isArray(applications) 
+      ? applications
+          .filter(app => app.ai_summary)
+          .slice(0, 3)
+      : [],
     scouts: Array.isArray(scouts) ? scouts : [],
     isLoading: jobsLoading || applicationsLoading || scoutsLoading,
     isError: jobsError || applicationsError || scoutsError,

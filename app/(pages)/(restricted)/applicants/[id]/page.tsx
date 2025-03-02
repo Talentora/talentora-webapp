@@ -2,18 +2,22 @@
 
 import { useState, useEffect } from 'react';
 import ApplicantPortal from '@/components/Applicants/Applicant/ApplicantPortal';
-import { ApplicantCandidate } from '@/types/merge';
-import { ArrowLeft } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tables } from '@/types/types_db';
+import { fetchApplicationAISummary, fetchApplicationMergeId } from '@/server/applications';
 import { createClient } from '@/utils/supabase/client';
-import { fetchApplicationData } from '@/server/applications';
-
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
+import { Tables } from '@/types/types_db';
+type AI_summary = Tables<'AI_summary'>;
 export type portalProps = {
-  AI_summary: Tables<'AI_summary'> | null; 
-  application: Tables<'applications'> | null;
-  job_interview_config: Tables<'job_interview_config'> | null;
-  mergeApplicant: ApplicantCandidate | null;
+  AI_summary: AI_summary | null; 
+  application: any | null;
+  job_interview_config: any | null;
+  mergeApplicant: any | null;
+  candidate: any | null;
+  job: any | null;
+  interviewStages: any | null;
+  hasSupabaseData: boolean;
 }
 
 interface emotion_eval {
@@ -52,95 +56,52 @@ export default function ApplicantPage({
     AI_summary: null,
     application: null,
     job_interview_config: null,
-    mergeApplicant: null
+    mergeApplicant: null,
+    candidate: null,
+    job: null,
+    interviewStages: null,
+    hasSupabaseData: false,
   });
 
-  const fetchMergeData = async () => {
-    const application = await fetchApplicationData(params.id);
-    setPortalProps(prev => ({...prev, mergeApplicant: application}));
-    return application;
-  };
-
-  const fetchJobConfig = async (merge_job_id: string) => {
-    const supabase = createClient();
-    const {data: jobConfigData} = await supabase
-      .from('job_interview_config')
-      .select('*')
-      .eq('job_id', merge_job_id)
-      .single();
-
-    setPortalProps(prev => ({...prev, job_interview_config: jobConfigData || null}));
-    return jobConfigData;
-  };
-
-  const fetchApplication = async (merge_applicant_id: string) => {
-    const supabase = createClient();
-    const { data: applicationData } = await supabase
-      .from('applications')
-      .select(`
-        *,
-        applicants!inner(*)
-      `)
-      .eq('applicants.merge_applicant_id', merge_applicant_id)
-      .single();
-
-    setPortalProps(prev => ({ ...prev, application: applicationData || null }));
-    return applicationData;
-  };
-
-  const fetchAISummary = async (application_id: string) => {
-    const supabase = createClient();
-    console.log("meoww", application_id)
-    const {data: aiSummaryData} = await supabase
-      .from('AI_summary')
-      .select('*')
-      .eq('application_id', application_id)
-      .single();
-
-    setPortalProps(prev => ({...prev, AI_summary: aiSummaryData || null}));
-    return aiSummaryData;
-  };
-
   useEffect(() => {
-    const fetchAllData = async () => {
+    const fetchData = async () => {
       try {
-        // Fetch Merge data first
-        const mergeData = await fetchMergeData();
+        // Fetch enriched applicant data
         
-        if (!mergeData?.application?.id || !mergeData?.job?.id) {
-          throw new Error('No applicant or job found');
-        }
+        const temp = await fetchApplicationAISummary(params.id);
+        const enrichedData = temp.data;
 
-        // Fetch remaining data in parallel
-        await Promise.all([
-          fetchJobConfig(mergeData.job.id),
-          fetchApplication(mergeData.application.id).then(appData => {
-            if (appData?.id) {
-              return fetchAISummary(appData.id);
-            }
-          })
-        ]);
-
-
+        // Set portal props
+        setPortalProps({
+          AI_summary: enrichedData.AI_summary,
+          application: enrichedData.application,
+          job_interview_config: null,
+          mergeApplicant: {
+            application: enrichedData.application,
+            candidate: enrichedData.candidate,
+            job: enrichedData.job,
+            interviewStages: enrichedData.interviewStages
+          },
+          candidate: enrichedData.candidate,
+          job: enrichedData.job,
+          interviewStages: enrichedData.interviewStages,
+          hasSupabaseData: enrichedData.hasSupabaseData,
+        });
+    
       } catch (err) {
         console.error('Error fetching data:', err);
-        setError('Failed to load data');
+        setError('Failed to load applicant data. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAllData();
+    fetchData();
   }, [params.id]);
 
-  if (error) {
-    return <div className="p-4 text-red-500">{error}</div>;
-  }
-
-  return (
-    <div className="max-w-6xl mx-auto p-4">
-     
-      {loading ? (
+  if (loading) {
+    return (
+      <div className="max-w-6xl mx-auto p-4">
         <div className="space-y-4">
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1 space-y-6">
@@ -153,12 +114,32 @@ export default function ApplicantPage({
             </div>
           </div>
         </div>
-      ) : (
-        <div>
-         
-          <ApplicantPortal portalProps={portalProps} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-6xl mx-auto p-4">
+        <Alert className="mb-6 bg-destructive text-destructive-foreground">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+        
+        <div className="text-center mt-8">
+          <p className="mb-4">You can return to the applicants list to view all available applicants.</p>
+          <a href="/applicants" className="text-primary hover:underline">
+            Back to Applicants List
+          </a>
         </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto p-4">
+      <ApplicantPortal portalProps={portalProps} />
     </div>
   );
 }

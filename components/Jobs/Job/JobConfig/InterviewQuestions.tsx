@@ -1,3 +1,5 @@
+'use client'
+
 import { Loader2, MessageSquare, MoreHorizontal } from 'lucide-react';
 import { Tables } from '@/types/types_db';
 import { DialogHeader, DialogTitle, DialogContent, Dialog } from '@/components/ui/dialog';

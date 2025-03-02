@@ -13,7 +13,7 @@ import {
   JobHeaderSkeleton, 
   RecentApplicantsSkeleton, 
   JobConfigSkeleton,
-  BotConfigSkeleton 
+  BotConfigSkeleton
 } from './JobSkeleton';
 
 interface JobProps {

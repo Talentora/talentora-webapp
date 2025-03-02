@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getErrorRedirect, getStatusRedirect } from '@/utils/helpers';
+import { createClient } from '@/utils/supabase/server';
 
 export async function GET(request: NextRequest) {
   // The `/auth/callback` route is required for the server-side auth flow implemented
@@ -22,27 +23,8 @@ export async function GET(request: NextRequest) {
         'You are now signed in.'
       )
     );
-
-    // Create a Supabase client with the response cookies
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return request.cookies.get(name)?.value
-          },
-          set(name: string, value: string, options: any) {
-            console.log(`[Auth Callback] Setting cookie: ${name}=${value.slice(0, 10)}...`);
-            response.cookies.set({ name, value, ...options })
-          },
-          remove(name: string, options: any) {
-            console.log(`[Auth Callback] Removing cookie: ${name}`);
-            response.cookies.delete(name)
-          },
-        },
-      }
-    );
+    
+    const supabase = createClient();
 
     console.log('[Auth Callback] Exchanging code for session...');
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);

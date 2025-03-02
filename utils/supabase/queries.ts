@@ -12,6 +12,7 @@ type scout = Tables<'bots'>;
 type AI_Summary = Tables<'AI_summary'>;
 import { inviteRecruiterAdmin, inviteCandidateAdmin, listUsersAdmin } from '@/utils/supabase/admin';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { fetchApplicationMergeId } from '@/server/applications';
 // CRUD operations for the company table
 
 /**
@@ -261,6 +262,7 @@ export async function inviteCandidate(
   email: string,
   job_id: string
 ): Promise<{ data?: any; error?: string | null }> {
+
   try {
     // Check if user already exists in auth.users
     const supabase = createClient();
@@ -334,11 +336,14 @@ export async function inviteCandidate(
       };
     }
 
-    console.log('supabase job id', job.id);
+
+    // merge application id
+    const application_id = await fetchApplicationMergeId(job_id, candidateId);
 
     const { data: application, error: applicationError } = await supabase
       .from('applications')
       .insert({
+        merge_application_id: application_id,
         applicant_id: candidateId,
         // job_id: job.id // this is the supabase job id, not the merge job id
         job_id: job_id // this is the merge job id
@@ -416,8 +421,10 @@ export const getRecruiter = async (
 export const getMergeApiKey = async (): Promise<string | null> => {
   try {
     const user = await getUser();
-    if (!user) {
-      throw new Error('User not found');
+    if (!user || user?.user_metadata.role === 'applicant') {
+      // throw new Error('User not found');
+      console.log("User not found")
+      return null;
     }
 
     const recruiter = await getRecruiter(user.id);
@@ -512,7 +519,6 @@ export const deletescout = async (id: number) => {
 export const getScouts = async (): Promise<ScoutWithJobs[] | null> => {
   try {
     const scoutsWithJobIds = await getScoutsWithJobIds();
-    console.log("scoutsWithJobIds",scoutsWithJobIds);
     return scoutsWithJobIds;
 
   } catch (error) {

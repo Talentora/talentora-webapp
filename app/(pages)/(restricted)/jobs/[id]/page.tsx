@@ -1,4 +1,5 @@
-'use client';
+'use client'
+
 import JobPage from '@/components/Jobs/Job';
 import { useJob } from '@/hooks/useJob';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -19,7 +20,7 @@ export default function Page({ params }: JobPageProps) {
 
 
 
-  if (error || job === null) {
+  if ((error || job === null) && !jobLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-[50vh] gap-4">
         <Alert intent="danger" title="Error">
@@ -32,7 +33,7 @@ export default function Page({ params }: JobPageProps) {
 
   return (
     <JobPage 
-      job={job} 
+      job={job || undefined} 
       applicants={applicants || []} 
       jobLoading={jobLoading}
       applicantsLoading={applicantsLoading}

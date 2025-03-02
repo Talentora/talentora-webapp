@@ -62,24 +62,22 @@ export default function JobListPage() {
     !filteredJobs.some(job => job.isConfigured);
 
   return (
-    <div className="container w-[90%] mx-auto py-8">
-      
-
+    <div className="container mx-auto mr-4 max-w-full overflow-hidden">
       <div className='gap-2 flex flex-col'>
-          <JobListHeader
-            state={state}
-            actions={actions}
-            enrichedJobs={filteredJobs}
-            departments={uniqueDepartments}
-            columns={COLUMNS}
-          />
-          <JobListContent
-            state={state}
-            actions={actions}
-            loading={loading}
-            paginatedJobs={paginatedJobs}
-            totalPages={totalPages}
-          />
+        <JobListHeader
+          state={state}
+          actions={actions}
+          enrichedJobs={filteredJobs}
+          departments={uniqueDepartments}
+          columns={COLUMNS}
+        />
+        <JobListContent
+          state={state}
+          actions={actions}
+          loading={loading}
+          paginatedJobs={paginatedJobs}
+          totalPages={totalPages}
+        />
       </div>
     </div>
   );
