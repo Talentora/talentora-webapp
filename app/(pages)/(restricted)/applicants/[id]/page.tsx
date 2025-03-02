@@ -66,95 +66,43 @@ export default function ApplicantPage({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // First try to fetch the specific applicant
-        try {
-          // Fetch enriched applicant data
-          const supabase = createClient();
-           
-          const { data: jobConfigData } = await supabase
-          .from('applications')
-          .select('*')
-          .eq('id', params.id)
-          .single();
+        // Fetch enriched applicant data
+        const supabase = createClient();
+          
+        const { data: jobConfigData } = await supabase
+        .from('applications')
+        .select('*')
+        .eq('id', params.id)
+        .single();
 
-          console.log(jobConfigData, "meow", params.id)
 
-          if (!jobConfigData?.job_id || !jobConfigData?.applicant_id) {
-            throw new Error('Missing job_id or applicant_id');
-          }
-          // const merge_applicaiton_id = await fetchApplicationMergeId(jobConfigData.job_id, jobConfigData.applicant_id);
-          // console.log(merge_applicaiton_id, "meow")
+        if (!jobConfigData?.job_id || !jobConfigData?.applicant_id) {
+          throw new Error('Missing job_id or applicant_id');
+        }
+        // const merge_applicaiton_id = await fetchApplicationMergeId(jobConfigData.job_id, jobConfigData.applicant_id);
+        console.log(params.id);
+        
+        const enrichedData = await fetchApplicationAISummary(params.id);
 
-          const enrichedData = await fetchApplicationAISummary(jobConfigData.merge_applicaiton_id);
+        console.log(enrichedData, "meow")
 
-  
-          // Set portal props
-          setPortalProps({
-            AI_summary: enrichedData.AI_summary,
+        // Set portal props
+        setPortalProps({
+          AI_summary: enrichedData.AI_summary,
+          application: enrichedData.application,
+          job_interview_config: null,
+          mergeApplicant: {
             application: enrichedData.application,
-            job_interview_config: null,
-            mergeApplicant: {
-              application: enrichedData.application,
-              candidate: enrichedData.candidate,
-              job: enrichedData.job,
-              interviewStages: enrichedData.interviewStages
-            },
             candidate: enrichedData.candidate,
             job: enrichedData.job,
-            interviewStages: enrichedData.interviewStages,
-            hasSupabaseData: enrichedData.hasSupabaseData,
-          });
-        } catch (specificError) {
-          console.error('Error fetching specific applicant:', specificError);
-          
-
-          // If specific fetch fails, try to find the applicant in the full list
-          // const allApplicants = await fetchAllEnrichedApplicants();
-          // const matchingApplicant = allApplicants.find(
-          //   (app: any) => app.application?.id === params.id || 
-          //                app.applicant?.merge_applicant_id === params.id
-          // );
-
-          
-          // if (matchingApplicant) {
-          //   console.log("Found applicant in full list:", matchingApplicant);
-            
-          //   // Fetch job interview config if we have a job ID
-          //   let jobConfig = null;
-          //   if (matchingApplicant.job?.id) {
-          //     const supabase = createClient();
-          //     const { data: jobConfigData } = await supabase
-          //       .from('job_interview_config')
-          //       .select('*')
-          //       .eq('job_id', matchingApplicant.job.id)
-          //       .single();
-              
-          //     jobConfig = jobConfigData;
-          //   }
-            
-          //   // Set portal props from the matching applicant
-          //   setPortalProps({
-          //     AI_summary: matchingApplicant.AI_summary,
-          //     application: matchingApplicant.application,
-          //     job_interview_config: jobConfig,
-          //     mergeApplicant: {
-          //       application: matchingApplicant.application,
-          //       candidate: matchingApplicant.candidate,
-          //       job: matchingApplicant.job,
-          //       interviewStages: matchingApplicant.interviewStages
-          //     },
-          //     candidate: matchingApplicant.candidate,
-          //     job: matchingApplicant.job,
-          //     interviewStages: matchingApplicant.interviewStages,
-          //     hasSupabaseData: matchingApplicant.hasSupabaseData,
-          //     hasMergeData: matchingApplicant.hasMergeData,
-          //     hasAISummary: matchingApplicant.hasAISummary
-          //   });
-          // } else {
-          //   // If we still can't find the applicant, set an error
-          //   setError('Applicant not found. The ID may be invalid or the applicant has been removed.');
-          // }
-        }
+            interviewStages: enrichedData.interviewStages
+          },
+          candidate: enrichedData.candidate,
+          job: enrichedData.job,
+          interviewStages: enrichedData.interviewStages,
+          hasSupabaseData: enrichedData.hasSupabaseData,
+        });
+    
       } catch (err) {
         console.error('Error fetching data:', err);
         setError('Failed to load applicant data. Please try again later.');

@@ -73,7 +73,7 @@ const InviteApplicantsTable = ({ applicants, jobs, onSort, sortField, sortDirect
       });
       return;
     }
-    router.push(`/applicants/${applicant.application.supabase_application_id}`);
+    router.push(`/applicants/${applicant.application.id}`);
   };
 
   const handleInvite = async () => {

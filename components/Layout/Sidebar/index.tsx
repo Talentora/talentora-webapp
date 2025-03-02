@@ -274,6 +274,36 @@ const Sidebar = () => {
               Dashboard
             </SidebarLink>
             <SidebarLink
+              href="/applicants"
+              icon={Users}
+              isActive={pathname === '/applicants'}
+              isSidebarOpen={isSidebarOpen}
+              // hasDropdown={true}
+              // isDropdownOpen={isApplicantsOpen}
+              // onDropdownClick={() => setIsApplicantsOpen(!isApplicantsOpen)}
+            >
+              Applicants
+            </SidebarLink>
+            {/* {isSidebarOpen && isApplicantsOpen && (
+              <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
+
+                {(() => {
+                  if (!isInitialized || isLoading) {
+                    return renderLoadingOrEmpty('applicants');
+                  }
+                  const applicantItems = filteredItems.filter(item => item.type === 'applicant');
+                  return applicantItems.length > 0 ? (
+                    applicantItems.map((applicant, index) => (
+                      <SubLink key={index} href={applicant.href}>
+                        {applicant.name}
+                      </SubLink>
+                    ))
+                  ) : renderLoadingOrEmpty('applicants');
+                })()}
+
+              </div>
+            )} */}
+            <SidebarLink
               href="/jobs"
               icon={BriefcaseIcon}
               isActive={pathname === '/jobs'}
@@ -334,36 +364,6 @@ const Sidebar = () => {
               </div>
             )}
             <SidebarLink
-              href="/applicants"
-              icon={Users}
-              isActive={pathname === '/applicants'}
-              isSidebarOpen={isSidebarOpen}
-              hasDropdown={true}
-              isDropdownOpen={isApplicantsOpen}
-              onDropdownClick={() => setIsApplicantsOpen(!isApplicantsOpen)}
-            >
-              Applicants
-            </SidebarLink>
-            {isSidebarOpen && isApplicantsOpen && (
-              <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
-
-                {(() => {
-                  if (!isInitialized || isLoading) {
-                    return renderLoadingOrEmpty('applicants');
-                  }
-                  const applicantItems = filteredItems.filter(item => item.type === 'applicant');
-                  return applicantItems.length > 0 ? (
-                    applicantItems.map((applicant, index) => (
-                      <SubLink key={index} href={applicant.href}>
-                        {applicant.name}
-                      </SubLink>
-                    ))
-                  ) : renderLoadingOrEmpty('applicants');
-                })()}
-
-              </div>
-            )}
-            <SidebarLink
               href="/settings"
               icon={SettingsIcon}
               isActive={pathname.startsWith('/settings')}
@@ -392,24 +392,6 @@ const Sidebar = () => {
 
                 <SubLink href="/settings?tab=integrations">
                   Integration Status
-                </SubLink>
-              </div>
-            )}
-            <SidebarLink
-              href="/job-interview-stages"
-              icon={ListChecks}
-              isActive={pathname === '/job-interview-stages'}
-              isSidebarOpen={isSidebarOpen}
-              hasDropdown={true}
-              isDropdownOpen={isStagesOpen}
-              onDropdownClick={() => setIsStagesOpen(!isStagesOpen)}
-            >
-              Interview Stages
-            </SidebarLink>
-            {isSidebarOpen && isStagesOpen && (
-              <div className="ml-4 mt-1 space-y-1 border-l-2 border-border pl-3">
-                <SubLink href="/job-interview-stages">
-                  All Stages
                 </SubLink>
               </div>
             )}

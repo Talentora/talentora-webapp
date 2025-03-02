@@ -6,7 +6,7 @@ const API_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
 
 
 export async function fetchApplicationData(mergeApplicationId: string) {
-    const response = await fetch(getURL(`api/applications/${mergeApplicationId}`), {
+    const response = await fetch(getURL(`api/application/${mergeApplicationId}`), {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json'

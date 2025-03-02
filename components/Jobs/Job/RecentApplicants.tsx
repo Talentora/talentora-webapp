@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import InviteApplicantsTable from '@/components/Applicants/InviteApplicantsTable';
-import { Button } from '@/components/ui/button';
 import ApplicationsGraph from './ApplicantStatistics/ApplicationsGraph';
 import { ApplicantCandidate, Job } from '@/types/merge';
 import { Dialog, DialogContent } from '@/components/ui/dialog';

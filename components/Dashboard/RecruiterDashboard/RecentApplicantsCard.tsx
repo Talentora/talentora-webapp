@@ -1,10 +1,8 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Navigation } from 'lucide-react';
 import InviteApplicantsTable from '../../Applicants/InviteApplicantsTable';
 import { ApplicantCandidate } from '@/types/merge';
-import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
 
 export default function RecentApplicantsCard({ applicants, jobs, isLoading }: { applicants: ApplicantCandidate[], jobs: any[], isLoading: boolean }) {

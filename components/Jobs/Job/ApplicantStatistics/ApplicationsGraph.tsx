@@ -32,7 +32,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
   // Get unique job names for the filter dropdown
   const jobOptions = useMemo(() => {
     const uniqueJobs = new Set<string>();
-    console.log(applicants, "maaaa")
+
     applicants.forEach(applicant => {
       uniqueJobs.add(applicant.job.name);
     });
