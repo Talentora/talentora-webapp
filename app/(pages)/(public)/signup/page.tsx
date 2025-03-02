@@ -29,14 +29,12 @@ export default function SignUp() {
         <div
           className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-background shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
             selectedType === 'recruiter'
-              ? 'ring-2 ring-blue-500 bg-blue-50'
-              : ''
+              ? 'ring-2 ring-primary bg-primary/10 text-foreground'
+              : 'text-muted-foreground'
           }`}
           onClick={() => handleUserTypeSelection('recruiter')}
         >
-          <h2 className="text-2xl font-semibold mb-2">
-            Recruiter
-          </h2>
+          <h2 className="text-2xl font-semibold mb-2">Recruiter</h2>
           <p className="text-center text-gray-600">
             I'm looking to hire talent
           </p>
@@ -44,14 +42,12 @@ export default function SignUp() {
         <div
           className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-background shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
             selectedType === 'applicant'
-              ? 'ring-2 ring-blue-500 bg-blue-50'
-              : ''
+              ? 'ring-2 ring-primary bg-primary/10 text-foreground'
+              : 'text-muted-foreground'
           }`}
           onClick={() => handleUserTypeSelection('applicant')}
         >
-          <h2 className="text-2xl font-semibold mb-2 ">
-            Applicant
-          </h2>
+          <h2 className="text-2xl font-semibold mb-2 ">Applicant</h2>
           <p className="text-center text-gray-600">
             I'm looking for job opportunities
           </p>

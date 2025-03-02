@@ -55,7 +55,7 @@ export default function SignUp({
               type="text"
               name="fullName"
               autoCapitalize="words"
-              className="w-full p-3 text-foreground rounded-md bg-zinc-800"
+              className="w-full p-3 bg-background text-foreground rounded-md border border-input"
             />
             <label htmlFor="email">Email</label>
             <input
@@ -66,7 +66,7 @@ export default function SignUp({
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
-              className="w-full p-3 text-foreground rounded-md bg-zinc-800"
+              className="w-full p-3 bg-background text-foreground rounded-md border border-input"
             />
             <label htmlFor="password">Password</label>
             <input
@@ -75,7 +75,7 @@ export default function SignUp({
               type="password"
               name="password"
               autoComplete="current-password"
-              className="w-full p-3 rounded-md text-foreground bg-zinc-800"
+              className="w-full p-3 bg-background text-foreground rounded-md border border-input"
             />
           </div>
           <Button
@@ -92,7 +92,7 @@ export default function SignUp({
       <p>
         <Link
           href={`/signin/password_signin?role=${role}`}
-          className="font-light text-sm"
+          className="font-light text-sm text-muted-foreground"
         >
           Sign in with email and password
         </Link>
