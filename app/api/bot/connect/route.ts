@@ -87,6 +87,8 @@ export async function POST(request: NextRequest) {
       // await updateApplicationWithAISummaryId(application.id, aiSummaryResponse.id);
     }
 
+    console.log("RESPONSE: ", botData)
+
     return NextResponse.json(botData);
   } catch (error) {
     console.error('Error starting bot:', error);

@@ -1,9 +1,7 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  RTVIClientProvider,
-} from "@pipecat-ai/client-react";
-import { RTVIClient } from "@pipecat-ai/client-js";
+import { RTVIClientProvider, RTVIClientAudio } from '@pipecat-ai/client-react';
+import { RTVIClient } from '@pipecat-ai/client-js';
 import App from '@/components/Bot/App';
 import { DailyTransport } from '@pipecat-ai/daily-transport';
 import { Tables } from '@/types/types_db';
@@ -11,8 +9,11 @@ import { Job as MergeJob } from '@/types/merge';
 import Splash from '@/components/Bot/Splash';
 import { BOT_READY_TIMEOUT } from '@/utils/rtvi.config';
 import { useToast } from '@/hooks/use-toast';
-import { TranscriptData } from '@pipecat-ai/client-js';
-import { InterviewTranscript, InterviewTranscriptEntry } from '@/types/transcript';
+import { TranscriptData, BotReadyData } from '@pipecat-ai/client-js';
+import {
+  InterviewTranscript,
+  InterviewTranscriptEntry
+} from '@/types/transcript';
 
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
@@ -30,14 +31,21 @@ interface BotProps {
   scoutTest: boolean;
 }
 
-type TransportState = 'disconnected' | 'initialized' | 'ready' | 'connecting' | 'connected' | 'error';
-
-
+type TransportState =
+  | 'disconnected'
+  | 'initializing'
+  | 'initialized'
+  | 'authenticating'
+  | 'connecting'
+  | 'connected'
+  | 'ready'
+  | 'disconnecting'
+  | 'error';
 
 export default function Bot(botProps: BotProps) {
-  const [isUserReady, setIsUserReady] = useState(false);
   const clientRef = useRef<RTVIClient | null>(null);
-  const [transportState, setTransportState] = useState<TransportState>('disconnected');
+  const [transportState, setTransportState] =
+    useState<TransportState>('disconnected');
   const [showSplash, setShowSplash] = useState(true);
   const [transcript, setTranscript] = useState<InterviewTranscript>([]);
   const mountedRef = useRef(false);
@@ -53,7 +61,7 @@ export default function Bot(botProps: BotProps) {
     companyContext,
     enableRecording,
     demo,
-    scoutTest,
+    scoutTest
   } = botProps;
 
   const voice = scout.voice;
@@ -74,7 +82,7 @@ export default function Bot(botProps: BotProps) {
     }
 
     console.log('[INIT] Creating new client instance');
-    
+
     const dailyTransport = new DailyTransport();
     const pipecatClient = new RTVIClient({
       transport: dailyTransport,
@@ -83,7 +91,7 @@ export default function Bot(botProps: BotProps) {
       params: {
         baseUrl: '/api/bot',
         endpoints: {
-          connect: '/connect',
+          connect: '/connect'
         },
         requestData: {
           data: {
@@ -109,6 +117,9 @@ export default function Bot(botProps: BotProps) {
 
     // Set up event listeners
     const eventHandlers = {
+      onBotReady: (data: BotReadyData) => {
+        console.log(`BOT READY: ${data.config}`);
+      },
       transportStateChanged: (state: string) => {
         console.log('[EVENT] Transport state:', state);
         setTransportState(state as TransportState);
@@ -119,7 +130,7 @@ export default function Bot(botProps: BotProps) {
           role: 'user',
           timestamp: new Date().toISOString()
         };
-        setTranscript(prev => [...prev, userEntry]);
+        setTranscript((prev) => [...prev, userEntry]);
       },
       onBotTranscript: (data: TranscriptData) => {
         const botEntry: InterviewTranscriptEntry = {
@@ -127,22 +138,22 @@ export default function Bot(botProps: BotProps) {
           role: 'bot',
           timestamp: new Date().toISOString()
         };
-        setTranscript(prev => [...prev, botEntry]);
+        setTranscript((prev) => [...prev, botEntry]);
       },
       error: (error: any) => {
         console.error('[EVENT] Bot error:', error);
         toast({
-          title: "Error",
+          title: 'Error',
           description: error.message || 'An unknown error occurred',
-          variant: "destructive"
+          variant: 'destructive'
         });
       },
       disconnected: () => {
         console.log('[EVENT] Bot disconnected');
         toast({
-          title: "Disconnected",
-          description: "Bot disconnected from session",
-          variant: "destructive"
+          title: 'Disconnected',
+          description: 'Bot disconnected from session',
+          variant: 'destructive'
         });
       }
     };
@@ -160,18 +171,28 @@ export default function Bot(botProps: BotProps) {
         });
       }
     };
-
-  }, [showSplash, voice, mergeJob, company, jobInterviewConfig, application, scout, companyContext, emotion, enableRecording, scoutTest, demo, toast]);
-
+  }, [
+    showSplash,
+    voice,
+    mergeJob,
+    company,
+    jobInterviewConfig,
+    application,
+    scout,
+    companyContext,
+    emotion,
+    enableRecording,
+    scoutTest,
+    demo,
+    toast
+  ]);
 
   if (showSplash) {
     return (
       <>
- 
         <Splash
           handleReady={() => {
             setShowSplash(false);
-            setIsUserReady(true);
           }}
           company={company}
           mergeJob={mergeJob}
@@ -194,10 +215,10 @@ export default function Bot(botProps: BotProps) {
 
   return (
     <>
-      
-        <RTVIClientProvider client={clientRef.current}>
-          <App {...botProps} transcript={transcript} />
-        </RTVIClientProvider>
+      <RTVIClientProvider client={clientRef.current}>
+        <App {...botProps} transcript={transcript} />
+        <RTVIClientAudio />
+      </RTVIClientProvider>
     </>
   );
 }

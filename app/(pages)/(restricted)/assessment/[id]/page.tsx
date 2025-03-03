@@ -18,9 +18,7 @@ import {
   getCompanyContext,
   getApplication
 } from '@/utils/supabase/queries';
-import {
-  useApplicant
-} from '@/hooks/useApplicant';
+import { useApplicant } from '@/hooks/useApplicant';
 import { fetchJobById } from '@/server/jobs';
 
 type ScoutProps = {
@@ -32,7 +30,6 @@ type ScoutProps = {
   mergeJob: MergeJob;
   application: Application;
   enableRecording: boolean;
-  mock: boolean;
   demo: boolean;
   scoutTest: boolean;
 };
@@ -108,7 +105,6 @@ export default function Assessment({ params }: { params: { id: string } }) {
           mergeJob,
           application,
           enableRecording: true,
-          mock: false,
           demo: false,
           scoutTest: false
         });

@@ -1,8 +1,12 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { RTVIClientProvider, RTVIClientVideo, useRTVIClient, useRTVIClientMediaDevices, VoiceVisualizer } from '@pipecat-ai/client-react';
-import { RTVIClient } from '@pipecat-ai/client-js';
+import {
+  RTVIClientVideo,
+  useRTVIClient,
+  useRTVIClientMediaDevices,
+  VoiceVisualizer
+} from '@pipecat-ai/client-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import {
@@ -36,7 +40,9 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({
   const [loading, setLoading] = useState(false);
   const [startAudioOff, setStartAudioOff] = useState(false);
   const [devicesInitialized, setDevicesInitialized] = useState(false);
-  const [availableSpeakers, setAvailableSpeakers] = useState<MediaDeviceInfo[]>([]);
+  const [availableSpeakers, setAvailableSpeakers] = useState<MediaDeviceInfo[]>(
+    []
+  );
   const [selectedSpeaker, setSelectedSpeaker] = useState<string>('');
   const [isPlayingTest, setIsPlayingTest] = useState(false);
 
@@ -47,28 +53,33 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({
     selectedCam,
     selectedMic,
     updateCam,
-    updateMic,
+    updateMic
   } = useRTVIClientMediaDevices();
 
   // Request media permissions and initialize devices
   useEffect(() => {
     async function initializeDevices() {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-        
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: true
+        });
+
         // Get audio output devices
         const devices = await navigator.mediaDevices.enumerateDevices();
-        const speakers = devices.filter(device => device.kind === 'audiooutput');
+        const speakers = devices.filter(
+          (device) => device.kind === 'audiooutput'
+        );
         setAvailableSpeakers(speakers);
-        
+
         // Set default speaker if available
         if (speakers.length > 0) {
           setSelectedSpeaker(speakers[0].deviceId);
         }
-        
+
         setDevicesInitialized(true);
         // Clean up the stream
-        stream.getTracks().forEach(track => track.stop());
+        stream.getTracks().forEach((track) => track.stop());
       } catch (err) {
         console.error('Error accessing media devices:', err);
       }
@@ -78,12 +89,15 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({
   // Update speaker when selection changes
   useEffect(() => {
     if (!selectedSpeaker) return;
-    
+
     // Try to set audio output device if browser supports it
     if ('setSinkId' in HTMLAudioElement.prototype) {
       const audio = document.createElement('audio');
-      audio.setSinkId(selectedSpeaker)
-        .catch((err: Error) => console.error('Error setting audio output device:', err));
+      audio
+        .setSinkId(selectedSpeaker)
+        .catch((err: Error) =>
+          console.error('Error setting audio output device:', err)
+        );
     }
   }, [selectedSpeaker]);
 
@@ -117,7 +131,15 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({
     if (availableCams.length > 0 && !selectedCam) {
       updateCam(availableCams[0].deviceId);
     }
-  }, [availableMics, availableCams, selectedMic, selectedCam, updateMic, updateCam, devicesInitialized]);
+  }, [
+    availableMics,
+    availableCams,
+    selectedMic,
+    selectedCam,
+    updateMic,
+    updateCam,
+    devicesInitialized
+  ]);
 
   // Update devices when selection changes
   useEffect(() => {
@@ -130,7 +152,15 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({
     if (selectedCam?.deviceId) {
       updateCam(selectedCam.deviceId);
     }
-  }, [selectedMic, selectedCam, updateMic, updateCam, client, startAudioOff, devicesInitialized]);
+  }, [
+    selectedMic,
+    selectedCam,
+    updateMic,
+    updateCam,
+    client,
+    startAudioOff,
+    devicesInitialized
+  ]);
 
   const handleNext = () => {
     switch (currentStage) {
@@ -194,13 +224,13 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({
               ))}
             </SelectContent>
           </Select>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="icon"
             onClick={playTestSound}
             disabled={isPlayingTest || !selectedSpeaker}
           >
-            <Volume2 className={isPlayingTest ? "animate-pulse" : ""} />
+            <Volume2 className={isPlayingTest ? 'animate-pulse' : ''} />
           </Button>
         </div>
       </div>
@@ -212,10 +242,7 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({
         )}
       </div>
       <div className="flex justify-end">
-        <Button 
-          onClick={handleNext} 
-          disabled={!selectedSpeaker}
-        >
+        <Button onClick={handleNext} disabled={!selectedSpeaker}>
           {getButtonText()}
         </Button>
       </div>
@@ -225,22 +252,19 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({
   const renderMicrophoneSetup = () => (
     <div className="space-y-4">
       <div>
-        <label className="text-sm font-medium mb-2 block">Microphone Input</label>
-        <Select
-          value={selectedMic?.deviceId || ''}
-          onValueChange={updateMic}
-        >
+        <label className="text-sm font-medium mb-2 block">
+          Microphone Input
+        </label>
+        <Select value={selectedMic?.deviceId || ''} onValueChange={updateMic}>
           <SelectTrigger>
             <SelectValue placeholder="Select a microphone" />
           </SelectTrigger>
           <SelectContent>
-            {availableMics.map(
-              (mic: { deviceId: string; label: string }) => (
-                <SelectItem key={mic.deviceId} value={mic.deviceId}>
-                  {mic.label}
-                </SelectItem>
-              )
-            )}
+            {availableMics.map((mic: { deviceId: string; label: string }) => (
+              <SelectItem key={mic.deviceId} value={mic.deviceId}>
+                {mic.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -264,10 +288,7 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({
     <div className="space-y-4">
       <div>
         <label className="text-sm font-medium mb-2 block">Camera Input</label>
-        <Select
-          value={selectedCam?.deviceId || ''}
-          onValueChange={updateCam}
-        >
+        <Select value={selectedCam?.deviceId || ''} onValueChange={updateCam}>
           <SelectTrigger>
             <SelectValue placeholder="Select a camera" />
           </SelectTrigger>
@@ -284,19 +305,15 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({
       </div>
       {selectedCam && (
         <div className="aspect-video overflow-hidden rounded-lg bg-muted">
-          <RTVIClientVideo
-            participant="local"
-            fit="contain"
-            mirror={true}
-          />
+          <RTVIClientVideo participant="local" fit="contain" mirror={true} />
         </div>
       )}
       <div className="flex justify-between">
         <Button variant="outline" onClick={handleBack}>
           Back
         </Button>
-        <Button 
-          onClick={handleNext} 
+        <Button
+          onClick={handleNext}
           disabled={!selectedCam || loading}
           variant={currentStage === 'camera' ? 'default' : 'outline'}
         >
@@ -311,9 +328,7 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({
       return (
         <div className="flex flex-col items-center space-y-4">
           <Loader2 className="h-8 w-8 animate-spin" />
-          <p className="text-sm text-gray-500">
-            Loading devices...
-          </p>
+          <p className="text-sm text-gray-500">Loading devices...</p>
         </div>
       );
     }
@@ -345,12 +360,14 @@ const Configure: React.FC<{ onStartInterview: () => void }> = ({
       <CardContent>
         {getCurrentStageContent()}
         <div className="mt-4 space-y-1">
-          <Progress 
+          <Progress
             value={stageToProgress[currentStage]}
             className="h-1 bg-muted mt-10 [&>div]:bg-primary"
           />
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>Step {Object.keys(stageToTitle).indexOf(currentStage) + 1} of 3</span>
+            <span>
+              Step {Object.keys(stageToTitle).indexOf(currentStage) + 1} of 3
+            </span>
           </div>
         </div>
       </CardContent>
