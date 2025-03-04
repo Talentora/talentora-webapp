@@ -22,12 +22,16 @@ export default function OnboardingPage() {
   ); // Initialize step 1 and 4 as completed
   const { user, recruiter } = useUser();
 
-  console.log(recruiter.data)
-  if (!recruiter.data || !('company_id' in recruiter.data) || !recruiter.data.company_id) {
+  console.log(recruiter.data);
+  if (
+    !recruiter.data ||
+    !('company_id' in recruiter.data) ||
+    !recruiter.data.company_id
+  ) {
     return <p>Error: Company ID is undefined. Please contact support.</p>;
   }
   const companyId = recruiter.data.company_id;
-  
+
   const nextStep = async () => {
     const newStep = Math.min(step + 1, totalSteps);
     setStep(newStep);
@@ -35,7 +39,10 @@ export default function OnboardingPage() {
 
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
-  const handleStepCompletion = async (stepNumber: number, isComplete: boolean) => {
+  const handleStepCompletion = async (
+    stepNumber: number,
+    isComplete: boolean
+  ) => {
     setCompletedSteps((prev) => {
       const updated = new Set(prev);
       if (isComplete) {
@@ -55,7 +62,6 @@ export default function OnboardingPage() {
       }
     }
   };
-
 
   return (
     <div className="container mx-auto py-10">

@@ -74,7 +74,7 @@ export default function EmailSignIn({
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
-              className="w-full p-3 rounded-md bg-zinc-800"
+              className="w-full p-3 bg-background text-foreground rounded-md border border-input"
             />
           </div>
           <Button
@@ -91,12 +91,18 @@ export default function EmailSignIn({
       {allowPassword && (
         <CardFooter className="flex flex-col items-start space-y-2">
           <p>
-            <Link href="/signin/password_signin" className="font-light text-sm">
+            <Link
+              href="/signin/password_signin"
+              className="font-light text-sm text-muted-foreground"
+            >
               Sign in with email and password
             </Link>
           </p>
           <p>
-            <Link href="/signin/signup" className="font-light text-sm">
+            <Link
+              href="/signin/signup"
+              className="font-light text-sm text-muted-foreground"
+            >
               Don&apos;t have an account? Sign up
             </Link>
           </p>

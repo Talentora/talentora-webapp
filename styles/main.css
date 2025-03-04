@@ -32,7 +32,8 @@
     --muted-foreground: #6B7280;
     --accent: var(--accent-base);
     --accent-foreground: #1F2937;
-
+    --popover: #ffffff; 
+    --popover-foreground: #1F2937;
    
 
     --radius: 0.5rem;
@@ -59,6 +60,8 @@
     --muted-foreground: #9CA3AF;
     --accent: #1F2937;
     --accent-foreground: #F9FAFB;
+    --popover: #020817; 
+    --popover-foreground: #F9FAFB;
 
    
   }
