@@ -12,6 +12,7 @@ type scout = Tables<'bots'>;
 type AI_Summary = Tables<'AI_summary'>;
 import { inviteRecruiterAdmin, inviteCandidateAdmin, listUsersAdmin } from '@/utils/supabase/admin';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { fetchApplicationMergeId } from '@/server/applications';
 // CRUD operations for the company table
 
 /**
@@ -268,6 +269,7 @@ export async function inviteCandidate(
   job_id: string,
   merge_applicant_id: string
 ): Promise<{ data?: any; error?: string | null }> {
+
   try {
     const supabase = createClient();
 
@@ -345,22 +347,40 @@ export async function inviteCandidate(
       return { data: null, error: 'Invalid job ID - job does not exist' };
     }
 
-    // create a new application record in the `applications` table
-    const { data: application, error: applicationInsertError } = await supabase
+    // Get the job id from merge_id
+    const { data: job, error: jobIdError } = await supabase
+      .from('jobs')
+      .select('id')
+      .eq('merge_id', job_id)
+      .single();
+
+    if (jobIdError || !job) {
+      return {
+        data: null,
+        error: 'Failed to get job ID'
+      };
+    }
+
+
+    // merge application id
+    const application_id = await fetchApplicationMergeId(job_id, candidateId);
+
+    const { data: application, error: applicationError } = await supabase
       .from('applications')
       .insert({
+        merge_application_id: application_id,
         applicant_id: candidateId,
         job_id // This is the Merge job ID
       })
       .select()
       .single();
 
-    if (applicationInsertError) {
+    if (applicationError) {
       console.error(
         'Error creating application record:',
-        applicationInsertError
+        applicationError
       );
-      return { data: null, error: applicationInsertError.message };
+      return { data: null, error: applicationError.message };
     }
 
     // Success response with candidate and application details
@@ -431,8 +451,10 @@ export const getRecruiter = async (
 export const getMergeApiKey = async (): Promise<string | null> => {
   try {
     const user = await getUser();
-    if (!user) {
-      throw new Error('User not found');
+    if (!user || user?.user_metadata.role === 'applicant') {
+      // throw new Error('User not found');
+      console.log("User not found")
+      return null;
     }
 
     const recruiter = await getRecruiter(user.id);
@@ -527,7 +549,6 @@ export const deletescout = async (id: number) => {
 export const getScouts = async (): Promise<ScoutWithJobs[] | null> => {
   try {
     const scoutsWithJobIds = await getScoutsWithJobIds();
-    console.log("scoutsWithJobIds",scoutsWithJobIds);
     return scoutsWithJobIds;
 
   } catch (error) {

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+<<<<<<< HEAD
 import {
   BriefcaseIcon,
   Users,
@@ -25,6 +26,11 @@ import {
   Building2,
   Phone
 } from 'lucide-react';
+=======
+
+import { BriefcaseIcon, Users, User, Sparkles, HomeIcon, LogOut, SettingsIcon, ChevronLeft, ChevronRight, Sun, Moon, Loader2, ChevronDown, ChevronUp, Search, CreditCard, Box, Mail, BookOpen, Building2, Phone, ListChecks } from 'lucide-react';
+
+>>>>>>> 9dd9eb3f8c3ceb89537aadb103dbcaae85fb5b24
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 
 import {
@@ -55,7 +61,6 @@ import { ScoutWithJobs } from '@/types/custom';
 import { SidebarHeader as NewSidebarHeader } from './components/SidebarHeader';
 import { CommandSearch } from './components/CommandSearch';
 import { SidebarLink, SubLink } from './components/SidebarLink';
-import { fetchApplicationsData } from '@/server/applications';
 
 
 interface Job {
@@ -88,6 +93,7 @@ const Sidebar = () => {
   const [isJobsOpen, setIsJobsOpen] = useState(false);
   const [isApplicantsOpen, setIsApplicantsOpen] = useState(false);
   const [isScoutsOpen, setIsScoutsOpen] = useState(false);
+  const [isStagesOpen, setIsStagesOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -280,6 +286,36 @@ const Sidebar = () => {
               Dashboard
             </SidebarLink>
             <SidebarLink
+              href="/applicants"
+              icon={Users}
+              isActive={pathname === '/applicants'}
+              isSidebarOpen={isSidebarOpen}
+              // hasDropdown={true}
+              // isDropdownOpen={isApplicantsOpen}
+              // onDropdownClick={() => setIsApplicantsOpen(!isApplicantsOpen)}
+            >
+              Applicants
+            </SidebarLink>
+            {/* {isSidebarOpen && isApplicantsOpen && (
+              <div className="ml-1 mt-1 space-y-1 border-l-2 border-border pl-3">
+
+                {(() => {
+                  if (!isInitialized || isLoading) {
+                    return renderLoadingOrEmpty('applicants');
+                  }
+                  const applicantItems = filteredItems.filter(item => item.type === 'applicant');
+                  return applicantItems.length > 0 ? (
+                    applicantItems.map((applicant, index) => (
+                      <SubLink key={index} href={applicant.href}>
+                        {applicant.name}
+                      </SubLink>
+                    ))
+                  ) : renderLoadingOrEmpty('applicants');
+                })()}
+
+              </div>
+            )} */}
+            <SidebarLink
               href="/jobs"
               icon={BriefcaseIcon}
               isActive={pathname === '/jobs'}
@@ -340,6 +376,7 @@ const Sidebar = () => {
               </div>
             )}
             <SidebarLink
+<<<<<<< HEAD
               href="/applicants"
               icon={Users}
               isActive={pathname === '/applicants'}
@@ -370,6 +407,8 @@ const Sidebar = () => {
               </div>
             )}
             <SidebarLink
+=======
+>>>>>>> 9dd9eb3f8c3ceb89537aadb103dbcaae85fb5b24
               href="/settings"
               icon={SettingsIcon}
               isActive={pathname.startsWith('/settings')}

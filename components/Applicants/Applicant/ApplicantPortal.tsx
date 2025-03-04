@@ -4,7 +4,11 @@ import ApplicantActions from '@/components/Applicants/Applicant/ApplicantActions
 import { portalProps } from '@/app/(pages)/(restricted)/applicants/[id]/page';
 import AnalysisDisplay from '@/components/AnalysisDisplay';
 import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle, AlertTriangle } from "lucide-react";
+import ResumeViewer from '@/components/AnalysisDisplay/ResumeViewer';
+import ApplicationTimeline from './ApplicationTimeline';
+
 interface ApplicantPortalProps {
   portalProps: portalProps;
 }
@@ -40,10 +44,7 @@ const PlaceholderAnalysis = () => (
       <h2 className="text-lg font-semibold mb-2">Video Transcript</h2>
       <Skeleton className="h-64 w-full" />
     </div>
-    <div>
-      <h2 className="text-lg font-semibold mb-2">Resume</h2>
-      <Skeleton className="h-64 w-full" />
-    </div>
+   
     <div>
       <h2 className="text-lg font-semibold mb-2">Emotional Analysis</h2>
       <Skeleton className="h-64 w-full" />
@@ -60,22 +61,19 @@ export default function ApplicantPortal({
 }: ApplicantPortalProps) {
   const {mergeApplicant, AI_summary, application, job_interview_config} = portalProps;
 
-  if (!mergeApplicant) {
+  if (!mergeApplicant || !mergeApplicant.candidate) {
     return (
       <div className="space-y-4">
+        <Alert intent="danger" className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Data Error</AlertTitle>
+          <AlertDescription>
+            Unable to load applicant data. The applicant may have been removed or there might be an issue with the data source.
+          </AlertDescription>
+        </Alert>
+        
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1 space-y-6">
-            <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-4 mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="flex-shrink-0">
-                  <span className="text-2xl">⚠️</span>
-                </div>
-                <div>
-                  <h4 className="font-medium text-destructive">Error Fetching Data</h4>
-                  <p className="text-muted-foreground">Unable to load applicant data from Merge API. Please try again later.</p>
-                </div>
-              </div>
-            </div>
             <ApplicantInfoSkeleton />
           </div>
         </div>
@@ -83,8 +81,21 @@ export default function ApplicantPortal({
     );
   }
 
+  // Check if we have partial data (e.g., candidate info but missing job info)
+  const hasPartialData = mergeApplicant.candidate && (!mergeApplicant.job || !mergeApplicant.application);
+
   return (
     <div className="space-y-4">
+      {hasPartialData && (
+        <Alert intent="danger" className="mb-6">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Incomplete Data</AlertTitle>
+          <AlertDescription>
+            Some applicant information may be missing or incomplete. This could affect the display of certain features.
+          </AlertDescription>
+        </Alert>
+      )}
+      
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="flex-1 space-y-6">
           <div>
@@ -96,11 +107,18 @@ export default function ApplicantPortal({
                 <ApplicantActions portalProps={portalProps} />
               </div>
             </div>
-
+            
+            {mergeApplicant.job && mergeApplicant.application && (
+              <div className="mt-6 bg-card rounded-lg">
+                <ApplicationTimeline portalProps={portalProps} />
+              </div>
+            )}
+            
+            {mergeApplicant.job && <ResumeViewer portalProps={portalProps} />}
+           
             {AI_summary ? (
               <div>
-             
-              <AnalysisDisplay portalProps={portalProps} />
+                <AnalysisDisplay portalProps={portalProps} />
               </div>
             ) : (
               <>
@@ -114,17 +132,11 @@ export default function ApplicantPortal({
                     <PlaceholderAnalysis />
                   </div>
                 ) : (
-                  <div className="rounded-lg bg-accent/10 border border-accent/20 p-4 mb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="flex-shrink-0">
-                        <span className="text-2xl">📝</span>
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-accent">Not Yet Invited</h4>
-                        <p className="text-muted-foreground">This candidate hasn't been invited to complete an assessment yet. Send an invitation to begin the evaluation process.</p>
-                      </div>
-                    </div>
-                  </div>
+                  <Alert intent="info" title="Not Yet Invited">
+                    <AlertDescription>
+                      This candidate hasn't been invited to complete an assessment yet. Send an invitation to begin the evaluation process.
+                    </AlertDescription>
+                  </Alert>
                 )}
               </>
             )}

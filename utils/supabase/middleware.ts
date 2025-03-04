@@ -1,3 +1,5 @@
+'use server'
+
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getUserRole, getCompany } from '@/utils/supabase/queries';
@@ -117,21 +119,16 @@ export async function handleRecruiterRedirects(
 
 export async function updateSession(request: NextRequest) {
   console.log('[Middleware] Updating session...');
-  // console.log('[Middleware] Initial request cookies:', request.cookies.getAll());
-
+  
   let supabaseResponse = NextResponse.next({
     request
   });
 
   const supabase = createClient();
-  // console.log('[Middleware] Created client:', supabase);
 
-  // IMPORTANT: Avoid writing any logic between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-  // issues with users being randomly logged out.
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
+  // Cache user data to avoid multiple calls
+  const userPromise = supabase.auth.getUser();
+  const { data: { user } } = await userPromise;
 
   console.log('[Middleware] Got user:', user ? 'Present' : 'None');
   console.log(
@@ -143,13 +140,13 @@ export async function updateSession(request: NextRequest) {
   const samlRedirect = await handleSamlRedirect(request);
   if (samlRedirect) return samlRedirect;
 
-  // Handle auth redirects
+  // Handle auth redirects using cached user
   const authRedirect = await handleAuthRedirects(request, user);
   if (authRedirect) {
     return authRedirect;
   }
 
-  // Handle recruiter-specific redirects if user is authenticated
+  // Handle recruiter-specific redirects using cached user
   if (user) {
     const recruiterRedirect = await handleRecruiterRedirects(
       request,
@@ -158,12 +155,14 @@ export async function updateSession(request: NextRequest) {
     );
     if (recruiterRedirect) return recruiterRedirect;
   }
+
   // Add debug headers
   supabaseResponse.headers.set(
     'x-debug-request-path',
     request.nextUrl.pathname
   );
   supabaseResponse.headers.set('x-debug-message', 'Middleware executed');
+  supabaseResponse.headers.set('x-user-present', user ? 'true' : 'false');
 
   console.log('here');
   return supabaseResponse;

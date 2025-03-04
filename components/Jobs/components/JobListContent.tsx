@@ -19,19 +19,15 @@ export function JobListContent({
 }: JobListContentProps) {
   return (
     <div className="space-y-4">
-      <div className="w-full border rounded-lg">
-        <div className="overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <JobTable
-              jobs={paginatedJobs}
-              sortField={state.sortField}
-              sortDirection={state.sortDirection}
-              onSort={actions.setSortField}
-              loading={loading}
-              visibleColumns={state.visibleColumns}
-            />
-          </div>
-        </div>
+      <div className="w-full border rounded-lg overflow-hidden">
+        <JobTable
+          jobs={paginatedJobs}
+          sortField={state.sortField}
+          sortDirection={state.sortDirection}
+          onSort={actions.setSortField}
+          loading={loading}
+          visibleColumns={state.visibleColumns}
+        />
       </div>
       {!loading && totalPages > 1 && (
         <JobListPagination

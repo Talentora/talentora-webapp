@@ -41,9 +41,11 @@ export async function fetchJobById(jobId: string) {
 
 
 
-// fetch job configuration data, and the job. Job ID is supabase/merge
+// fetch job configuration data, and the job. JobID is merge job id
 export async function fetchJobConfigurationData(jobId: string) {
+    console.log("reaches here")
    const accountToken = await getMergeApiKey();
+
       if (!accountToken) {
           throw new Error('Account token not found');
       }
@@ -63,8 +65,9 @@ export async function fetchJobConfigurationData(jobId: string) {
       });
       
       if (!response.ok) {
-        throw new Error(`Applications fetch failed: ${response.status}`);
+        throw new Error(`Jobs fetch failed: ${response.status}`);
       }
       
       return response.json();
 }
+

@@ -1,13 +1,11 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Navigation } from 'lucide-react';
-import ApplicantTable from '../../Applicants/ApplicantTable';
+import InviteApplicantsTable from '../../Applicants/InviteApplicantsTable';
 import { ApplicantCandidate } from '@/types/merge';
-import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
 
-export default function RecentApplicantsCard({ applicants, isLoading }: { applicants: ApplicantCandidate[], isLoading: boolean }) {
+export default function RecentApplicantsCard({ applicants, jobs, isLoading }: { applicants: ApplicantCandidate[], jobs: any[], isLoading: boolean }) {
 
   return (
     <Card className="p-5 rounded-2xl bg-background shadow-md shadow-[#5650F0]/20 dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
@@ -31,7 +29,7 @@ export default function RecentApplicantsCard({ applicants, isLoading }: { applic
             <Skeleton className="h-2 w-24" />
           </div>
         ) : (
-          <ApplicantTable applicants={applicants} title={''} />
+          <InviteApplicantsTable applicants={applicants} jobs={jobs} />
         )}
       </CardContent>
     </Card>
