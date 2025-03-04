@@ -175,12 +175,29 @@ type Recruiter = {
 };
 
 // ApplicantCandidate type
-// export type ApplicantCandidate = Application & {
 export type ApplicantCandidate = {
   application: Application;
   candidate: Candidate;
   job: Job;
   interviewStages: JobInterviewStage;
+  
+  // Supabase data
+  applicant?: {
+    id: string;
+    merge_applicant_id: string;
+  };
+  AI_summary?: {
+    id: string;
+    overall_summary: any;
+    emotion_eval: any;
+    text_eval: any;
+    transcript_summary: string;
+  };
+  
+  // Status flags
+  hasSupabaseData?: boolean;
+  hasMergeData?: boolean;
+  hasAISummary?: boolean;
 };
 
 export type Job = SimpleJob & { departments: Department[]; offices: Office[] };

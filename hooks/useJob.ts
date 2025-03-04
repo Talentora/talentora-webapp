@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { EnrichedJob } from '@/components/Jobs/types';
 import { ApplicantCandidate } from '@/types/merge';
 import { fetchJobById } from '@/server/jobs';
-import { fetchApplicationsData } from '@/server/applications';
+import { fetchAllApplications } from '@/server/applications';
+import { fetchJobConfigurationData } from '@/server/jobs';
 
 export function useJob(jobId: string) {
   const [job, setJob] = useState<EnrichedJob | null>(null);
@@ -39,7 +40,7 @@ export function useJob(jobId: string) {
     
     setApplicantsLoading(true);
     try {
-      const allApps = await fetchApplicationsData();
+      const allApps = await fetchAllApplications();
       const filteredApps = allApps.filter((app: ApplicantCandidate) => app.job.id === jobId);
       if (isMounted.current) {
         setApplicants(filteredApps);
