@@ -45,6 +45,32 @@
 /* Remove any default styling that might cause the black line */
 .react-flow__node {
   outline: none;
+  margin: 15px !important; /* Increase margin between nodes */
+}
+
+/* Fixed width for all nodes */
+.react-flow__node-input,
+.react-flow__node-question,
+.react-flow__node-section,
+.react-flow__node-conclusion,
+.input-node,
+.question-node,
+.section-node,
+.conclusion-node {
+  width: 250px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+  background: white;
+}
+
+/* Ensure content wraps properly */
+.node-content {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .react-flow__handle::after,
@@ -82,4 +108,19 @@
   background: #0080ff;
   transform: scale(1.2);
   transition: all 0.2s ease;
+}
+
+/* Node container styles */
+.flow-container {
+  padding: 20px;
+}
+
+/* Adjust spacing for react flow */
+.react-flow__viewport {
+  padding: 20px;
+}
+
+/* Ensure consistent spacing between nodes in the flow */
+.react-flow__edge {
+  margin: 5px;
 } 

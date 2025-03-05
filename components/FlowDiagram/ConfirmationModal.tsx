@@ -2,22 +2,27 @@ interface ConfirmationModalProps {
   isOpen: boolean;
   title: string;
   message: string;
-  confirmText: string;
-  cancelText: string;
+  confirmText?: string;
+  cancelText?: string;
   onConfirm: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
+  onClose: () => void;
 }
 
 export default function ConfirmationModal({
   isOpen,
   title,
   message,
-  confirmText,
-  cancelText,
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
   onConfirm,
-  onCancel
+  onCancel,
+  onClose
 }: ConfirmationModalProps) {
   if (!isOpen) return null;
+
+  // If onCancel is not provided, use onClose instead
+  const handleCancel = onCancel || onClose;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -28,7 +33,7 @@ export default function ConfirmationModal({
         <div className="flex justify-end gap-3">
           <button 
             className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded transition-colors"
-            onClick={onCancel}
+            onClick={handleCancel}
           >
             {cancelText}
           </button>
