@@ -86,7 +86,7 @@ const ResumeViewer = ({ portalProps }: ResumeViewerProps) => {
     if (isLoading) {
         return (
             <div className="space-y-4">
-                <Skeleton className="h-[600px] w-full" />
+                <Skeleton className="h-[700px] w-full rounded-lg" />
             </div>
         );
     }
@@ -115,20 +115,23 @@ const ResumeViewer = ({ portalProps }: ResumeViewerProps) => {
     };
 
     return (
-        <div>
+        <div className="bg-background rounded-lg border shadow-sm">
             <div 
-                className="flex items-center justify-between cursor-pointer" 
+                className="flex items-center justify-between cursor-pointer p-4 border-b" 
                 onClick={() => setIsExpanded(!isExpanded)}
             >
                 <h2 className="text-2xl font-semibold">Resume</h2>
-                {isExpanded ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
+                <div className="flex items-center gap-2">
+                    
+                    {isExpanded ? <ChevronUp className="h-6 w-6" /> : <ChevronDown className="h-6 w-6" />}
+                </div>
             </div>
             
             {isExpanded && (
-                <div className="rounded-lg p-4">
-                    <div className="w-full h-[600px]">
+                <div className="p-4">
+                    <div className="w-full h-[700px]">
                         {isLoading ? (
-                            <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                            <div className="w-full h-full flex items-center justify-center bg-gray-50 rounded-lg">
                                 <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
                             </div>
                         ) : displayUrl ? (
@@ -151,7 +154,7 @@ const ResumeViewer = ({ portalProps }: ResumeViewerProps) => {
                                 </div>
                             </object>
                         ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                            <div className="w-full h-full flex items-center justify-center bg-gray-50 rounded-lg">
                                 <div className="text-center">
                                     <p className="text-muted-foreground mb-2">Failed to load PDF preview</p>
                                     {resumeData?.file_url && (

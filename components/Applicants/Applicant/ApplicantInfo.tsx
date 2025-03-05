@@ -9,12 +9,17 @@ import {
 } from '@/components/ui/card';
 import { CalendarDays, Mail, Phone } from 'lucide-react';
 import Link from 'next/link';
+import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
+import ApplicantActions from './ApplicantActions';
+
 interface ApplicantInfoProps {
   ApplicantCandidate: ApplicantCandidate | null;
+  portalProps?: portalProps;
 }
 
 export default function ApplicantInfo({
-  ApplicantCandidate
+  ApplicantCandidate,
+  portalProps
 }: ApplicantInfoProps) {
   if (!ApplicantCandidate) {
     return null;
@@ -29,51 +34,60 @@ export default function ApplicantInfo({
   const jobName = ApplicantCandidate.job.name || 'No job specified';
   const appliedAt = ApplicantCandidate.application.created_at ? new Date(ApplicantCandidate.application.created_at).toLocaleDateString() : 'Unknown date';
   return (
-    <Card className="border-none">
-      <CardHeader className="flex flex-row items-center gap-4">
-        <Avatar className="w-16 h-16">
-          <AvatarImage alt={candidateName} src={avatarUrl} />
-          <AvatarFallback>
-            {candidateName
-              .split(' ')
-              .map((n) => n[0])
-              .join('')}
-          </AvatarFallback>
-        </Avatar>
-        <div>
-          <CardTitle>{candidateName}</CardTitle>
-          <CardDescription>
-            <Link href={`/jobs/${ApplicantCandidate.job.id}`} className="hover:underline">
-              {jobName}
-            </Link>
-          </CardDescription>
+    <Card className="border rounded-3xl bg-background p-4">
+      <div className="flex justify-between">
+        <div className="flex-1">
+          <CardHeader className="flex flex-row items-center gap-4">
+            <Avatar className="w-16 h-16">
+              <AvatarImage alt={candidateName} src={avatarUrl} />
+              <AvatarFallback>
+                {candidateName
+                  .split(' ')
+                  .map((n) => n[0])
+                  .join('')}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <CardTitle>{candidateName}</CardTitle>
+              <CardDescription>
+                <Link href={`/jobs/${ApplicantCandidate.job.id}`} className="hover:underline">
+                  {jobName}
+                </Link>
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                <span className="text-sm">{email}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4" />
+                <span className="text-sm">{phoneNumber}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CalendarDays className="w-4 h-4" />
+                <span className="text-sm">
+                  Applied on{' '}
+                  {appliedAt}
+                </span>
+              </div>
+              {/* <div className="flex items-center">
+                <span className="text-sm font-medium">Current Stage: </span>
+                <span className="text-sm font-bold">
+                  {ApplicantCandidate.interviewStages.name}
+                </span>
+              </div> */}
+            </div>
+          </CardContent>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-row justify-between">
-          <div className="flex items-center gap-2">
-            <Mail className="w-4 h-4" />
-            <span className="text-sm">{email}</span>
+        {portalProps && (
+          <div className="w-64 flex items-center">
+            <ApplicantActions portalProps={portalProps} />
           </div>
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4" />
-            <span className="text-sm">{phoneNumber}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CalendarDays className="w-4 h-4" />
-            <span className="text-sm">
-              Applied on{' '}
-              {appliedAt}
-            </span>
-          </div>
-          {/* <div className="flex items-center">
-            <span className="text-sm font-medium">Current Stage: </span>
-            <span className="text-sm font-bold">
-              {ApplicantCandidate.interviewStages.name}
-            </span>
-          </div> */}
-        </div>
-      </CardContent>
+        )}
+      </div>
     </Card>
   );
 }

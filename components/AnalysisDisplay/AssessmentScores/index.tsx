@@ -15,7 +15,7 @@ const ScoreCircle = ({ score }: { score: number | null }) => {
   else if (score >= 60) backgroundColor = "bg-yellow-500"; // Warning
   else backgroundColor = "bg-red-500"; // Destructive
   
-  return <div className={`w-20 h-20 flex items-center justify-center rounded-full ${backgroundColor} text-white`}>{score}</div>;
+  return <div className={`w-20 h-20 flex items-center justify-center rounded-full ${backgroundColor} text-white text-xl font-semibold`}>{score}</div>;
 };
 
 const Page = ({ portalProps }: AssessmentScoresProps) => {
@@ -40,9 +40,10 @@ const Page = ({ portalProps }: AssessmentScoresProps) => {
                 <CardTitle className="text-lg font-semibold">Assessment Scores</CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="grid grid-cols-2 gap-6">
-                    <div className="flex flex-col items-center">
+                <div className="grid grid-cols-2 gap-8 p-4">
+                    <div className="flex flex-col items-center justify-center p-3">
                         <ScoreCircle score={overallScore} />
+                        <span className="mt-3 text-sm font-medium">Overall</span>
                     </div>
                 </div>
             </CardContent>
@@ -57,7 +58,7 @@ Page.Skeleton = function AssessmentScoresSkeleton() {
             <CardHeader>
                 <CardTitle className="text-sm font-medium">Assessment Scores</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6">
                 <Skeleton className="h-[200px] w-full" />
             </CardContent>
         </Card>

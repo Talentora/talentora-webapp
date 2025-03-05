@@ -39,12 +39,13 @@ const Page = ({ portalProps }: AssessmentSummaryProps) => {
     const hasResumeScores = !!resumeAnalysis;
     
     return (
-        <Card className="p-4 border-none">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className="p-4 border bg-background">
+            {/* <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-lg font-semibold">Assessment Summary</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-2">
-                <div className="text-base mb-4">
+            </CardHeader> */}
+            <CardContent className="pt-2 flex flex-row gap-10">
+                <div className="text-base w-1/2">
+                    <h1 className="text-lg font-semibold">Assessment Summary</h1>
                     {explanation ? (
                         <p className="whitespace-pre-line">{explanation}</p>
                     ) : (
@@ -53,8 +54,8 @@ const Page = ({ portalProps }: AssessmentSummaryProps) => {
                 </div>
                 
                 {hasResumeScores && (
-                    <div className="mt-6 space-y-4">
-                        <h3 className="text-sm font-medium mb-2">Resume Assessment</h3>
+                    <div className="space-y-4 w-1/2">
+                    <h1 className="text-lg font-semibold">Assessment Summary</h1>
                         
                         <div className="space-y-3">
                             <ScoreItem 

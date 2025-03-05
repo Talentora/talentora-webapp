@@ -3,10 +3,55 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { ParsedOverallSummary } from "@/types/analysis";
+import { PieChart, Pie, Cell, ResponsiveContainer, Label, LabelList } from "recharts";
 
 interface AssessmentScoreProps {
     portalProps: portalProps;
 }
+
+const ScoreDonut = ({ score, label }: { score: number; label: string }) => {
+    const donutData = [
+        { name: "Score", value: score },
+        { name: "Remaining", value: 100 - score }
+    ];
+    
+    return (
+        <div className="space-y-1">
+            <div className="h-20 w-full" >
+                <ResponsiveContainer width="100%" height="100%">
+                    <PieChart margin={{ top: 0, right: 10, bottom: 0, left: 10 }}>
+                        <Pie
+                            data={donutData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={22}
+                            outerRadius={30}
+                            paddingAngle={2}
+                            dataKey="value"
+                            startAngle={90}
+                            endAngle={-270}
+                        >
+                            <Label 
+                                value={`${score}/100`} 
+                                position="center"
+                                style={{ 
+                                    fontSize: '14px',
+                                    fontWeight: 'bold',
+                                    fill: '#000'
+                                }}
+                            />
+                            <Cell fill={getVibrantColorForDonut(score)} />
+                            <Cell fill="#f1f5f9" />
+                        </Pie>
+                    </PieChart>
+                </ResponsiveContainer>
+            </div>
+            <div className="flex justify-between">
+                <span className="text-xs font-medium">{label}</span>
+            </div>
+        </div>
+    );
+};
 
 const AssessmentScore = ({ portalProps }: AssessmentScoreProps) => {
     const { AI_summary } = portalProps;
@@ -63,61 +108,14 @@ const AssessmentScore = ({ portalProps }: AssessmentScoreProps) => {
     }
 
     return (
-        <Card className="p-4 border-none">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className="p-3 border rounded-3xl bg-background">
+            <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg font-semibold">Assessment Scores</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6 pt-2">
-                <div className="space-y-2">
-                    <div className="flex justify-between">
-                        <span className="font-medium">Overall Match Score</span>
-                        <span className="font-bold text-lg">{overallScore}/100</span>
-                    </div>
-                    <div className="relative h-2.5 w-full bg-blue-50 rounded-md overflow-hidden">
-                        <div
-                            className="h-full rounded-md transition-all duration-500 ease-in-out"
-                            style={{
-                                background: getVibrantColorForScore(overallScore),
-                                width: `${overallScore}%`,
-                                marginLeft: `${100 - overallScore}%`, // Starts from right side
-                            }}
-                        />
-                    </div>
-                </div>
-                
-                <div className="space-y-2">
-                    <div className="flex justify-between">
-                        <span className="font-medium">Emotional Analysis</span>
-                        <span>{emotionScore}/100</span>
-                    </div>
-                    <div className="relative h-2 w-full bg-blue-50 rounded-md overflow-hidden">
-                        <div
-                            className="h-full rounded-md transition-all duration-500 ease-in-out"
-                            style={{
-                                background: getVibrantColorForScore(emotionScore),
-                                width: `${emotionScore}%`,
-                                marginLeft: `${100 - emotionScore}%`, // Starts from right side
-                            }}
-                        />
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <div className="flex justify-between">
-                        <span className="font-medium">Lexical Analysis</span>
-                        <span>{textScore}/100</span>
-                    </div>
-                    <div className="relative h-2 w-full bg-blue-50 rounded-md overflow-hidden">
-                        <div
-                            className="h-full rounded-md transition-all duration-500 ease-in-out"
-                            style={{
-                                background: getVibrantColorForScore(textScore),
-                                width: `${textScore}%`,
-                                marginLeft: `${100 - textScore}%`, // Starts from right side
-                            }}
-                        />
-                    </div>
-                </div>
+            <CardContent className="flex flex-row items-center justify-evenly px-6">
+                <ScoreDonut score={overallScore} label="Overall" />
+                <ScoreDonut score={emotionScore} label="Emotional" />
+                <ScoreDonut score={textScore} label="Lexical" />
             </CardContent>
         </Card>
     );
@@ -130,7 +128,14 @@ function getColorForScore(score: number): string {
     return '#22c55e'; // green
 }
 
-// New function with more vibrant colors
+// Function for donut chart colors
+function getVibrantColorForDonut(score: number): string {
+    if (score < 40) return '#ff0000'; // vibrant red
+    if (score < 70) return '#ff8800'; // vibrant orange
+    return '#22c55e'; // vibrant green
+}
+
+// Original function with gradients (kept for reference)
 function getVibrantColorForScore(score: number): string {
     if (score < 40) return 'linear-gradient(90deg, #ff4d4d, #ff0000)'; // vibrant red
     if (score < 70) return 'linear-gradient(90deg, #ffaa33, #ff8800)'; // vibrant orange
