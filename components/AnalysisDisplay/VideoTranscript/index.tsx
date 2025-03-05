@@ -47,7 +47,8 @@ const VideoTranscript = ({ portalProps }: VideoTranscriptProps) => {
     const { AI_summary: aiSummary } = portalProps;
     // Access properties directly instead of type casting
     const transcriptSummary = aiSummary?.transcript_summary;
-    const transcriptId = aiSummary?.["batch-processor_transcript_id"];
+    const transcriptId = aiSummary?.batch_processor_transcript_id;
+    console.log("reaches here", aiSummary)
     const recordingId = aiSummary?.recording_id;
 
     // Fetch recording data
@@ -63,9 +64,11 @@ const VideoTranscript = ({ portalProps }: VideoTranscriptProps) => {
                 return;
             }
             try {
+
                 const response = await fetch(`/api/bot/recordings/${recordingId}`);
                 if (!response.ok) throw new Error('Failed to fetch recording');
                 const data = await response.json();
+
                 setRecording(data);
             } catch (error) {
                 console.error('Error fetching recording:', error);
@@ -90,6 +93,7 @@ const VideoTranscript = ({ portalProps }: VideoTranscriptProps) => {
                 return;
             }
             try {
+                console.log("fetching transcrip")
                 const response = await fetch(`/api/bot/transcription/${transcriptId}`, {
                     headers: {
                         'x-transcript-format': 'txt'
