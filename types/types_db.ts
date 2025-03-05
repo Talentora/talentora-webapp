@@ -20,8 +20,7 @@ export type Database = {
           recording_id: string | null
           room_name: string | null
           text_eval: Json | null
-          transcript_summary: string | null,
-          resume_analysis: Json | null;
+          transcript_summary: string | null
         }
         Insert: {
           application_id?: string | null
