@@ -164,6 +164,5 @@ export async function updateSession(request: NextRequest) {
   supabaseResponse.headers.set('x-debug-message', 'Middleware executed');
   supabaseResponse.headers.set('x-user-present', user ? 'true' : 'false');
 
-  console.log('here');
   return supabaseResponse;
 }

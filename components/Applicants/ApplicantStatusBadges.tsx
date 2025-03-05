@@ -8,7 +8,7 @@ export const hasCompletedInterview = (applicant: any): boolean => {
   
   // Check if it's an empty array
   if (Array.isArray(applicant.AI_summary) && applicant.AI_summary.length === 0) return false;
-  
+
   // If it's an array with content or an object, consider it valid
   return true;
 };

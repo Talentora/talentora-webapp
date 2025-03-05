@@ -19,6 +19,7 @@ type Application = {
     linked_account_defined_targets: Record<string, any>;
   };
   remote_data: any | null;
+  supabase_application_id: string | null;
 };
 
 type Activity = {

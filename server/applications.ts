@@ -11,8 +11,8 @@ export async function fetchApplicationData(mergeApplicationId: string) {
       headers: {
         'Content-Type': 'application/json'
       },
-      cache: 'force-cache',
-      next: { revalidate: 3600 }
+      // cache: 'force-cache',
+      // next: { revalidate: 3600 }
     });
     
     if (!response.ok) {

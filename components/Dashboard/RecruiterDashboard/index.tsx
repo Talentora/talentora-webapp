@@ -38,13 +38,13 @@ export default function RecruiterDashboard() {
     queryFn: fetchAllApplications,
   });
 
-  console.log(applicants, "applicants2")
 
   const { data: mergeJobs = [], isLoading: jobsLoading } = useQuery<Job[]>({
     queryKey: ['jobs'],
     queryFn: fetchJobsData,
     staleTime: 5 * 60 * 1000
   });
+
 
   const factWindow = 90;
 

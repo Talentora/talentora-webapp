@@ -4,6 +4,9 @@ export interface TextEvaluation {
 }
 
 export interface EmotionEvaluation {
+    explanation: string;
+    overall_score: number;
+    // Add timeline if it becomes available in future data
     timeline?: any;
     averages?: {
         face: {
@@ -21,20 +24,18 @@ export interface EmotionEvaluation {
     };
 }
 
-export interface OverallSummary {
+export interface ParsedOverallSummary {
+    score: number;
     explanation: string;
-    overall_score: number;
 }
 
 export interface AISummaryApplicant {
-    text_eval?: TextEvaluation | null;
-    emotion_eval?: EmotionEvaluation | null;
-    overall_summary?: OverallSummary | null;
-    transcript_summary?: string | null;
-    recording_id?: string | null;
-    application_id?: string | null;
-    room_name?: string | null;
-    created_at?: string;
-    id?: string;
-    "batch-processor_transcript_id"?: string | null;
+    id: string;
+    recording_id: string;
+    room_name: string;
+    batch_processor_transcript_id: string;
+    overall_summary: string;
+    transcript_summary: string;
+    emotion_eval: EmotionEvaluation;
+    text_eval: TextEvaluation;
 }

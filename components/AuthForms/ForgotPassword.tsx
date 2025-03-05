@@ -31,6 +31,7 @@ export default function ForgotPassword({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const searchParams = useSearchParams();
   const role: string = searchParams.get('role') ?? 'unknown';
+  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true); // Disable the button while the request is being handled
     await handleRequest(e, requestPasswordUpdate, router);

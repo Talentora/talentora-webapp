@@ -35,6 +35,7 @@ export default function ResumeAnalysisScores({ portalProps }: ResumeAnalysisScor
   
   // Extract resume analysis data
   const resumeAnalysis = AI_summary.resume_analysis || {};
+  console.log(resumeAnalysis, "resumeAnalysis");
   
   // Get scores with fallbacks
   const resumeScore = resumeAnalysis.resumeScore || null;

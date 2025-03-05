@@ -113,9 +113,15 @@ export async function requestPasswordUpdate(formData: FormData) {
 
   const supabase = createClient();
 
-  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: callbackURL
-  });
+
+  const { data, error } = await supabase.auth.signInWithOtp({
+    email: email,
+    options: {
+      emailRedirectTo: process.env.NEXT_PUBLIC_SITE_URL
+    }
+  })
+  
+  console.log(data, error);
 
   if (error) {
     redirectPath = getErrorRedirect(

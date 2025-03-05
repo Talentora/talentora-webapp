@@ -18,7 +18,7 @@ interface EmotionTimelineProps {
 
 const EmotionTimeline = ({ timeline, type }: EmotionTimelineProps) => {
     const [selectedEmotions, setSelectedEmotions] = useState<string[]>([]);
-    const [windowSizeFactor, setWindowSizeFactor] = useState(0.01);
+    const [windowSizeFactor, setWindowSizeFactor] = useState(0.1); // Changed default to 0.1
     const [open, setOpen] = useState(false);
     const [allEmotions, setAllEmotions] = useState<string[]>([]);
 
@@ -148,45 +148,35 @@ const EmotionTimeline = ({ timeline, type }: EmotionTimelineProps) => {
                         </PopoverContent>
                     </Popover>
                 </div>
-                {allEmotions.length > 0 && (
-                    <div className="flex-1">
-                        <div className="space-y-2">
-                            <label className="text-sm">Smoothing: {windowSizeFactor}</label>
-                            <Slider
-                                value={[windowSizeFactor]}
-                                onValueChange={([value]) => setWindowSizeFactor(value)}
-                                min={0.001}
-                                max={0.1}
-                                step={0.001}
-                            />
-                        </div>
-                    </div>
-                )}
+                {/* Removed the slider UI for smoothing since we're using fixed value */}
             </div>
 
             {selectedEmotions.length > 0 && (
-                <ChartContainer config={config}>
-                    <LineChart data={data}>
-                        <XAxis 
-                            dataKey="time" 
-                            label={{ value: 'Time (seconds)', position: 'bottom' }}
-                        />
-                        <YAxis 
-                            label={{ value: 'Intensity', angle: -90, position: 'left' }}
-                        />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                        {selectedEmotions.map((emotion, index) => (
-                            <Line
-                                key={emotion}
-                                type="monotone"
-                                dataKey={emotion}
-                                stroke={colors[index % colors.length]}
-                                strokeWidth={2}
-                                dot={false}
+                <div className="w-full" style={{ overflow: 'hidden' }}> {/* Added style to remove scrollbar */}
+                    <ChartContainer config={config}>
+                        <LineChart data={data} margin={{ top: 5, right: 20, left: 20, bottom: 25 }}>
+                            <XAxis 
+                                dataKey="time" 
+                                label={{ value: 'Time (seconds)', position: 'bottom' }}
                             />
-                        ))}
-                    </LineChart>
-                </ChartContainer>
+                            <YAxis 
+                                label={{ value: 'Intensity', angle: -90, position: 'left' }}
+                                domain={[0, 1]}
+                            />
+                            <ChartTooltip content={<ChartTooltipContent />} />
+                            {selectedEmotions.map((emotion, index) => (
+                                <Line
+                                    key={emotion}
+                                    type="monotone"
+                                    dataKey={emotion}
+                                    stroke={colors[index % colors.length]}
+                                    strokeWidth={2}
+                                    dot={false}
+                                />
+                            ))}
+                        </LineChart>
+                    </ChartContainer>
+                </div>
             )}
         </div>
     );
@@ -194,7 +184,7 @@ const EmotionTimeline = ({ timeline, type }: EmotionTimelineProps) => {
 
 const Page = ({ timeline }: { timeline: any }) => {
     return (
-        <div className="space-y-8">
+        <div className="space-y-8" style={{ overflow: 'hidden' }}> {/* Added style to remove scrollbar */}
             <div>
                 <h3 className="text-lg font-medium mb-4">Facial Expressions</h3>
                 <EmotionTimeline timeline={timeline} type="face" />

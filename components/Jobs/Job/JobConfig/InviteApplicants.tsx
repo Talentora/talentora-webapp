@@ -40,21 +40,32 @@ const InviteApplicants = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [isInviting, setIsInviting] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<string>(
-    jobs?.[0]?.mergeJob.id ?? ''
+    jobs?.[0]?.id ?? ''
   );
   const { toast } = useToast();
 
   const filteredApplicants = applicants.filter(
-    (applicant) =>
-      applicant.candidate.first_name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      applicant.candidate.last_name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      applicant.candidate.email_addresses[0].value
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
+    (applicant) => {
+      // Only show applicants that don't have a supabase_application_id (not invited yet)
+      const notInvitedYet = !applicant.application.supabase_application_id;
+      
+      // First check if we need to filter by job ID (only when not in single job mode and a job is selected)
+      const jobIdMatch = singleJobFlag || !selectedJobId || applicant.job.id === selectedJobId;
+
+      // Then apply the name/email search filter
+      const searchMatch = 
+        applicant.candidate.first_name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        applicant.candidate.last_name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        applicant.candidate.email_addresses[0].value
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+          
+      return notInvitedYet && jobIdMatch && searchMatch;
+    }
   );
 
   const handleSelectAll = () => {
@@ -186,11 +197,11 @@ const InviteApplicants = ({
             <SelectContent>
               {jobs.map((job) => (
                 <SelectItem
-                  key={job.mergeJob.id}
-                  value={job.mergeJob.id}
+                  key={job.id}
+                  value={job.id}
                   className="hover:bg-blue-50 cursor-pointer py-2 px-4"
                 >
-                  {job.mergeJob.name}
+                  {job.name}
                 </SelectItem>
               ))}
             </SelectContent>

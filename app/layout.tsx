@@ -57,11 +57,11 @@ export default async function RootLayout({ children }: PropsWithChildren) {
                 id="skip"
                 className={`flex-1 min-h-screen`}
               >
-                <div className="sticky top-0 z-[9999] w-full bg-background/95 backdrop-blur">
+                <div className="sticky top-0 z-40 w-full bg-background/95">
                   <Navbar visible={isSidebarVisible} />
                   {isSidebarVisible && <BreadcrumbsContainer />}
                 </div>
-                <div>
+                <div className="mt-2">
                   <Suspense fallback={<Loading />}>
                     {children}
                   </Suspense>

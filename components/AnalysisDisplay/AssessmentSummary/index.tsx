@@ -1,6 +1,5 @@
 import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface AssessmentSummaryProps {
@@ -10,23 +9,36 @@ interface AssessmentSummaryProps {
 const Page = ({ portalProps }: AssessmentSummaryProps) => {
     const { AI_summary } = portalProps;
     
-    if (!AI_summary) return <Skeleton className="h-[300px]" />;
+    if (!AI_summary) return <AssessmentSummarySkeleton />;
     
-    // Handle both array and object formats for backward compatibility
-    const isArray = Array.isArray(AI_summary);
+    // Extract the overall summary explanation
+    let explanation = "";
     
-    // Extract data safely with fallbacks
-    const explanation = isArray 
-        ? (AI_summary[0] as any)?.overall_summary?.explanation 
-        : typeof AI_summary.overall_summary === 'object' ? (AI_summary.overall_summary as any)?.explanation : undefined;
-
+    try {
+        // Try to parse the overall_summary if it's a string
+        if (typeof AI_summary.overall_summary === 'string') {
+            try {
+                const parsed = JSON.parse(AI_summary.overall_summary);
+                explanation = parsed.explanation || "";
+            } catch (e) {
+                console.error("Error parsing overall_summary JSON:", e);
+                explanation = AI_summary.overall_summary || "";
+            }
+        } else if (AI_summary.overall_summary && typeof AI_summary.overall_summary === 'object') {
+            // If it's already an object, access directly
+            explanation = (AI_summary.overall_summary as any).explanation || "";
+        }
+    } catch (e) {
+        console.error("Error extracting explanation:", e);
+        explanation = "Unable to load summary data.";
+    }
     
     return (
         <Card className="p-4 border-none">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-lg font-semibold">Assessment Summary</CardTitle>
             </CardHeader>
-            <CardContent >
+            <CardContent className="pt-2">
                 <div className="text-base">
                     {explanation ? (
                         <p className="whitespace-pre-line">{explanation}</p>
@@ -40,7 +52,7 @@ const Page = ({ portalProps }: AssessmentSummaryProps) => {
 };
 
 // Add Skeleton component for loading state
-Page.Skeleton = function AssessmentSummarySkeleton() {
+function AssessmentSummarySkeleton() {
     return (
         <Card>
             <CardHeader>
@@ -52,5 +64,7 @@ Page.Skeleton = function AssessmentSummarySkeleton() {
         </Card>
     );
 };
+
+Page.Skeleton = AssessmentSummarySkeleton;
 
 export default Page;

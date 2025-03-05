@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
           JSON.stringify(jobInterviewConfig.interview_questions)
         ],
         enable_recording: enableRecording,
-        mock: mock,
+        // mock: mock,
         bot_test: scoutTest,
         demo: demo
       }
@@ -78,14 +78,14 @@ export async function POST(request: NextRequest) {
     // console.log("Room URL:", roomUrl);
     // console.log("Room name:", roomName);
 
-    if (enableRecording) {
-      const aiSummaryResponse = await createAISummaryRecord(
-        roomName,
-        application.id
-      );
-      console.log('AI summary response:', aiSummaryResponse);
-      // await updateApplicationWithAISummaryId(application.id, aiSummaryResponse.id);
-    }
+    // if (enableRecording) {
+    //   const aiSummaryResponse = await createAISummaryRecord(
+    //     roomName,
+    //     application.id
+    //   );
+    //   console.log('AI summary response:', aiSummaryResponse);
+    //   // await updateApplicationWithAISummaryId(application.id, aiSummaryResponse.id);
+    // }
 
     console.log("RESPONSE: ", botData)
 

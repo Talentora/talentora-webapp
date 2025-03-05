@@ -12,7 +12,6 @@ type AI_summary = Tables<'AI_summary'>;
 export type portalProps = {
   AI_summary: AI_summary | null; 
   application: any | null;
-  job_interview_config: any | null;
   mergeApplicant: any | null;
   candidate: any | null;
   job: any | null;
@@ -55,7 +54,6 @@ export default function ApplicantPage({
   const [portalProps, setPortalProps] = useState<portalProps>({
     AI_summary: null,
     application: null,
-    job_interview_config: null,
     mergeApplicant: null,
     candidate: null,
     job: null,
@@ -70,12 +68,13 @@ export default function ApplicantPage({
         
         const temp = await fetchApplicationAISummary(params.id);
         const enrichedData = temp.data;
+        
+        console.log(enrichedData, "enricheddata");
 
         // Set portal props
         setPortalProps({
-          AI_summary: enrichedData.AI_summary,
+          AI_summary: enrichedData.ai_summary,
           application: enrichedData.application,
-          job_interview_config: null,
           mergeApplicant: {
             application: enrichedData.application,
             candidate: enrichedData.candidate,

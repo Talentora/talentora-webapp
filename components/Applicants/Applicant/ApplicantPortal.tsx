@@ -1,4 +1,3 @@
-import { ApplicantCandidate } from '@/types/merge';
 import ApplicantInfo from '@/components/Applicants/Applicant/ApplicantInfo';
 import ApplicantActions from '@/components/Applicants/Applicant/ApplicantActions';
 import { portalProps } from '@/app/(pages)/(restricted)/applicants/[id]/page';
@@ -59,8 +58,10 @@ const PlaceholderAnalysis = () => (
 export default function ApplicantPortal({
   portalProps
 }: ApplicantPortalProps) {
-  const {mergeApplicant, AI_summary, application, job_interview_config} = portalProps;
+  const {mergeApplicant, AI_summary, application} = portalProps;
+  console.log(AI_summary, "AI_summary");
 
+  ;
   if (!mergeApplicant || !mergeApplicant.candidate) {
     return (
       <div className="space-y-4">
