@@ -68,7 +68,7 @@ export default function ApplicantPage({
         
         const temp = await fetchApplicationAISummary(params.id);
         const enrichedData = temp.data;
-        
+
         console.log(enrichedData, "enricheddata");
 
         // Set portal props

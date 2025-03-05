@@ -73,29 +73,16 @@ const AssessmentScore = ({ portalProps }: AssessmentScoreProps) => {
                         <span className="font-medium">Overall Match Score</span>
                         <span className="font-bold text-lg">{overallScore}/100</span>
                     </div>
-                    <Progress 
-                        value={overallScore} 
-                        className="h-2.5" 
-                        style={{
-                            background: '#e5e7eb',
-                            '--progress-background': getColorForScore(overallScore)
-                        } as React.CSSProperties}
-                    />
-                </div>
-                
-                <div className="space-y-2">
-                    <div className="flex justify-between">
-                        <span className="font-medium">Lexical Analysis</span>
-                        <span>{textScore}/100</span>
+                    <div className="relative h-2.5 w-full bg-blue-50 rounded-md overflow-hidden">
+                        <div
+                            className="h-full rounded-md transition-all duration-500 ease-in-out"
+                            style={{
+                                background: getVibrantColorForScore(overallScore),
+                                width: `${overallScore}%`,
+                                marginLeft: `${100 - overallScore}%`, // Starts from right side
+                            }}
+                        />
                     </div>
-                    <Progress 
-                        value={textScore} 
-                        className="h-2" 
-                        style={{
-                            background: '#e5e7eb',
-                            '--progress-background': getColorForScore(textScore)
-                        } as React.CSSProperties}
-                    />
                 </div>
                 
                 <div className="space-y-2">
@@ -103,14 +90,33 @@ const AssessmentScore = ({ portalProps }: AssessmentScoreProps) => {
                         <span className="font-medium">Emotional Analysis</span>
                         <span>{emotionScore}/100</span>
                     </div>
-                    <Progress 
-                        value={emotionScore} 
-                        className="h-2" 
-                        style={{
-                            background: '#e5e7eb',
-                            '--progress-background': getColorForScore(emotionScore)
-                        } as React.CSSProperties}
-                    />
+                    <div className="relative h-2 w-full bg-blue-50 rounded-md overflow-hidden">
+                        <div
+                            className="h-full rounded-md transition-all duration-500 ease-in-out"
+                            style={{
+                                background: getVibrantColorForScore(emotionScore),
+                                width: `${emotionScore}%`,
+                                marginLeft: `${100 - emotionScore}%`, // Starts from right side
+                            }}
+                        />
+                    </div>
+                </div>
+
+                <div className="space-y-2">
+                    <div className="flex justify-between">
+                        <span className="font-medium">Lexical Analysis</span>
+                        <span>{textScore}/100</span>
+                    </div>
+                    <div className="relative h-2 w-full bg-blue-50 rounded-md overflow-hidden">
+                        <div
+                            className="h-full rounded-md transition-all duration-500 ease-in-out"
+                            style={{
+                                background: getVibrantColorForScore(textScore),
+                                width: `${textScore}%`,
+                                marginLeft: `${100 - textScore}%`, // Starts from right side
+                            }}
+                        />
+                    </div>
                 </div>
             </CardContent>
         </Card>
@@ -122,6 +128,13 @@ function getColorForScore(score: number): string {
     if (score < 40) return '#ef4444'; // red
     if (score < 70) return '#f59e0b'; // amber
     return '#22c55e'; // green
+}
+
+// New function with more vibrant colors
+function getVibrantColorForScore(score: number): string {
+    if (score < 40) return 'linear-gradient(90deg, #ff4d4d, #ff0000)'; // vibrant red
+    if (score < 70) return 'linear-gradient(90deg, #ffaa33, #ff8800)'; // vibrant orange
+    return 'linear-gradient(90deg, #4ade80, #22c55e)'; // vibrant green
 }
 
 function AssessmentScoreSkeleton() {
