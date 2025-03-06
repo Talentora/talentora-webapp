@@ -48,7 +48,7 @@ const VideoTranscript = ({ portalProps }: VideoTranscriptProps) => {
     // Access properties directly instead of type casting
     const transcriptSummary = aiSummary?.transcript_summary;
     const transcriptId = aiSummary?.batch_processor_transcript_id;
-    console.log("reaches here", aiSummary)
+
     const recordingId = aiSummary?.recording_id;
 
     // Fetch recording data
