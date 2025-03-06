@@ -23,6 +23,7 @@ export default function JobPortal() {
     );
   }, [enrichedApplications]);
 
+  console.log(enrichedApplications, 'enrichedApplications');
   return (
     <div className="min-h-screen">
       <header className="py-8 px-6">

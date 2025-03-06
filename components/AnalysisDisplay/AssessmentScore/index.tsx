@@ -43,6 +43,7 @@ const AssessmentScore = ({ portalProps }: AssessmentScoreProps) => {
             }
         } else if (AI_summary.text_eval && typeof AI_summary.text_eval === 'object') {
             textScore = (AI_summary.text_eval as any).overall_score || 0;
+            console.log("here23")
         }
         
         // Parse emotion_eval score
