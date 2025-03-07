@@ -15,7 +15,6 @@ export async function redirectToPath(path: string) {
   return redirect(path);
 }
 export async function SignOut() {
-
   const cookieStore = cookies();
   const supabase = createClient();
 
@@ -33,16 +32,15 @@ export async function SignOut() {
     'sb-access-token',
     'sb-refresh-token',
     'sb-auth-token',
-    'supabase-auth-token',
+    'supabase-auth-token'
   ];
 
-  cookiesToClear.forEach(name => {
+  cookiesToClear.forEach((name) => {
     cookieStore.delete(name);
   });
 
   return '/';
 }
-
 
 export async function signInWithEmail(formData: FormData) {
   const cookieStore = cookies();
@@ -115,9 +113,15 @@ export async function requestPasswordUpdate(formData: FormData) {
 
   const supabase = createClient();
 
-  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: callbackURL
-  });
+
+  const { data, error } = await supabase.auth.signInWithOtp({
+    email: email,
+    options: {
+      emailRedirectTo: process.env.NEXT_PUBLIC_SITE_URL
+    }
+  })
+  
+  console.log(data, error);
 
   if (error) {
     redirectPath = getErrorRedirect(
@@ -162,10 +166,16 @@ export async function signInWithPassword(formData: FormData) {
       'Sign in failed.',
       error.message
     );
-    redirectPath = `/signin/password_signin?role=${role}`
+    redirectPath = `/signin/password_signin?role=${role}`;
   } else if (data.user) {
-    cookieStore.set('preferredSignInView', 'password_signin', { path: '/dashboard' });
-    redirectPath = getStatusRedirect('/dashboard', 'Success!', 'You are now signed in.');
+    cookieStore.set('preferredSignInView', 'password_signin', {
+      path: '/dashboard'
+    });
+    redirectPath = getStatusRedirect(
+      '/dashboard',
+      'Success!',
+      'You are now signed in.'
+    );
   } else {
     redirectPath = getErrorRedirect(
       '/signin/password_signin',
@@ -234,8 +244,7 @@ export async function signUp(formData: FormData) {
   });
 
   if (error) {
-
-    redirectPath = `/signin/signup?role=${role}`
+    redirectPath = `/signin/signup?role=${role}`;
     // redirectPath = getStatusRedirect(
     //   `/signin/signup?role=${role}`,
     //   'Sign up failed.',
@@ -243,7 +252,7 @@ export async function signUp(formData: FormData) {
     // );
   } else if (data.session) {
     console.log('Sign-up successful with active session.');
-    redirectPath = `/signin/signup?role=${role}`
+    redirectPath = `/signin/signup?role=${role}`;
 
     // redirectPath = getStatusRedirect(
     //   '/settings/onboarding',
@@ -261,7 +270,6 @@ export async function signUp(formData: FormData) {
       'Sign up failed.',
       'There is already an account associated with this email address. Try resetting your password.'
     );
-
   } else if (data.user) {
     console.log('Sign-up successful: Email confirmation required.');
     redirectPath = getStatusRedirect(

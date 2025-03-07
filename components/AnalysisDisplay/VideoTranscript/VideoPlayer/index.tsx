@@ -77,6 +77,7 @@ export default function VideoPlayer({ recording }: VideoPlayerProps) {
   };
 
   useEffect(() => {
+    console.log("fethcing recording url")
     fetchVideoUrl();
   }, [recording?.id, retryCount]);
 

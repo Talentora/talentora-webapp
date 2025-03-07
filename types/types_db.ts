@@ -12,36 +12,39 @@ export type Database = {
       AI_summary: {
         Row: {
           application_id: string | null
-          "batch-processor_transcript_id": string | null
+          batch_processor_transcript_id: string | null
           created_at: string
           emotion_eval: Json | null
           id: string
           overall_summary: Json | null
           recording_id: string | null
+          resume_analysis: Json | null
           room_name: string | null
           text_eval: Json | null
           transcript_summary: string | null
         }
         Insert: {
           application_id?: string | null
-          "batch-processor_transcript_id"?: string | null
+          batch_processor_transcript_id?: string | null
           created_at?: string
           emotion_eval?: Json | null
           id?: string
           overall_summary?: Json | null
           recording_id?: string | null
+          resume_analysis?: Json | null
           room_name?: string | null
           text_eval?: Json | null
           transcript_summary?: string | null
         }
         Update: {
           application_id?: string | null
-          "batch-processor_transcript_id"?: string | null
+          batch_processor_transcript_id?: string | null
           created_at?: string
           emotion_eval?: Json | null
           id?: string
           overall_summary?: Json | null
           recording_id?: string | null
+          resume_analysis?: Json | null
           room_name?: string | null
           text_eval?: Json | null
           transcript_summary?: string | null
@@ -58,16 +61,25 @@ export type Database = {
       }
       applicants: {
         Row: {
+          email: string | null
+          full_name: string | null
           id: string
-          merge_applicant_id: string | null
+          merge_candidate_id: string | null
+          user_id: string | null
         }
         Insert: {
+          email?: string | null
+          full_name?: string | null
           id?: string
-          merge_applicant_id?: string | null
+          merge_candidate_id?: string | null
+          user_id?: string | null
         }
         Update: {
+          email?: string | null
+          full_name?: string | null
           id?: string
-          merge_applicant_id?: string | null
+          merge_candidate_id?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -77,18 +89,21 @@ export type Database = {
           created_at: string
           id: string
           job_id: string
+          merge_application_id: string | null
         }
         Insert: {
           applicant_id: string
           created_at?: string
           id?: string
           job_id: string
+          merge_application_id?: string | null
         }
         Update: {
           applicant_id?: string
           created_at?: string
           id?: string
           job_id?: string
+          merge_application_id?: string | null
         }
         Relationships: [
           {
@@ -315,6 +330,7 @@ export type Database = {
           job_id: string
           min_qual: Json[] | null
           preferred_qual: Json[] | null
+          prompt_graph: Json | null
           type: string | null
         }
         Insert: {
@@ -328,6 +344,7 @@ export type Database = {
           job_id?: string
           min_qual?: Json[] | null
           preferred_qual?: Json[] | null
+          prompt_graph?: Json | null
           type?: string | null
         }
         Update: {
@@ -341,6 +358,7 @@ export type Database = {
           job_id?: string
           min_qual?: Json[] | null
           preferred_qual?: Json[] | null
+          prompt_graph?: Json | null
           type?: string | null
         }
         Relationships: [

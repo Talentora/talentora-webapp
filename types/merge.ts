@@ -19,6 +19,7 @@ type Application = {
     linked_account_defined_targets: Record<string, any>;
   };
   remote_data: any | null;
+  supabase_application_id: string | null;
 };
 
 type Activity = {
@@ -184,7 +185,7 @@ export type ApplicantCandidate = {
   // Supabase data
   applicant?: {
     id: string;
-    merge_applicant_id: string;
+    merge_candidate_id: string;
   };
   AI_summary?: {
     id: string;

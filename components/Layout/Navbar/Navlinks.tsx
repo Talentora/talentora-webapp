@@ -11,12 +11,12 @@ export default function Navlinks({ visible }: { visible: boolean }) {
   const { user, company } = useUser();
   const userData = user.data;
   const companyData = company.data;
-  
-  const isRecruiter = userData?.user_metadata?.role === "applicant" ? false : true;
 
-  const role = isRecruiter? "recruiter" : "applicant";
+  const isRecruiter =
+    userData?.user_metadata?.role === 'applicant' ? false : true;
+
+  const role = isRecruiter ? 'recruiter' : 'applicant';
   // visible ? 'recruiter' : 'applicant';
-
 
   if (user.loading) {
     return (

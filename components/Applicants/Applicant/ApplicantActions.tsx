@@ -16,7 +16,7 @@ interface ApplicantActionsProps {
 }
 
 const ApplicantActions = ({ portalProps }: ApplicantActionsProps) => {
-  const { AI_summary, application, job_interview_config } = portalProps;
+  const { AI_summary, application, mergeApplicant } = portalProps;
 
   // Format date safely
   const formatDate = (dateString: string) => {
@@ -72,29 +72,29 @@ const ApplicantActions = ({ portalProps }: ApplicantActionsProps) => {
   }
 
   // If there's no job interview config, show disabled button with tooltip
-  if (!job_interview_config) {
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="w-full">
-              <Button 
-                variant="default"
-                className="w-full"
-                disabled
-              >
-                <UserPlus className="mr-2 h-4 w-4" />
-                Invite Candidate
-              </Button>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Interview configuration needs to be set up before inviting candidates</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    );
-  }
+  // if (!mergeApplicant) {
+  //   return (
+  //     <TooltipProvider>
+  //       <Tooltip>
+  //         <TooltipTrigger asChild>
+  //           <div className="w-full">
+  //             <Button 
+  //               variant="default"
+  //               className="w-full"
+  //               disabled
+  //             >
+  //               <UserPlus className="mr-2 h-4 w-4" />
+  //               Invite Candidate
+  //             </Button>
+  //           </div>
+  //         </TooltipTrigger>
+  //         <TooltipContent>
+  //           <p>Interview configuration needs to be set up before inviting candidates</p>
+  //         </TooltipContent>
+  //       </Tooltip>
+  //     </TooltipProvider>
+  //   );
+  // }
 
   // Default case: Can invite the candidate
   return (

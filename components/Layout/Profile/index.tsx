@@ -8,7 +8,6 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { type Database } from '@/types/types_db';
 type Company = Database['public']['Tables']['companies']['Row'];
-
 const Profile = ({
   user,
   role,

@@ -111,7 +111,7 @@ const InviteApplicantsTable = ({ applicants, jobs, onSort, sortField, sortDirect
           continue;
         }
         
-        const { error } = await inviteCandidate(name, email, selectedJobId);
+        const { error } = await inviteCandidate(name, email, selectedJobId, applicant.candidate.id);
         
         if (error) {
           toast({

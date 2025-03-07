@@ -16,11 +16,8 @@ export async function handleRequest(
   const formData = new FormData(e.currentTarget);
   const role = formData.get('role') || 'applicant'; // Default to applicant
 
+  const redirectUrl: string = await requestFunc(formData);
 
-  const redirectUrl: string = await requestFunc(
-    formData
-  );
-  
   if (router) {
     router.push(redirectUrl);
     router.refresh();

@@ -24,10 +24,13 @@ import { cn } from '@/utils/cn';
 import { ThemeToggle } from '@/components/Layout/Sidebar/ThemeToggle';
 
 
-
-export function NavigationItems({ isUser, isRecruiter }: { isUser: boolean; isRecruiter: boolean }) {
-
-
+export function NavigationItems({
+  isUser,
+  isRecruiter
+}: {
+  isUser: boolean;
+  isRecruiter: boolean;
+}) {
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -69,10 +72,10 @@ function SolutionsMenu() {
         Solutions
       </NavigationMenuTrigger>
       <NavigationMenuContent>
-        <div className="grid gap-3 p-2 w-[400px] md:w-[500px] lg:w-[600px] bg-white rounded-lg">
+        <div className="grid gap-3 p-2 w-[400px] md:w-[500px] lg:w-[600px] bg-popover rounded-lg shadow-md">
           <div className="grid grid-cols-2 gap-2 text-black">
-            <NavigationLink 
-              href="/product#ai-interviews" 
+            <NavigationLink
+              href="/product#ai-interviews"
               icon={<BarChart2 className="h-5 w-5 mr-2 text-purple-600" />}
               title="AI Interviews"
               description="Automated candidate screening and assessment"
@@ -109,9 +112,9 @@ function ResourcesMenu() {
         Resources
       </NavigationMenuTrigger>
       <NavigationMenuContent>
-        <div className="grid gap-3 p-2 w-[400px] text-black bg-white rounded-lg">
-          <NavigationLink 
-            href="/blog" 
+        <div className="grid gap-3 p-2 w-[400px] bg-popover rounded-lg shadow-md">
+          <NavigationLink
+            href="/blog"
             icon={<BookOpen className="h-5 w-5 mr-2 text-indigo-600" />}
             title="Blog"
             description="Latest insights and updates"
@@ -135,39 +138,42 @@ function CompanyMenu() {
         Company
       </NavigationMenuTrigger>
       <NavigationMenuContent>
-        <div className="grid grid-cols-2 gap-3 p-2 w-[400px] text-black bg-white rounded-lg">
-          <NavigationLink 
+        <div className="grid grid-cols-2 gap-3 p-2 w-[400px] bg-popover rounded-lg shadow-md">
+          <NavigationLink
             href="/about"
             icon={<Building2 className="h-5 w-5 mr-2 text-purple-600" />}
             title="About"
             description="Learn about our mission and values"
           />
-
+          {/* <NavigationLink
+            href="/team" */}
           {/* <NavigationLink 
             href="/team" 
             icon={<Users className="h-5 w-5 mr-2 text-blue-600" />}
             title="Team"
             description="Meet the people behind Talentora"
+          />
+          <NavigationLink
+            href="/pricing"
           /> */}
           {/* <NavigationLink 
             href="/pricing" 
             icon={<CreditCard className="h-5 w-5 mr-2 text-green-600" />}
             title="Pricing"
             description="View our pricing plans"
+          />
+          <NavigationLink
+            href="/contact"
           /> */}
-          <NavigationLink 
-            href="/contact" 
-
+          <NavigationLink
+            href="/contact"
             icon={<Mail className="h-5 w-5 mr-2 text-orange-600" />}
             title="Contact"
             description="Get in touch with us"
           />
         </div>
-        
       </NavigationMenuContent>
     </NavigationMenuItem>
-             
-    
   );
 }
 
@@ -187,11 +193,11 @@ function NavigationLink({
   return (
     <Link
       href={href}
-      className="group block space-y-2 p-4 rounded-lg hover:bg-gray-50"
+      className="group block space-y-2 p-4 rounded-lg hover:bg-muted transition-colors"
     >
       <div className="flex items-center">
         {icon}
-        <h3 className="font-medium">{title}</h3>
+        <h3 className="font-medium text-foreground">{title}</h3>
       </div>
       <p className="text-sm text-muted-foreground">{description}</p>
     </Link>

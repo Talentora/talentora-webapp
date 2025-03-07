@@ -134,7 +134,7 @@ export const updateCompany = async (
  * @param id - The ID of the company to delete.
  * @returns A boolean indicating whether the deletion was successful.
  * @throws Error if the deletion operation fails.
- */
+*/
 
 export const deleteCompany = async (id: number): Promise<boolean> => {
   const supabase = createClient();
@@ -189,11 +189,11 @@ export async function inviteRecruiter(
   try {
     // Check if user already exists in auth.users
     const supabase = createClient();
-    const { data: existingUser, error: userCheckError } = await listUsersAdmin();
-    const userExists = existingUser?.users?.some(user => user.email === email);
-    
-
-
+    const { data: existingUser, error: userCheckError } =
+      await listUsersAdmin();
+    const userExists = existingUser?.users?.some(
+      (user) => user.email === email
+    );
 
     if (userCheckError) {
       console.error('Error checking existing user:', userCheckError);
@@ -223,13 +223,20 @@ export async function inviteRecruiter(
       };
     }
 
-    const {data, error} = await inviteRecruiterAdmin(name, email, company?.id ?? '');
+    const { data, error } = await inviteRecruiterAdmin(
+      name,
+      email,
+      company?.id ?? ''
+    );
     console.log('data', data);
     // Return early if invitation failed
     if (!data) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : error || 'Failed to invite recruiter'
+        error:
+          error instanceof Error
+            ? error.message
+            : error || 'Failed to invite recruiter'
       };
     }
 
@@ -246,69 +253,90 @@ export async function inviteRecruiter(
       data: recruiter,
       error: null
     };
-
   } catch (error) {
     console.error('Error inviting recruiter:', error);
     return {
       data: null,
-      error: error instanceof Error ? error.message : 'Failed to invite recruiter'
+      error:
+        error instanceof Error ? error.message : 'Failed to invite recruiter'
     };
   }
 }
 
-
 export async function inviteCandidate(
   name: string,
   email: string,
-  job_id: string
+  job_id: string,
+  merge_candidate_id: string
 ): Promise<{ data?: any; error?: string | null }> {
 
   try {
-    // Check if user already exists in auth.users
     const supabase = createClient();
-    const { data: existingUser, error: userCheckError } = await listUsersAdmin();
-    const userExists = existingUser?.users?.some(user => user.email === email);
 
+    // Check if the user already exists
+    const { data: existingUsers, error: userCheckError } =
+      await listUsersAdmin();
     if (userCheckError) {
-      console.error('Error checking existing user:', userCheckError);
-      return {
-        data: null,
-        error: 'Failed to check if user exists'
-      };
+      console.error('Error checking existing users:', userCheckError);
+      return { data: null, error: 'Failed to check if user exists' };
     }
 
+    const userExists = existingUsers?.users?.some(
+      (user) => user.email === email
+    );
     if (userExists) {
-      console.log('User with this email already exists');
-      // return {
-      //   data: null,
-      //   error: 'User with this email already exists'
-      // };
+      console.log(`User with email ${email} already exists.`);
     }
 
-
-    const {data: candidate, error} = await inviteCandidateAdmin(name, email);
-    
-    // Return early if invitation failed
-    if (error) {
-      console.error('Error inviting candidate:', error);
+    // Invite the candidate via Supabase Admin API
+    const { data: candidate, error: candidateError } =
+      await inviteCandidateAdmin(name, email);
+    if (candidateError) {
+      console.error('Error inviting candidate:', candidateError);
+      return { data: null, error: 'Failed to invite candidate' };
     }
-
-    console.log('candidate', candidate);
 
     const candidateId = candidate?.user?.id;
-
     if (!candidateId) {
-      return {
-        data: null,
-        error: 'Failed to get candidate ID'
-      };
+      return { data: null, error: 'Failed to retrieve candidate ID' };
     }
 
-    console.log('candidateId', candidateId);
-    console.log('merge job id', job_id);
+    // check if the applicant already exists in the `applicants` table
+    const { data: existingApplicant } = await supabase
+      .from('applicants')
+      .select('*')
+      .eq('id', candidateId)
+      .single();
 
-    // Create application record linking the job and new user
-    // First check if job exists
+    if (!existingApplicant) {
+      // insert the applicant into the `applicants` table
+      const { data: newApplicant, error: applicantInsertError } = await supabase
+        .from('applicants')
+        .insert({
+          id: candidateId,
+          email,
+          full_name: name,
+          merge_candidate_id,
+          user_id: candidateId
+        })
+        .select()
+        .single();
+
+      if (applicantInsertError) {
+        console.error(
+          'Error inserting into applicants table:',
+          applicantInsertError
+        );
+        return {
+          data: null,
+          error: 'Failed to add candidate to applicants table'
+        };
+      }
+    } else {
+      console.log(`Applicant with ID ${candidateId} already exists.`);
+    }
+
+    // check if job exists in the `jobs` table
     const { data: jobExists, error: jobCheckError } = await supabase
       .from('jobs')
       .select('merge_id')
@@ -316,10 +344,7 @@ export async function inviteCandidate(
       .single();
 
     if (jobCheckError || !jobExists) {
-      return {
-        data: null,
-        error: 'Invalid job ID - job does not exist'
-      };
+      return { data: null, error: 'Invalid job ID - job does not exist' };
     }
 
     // Get the job id from merge_id
@@ -345,36 +370,41 @@ export async function inviteCandidate(
       .insert({
         merge_application_id: application_id,
         applicant_id: candidateId,
-        // job_id: job.id // this is the supabase job id, not the merge job id
-        job_id: job_id // this is the merge job id
+        job_id // This is the Merge job ID
       })
       .select()
       .single();
 
     if (applicationError) {
-      console.error('Error creating application:', applicationError);
-      return {
-        data: null,
-        error: applicationError.message
-      };
+      console.error(
+        'Error creating application record:',
+        applicationError
+      );
+      return { data: null, error: applicationError.message };
     }
 
+    // Success response with candidate and application details
     return {
       data: {
-        candidate: candidate,
-        application: application
+        candidate,
+        application
       },
       error: null
     };
-
   } catch (err) {
-    console.error('Error in inviteCandidate:', err);
+    console.error('Unexpected error in inviteCandidate:', err);
     return {
       data: null,
-      error: err instanceof Error ? err.message : 'Unknown error occurred'
+      error:
+        err instanceof Error
+          ? err.message
+          : 'An unknown error occurred while inviting the candidate'
     };
   }
 }
+
+
+
 
 /**
  * Fetches a recruiter by their ID.

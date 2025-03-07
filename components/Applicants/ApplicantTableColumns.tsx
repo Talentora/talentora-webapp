@@ -13,10 +13,10 @@ import { Badge } from '@/components/ui/badge';
 
 // Helper function to get resume analysis scores
 const getResumeAnalysisScore = (applicant: any, scoreType: string): number | null => {
-  if (!applicant.AI_summary) return null;
+  if (!applicant.ai_summary) return null;
   
-  if (Array.isArray(applicant.AI_summary) && applicant.AI_summary.length > 0) {
-    const sortedSummaries = [...applicant.AI_summary].sort((a, b) => 
+  if (Array.isArray(applicant.ai_summary) && applicant.ai_summary.length > 0) {
+    const sortedSummaries = [...applicant.ai_summary].sort((a, b) => 
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
     
@@ -26,9 +26,9 @@ const getResumeAnalysisScore = (applicant: any, scoreType: string): number | nul
            null;
   }
   
-  return applicant.AI_summary.resume_analysis?.[scoreType] || 
-         applicant.AI_summary.overall_summary?.[scoreType] || 
-         applicant.AI_summary[scoreType] || 
+  return applicant.ai_summary.resume_analysis?.[scoreType] || 
+         applicant.ai_summary.overall_summary?.[scoreType] || 
+         applicant.ai_summary[scoreType] || 
          null;
 };
 
@@ -202,8 +202,8 @@ export const getApplicantColumns = ({
     size: 160,
     sortingFn: (rowA, rowB) => {
       const getStatusPriority = (row: any) => {
-        if (!row.original.AI_summary && !row.original.applicant) return 0;
-        if (row.original.AI_summary && row.original.applicant) {
+        if (!row.original.ai_summary && !row.original.applicant) return 0;
+        if (row.original.ai_summary && row.original.applicant) {
           return hasCompletedInterview(row.original) ? 2 : 1;
         }
         return 0;
@@ -246,21 +246,30 @@ export const getApplicantColumns = ({
     cell: ({ row }) => {
       const applicant = row.original;
       let score = null;
-      
-      if (applicant.AI_summary) {
-        if (Array.isArray(applicant.AI_summary) && applicant.AI_summary.length > 0) {
-          const sortedSummaries = [...applicant.AI_summary].sort((a, b) => 
+      if (applicant.ai_summary) {
+        if (Array.isArray(applicant.ai_summary) && applicant.ai_summary.length > 0) {
+          const sortedSummaries = [...applicant.ai_summary].sort((a, b) => 
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
           );
           score = sortedSummaries[0]?.overall_summary?.score;
         } else {
-          score = applicant.AI_summary?.overall_summary?.score;
+          // Fix: Access the score directly from overall_summary if it's an object,
+          // or try to parse it if it's a string
+          if (typeof applicant.ai_summary.overall_summary === 'string') {
+            try {
+              const parsed = JSON.parse(applicant.ai_summary.overall_summary);
+              score = parsed.score;
+            } catch (e) {
+              console.error("Error parsing overall_summary:", e);
+            }
+          } else if (applicant.ai_summary.overall_summary) {
+            // Access score directly from the overall_summary object
+            score = applicant.ai_summary.overall_summary.score;
+          }
         }
       }
       
-      return score !== null && !isNaN(parseFloat(score)) 
-        ? <ResumeScoreBadge score={score} />
-        : <span className="text-gray-400">N/A</span>;
+      return (score !== null && !isNaN(parseFloat(score))) ? <ResumeScoreBadge score={parseFloat(score)} /> : <span className="text-gray-400">N/A</span>;
     },
     enableSorting: true,
     size: 80,

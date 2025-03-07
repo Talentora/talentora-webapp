@@ -63,7 +63,8 @@ export default function Bot(botProps: BotProps) {
     demo,
     scoutTest
   } = botProps;
-
+  
+  console.log(enableRecording, "meoww ");
   const voice = scout.voice;
   const emotion = scout.emotion;
 
