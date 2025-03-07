@@ -64,21 +64,21 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
-          merge_applicant_id: string | null
+          merge_candidate_id: string | null
           user_id: string | null
         }
         Insert: {
           email?: string | null
           full_name?: string | null
           id?: string
-          merge_applicant_id?: string | null
+          merge_candidate_id?: string | null
           user_id?: string | null
         }
         Update: {
           email?: string | null
           full_name?: string | null
           id?: string
-          merge_applicant_id?: string | null
+          merge_candidate_id?: string | null
           user_id?: string | null
         }
         Relationships: []

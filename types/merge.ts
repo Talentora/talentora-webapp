@@ -185,7 +185,7 @@ export type ApplicantCandidate = {
   // Supabase data
   applicant?: {
     id: string;
-    merge_applicant_id: string;
+    merge_candidate_id: string;
   };
   AI_summary?: {
     id: string;
