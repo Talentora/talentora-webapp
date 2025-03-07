@@ -267,7 +267,7 @@ export async function inviteCandidate(
   name: string,
   email: string,
   job_id: string,
-  merge_applicant_id: string
+  merge_candidate_id: string
 ): Promise<{ data?: any; error?: string | null }> {
 
   try {
@@ -316,7 +316,7 @@ export async function inviteCandidate(
           id: candidateId,
           email,
           full_name: name,
-          merge_applicant_id,
+          merge_candidate_id,
           user_id: candidateId
         })
         .select()
