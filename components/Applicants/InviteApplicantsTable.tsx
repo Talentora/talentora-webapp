@@ -33,6 +33,9 @@ import ApplicantFilters from './ApplicantFilters';
 import ApplicantJobInfo from './ApplicantJobInfo';
 import ApplicantTablePagination from './ApplicantTablePagination';
 import { getApplicantColumns } from './ApplicantTableColumns';
+import { getNotInvitedColumns } from './NotInvitedColumns'; 
+import { getInProgressColumns } from './InProgressColumns';
+import { getCompletedColumns } from './CompletedColumns';
 
 interface InviteApplicantsTableProps {
   applicants: any[];
@@ -40,9 +43,17 @@ interface InviteApplicantsTableProps {
   onSort?: (field: string) => void;
   sortField?: string;
   sortDirection?: 'asc' | 'desc';
+  customColumns?: 'not-invited' | 'in-progress' | 'completed';
 }
 
-const InviteApplicantsTable = ({ applicants, jobs, onSort, sortField, sortDirection }: InviteApplicantsTableProps) => {
+const InviteApplicantsTable = ({ 
+  applicants, 
+  jobs, 
+  onSort, 
+  sortField, 
+  sortDirection, 
+  customColumns 
+}: InviteApplicantsTableProps) => {
   const [selectedApplicants, setSelectedApplicants] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedJobId, setSelectedJobId] = useState<string>("all");
@@ -142,6 +153,29 @@ const InviteApplicantsTable = ({ applicants, jobs, onSort, sortField, sortDirect
 
   // Define columns for the data table
   const columns = useMemo(() => {
+    // If custom columns are specified, use those instead
+    if (customColumns === 'not-invited') {
+      return getNotInvitedColumns({ 
+        handleViewApplicant,
+        setSelectedApplicants 
+      });
+    }
+    
+    if (customColumns === 'in-progress') {
+      return getInProgressColumns({
+        handleViewApplicant,
+        setSelectedApplicants
+      });
+    }
+    
+    if (customColumns === 'completed') {
+      return getCompletedColumns({
+        handleViewApplicant,
+        setSelectedApplicants
+      });
+    }
+    
+    // Otherwise, use the regular columns
     const cols = getApplicantColumns({ 
       selectedJobId, 
       handleViewApplicant,
@@ -169,7 +203,7 @@ const InviteApplicantsTable = ({ applicants, jobs, onSort, sortField, sortDirect
     }
 
     return cols;
-  }, [selectedJobId]);
+  }, [selectedJobId, customColumns]);
 
   // Filter applicants based on search term and selected job
   const filteredApplicants = useMemo(() => {
