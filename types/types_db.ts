@@ -12,7 +12,7 @@ export type Database = {
       AI_summary: {
         Row: {
           application_id: string | null
-          "batch-processor_transcript_id": string | null
+          batch_processor_transcript_id: string | null
           created_at: string
           emotion_eval: Json | null
           id: string
@@ -25,7 +25,7 @@ export type Database = {
         }
         Insert: {
           application_id?: string | null
-          "batch-processor_transcript_id"?: string | null
+          batch_processor_transcript_id?: string | null
           created_at?: string
           emotion_eval?: Json | null
           id?: string
@@ -38,7 +38,7 @@ export type Database = {
         }
         Update: {
           application_id?: string | null
-          "batch-processor_transcript_id"?: string | null
+          batch_processor_transcript_id?: string | null
           created_at?: string
           emotion_eval?: Json | null
           id?: string
