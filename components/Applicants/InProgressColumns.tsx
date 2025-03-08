@@ -104,27 +104,6 @@ export const getInProgressColumns = ({
     size: 150,
   },
   {
-    accessorKey: "appliedFor",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
-      >
-        Applied Job
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => row.original.job?.name || "No job specified",
-    enableSorting: true,
-    sortingFn: (rowA, rowB) => {
-      const a = rowA.original.job?.name || '';
-      const b = rowB.original.job?.name || '';
-      return a.localeCompare(b);
-    },
-    size: 200,
-  },
-  {
     accessorKey: "email",
     header: ({ column }) => (
       <Button
@@ -139,6 +118,11 @@ export const getInProgressColumns = ({
     cell: ({ row }) => row.original.candidate?.email_addresses?.[0]?.value || "No email address",
     enableSorting: true,
     size: 200,
+    sortingFn: (rowA, rowB) => {
+      const emailA = rowA.original.candidate?.email_addresses?.[0]?.value?.toLowerCase() || '';
+      const emailB = rowB.original.candidate?.email_addresses?.[0]?.value?.toLowerCase() || '';
+      return emailA.localeCompare(emailB);
+    },
   },
   {
     accessorKey: "status",
@@ -205,6 +189,11 @@ export const getInProgressColumns = ({
     },
     enableSorting: true,
     size: 120,
+    sortingFn: (rowA, rowB) => {
+      const dateA = rowA.original.application?.created_at ? new Date(rowA.original.application.created_at).getTime() : 0;
+      const dateB = rowB.original.application?.created_at ? new Date(rowB.original.application.created_at).getTime() : 0;
+      return dateA - dateB;
+    },
   },
   {
     id: "actions",

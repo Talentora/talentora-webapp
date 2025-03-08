@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from '@/components/ui/button';
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, CheckCircle2 } from 'lucide-react';
 import { ResumeScoreBadge } from './ApplicantTableColumns';
 import { Badge } from "@/components/ui/badge";
 
@@ -119,27 +119,6 @@ export const getCompletedColumns = ({
     size: 150,
   },
   {
-    accessorKey: "appliedFor",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
-      >
-        Applied Job
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => row.original.job?.name || "No job specified",
-    enableSorting: true,
-    sortingFn: (rowA, rowB) => {
-      const a = rowA.original.job?.name || '';
-      const b = rowB.original.job?.name || '';
-      return a.localeCompare(b);
-    },
-    size: 150,
-  },
-  {
     accessorKey: "email",
     header: ({ column }) => (
       <Button
@@ -154,6 +133,11 @@ export const getCompletedColumns = ({
     cell: ({ row }) => row.original.candidate?.email_addresses?.[0]?.value || "No email address",
     enableSorting: true,
     size: 200,
+    sortingFn: (rowA, rowB) => {
+      const emailA = rowA.original.candidate?.email_addresses?.[0]?.value?.toLowerCase() || '';
+      const emailB = rowB.original.candidate?.email_addresses?.[0]?.value?.toLowerCase() || '';
+      return emailA.localeCompare(emailB);
+    },
   },
   {
     accessorKey: "score",
@@ -261,6 +245,37 @@ export const getCompletedColumns = ({
     },
     enableSorting: true,
     size: 120,
+    sortingFn: (rowA, rowB) => {
+      let dateA = 0;
+      let dateB = 0;
+      
+      const applicantA = rowA.original;
+      const applicantB = rowB.original;
+      
+      if (applicantA.ai_summary) {
+        if (Array.isArray(applicantA.ai_summary) && applicantA.ai_summary.length > 0) {
+          const sortedSummariesA = [...applicantA.ai_summary].sort((a, b) => 
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          );
+          dateA = new Date(sortedSummariesA[0].created_at).getTime();
+        } else if (applicantA.ai_summary.created_at) {
+          dateA = new Date(applicantA.ai_summary.created_at).getTime();
+        }
+      }
+      
+      if (applicantB.ai_summary) {
+        if (Array.isArray(applicantB.ai_summary) && applicantB.ai_summary.length > 0) {
+          const sortedSummariesB = [...applicantB.ai_summary].sort((a, b) => 
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          );
+          dateB = new Date(sortedSummariesB[0].created_at).getTime();
+        } else if (applicantB.ai_summary.created_at) {
+          dateB = new Date(applicantB.ai_summary.created_at).getTime();
+        }
+      }
+      
+      return dateA - dateB;
+    },
   },
   {
     id: "actions",
@@ -273,6 +288,28 @@ export const getCompletedColumns = ({
           className="p-0 h-auto font-normal underline"
         >
           View Details
+        </Button>
+      );
+    },
+    enableSorting: false,
+    size: 100,
+  },
+  {
+    id: "accept",
+    header: "Hire",
+    cell: ({ row }) => {
+      return (
+        <Button 
+          variant="outline" 
+          size="sm"
+          className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100 hover:text-green-800 hover:border-green-300 transition-colors flex items-center gap-1"
+          onClick={() => {
+            // Empty for now, will implement accept functionality later
+            console.log("Accept applicant:", row.original);
+          }}
+        >
+          <CheckCircle2 className="h-4 w-4" />
+          Accept
         </Button>
       );
     },

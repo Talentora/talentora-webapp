@@ -26,7 +26,7 @@ export default function ApplicantList() {
   const [sortField, setSortField] = useState<string>('');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [activeTab, setActiveTab] = useState<string>("not-invited");
-  const [selectedJobFilter, setSelectedJobFilter] = useState<string>("all");
+  const [selectedJobFilter, setSelectedJobFilter] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,6 +44,12 @@ export default function ApplicantList() {
         
         setApplicantCandidates(applicantsData);
         setJobs(jobsData);
+        
+        // Set the first job as default selected job
+        if (jobsData.length > 0) {
+          setSelectedJobFilter(jobsData[0].id);
+        }
+        
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -56,8 +62,7 @@ export default function ApplicantList() {
 
   // Filter applicants based on selected job
   const filteredByJobApplicants = useMemo(() => {
-    if (selectedJobFilter === "all") return applicantCandidates;
-    
+    // No more "all" option, always filter by job
     return applicantCandidates.filter(app => 
       app.job?.id === selectedJobFilter
     );
@@ -131,33 +136,60 @@ export default function ApplicantList() {
             </div>
           ) : (
             <div className="w-full max-w-[1200px] h-full flex flex-col">
-              {/* Job Filter Dropdown */}
-              <Card className="mb-4 p-4 flex items-center gap-4 bg-white">
-                <div className="flex items-center">
-                  <Briefcase className="h-5 w-5 text-gray-500 mr-2" />
-                  <span className="font-medium">Filter by Job:</span>
+              {/* Enhanced Job Filter Dropdown */}
+              <Card className="mb-4 p-5 bg-white border border-blue-100 shadow-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                  <div className="flex items-center">
+                    <Briefcase className="h-6 w-6 text-blue-600 mr-2" />
+                    <span className="text-lg font-semibold text-gray-800">Job Position:</span>
+                  </div>
+                  
+                  <div className="flex-1 max-w-xl">
+                    <Select
+                      value={selectedJobFilter}
+                      onValueChange={setSelectedJobFilter}
+                    >
+                      <SelectTrigger className="w-full bg-blue-50 border-blue-200 hover:border-blue-300 transition-colors text-blue-900">
+                        <SelectValue placeholder="Select a job position" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-80">
+                        {jobOptions.map((job) => (
+                          <SelectItem key={job.id} value={job.id} className="py-3 hover:bg-blue-50">
+                            {job.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="ml-auto flex items-center gap-2">
+                    <span className="text-gray-600 font-medium">Total:</span>
+                    <Badge variant="outline" className="bg-blue-50 border-blue-200 text-blue-800 font-medium py-1.5">
+                      {filteredByJobApplicants.length} applicants
+                    </Badge>
+                  </div>
                 </div>
-                <Select
-                  value={selectedJobFilter}
-                  onValueChange={setSelectedJobFilter}
-                >
-                  <SelectTrigger className="w-[280px]">
-                    <SelectValue placeholder="Select a job" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Jobs</SelectItem>
-                    {jobOptions.map((job) => (
-                      <SelectItem key={job.id} value={job.id}>
-                        {job.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
                 
-                {selectedJobFilter !== "all" && (
-                  <Badge variant="outline" className="ml-auto">
-                    {filteredByJobApplicants.length} applicants
-                  </Badge>
+                {selectedJobFilter && (
+                  <div className="mt-4 pt-3 border-t border-gray-100">
+                    <div className="flex flex-wrap gap-3">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                        <span className="text-sm font-medium">Not Invited:</span>
+                        <span className="text-sm">{notInvitedApplicants.length}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                        <span className="text-sm font-medium">In Progress:</span>
+                        <span className="text-sm">{inProgressApplicants.length}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span className="text-sm font-medium">Completed:</span>
+                        <span className="text-sm">{completedApplicants.length}</span>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </Card>
               

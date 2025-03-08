@@ -117,27 +117,6 @@ export const getNotInvitedColumns = ({
     size: 200,
   },
   {
-    accessorKey: "appliedFor",
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
-      >
-        Applied Job
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    ),
-    cell: ({ row }) => row.original.job?.name || "No job specified",
-    enableSorting: true,
-    sortingFn: (rowA, rowB) => {
-      const a = rowA.original.job?.name || '';
-      const b = rowB.original.job?.name || '';
-      return a.localeCompare(b);
-    },
-    size: 200,
-  },
-  {
     accessorKey: "email",
     header: ({ column }) => (
       <Button
@@ -152,6 +131,11 @@ export const getNotInvitedColumns = ({
     cell: ({ row }) => row.original.candidate?.email_addresses?.[0]?.value || "No email address",
     enableSorting: true,
     size: 250,
+    sortingFn: (rowA, rowB) => {
+      const emailA = rowA.original.candidate?.email_addresses?.[0]?.value?.toLowerCase() || '';
+      const emailB = rowB.original.candidate?.email_addresses?.[0]?.value?.toLowerCase() || '';
+      return emailA.localeCompare(emailB);
+    },
   },
   {
     accessorKey: "status",

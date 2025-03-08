@@ -59,7 +59,13 @@ const InviteApplicantsTable = ({
   const [selectedJobId, setSelectedJobId] = useState<string>("all");
   const [isInviting, setIsInviting] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [sorting, setSorting] = useState<SortingState>([]);
+  
+  // Initialize sorting state from props if provided
+  const initialSorting: SortingState = sortField 
+    ? [{ id: sortField, desc: sortDirection === 'desc' }]
+    : [];
+  
+  const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     status: false,
@@ -315,11 +321,31 @@ const InviteApplicantsTable = ({
     setRowSelection({});
   }, [selectedJobId, invitationStatus, interviewStatus, scoreThreshold]);
 
+  // Update parent component's sort state when local sorting changes
+  const handleSortingChange = (updaterOrValue: SortingState | ((old: SortingState) => SortingState)) => {
+    // Handle both direct value and updater function
+    const newSorting = typeof updaterOrValue === 'function' 
+      ? updaterOrValue(sorting) 
+      : updaterOrValue;
+      
+    setSorting(newSorting);
+    
+    if (newSorting.length > 0 && onSort && newSorting[0].id) {
+      const { id, desc } = newSorting[0];
+      onSort(id);
+      // Update parent's sort direction if needed
+      if ((desc && sortDirection !== 'desc') || (!desc && sortDirection !== 'asc')) {
+        // This would trigger the parent to update sortDirection
+        onSort(id);
+      }
+    }
+  };
+
   // Initialize the table
   const table = useReactTable({
     data: filteredApplicants,
     columns,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
