@@ -107,8 +107,8 @@ export default function ApplicantList() {
 
   // Helper function to get status priority for sorting
   const getStatusPriority = (applicant: any): number => {
-    if (!applicant.AI_summary && !applicant.applicant) return 0; // Not invited
-    if (!applicant.AI_summary && applicant.applicant) return 1;  // In progress
+    if (!applicant.AI_summary && !applicant.application?.supabase_application_id) return 0; // Not invited
+    if (!applicant.AI_summary && applicant.application?.supabase_application_id) return 1;  // In progress
     return 2; // Review ready
   };
 

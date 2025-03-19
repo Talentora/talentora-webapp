@@ -11,29 +11,46 @@ interface SignUpProps {
   allowEmail: boolean;
   redirectMethod: string;
   role: string;
+  prefilledEmail?: string;
+  candidateId?: string;
+  jobId?: string;
 }
 
 export default function SignUp({
   allowEmail,
   redirectMethod,
-  role
+  role,
+  prefilledEmail,
+  candidateId,
+  jobId
 }: SignUpProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email, setEmail] = useState(prefilledEmail || '');
+  const [fullName, setFullName] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setIsSubmitting(true);
-    // Append role to form data
+    
+    // Create form data with the state values
     const formData = new FormData(e.currentTarget);
-    formData.append('role', role);
-    e.currentTarget = e.currentTarget.cloneNode(true) as HTMLFormElement;
-    e.currentTarget.appendChild(
-      Object.assign(document.createElement('input'), {
-        type: 'hidden',
-        name: 'role',
-        value: role
-      })
-    );
+    
+    // Make sure to use the state values
+    formData.set('email', email);
+    formData.set('full_name', fullName);
+    formData.set('password', password);
+    formData.set('role', role);
+    
+    // Add candidateId and jobId if available
+    if (candidateId) {
+      formData.set('candidateId', candidateId);
+    }
+    
+    if (jobId) {
+      formData.set('jobId', jobId);
+    }
 
     await handleRequest(e, signUp, router);
     setIsSubmitting(false);
@@ -54,6 +71,8 @@ export default function SignUp({
               placeholder="John Doe"
               type="text"
               name="fullName"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
               autoCapitalize="words"
               className="w-full p-3 bg-background text-foreground rounded-md border border-input"
             />
@@ -63,10 +82,15 @@ export default function SignUp({
               placeholder="name@example.com"
               type="email"
               name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              readOnly={!!prefilledEmail}
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
-              className="w-full p-3 bg-background text-foreground rounded-md border border-input"
+              className={`w-full p-3 rounded-md border ${
+                prefilledEmail ? 'bg-muted' : 'bg-background'
+              } text-foreground border-input`}
             />
             <label htmlFor="password">Password</label>
             <input
@@ -74,6 +98,8 @@ export default function SignUp({
               placeholder="Password"
               type="password"
               name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               className="w-full p-3 bg-background text-foreground rounded-md border border-input"
             />
@@ -82,21 +108,22 @@ export default function SignUp({
             variant="default"
             type="submit"
             className="mt-1 w-full"
-            // loading={isSubmitting}
+            disabled={isSubmitting}
           >
-            Sign up as {role}
+            {isSubmitting ? 'Signing up...' : `Sign up as ${role}`}
           </Button>
         </div>
       </form>
-      <p>Already have an account?</p>
-      <p>
-        <Link
-          href={`/signin/password_signin?role=${role}`}
-          className="font-light text-sm text-muted-foreground"
-        >
-          Sign in with email and password
-        </Link>
-      </p>
+      {!candidateId && (
+        <p>
+          <Link
+            href={`/signin/password_signin?role=${role}`}
+            className="font-light text-sm text-muted-foreground"
+          >
+            Already have an account? Sign in
+          </Link>
+        </p>
+      )}
     </div>
   );
 }

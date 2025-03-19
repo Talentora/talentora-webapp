@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getURL, getErrorRedirect, getStatusRedirect } from '@/utils/helpers';
 import { getAuthTypes } from '@/utils/auth-helpers/settings';
+import { fetchApplicationMergeId } from '@/server/applications';
 
 function isValidEmail(email: string) {
   var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -13,33 +14,6 @@ function isValidEmail(email: string) {
 
 export async function redirectToPath(path: string) {
   return redirect(path);
-}
-export async function SignOut() {
-  const cookieStore = cookies();
-  const supabase = createClient();
-
-  const { error } = await supabase.auth.signOut({
-    scope: 'global'
-  });
-
-  if (error) {
-    console.error('Sign out error:', error);
-    throw error;
-  }
-
-  // Clear all auth-related cookies
-  const cookiesToClear = [
-    'sb-access-token',
-    'sb-refresh-token',
-    'sb-auth-token',
-    'supabase-auth-token'
-  ];
-
-  cookiesToClear.forEach((name) => {
-    cookieStore.delete(name);
-  });
-
-  return '/';
 }
 
 export async function signInWithEmail(formData: FormData) {
@@ -213,8 +187,13 @@ export async function signUp(formData: FormData) {
 
   const email = String(formData.get('email')).trim();
   const password = String(formData.get('password')).trim();
-  const fullName = String(formData.get('fullName')).trim();
+  const fullName = String(formData.get('full_name')).trim();
   const role = String(formData.get('role')).trim();
+  let candidate_id: string | null = "";
+  const candidateIdValue = formData.get('candidateId');
+  if (candidateIdValue !== null) {
+    candidate_id = String(candidateIdValue).trim();
+  }
   let redirectPath: string;
 
   console.log(`Signing up as a ${role}`);
@@ -228,65 +207,248 @@ export async function signUp(formData: FormData) {
       'Invalid email address.',
       'Please try again.'
     );
+    return redirectPath;
   }
 
   const supabase = createClient();
 
   console.log('Supabase client created. Attempting to sign up user...');
-  const { error, data } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: callbackURL,
+  
+  try {
+    const { error, data } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: callbackURL,
+        data: { role: role, full_name: fullName }
+      }
+    });
 
-      data: { role: role, full_name: fullName }
+
+    if (error) {
+      console.error('Sign-up error:', error);
+      
+      // Special handling for "User already registered" error
+      if (error.message.includes('already registered') || error.message.includes('already exists')) {
+        // Fix: ensure we're using '&' and not a second '?' for query parameters
+        redirectPath = getErrorRedirect(
+          `/signin/signup?role=${role}`,  // Base path with first query param
+          'Account already exists',       // Error name
+          'There is already an account associated with this email address. Try signing in or resetting your password.'
+        );
+      } else {
+        redirectPath = getErrorRedirect(
+          `/signin/signup?role=${role}`,
+          'Sign up failed.',
+          error.message
+        );
+      }
+    } else if (data.session) {
+      console.log('Sign-up successful with active session.');
+      
+      // Add user to applicants table if role is applicant
+      if (role === 'applicant' && data.user) {
+        await addUserToApplicantsTable(supabase, data.user.id, email, fullName, candidate_id);
+        
+        // If we have a candidate_id, link the user to their application
+        if (candidate_id !== "") {
+          const jobId = formData.get('jobId')?.toString()?.trim() || null;
+          if (jobId) {
+            await addUserToApplicationsTable(supabase, data.user.id, candidate_id, jobId);
+          }
+        }
+      }
+      
+      redirectPath = getStatusRedirect(
+        '/settings/onboarding',
+        'Success!',
+        `You are now signed in as a ${role}.`
+      );
+    } else if (
+      data.user &&
+      data.user.identities &&
+      data.user.identities.length == 0
+    ) {
+      console.log('Sign-up failed: Account already exists with no identities.');
+      redirectPath = getErrorRedirect(
+        `/signin/signup?role=${role}`,
+        'Account already exists',
+        'There is already an account associated with this email address. Try resetting your password.'
+      );
+      
+    } else if (data.user) {
+      console.log('Sign-up successful: Email confirmation required.');
+      
+      // Add user to applicants table if role is applicant
+      if (role === 'applicant' && data.user) {
+        await addUserToApplicantsTable(supabase, data.user.id, email, fullName, candidate_id);
+        
+        // If we have a candidate_id, link the user to their application
+        if (candidate_id) {
+          const jobId = formData.get('jobId')?.toString()?.trim() || null;
+          if (jobId) {
+            await addUserToApplicationsTable(supabase, data.user.id, candidate_id, jobId);
+          }
+        }
+      }
+      
+      redirectPath = getStatusRedirect(
+        '/',
+        'Success!',
+        'Please check your email for a confirmation link. You may now close this tab.'
+      );
+    } else {
+      console.log('Sign-up failed: Unknown error.');
+      redirectPath = getErrorRedirect(
+        `/signin/signup?role=${role}`,
+        'Hmm... Something went wrong.',
+        'You could not be signed up.'
+      );
     }
-  });
-
-  if (error) {
-    redirectPath = `/signin/signup?role=${role}`;
-    // redirectPath = getStatusRedirect(
-    //   `/signin/signup?role=${role}`,
-    //   'Sign up failed.',
-    //   error.message
-    // );
-  } else if (data.session) {
-    console.log('Sign-up successful with active session.');
-    redirectPath = `/signin/signup?role=${role}`;
-
-    // redirectPath = getStatusRedirect(
-    //   '/settings/onboarding',
-    //   'Success!',
-    //   `You are now signed in as a ${role}.`
-    // );
-  } else if (
-    data.user &&
-    data.user.identities &&
-    data.user.identities.length == 0
-  ) {
-    console.log('Sign-up failed: Account already exists with no identities.');
-    redirectPath = getStatusRedirect(
-      `/signin/signup?role=${role}`,
-      'Sign up failed.',
-      'There is already an account associated with this email address. Try resetting your password.'
-    );
-  } else if (data.user) {
-    console.log('Sign-up successful: Email confirmation required.');
-    redirectPath = getStatusRedirect(
-      '/',
-      'Success!',
-      'Please check your email for a confirmation link. You may now close this tab.'
-    );
-  } else {
-    console.log('Sign-up failed: Unknown error.');
+  } catch (err: any) {
+    console.error('Exception during sign-up:', err);
     redirectPath = getErrorRedirect(
       `/signin/signup?role=${role}`,
-      'Hmm... Something went wrong.',
-      'You could not be signed up.'
+      'Sign up failed.',
+      err.message || 'An unexpected error occurred'
     );
   }
 
   return redirectPath;
+}
+
+/**
+ * Helper function to add or update a user in the applicants table
+ * @param supabase - Supabase client
+ * @param userId - User ID to use as applicant ID
+ * @param email - User's email
+ * @param fullName - User's full name
+ * @param candidateId - Optional candidate ID to add to merge_candidate_id array
+ */
+async function addUserToApplicantsTable(
+  supabase: any,
+  userId: string,
+  email: string,
+  fullName: string,
+  candidateId: string | null
+) {
+
+  if (candidateId === "") { return; }
+  
+  try {
+    // First check if the user already exists in applicants table
+    const { data: existingApplicant, error: fetchError } = await supabase
+      .from('applicants')
+      .select('merge_candidate_id')
+      .eq('id', userId)
+      .maybeSingle(); 
+    
+    let mergeIds: string[] = [];
+    
+    // If user exists, use existing merge_candidate_id array
+    if (existingApplicant?.merge_candidate_id) {
+      mergeIds = existingApplicant.merge_candidate_id;
+    }
+    
+    // Add candidateId to mergeIds if it doesn't exist and is not null
+    if (candidateId && !mergeIds.includes(candidateId)) {
+      mergeIds.push(candidateId);
+    }
+    
+    // Upsert user data to applicants table
+    const { error: upsertError } = await supabase
+      .from('applicants')
+      .upsert({
+        id: userId,
+        email,
+        full_name: fullName,
+        merge_candidate_id: mergeIds
+      })
+      .select();
+    
+    if (upsertError) {
+      console.error('Error adding user to applicants table:', upsertError);
+    } else {
+      console.log('Successfully added/updated user in applicants table');
+    }
+  } catch (err) {
+    console.error('Exception when adding user to applicants table:', err);
+  }
+  
+}
+
+/**
+ * Helper function to add or update a user in the applications table
+ * @param supabase - Supabase client
+ * @param applicantId - User ID / Applicant ID to use as foreign key
+ * @param candidateId - Candidate ID from Merge
+ * @param jobId - Job ID from Merge
+ */
+async function addUserToApplicationsTable(
+  supabase: any,
+  applicantId: string,
+  candidateId: string,
+  jobId: string
+) {
+  try {
+    // Fetch the Merge application ID using the API
+    let applicationId;
+    try {
+      applicationId = await fetchApplicationMergeId(jobId, candidateId);
+      console.log('Fetched application ID:', applicationId);
+    } catch (error) {
+      console.error('Error fetching application ID:', error);
+      return;
+    }
+
+    if (!applicationId) {
+      console.error('Could not fetch application ID for candidate and job');
+      return;
+    }
+
+    // Check if the application record exists
+    const { data: existingApplication, error: fetchError } = await supabase
+      .from('applications')
+      .select('*')
+      .eq('merge_application_id', applicationId)
+      .maybeSingle();
+
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      console.error('Error fetching application:', fetchError);
+      return;
+    }
+
+    // Update the existing application with the applicant_id or create a new one
+    if (existingApplication) {
+      const { error: updateError } = await supabase
+        .from('applications')
+        .update({ applicant_id: applicantId })
+        .eq('merge_application_id', applicationId);
+
+      if (updateError) {
+        console.error('Error updating application with applicant ID:', updateError);
+      } else {
+        console.log('Successfully updated application with applicant ID');
+      }
+    } else {
+      // If no application exists, create one
+      const { error: insertError } = await supabase
+        .from('applications')
+        .insert({
+          merge_application_id: applicationId,
+          applicant_id: applicantId,
+          job_id: jobId
+        });
+
+      if (insertError) {
+        console.error('Error creating application record:', insertError);
+      } else {
+        console.log('Successfully created application with applicant ID');
+      }
+    }
+  } catch (err) {
+    console.error('Exception when updating applications table:', err);
+  }
 }
 
 export async function updatePassword(formData: FormData) {

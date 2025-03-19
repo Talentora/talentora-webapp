@@ -21,9 +21,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from '@/components/ui/button';
-import { SlidersHorizontal } from 'lucide-react';
-import { Badge } from "@/components/ui/badge";
 import { inviteCandidate } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 

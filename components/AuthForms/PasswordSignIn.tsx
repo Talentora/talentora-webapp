@@ -11,15 +11,23 @@ interface PasswordSignInProps {
   allowEmail: boolean;
   redirectMethod: string;
   role: string;
+  prefilledEmail?: string;
+  candidateId?: string;
+  jobId?: string;
 }
 
 export default function PasswordSignIn({
   allowEmail,
   redirectMethod,
-  role
+  role,
+  prefilledEmail,
+  candidateId,
+  jobId
 }: PasswordSignInProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [email, setEmail] = useState(prefilledEmail || '');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,7 +35,20 @@ export default function PasswordSignIn({
 
     try {
       const formData = new FormData(e.currentTarget);
-      formData.append('role', role);
+      
+      // Make sure to use state values
+      formData.set('email', email);
+      formData.set('password', password);
+      formData.set('role', role);
+      
+      // Add candidateId and jobId if available
+      if (candidateId) {
+        formData.set('candidateId', candidateId);
+      }
+      
+      if (jobId) {
+        formData.set('jobId', jobId);
+      }
 
       await handleRequest(e, signInWithPassword, router);
 
@@ -51,6 +72,12 @@ export default function PasswordSignIn({
         onSubmit={handleSubmit}
       >
         <input type="hidden" name="role" value={role || 'applicant'} />
+        {candidateId && (
+          <input type="hidden" name="candidateId" value={candidateId} />
+        )}
+        {jobId && (
+          <input type="hidden" name="jobId" value={jobId} />
+        )}
         <div className="grid gap-1">
           <label htmlFor="email" className="text-muted-foreground">
             Email
@@ -60,10 +87,15 @@ export default function PasswordSignIn({
             placeholder="name@example.com"
             type="email"
             name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            readOnly={!!prefilledEmail}
             autoCapitalize="none"
             autoComplete="email"
             autoCorrect="off"
-            className="w-full p-3 bg-background text-foreground rounded-md border border-input"
+            className={`w-full p-3 rounded-md border ${
+              prefilledEmail ? 'bg-muted' : 'bg-background'
+            } text-foreground border-input`}
           />
           <label htmlFor="password" className="text-muted-foreground">
             Password
@@ -73,6 +105,8 @@ export default function PasswordSignIn({
             placeholder="Password"
             type="password"
             name="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
             className="w-full p-3 bg-background text-foreground rounded-md border border-input"
           />
@@ -96,7 +130,7 @@ export default function PasswordSignIn({
       </p>
       <p>
         <Link
-          href={`/signin/signup?role=${role}`}
+          href={`/signup?role=${role}`}
           className="font-light text-sm text-muted-foreground"
         >
           Don&apos;t have an account? Sign up
