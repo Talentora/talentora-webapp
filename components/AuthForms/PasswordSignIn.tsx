@@ -14,6 +14,8 @@ interface PasswordSignInProps {
   prefilledEmail?: string;
   candidateId?: string;
   jobId?: string;
+  applicationId?: string;
+  signUpRedirectLink?: string
 }
 
 export default function PasswordSignIn({
@@ -22,7 +24,9 @@ export default function PasswordSignIn({
   role,
   prefilledEmail,
   candidateId,
-  jobId
+  jobId,
+  applicationId,
+  signUpRedirectLink
 }: PasswordSignInProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,6 +52,11 @@ export default function PasswordSignIn({
       
       if (jobId) {
         formData.set('jobId', jobId);
+      }
+      
+      // Add applicationId if available
+      if (applicationId) {
+        formData.set('applicationId', applicationId);
       }
 
       await handleRequest(e, signInWithPassword, router);
@@ -77,6 +86,9 @@ export default function PasswordSignIn({
         )}
         {jobId && (
           <input type="hidden" name="jobId" value={jobId} />
+        )}
+        {applicationId && (
+          <input type="hidden" name="applicationId" value={applicationId} />
         )}
         <div className="grid gap-1">
           <label htmlFor="email" className="text-muted-foreground">
@@ -130,7 +142,7 @@ export default function PasswordSignIn({
       </p>
       <p>
         <Link
-          href={`/signup?role=${role}`}
+          href={signUpRedirectLink ? signUpRedirectLink: `/signup?role=${role}` }
           className="font-light text-sm text-muted-foreground"
         >
           Don&apos;t have an account? Sign up

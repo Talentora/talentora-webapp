@@ -16,60 +16,6 @@ export async function redirectToPath(path: string) {
   return redirect(path);
 }
 
-export async function signInWithEmail(formData: FormData) {
-  const cookieStore = cookies();
-  const callbackURL = getURL('/auth/callback');
-
-  const email = String(formData.get('email')).trim();
-  let redirectPath: string;
-
-  if (!isValidEmail(email)) {
-    redirectPath = getErrorRedirect(
-      '/signin/email_signin',
-      'Invalid email address.',
-      'Please try again.'
-    );
-  }
-
-  const supabase = createClient();
-  let options = {
-    emailRedirectTo: callbackURL,
-    shouldCreateUser: true
-  };
-
-  // If allowPassword is false, do not create a new user
-  const { allowPassword } = getAuthTypes();
-  if (allowPassword) options.shouldCreateUser = false;
-  const { data, error } = await supabase.auth.signInWithOtp({
-    email,
-    options: options
-  });
-
-  if (error) {
-    redirectPath = getErrorRedirect(
-      '/signin/email_signin',
-      'You could not be signed in.',
-      error.message
-    );
-  } else if (data) {
-    cookieStore.set('preferredSignInView', 'email_signin', { path: '/' });
-    redirectPath = getStatusRedirect(
-      '/signin/email_signin',
-      'Success!',
-      'Please check your email for a magic link. You may now close this tab.',
-      true
-    );
-  } else {
-    redirectPath = getErrorRedirect(
-      '/signin/email_signin',
-      'Hmm... Something went wrong.',
-      'You could not be signed in.'
-    );
-  }
-
-  return redirectPath;
-}
-
 export async function requestPasswordUpdate(formData: FormData) {
   const callbackURL = getURL('/auth/reset_password');
 
@@ -128,6 +74,15 @@ export async function signInWithPassword(formData: FormData) {
   const role = String(formData.get('role')).trim();
   let redirectPath: string;
 
+  let candidate_id = String(formData.get('candidateId'))
+  if (candidate_id) { candidate_id = candidate_id.trim(); }
+
+  let job_id = String(formData.get('jobId'))
+  if (job_id) { job_id = job_id.trim(); }
+  
+  let application_id = String(formData.get('applicationId'))
+  if (application_id) { application_id = application_id.trim(); }
+
   const supabase = createClient();
   const { error, data } = await supabase.auth.signInWithPassword({
     email,
@@ -150,6 +105,22 @@ export async function signInWithPassword(formData: FormData) {
       'Success!',
       'You are now signed in.'
     );
+
+    if (candidate_id && job_id) { // special token sign in
+      const applicantId = data.user.id;
+
+      try {
+        addUserToApplicationsTable(supabase, applicantId, candidate_id, job_id, application_id);
+        addUserToApplicantsTable(supabase, applicantId, email, data.user.user_metadata.full_name, candidate_id);
+      } catch (err: any) {
+        redirectPath = getStatusRedirect(
+          '/',
+          'Critical signin error, please contact Talentora team for support',
+          'You could not be signed in.'
+        );
+      }
+    }
+
   } else {
     redirectPath = getErrorRedirect(
       '/signin/password_signin',
@@ -189,11 +160,18 @@ export async function signUp(formData: FormData) {
   const password = String(formData.get('password')).trim();
   const fullName = String(formData.get('full_name')).trim();
   const role = String(formData.get('role')).trim();
-  let candidate_id: string | null = "";
+  let candidate_id: string | null = null;
   const candidateIdValue = formData.get('candidateId');
   if (candidateIdValue !== null) {
     candidate_id = String(candidateIdValue).trim();
   }
+
+  let application_id: string | null = null;
+  const applicationIdValue = formData.get('application_id');
+  if(applicationIdValue !== null) {
+    application_id = String(applicationIdValue).trim();
+  }
+
   let redirectPath: string;
 
   console.log(`Signing up as a ${role}`);
@@ -243,28 +221,7 @@ export async function signUp(formData: FormData) {
           error.message
         );
       }
-    } else if (data.session) {
-      console.log('Sign-up successful with active session.');
-      
-      // Add user to applicants table if role is applicant
-      if (role === 'applicant' && data.user) {
-        await addUserToApplicantsTable(supabase, data.user.id, email, fullName, candidate_id);
-        
-        // If we have a candidate_id, link the user to their application
-        if (candidate_id !== "") {
-          const jobId = formData.get('jobId')?.toString()?.trim() || null;
-          if (jobId) {
-            await addUserToApplicationsTable(supabase, data.user.id, candidate_id, jobId);
-          }
-        }
-      }
-      
-      redirectPath = getStatusRedirect(
-        '/settings/onboarding',
-        'Success!',
-        `You are now signed in as a ${role}.`
-      );
-    } else if (
+    } else if ( // sign up was successful
       data.user &&
       data.user.identities &&
       data.user.identities.length == 0
@@ -287,7 +244,7 @@ export async function signUp(formData: FormData) {
         if (candidate_id) {
           const jobId = formData.get('jobId')?.toString()?.trim() || null;
           if (jobId) {
-            await addUserToApplicationsTable(supabase, data.user.id, candidate_id, jobId);
+            await addUserToApplicationsTable(supabase, data.user.id, candidate_id, jobId, application_id);
           }
         }
       }
@@ -383,25 +340,30 @@ async function addUserToApplicantsTable(
  * @param applicantId - User ID / Applicant ID to use as foreign key
  * @param candidateId - Candidate ID from Merge
  * @param jobId - Job ID from Merge
+ * @param applicationId - Application ID from Merge (optional)
  */
 async function addUserToApplicationsTable(
   supabase: any,
   applicantId: string,
   candidateId: string,
-  jobId: string
+  jobId: string,
+  applicationId?: string | null
 ) {
+  console.log(applicationId, "meow")
   try {
-    // Fetch the Merge application ID using the API
-    let applicationId;
-    try {
-      applicationId = await fetchApplicationMergeId(jobId, candidateId);
-      console.log('Fetched application ID:', applicationId);
-    } catch (error) {
-      console.error('Error fetching application ID:', error);
-      return;
+    // Use provided application ID if available, otherwise fetch it
+    let mergeApplicationId = applicationId;
+    if (!mergeApplicationId) {
+      try {
+        mergeApplicationId = await fetchApplicationMergeId(jobId, candidateId);
+        console.log('Fetched application ID:', mergeApplicationId);
+      } catch (error) {
+        console.error('Error fetching application ID:', error);
+        return;
+      }
     }
 
-    if (!applicationId) {
+    if (!mergeApplicationId) {
       console.error('Could not fetch application ID for candidate and job');
       return;
     }
@@ -410,7 +372,7 @@ async function addUserToApplicationsTable(
     const { data: existingApplication, error: fetchError } = await supabase
       .from('applications')
       .select('*')
-      .eq('merge_application_id', applicationId)
+      .eq('merge_application_id', mergeApplicationId)
       .maybeSingle();
 
     if (fetchError && fetchError.code !== 'PGRST116') {
@@ -423,7 +385,7 @@ async function addUserToApplicationsTable(
       const { error: updateError } = await supabase
         .from('applications')
         .update({ applicant_id: applicantId })
-        .eq('merge_application_id', applicationId);
+        .eq('merge_application_id', mergeApplicationId);
 
       if (updateError) {
         console.error('Error updating application with applicant ID:', updateError);
@@ -435,7 +397,7 @@ async function addUserToApplicationsTable(
       const { error: insertError } = await supabase
         .from('applications')
         .insert({
-          merge_application_id: applicationId,
+          merge_application_id: mergeApplicationId,
           applicant_id: applicantId,
           job_id: jobId
         });

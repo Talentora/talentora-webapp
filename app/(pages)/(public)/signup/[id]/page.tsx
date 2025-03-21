@@ -11,6 +11,7 @@ import { verifyToken } from '@/utils/email_helpers'
 import { signUp } from '@/utils/auth-helpers/server'
 import { extractErrorMessageFromURL } from '@/utils/helpers'
 
+
 export default function CandidateSignUp({ params }: { params: { id: string } }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -20,10 +21,13 @@ export default function CandidateSignUp({ params }: { params: { id: string } }) 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [tokenVerified, setTokenVerified] = useState(false)
+  const [applicationId, setApplicationId] = useState<string | null>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClientComponentClient()
   const candidateId = params.id
+  const token = searchParams.get('token')
+  const applicationIdParam = searchParams.get('application')
 
   // Check for error messages in URL parameters
   useEffect(() => {
@@ -31,12 +35,16 @@ export default function CandidateSignUp({ params }: { params: { id: string } }) 
     if (errorMessage) {
       setError(errorMessage);
     }
-  }, [searchParams]);
+    
+    // Set application ID from query params if available
+    if (applicationIdParam) {
+      setApplicationId(applicationIdParam);
+    }
+  }, [searchParams, applicationIdParam]);
 
   // Verify token and extract email
   useEffect(() => {
     const verifyEmailToken = async () => {
-      const token = searchParams.get('token')
       console.log(token);
       if (!token) {
         router.push('/')
@@ -106,6 +114,11 @@ export default function CandidateSignUp({ params }: { params: { id: string } }) 
       formData.append('role', 'applicant')
       formData.append('candidateId', candidateId)
       
+      // Add application ID if available
+      if (applicationId) {
+        formData.append('application_id', applicationId)
+      }
+      
       // Call the server action
       const redirectPath = await signUp(formData)
       
@@ -119,6 +132,8 @@ export default function CandidateSignUp({ params }: { params: { id: string } }) 
           setLoading(false);
           return;
         }
+
+
         
         // Fix malformed URLs with multiple question marks
         let fixedPath = redirectPath;
@@ -137,19 +152,7 @@ export default function CandidateSignUp({ params }: { params: { id: string } }) 
           setLoading(false);
           return;
         }
-        
-        // Update the user's info in the applicants table
-        const { error: updateError } = await supabase
-          .from('applicants')
-          .upsert({
-            email, // Using state variable
-            full_name: name, // Using state variable
-            merge_candidate_id: candidateId
-          })
 
-        if (updateError) {
-          throw new Error(updateError.message);
-        }
 
         // Navigate to the returned path or dashboard
         router.push(redirectPath || '/dashboard')
@@ -313,7 +316,7 @@ export default function CandidateSignUp({ params }: { params: { id: string } }) 
             </div>
 
             <div className="mt-6"></div>
-              <Link href="/signin">
+              <Link href={`/signin/${candidateId}/protected?token=${token}`}>
                 <Button variant="outline" className="w-full">
                   Sign in
                 </Button>

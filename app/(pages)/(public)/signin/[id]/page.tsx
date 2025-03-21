@@ -12,7 +12,6 @@ import {
 } from '@/utils/auth-helpers/settings';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import PasswordSignIn from '@/components/AuthForms/PasswordSignIn';
-import EmailSignIn from '@/components/AuthForms/EmailSignIn';
 import ForgotPassword from '@/components/AuthForms/ForgotPassword';
 import UpdatePassword from '@/components/AuthForms/UpdatePassword';
 import { createClient } from '@/utils/supabase/server';
@@ -86,13 +85,6 @@ export default async function SignInPage({
                       allowEmail={allowEmail}
                       redirectMethod={redirectMethod}
                       role={role || 'applicant'}
-                    />
-                  )}
-                  {viewProp === 'email_signin' && (
-                    <EmailSignIn
-                      allowPassword={allowPassword}
-                      redirectMethod={redirectMethod}
-                      disableButton={searchParams.disable_button === 'true'}
                     />
                   )}
                   {viewProp === 'forgot_password' && (

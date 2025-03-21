@@ -65,12 +65,15 @@ export async function verifyToken(token: string, candidate_id: string): Promise<
  * @param candidate_id - ID of the candidate
  * @returns Response from email service
  */
-export async function sendAuthEmail(email: string, candidate_id: string) {
+export async function sendAuthEmail(
+  email: string, 
+  candidate_id: string, 
+  company_name: string,
+  application_id: string) {
     const token = await generateToken(email, candidate_id);
     
-    // Generate links for both signin and signup using consistent parameter names
-    const signinLink = `${process.env.NEXT_PUBLIC_SITE_URL}/signin/${candidate_id}/protected?token=${token}`;
-    const signupLink = `${process.env.NEXT_PUBLIC_SITE_URL}/signup/${candidate_id}?token=${token}`;
+    // Generate link for signin
+    const signinLink = `${process.env.NEXT_PUBLIC_SITE_URL}/signin/${candidate_id}/protected?token=${token}&application=${application_id}`;
     
     // Resend email API payload
     const payload = {
@@ -78,20 +81,96 @@ export async function sendAuthEmail(email: string, candidate_id: string) {
       to: email,
       subject: 'Access Your Talentora Account',
       html: `
-        <h2>Welcome to Talentora!</h2>
-        <p>Use the appropriate link below to access your account:</p>
-        
-        <div style="margin: 20px 0;">
-          <p><strong>Already have an account?</strong></p>
-          <p><a href="${signinLink}" style="padding: 10px 15px; background-color: #4F46E5; color: white; text-decoration: none; border-radius: 4px;">Sign In</a></p>
-        </div>
-        
-        <div style="margin: 20px 0;">
-          <p><strong>New to Talentora?</strong></p>
-          <p><a href="${signupLink}" style="padding: 10px 15px; background-color: #10B981; color: white; text-decoration: none; border-radius: 4px;">Create Account</a></p>
-        </div>
-        
-        <p style="margin-top: 30px; font-size: 12px; color: #6B7280;">This link is unique to your email address. Please do not share it with others.</p>
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Access Your Talentora Account</title>
+          <style>
+            body { 
+              font-family: 'Arial', sans-serif; 
+              line-height: 1.6; 
+              color: #333;
+              margin: 0;
+              padding: 0;
+            }
+            .container {
+              max-width: 600px;
+              margin: 0 auto;
+              padding: 20px;
+              background-color: #ffffff;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 30px;
+            }
+            .logo-text {
+              font-size: 28px;
+              font-weight: bold;
+              color: #333;
+            }
+            .logo-highlight {
+              background: linear-gradient(to right, #4F46E5, #10B981);
+              -webkit-background-clip: text;
+              background-clip: text;
+              -webkit-text-fill-color: transparent;
+              font-weight: bold;
+            }
+            .content {
+              background-color: #f9fafb;
+              padding: 30px;
+              border-radius: 8px;
+              margin-bottom: 20px;
+            }
+            .button {
+              display: inline-block;
+              padding: 12px 24px;
+              background-color: #4F46E5;
+              color: white !important;
+              text-decoration: none;
+              border-radius: 6px;
+              font-weight: bold;
+              text-align: center;
+              margin: 15px 0;
+            }
+            .footer {
+              font-size: 12px;
+              color: #6B7280;
+              text-align: center;
+              margin-top: 30px;
+              padding-top: 15px;
+              border-top: 1px solid #e5e7eb;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <div class="logo-text">
+                Talent<span class="logo-highlight">ora</span>
+              </div>
+            </div>
+            
+            <div class="content">
+              <h2>Welcome to Talentora!</h2>
+              <p>You've been invited to access the Talentora platform by ${company_name}.</p>
+              <p>Click the button below to access your account:</p>
+              
+              <div style="text-align: center;">
+                <a href="${signinLink}" class="button">Access Your Account</a>
+              </div>
+              
+              <p>If you have any questions, please contact the ${company_name} recruitment team.</p>
+            </div>
+            
+            <div class="footer">
+              <p>This link is unique to your email address. Please do not share it with others.</p>
+              <p>© ${new Date().getFullYear()} Talentora. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+        </html>
       `
     };
   
@@ -108,9 +187,4 @@ export async function sendAuthEmail(email: string, candidate_id: string) {
       throw new Error('Failed to send email');
     }
     return response.json();
-}
-
-// For backward compatibility
-export async function sendSignupEmail(email: string, candidate_id: string) {
-    return sendAuthEmail(email, candidate_id);
 }

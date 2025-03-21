@@ -275,21 +275,61 @@ export async function inviteCandidate(
 
   try {
     const supabase = createClient();
-
+    
+    // First, get the job information including company_id
+    const { data: jobData, error: jobError } = await supabase
+      .from('jobs')
+      .select('company_id')
+      .eq('merge_id', job_id)
+      .single();
+    
+    if (jobError || !jobData || !jobData.company_id) {
+      console.error('Error fetching job:', jobError);
+      return { data: null, error: 'Failed to find job information' };
+    }
+    
+    // Now fetch the company name using the company_id
+    const { data: companyData, error: companyError } = await supabase
+      .from('companies')
+      .select('name')
+      .eq('id', jobData.company_id)
+      .single();
+    
+    if (companyError || !companyData) {
+      console.error('Error fetching company:', companyError);
+      return { data: null, error: 'Failed to find company information' };
+    }
+    
+    const companyName = companyData.name;
+    // merge application id
+    const application_id = await fetchApplicationMergeId(job_id, merge_candidate_id);
+    
     // Send authentication email with both signup and signin links
-    const emailSend = await sendAuthEmail(email, merge_candidate_id);
-    if (!emailSend) {
+    const emailSend = await sendAuthEmail(email, merge_candidate_id, companyName, application_id);
+
+    if (!emailSend || !companyName) {
       return { data: null, error: "Failed to send email" };
     }
 
-    // merge application id
-    const application_id = await fetchApplicationMergeId(job_id, merge_candidate_id);
-
+   
+    // Check if application already exists
+    const { data: existingApplication, error: checkError } = await supabase
+      .from('applications')
+      .select('id')
+      .eq('merge_application_id', application_id)
+      .single();
+      
+    if (existingApplication) {
+      // Application already exists, return it
+      return { data: existingApplication, error: null };
+    }
+    
+    // If no existing application found, insert new one
     const { data: application, error: applicationError } = await supabase
       .from('applications')
       .insert({
         merge_application_id: application_id,
-        applicant_id: "",
+        applicant_id: null,
         job_id // This is the Merge job ID
       })
       .select()

@@ -98,7 +98,7 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
         account_token: accountToken
     });
     
-    const url = `${API_URL}/application-id/${jobId}/${candidateId}?${params.toString()}`;
+    const url = `${API_URL}/merge/application-id/${jobId}/${candidateId}?${params.toString()}`;
     
     const response = await fetch(url, {
         credentials: 'include',
