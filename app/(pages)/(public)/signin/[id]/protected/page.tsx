@@ -6,11 +6,11 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import PasswordSignIn from '@/components/AuthForms/PasswordSignIn';
-import { verifyToken } from '@/utils/email_helpers';
+import { verifyToken, invalidateToken } from '@/utils/email_helpers';
 import { getAuthTypes, getRedirectMethod } from '@/utils/auth-helpers/settings';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 export default function TokenProtectedSignIn({
   params
@@ -23,6 +23,7 @@ export default function TokenProtectedSignIn({
   const [error, setError] = useState<string | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
   const [applicationId, setApplicationId] = useState<string | null>(null);
+  const [verifiedEmail, setVerifiedEmail] = useState<string | null>(null);
   
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -32,7 +33,50 @@ export default function TokenProtectedSignIn({
   const applicationIdParam = searchParams.get('application');
   const { allowEmail } = getAuthTypes();
   const redirectMethod = getRedirectMethod();
+  const supabase = createClientComponentClient()
+  
 
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        // User is already logged in
+        
+        try {
+          // If we have a token and it's valid, add the user to applicants and applications tables
+          if (token && isValidToken && verifiedEmail) {
+            const user = session.user;
+            
+            // Call functions to add user to applicants and applications tables
+            await addUserToApplicantAndApplicationTables(
+              user.id, 
+              verifiedEmail, 
+              user.user_metadata.full_name, 
+              candidateId,
+              jobId,
+              applicationId
+            );
+            
+            // Invalidate the token after successful processing
+            await invalidateToken(token);
+          }
+          
+          // Redirect to dashboard
+          router.push('/dashboard');
+          router.refresh();
+        } catch (err) {
+          console.error('Error processing authentication:', err);
+          // Still redirect to dashboard even if there's an error
+          router.push('/dashboard');
+          router.refresh();
+        }
+      }
+    }
+    
+    checkUser()
+  }, [router, supabase, isValidToken, token, verifiedEmail, candidateId, jobId, applicationId])
+  
   useEffect(() => {
     // Set job ID from query params if available
     if (jobIdParam) {
@@ -54,6 +98,7 @@ export default function TokenProtectedSignIn({
 
       try {
         const response = await verifyToken(token, candidateId);
+        setVerifiedEmail(response.email);
         setIsValidToken(true);
         setIsLoading(false);
       } catch (err) {
@@ -66,6 +111,43 @@ export default function TokenProtectedSignIn({
 
     validateToken();
   }, [token, candidateId, jobIdParam, applicationIdParam]);
+
+  // Helper function to add user to both tables
+  async function addUserToApplicantAndApplicationTables(
+    userId: string,
+    email: string,
+    fullName: string,
+    candidateId: string,
+    jobId: string | null,
+    applicationId: string | null
+  ) {
+    // Add to applicants table
+    const { error: applicantError } = await supabase
+      .from('applicants')
+      .upsert({
+        id: userId,
+        email: email,
+        full_name: fullName,
+        merge_candidate_id: [candidateId]
+      })
+      .select();
+    
+    if (applicantError) {
+      console.error('Error adding user to applicants table:', applicantError);
+    }
+    
+    // Add to applications table if we have a job ID and application ID
+    if (jobId && applicationId) {
+      const { error: applicationError } = await supabase
+        .from('applications')
+        .update({ applicant_id: userId })
+        .eq('merge_application_id', applicationId);
+      
+      if (applicationError) {
+        console.error('Error updating application with applicant ID:', applicationError);
+      }
+    }
+  }
 
   if (isLoading) {
     return (
@@ -116,6 +198,11 @@ export default function TokenProtectedSignIn({
                   jobId={jobId || undefined}
                   applicationId={applicationId || undefined}
                   signUpRedirectLink={`/signup/${candidateId}?token=${token}${applicationId ? `&application=${applicationId}` : ''}`}
+                  onSuccessfulSignIn={async () => {
+                    if (token) {
+                      await invalidateToken(token);
+                    }
+                  }}
                 />
               </div>
             </CardContent>

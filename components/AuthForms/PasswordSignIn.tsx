@@ -15,7 +15,8 @@ interface PasswordSignInProps {
   candidateId?: string;
   jobId?: string;
   applicationId?: string;
-  signUpRedirectLink?: string
+  signUpRedirectLink?: string;
+  onSuccessfulSignIn?: () => Promise<void>;
 }
 
 export default function PasswordSignIn({
@@ -26,7 +27,8 @@ export default function PasswordSignIn({
   candidateId,
   jobId,
   applicationId,
-  signUpRedirectLink
+  signUpRedirectLink,
+  onSuccessfulSignIn
 }: PasswordSignInProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,7 +61,12 @@ export default function PasswordSignIn({
         formData.set('applicationId', applicationId);
       }
 
-      await handleRequest(e, signInWithPassword, router);
+      const response = await handleRequest(e, signInWithPassword, router);
+      
+      // If sign-in was successful, call the callback if provided
+      if (response === true && onSuccessfulSignIn) {
+        await onSuccessfulSignIn();
+      }
 
       // Force a hard refresh after successful sign-in
       window.location.href = '/dashboard';

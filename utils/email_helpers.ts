@@ -5,6 +5,10 @@ import jwt from 'jsonwebtoken';
 // Make sure to set JWT_SECRET securely in your environment variables
 const secret = process.env.JWT_SECRET as string;
 
+// Store for invalidated tokens - in a production environment,
+// this should be replaced with a database table
+const invalidatedTokens = new Set<string>();
+
 if (!secret) {
     console.warn('WARNING: JWT_SECRET is not set in environment variables');
 }
@@ -28,6 +32,32 @@ export async function generateToken(email: string, candidate_id: string): Promis
 }
 
 /**
+ * Invalidates a JWT token so it can no longer be used
+ * @param token The JWT token to invalidate
+ * @returns A boolean indicating whether the invalidation was successful
+ */
+export async function invalidateToken(token: string): Promise<boolean> {
+    if (!token) {
+        return false;
+    }
+    
+    try {
+        // Verify the token is valid before adding it to the invalidated list
+        // This prevents storing invalid tokens in our invalidated tokens set
+        const decoded = jwt.verify(token, secret);
+        
+        // Add the token to the invalidated tokens set
+        invalidatedTokens.add(token);
+        
+        return true;
+    } catch (error) {
+        // If the token is already invalid, we don't need to invalidate it
+        console.error('Error invalidating token:', error);
+        return false;
+    }
+}
+
+/**
  * Verifies a JWT token and returns the email if valid
  * @param token The JWT token to verify
  * @param candidate_id The candidate ID that should match the token
@@ -41,6 +71,11 @@ export async function verifyToken(token: string, candidate_id: string): Promise<
     
     if (!token) {
         throw new Error('Missing token');
+    }
+    
+    // Check if token has been invalidated
+    if (invalidatedTokens.has(token)) {
+        throw new Error('Token has been invalidated');
     }
     
     try {

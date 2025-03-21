@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { verifyToken } from '@/utils/email_helpers'
+import { verifyToken, invalidateToken } from '@/utils/email_helpers'
 import { signUp } from '@/utils/auth-helpers/server'
 import { extractErrorMessageFromURL } from '@/utils/helpers'
 
@@ -70,14 +70,58 @@ export default function CandidateSignUp({ params }: { params: { id: string } }) 
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
-        // User is already logged in, redirect to dashboard
-        router.push('/dashboard')
-        router.refresh()
+        // User is already logged in
+        
+        try {
+          // If we have a token and it's valid, add the user to applicants and applications tables
+          if (token && tokenVerified) {
+            const user = session.user;
+            
+            // Add user to applicants table
+            const { error: applicantError } = await supabase
+              .from('applicants')
+              .upsert({
+                id: user.id,
+                email: email,
+                full_name: user.user_metadata.full_name,
+                merge_candidate_id: candidateId ? [candidateId] : []
+              })
+              .select();
+            
+            if (applicantError) {
+              console.error('Error adding user to applicants table:', applicantError);
+            }
+            
+            // Add to applications table if we have an application ID
+            if (applicationId) {
+              const { error: applicationError } = await supabase
+                .from('applications')
+                .update({ applicant_id: user.id })
+                .eq('merge_application_id', applicationId);
+              
+              if (applicationError) {
+                console.error('Error updating application with applicant ID:', applicationError);
+              }
+            }
+            
+            // Invalidate the token after successful processing
+            await invalidateToken(token);
+          }
+          
+          // Redirect to dashboard
+          router.push('/dashboard')
+          router.refresh()
+        } catch (err) {
+          console.error('Error processing authentication:', err);
+          // Still redirect to dashboard even if there's an error
+          router.push('/dashboard')
+          router.refresh()
+        }
       }
     }
     
     checkUser()
-  }, [router, supabase])
+  }, [router, supabase, tokenVerified, email, candidateId, applicationId, token])
 
   // Check if passwords match whenever either password field changes
   useEffect(() => {
@@ -153,6 +197,16 @@ export default function CandidateSignUp({ params }: { params: { id: string } }) 
           return;
         }
 
+        // On successful signup, invalidate the token
+        if (!redirectPath.includes('error=')) {
+          try {
+            if (token) {
+              await invalidateToken(token);
+            }
+          } catch (invalidateError) {
+            console.error('Error invalidating token:', invalidateError);
+          }
+        }
 
         // Navigate to the returned path or dashboard
         router.push(redirectPath || '/dashboard')
