@@ -4,8 +4,6 @@ alter table "public"."applications" drop constraint "applications_applicant_id_f
 
 alter table "public"."applicants" drop column "user_id";
 
-alter table "public"."applicants" alter column "merge_candidate_id" set data type uuid[] using "merge_candidate_id"::uuid[];
-
 alter table "public"."applications" alter column "applicant_id" drop not null;
 
 alter table "public"."applicants" add constraint "fk_applicants_auth_users" FOREIGN KEY (id) REFERENCES auth.users(id) not valid;
