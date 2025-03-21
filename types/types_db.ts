@@ -64,55 +64,45 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
-          merge_candidate_id: string | null
-          user_id: string | null
+          merge_candidate_id: string[] | null
         }
         Insert: {
           email?: string | null
           full_name?: string | null
           id?: string
-          merge_candidate_id?: string | null
-          user_id?: string | null
+          merge_candidate_id?: string[] | null
         }
         Update: {
           email?: string | null
           full_name?: string | null
           id?: string
-          merge_candidate_id?: string | null
-          user_id?: string | null
+          merge_candidate_id?: string[] | null
         }
         Relationships: []
       }
       applications: {
         Row: {
-          applicant_id: string
+          applicant_id: string | null
           created_at: string
           id: string
           job_id: string
           merge_application_id: string | null
         }
         Insert: {
-          applicant_id: string
+          applicant_id?: string | null
           created_at?: string
           id?: string
           job_id: string
           merge_application_id?: string | null
         }
         Update: {
-          applicant_id?: string
+          applicant_id?: string | null
           created_at?: string
           id?: string
           job_id?: string
           merge_application_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "applications_applicant_id_fkey"
-            columns: ["applicant_id"]
-            isOneToOne: false
-            referencedRelation: "applicants"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "applications_job_id_fkey"
             columns: ["job_id"]
