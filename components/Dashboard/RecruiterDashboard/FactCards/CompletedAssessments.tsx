@@ -19,13 +19,13 @@ const CompletedAssessmentsCard = ({ factWindow }: { factWindow: number }) => {
       const { data: currentData, error: currentError } = await supabase
         .from('AI_summary')
         .select('*')
-        .gte("created_at", currentStartDate);
+        // .gte("created_at", currentStartDate);
 
       const { data: previousData, error: previousError } = await supabase
         .from('AI_summary')
         .select('*')
         .gte("created_at", previousStartDate)
-        .lt("created_at", midDate);
+        // .lt("created_at", midDate);
 
       if (currentError || previousError) {
         console.error(currentError || previousError);

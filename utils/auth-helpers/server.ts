@@ -349,7 +349,7 @@ async function addUserToApplicationsTable(
   jobId: string,
   applicationId?: string | null
 ) {
-  console.log(applicationId, "meow")
+
   try {
     // Use provided application ID if available, otherwise fetch it
     let mergeApplicationId = applicationId;

@@ -109,7 +109,7 @@ export async function sendAuthEmail(
     
     // Generate link for signin
     const signinLink = `${process.env.NEXT_PUBLIC_SITE_URL}/signin/${candidate_id}/protected?token=${token}&application=${application_id}`;
-    
+
     // Resend email API payload
     const payload = {
       from: 'talentora-do-not-reply@talentora.io',
