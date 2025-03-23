@@ -305,7 +305,7 @@ export async function inviteCandidate(
     const application_id = await fetchApplicationMergeId(job_id, merge_candidate_id);
     
     // Send authentication email with both signup and signin links
-    const emailSend = await sendAuthEmail(email, merge_candidate_id, companyName, application_id);
+    const emailSend = await sendAuthEmail("bengardiner18@gmail.com", merge_candidate_id, companyName, application_id);
 
     if (!emailSend || !companyName) {
       return { data: null, error: "Failed to send email" };
