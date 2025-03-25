@@ -23,23 +23,37 @@ export async function fetchJobsData() {
 
 // fetch jobs by id
 export async function fetchJobById(jobId: string) {
-    const response = await fetch(getURL(`api/jobs/${jobId}`), {
+
+  const accountToken = await getMergeApiKey();
+
+    if (!accountToken) {
+        throw new Error('Account token not found');
+    }
+    
+    const params = new URLSearchParams({
+        account_token: accountToken
+    });
+
+    const url = `${API_URL}/merge/job/${jobId}?${params.toString()}`;
+
+    const response = await fetch(url, {
       credentials: 'include',
-      headers: { 
-        'Content-Type': 'application/json' 
+      headers: {
+          'Content-Type': 'application/json'
       },
-      cache: 'force-cache',
-      next: { revalidate: 3600 }
+      // cache: 'force-cache',
+      // next: { revalidate: 1200 }
+      cache: 'no-store'
     });
 
     if (!response.ok) {
-        throw new Error(`Job fetch failed: ${response.status}`);
-    }
+      throw new Error(`Failed to fetch application ID: ${response.status}`);
+    } 
     
-    return response.json();
+    const data = await response.json();
+    console.log('fetch job', data); // Changed this line to log data instead of response.json()
+    return data.data;
   }
-
-
 
 // fetch job configuration data, and the job. JobID is merge job id
 export async function fetchJobConfigurationData(jobId: string) {
