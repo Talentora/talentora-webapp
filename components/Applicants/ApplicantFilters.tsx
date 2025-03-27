@@ -261,7 +261,6 @@ const ApplicantFilters = ({
                             const columnName = column.id === 'dataStatus' 
                               ? 'Data Status' 
                               : column.id.charAt(0).toUpperCase() + column.id.slice(1);
-                            
                             return (
                               <div key={column.id} className="flex items-center space-x-2">
                                 <Checkbox 

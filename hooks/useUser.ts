@@ -70,8 +70,9 @@ export function useUser(): UseUserReturn {
 
   const userId = userData?.id ?? '';
   // console.log("userdata in useuser", userData);
+
   const role =
-    userData?.identities?.[0].identity_data?.role == 'applicant'
+    userData?.user_metadata.role === 'applicant'
       ? 'applicant'
       : 'recruiter';
 
@@ -87,6 +88,7 @@ export function useUser(): UseUserReturn {
     enabled: !!userData?.id, // wait until role is determined
     queryFn: async () => {
       if (!userData?.id) return null;
+
       if (isRecruiter) {
         console.log('going to recruiters');
         const { data, error } = await supabase

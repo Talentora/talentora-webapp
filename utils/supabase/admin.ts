@@ -39,8 +39,15 @@ const inviteCandidateAdmin = async (name: string, email: string) => {
     }
 
     // User doesn't exist, invite them
-    const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, 
-      { data: { role: 'applicant', full_name: name } }
+    const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(
+      email, 
+      { 
+        data: { 
+          role: 'applicant', 
+          full_name: name 
+        },
+        redirectTo: ""
+      }
     );
 
     if (error) {

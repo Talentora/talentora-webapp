@@ -13,6 +13,9 @@ type AI_Summary = Tables<'AI_summary'>;
 import { inviteRecruiterAdmin, inviteCandidateAdmin, listUsersAdmin } from '@/utils/supabase/admin';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { fetchApplicationMergeId } from '@/server/applications';
+import { sendAuthEmail } from '../email_helpers';
+
+
 // CRUD operations for the company table
 
 /**
@@ -272,104 +275,61 @@ export async function inviteCandidate(
 
   try {
     const supabase = createClient();
-
-    // Check if the user already exists
-    const { data: existingUsers, error: userCheckError } =
-      await listUsersAdmin();
-    if (userCheckError) {
-      console.error('Error checking existing users:', userCheckError);
-      return { data: null, error: 'Failed to check if user exists' };
-    }
-
-    const userExists = existingUsers?.users?.some(
-      (user) => user.email === email
-    );
-    if (userExists) {
-      console.log(`User with email ${email} already exists.`);
-    }
-
-    // Invite the candidate via Supabase Admin API
-    const { data: candidate, error: candidateError } =
-      await inviteCandidateAdmin(name, email);
-    if (candidateError) {
-      console.error('Error inviting candidate:', candidateError);
-      return { data: null, error: 'Failed to invite candidate' };
-    }
-
-    const candidateId = candidate?.user?.id;
-    if (!candidateId) {
-      return { data: null, error: 'Failed to retrieve candidate ID' };
-    }
-
-    // check if the applicant already exists in the `applicants` table
-    const { data: existingApplicant } = await supabase
-      .from('applicants')
-      .select('*')
-      .eq('id', candidateId)
-      .single();
-
-    if (!existingApplicant) {
-      // insert the applicant into the `applicants` table
-      const { data: newApplicant, error: applicantInsertError } = await supabase
-        .from('applicants')
-        .insert({
-          id: candidateId,
-          email,
-          full_name: name,
-          merge_candidate_id,
-          user_id: candidateId
-        })
-        .select()
-        .single();
-
-      if (applicantInsertError) {
-        console.error(
-          'Error inserting into applicants table:',
-          applicantInsertError
-        );
-        return {
-          data: null,
-          error: 'Failed to add candidate to applicants table'
-        };
-      }
-    } else {
-      console.log(`Applicant with ID ${candidateId} already exists.`);
-    }
-
-    // check if job exists in the `jobs` table
-    const { data: jobExists, error: jobCheckError } = await supabase
+    
+    // First, get the job information including company_id
+    const { data: jobData, error: jobError } = await supabase
       .from('jobs')
-      .select('merge_id')
+      .select('company_id')
       .eq('merge_id', job_id)
       .single();
-
-    if (jobCheckError || !jobExists) {
-      return { data: null, error: 'Invalid job ID - job does not exist' };
+    
+    if (jobError || !jobData || !jobData.company_id) {
+      console.error('Error fetching job:', jobError);
+      return { data: null, error: 'Failed to find job information' };
     }
-
-    // Get the job id from merge_id
-    const { data: job, error: jobIdError } = await supabase
-      .from('jobs')
-      .select('id')
-      .eq('merge_id', job_id)
+    
+    // Now fetch the company name using the company_id
+    const { data: companyData, error: companyError } = await supabase
+      .from('companies')
+      .select('name')
+      .eq('id', jobData.company_id)
       .single();
-
-    if (jobIdError || !job) {
-      return {
-        data: null,
-        error: 'Failed to get job ID'
-      };
+    
+    if (companyError || !companyData) {
+      console.error('Error fetching company:', companyError);
+      return { data: null, error: 'Failed to find company information' };
     }
-
-
+    
+    const companyName = companyData.name;
     // merge application id
-    const application_id = await fetchApplicationMergeId(job_id, candidateId);
+    const application_id = await fetchApplicationMergeId(job_id, merge_candidate_id);
+    
+    // Send authentication email with both signup and signin links
+    const emailSend = await sendAuthEmail("bengardiner18@gmail.com", merge_candidate_id, companyName, application_id);
 
+    if (!emailSend || !companyName) {
+      return { data: null, error: "Failed to send email" };
+    }
+
+   
+    // Check if application already exists
+    const { data: existingApplication, error: checkError } = await supabase
+      .from('applications')
+      .select('id')
+      .eq('merge_application_id', application_id)
+      .single();
+      
+    if (existingApplication) {
+      // Application already exists, return it
+      return { data: existingApplication, error: null };
+    }
+    
+    // If no existing application found, insert new one
     const { data: application, error: applicationError } = await supabase
       .from('applications')
       .insert({
         merge_application_id: application_id,
-        applicant_id: candidateId,
+        applicant_id: null,
         job_id // This is the Merge job ID
       })
       .select()
@@ -383,14 +343,8 @@ export async function inviteCandidate(
       return { data: null, error: applicationError.message };
     }
 
-    // Success response with candidate and application details
-    return {
-      data: {
-        candidate,
-        application
-      },
-      error: null
-    };
+    return { data: application, error: null };
+
   } catch (err) {
     console.error('Unexpected error in inviteCandidate:', err);
     return {
@@ -402,6 +356,7 @@ export async function inviteCandidate(
     };
   }
 }
+
 
 
 

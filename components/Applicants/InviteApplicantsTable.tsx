@@ -21,9 +21,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from '@/components/ui/button';
-import { SlidersHorizontal } from 'lucide-react';
-import { Badge } from "@/components/ui/badge";
 import { inviteCandidate } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 
@@ -33,6 +30,9 @@ import ApplicantFilters from './ApplicantFilters';
 import ApplicantJobInfo from './ApplicantJobInfo';
 import ApplicantTablePagination from './ApplicantTablePagination';
 import { getApplicantColumns } from './ApplicantTableColumns';
+import { getNotInvitedColumns } from './NotInvitedColumns'; 
+import { getInProgressColumns } from './InProgressColumns';
+import { getCompletedColumns } from './CompletedColumns';
 
 interface InviteApplicantsTableProps {
   applicants: any[];
@@ -40,15 +40,29 @@ interface InviteApplicantsTableProps {
   onSort?: (field: string) => void;
   sortField?: string;
   sortDirection?: 'asc' | 'desc';
+  customColumns?: 'not-invited' | 'in-progress' | 'completed';
 }
 
-const InviteApplicantsTable = ({ applicants, jobs, onSort, sortField, sortDirection }: InviteApplicantsTableProps) => {
+const InviteApplicantsTable = ({ 
+  applicants, 
+  jobs, 
+  onSort, 
+  sortField, 
+  sortDirection, 
+  customColumns 
+}: InviteApplicantsTableProps) => {
   const [selectedApplicants, setSelectedApplicants] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedJobId, setSelectedJobId] = useState<string>("all");
   const [isInviting, setIsInviting] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [sorting, setSorting] = useState<SortingState>([]);
+  
+  // Initialize sorting state from props if provided
+  const initialSorting: SortingState = sortField 
+    ? [{ id: sortField, desc: sortDirection === 'desc' }]
+    : [];
+  
+  const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     status: false,
@@ -142,6 +156,29 @@ const InviteApplicantsTable = ({ applicants, jobs, onSort, sortField, sortDirect
 
   // Define columns for the data table
   const columns = useMemo(() => {
+    // If custom columns are specified, use those instead
+    if (customColumns === 'not-invited') {
+      return getNotInvitedColumns({ 
+        handleViewApplicant,
+        setSelectedApplicants 
+      });
+    }
+    
+    if (customColumns === 'in-progress') {
+      return getInProgressColumns({
+        handleViewApplicant,
+        setSelectedApplicants
+      });
+    }
+    
+    if (customColumns === 'completed') {
+      return getCompletedColumns({
+        handleViewApplicant,
+        setSelectedApplicants
+      });
+    }
+    
+    // Otherwise, use the regular columns
     const cols = getApplicantColumns({ 
       selectedJobId, 
       handleViewApplicant,
@@ -169,7 +206,7 @@ const InviteApplicantsTable = ({ applicants, jobs, onSort, sortField, sortDirect
     }
 
     return cols;
-  }, [selectedJobId]);
+  }, [selectedJobId, customColumns]);
 
   // Filter applicants based on search term and selected job
   const filteredApplicants = useMemo(() => {
@@ -281,11 +318,31 @@ const InviteApplicantsTable = ({ applicants, jobs, onSort, sortField, sortDirect
     setRowSelection({});
   }, [selectedJobId, invitationStatus, interviewStatus, scoreThreshold]);
 
+  // Update parent component's sort state when local sorting changes
+  const handleSortingChange = (updaterOrValue: SortingState | ((old: SortingState) => SortingState)) => {
+    // Handle both direct value and updater function
+    const newSorting = typeof updaterOrValue === 'function' 
+      ? updaterOrValue(sorting) 
+      : updaterOrValue;
+      
+    setSorting(newSorting);
+    
+    if (newSorting.length > 0 && onSort && newSorting[0].id) {
+      const { id, desc } = newSorting[0];
+      onSort(id);
+      // Update parent's sort direction if needed
+      if ((desc && sortDirection !== 'desc') || (!desc && sortDirection !== 'asc')) {
+        // This would trigger the parent to update sortDirection
+        onSort(id);
+      }
+    }
+  };
+
   // Initialize the table
   const table = useReactTable({
     data: filteredApplicants,
     columns,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

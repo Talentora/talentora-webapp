@@ -71,7 +71,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
 
     // Fill bins with data
     filteredApplicants.forEach(applicant => {
-      const createdAt = new Date(applicant.application.applied_at);
+      const createdAt = new Date(applicant.application.created_at);
       if (createdAt >= startDate && createdAt <= now) {
         const binDate = new Date(createdAt);
         binDate.setHours(0, 0, 0, 0);

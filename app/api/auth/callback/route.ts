@@ -9,7 +9,6 @@ export async function GET(request: NextRequest) {
   // by the `@supabase/ssr` package. It exchanges an auth code for the user's session.
   const requestUrl = new URL(request.url);
   console.log('[Auth Callback] Request URL:', requestUrl.toString());
-  console.log('[Auth Callback] Request cookies:', request.cookies.getAll());
   
   const code = requestUrl.searchParams.get('code');
   console.log('[Auth Callback] Auth code present:', !!code);
@@ -42,7 +41,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log('[Auth Callback] Final response cookies:', response.cookies.getAll());
     return response;
   }
 
@@ -62,4 +60,3 @@ export async function POST(request: NextRequest) {
   console.log('[Auth Callback] POST request received');
   return GET(request);
 }
-  

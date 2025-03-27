@@ -1,7 +1,6 @@
 'use client';
 import Navlinks from './Navlinks';
 import { useEffect, useState } from 'react';
-import { cn } from '@/utils/lib';
 
 export default function Navbar({ visible }: { visible: boolean }) {
   const [opacity, setOpacity] = useState(1);

@@ -42,12 +42,15 @@ const InviteApplicants = ({
   const [selectedJobId, setSelectedJobId] = useState<string>(
     jobs?.[0]?.id ?? ''
   );
+  const [invitedApplicants, setInvitedApplicants] = useState<ApplicantCandidate[]>([]);
   const { toast } = useToast();
 
   const filteredApplicants = applicants.filter(
     (applicant) => {
       // Only show applicants that don't have a supabase_application_id (not invited yet)
-      const notInvitedYet = !applicant.application.supabase_application_id;
+      // and aren't in the invitedApplicants array
+      const notInvitedYet = !applicant.application.supabase_application_id && 
+        !invitedApplicants.some(invited => invited.application.id === applicant.application.id);
       
       // First check if we need to filter by job ID (only when not in single job mode and a job is selected)
       const jobIdMatch = singleJobFlag || !selectedJobId || applicant.job.id === selectedJobId;
@@ -109,14 +112,14 @@ const InviteApplicants = ({
           );
 
           if (error) throw new Error(error);
-          return { name, email };
+          return { name, email, applicant };
         })
       );
 
       const successes = results.filter(
         (
           result
-        ): result is PromiseFulfilledResult<{ name: string; email: string }> =>
+        ): result is PromiseFulfilledResult<{ name: string; email: string, applicant: ApplicantCandidate }> =>
           result.status === 'fulfilled'
       );
       const failures = results.filter(
@@ -125,6 +128,10 @@ const InviteApplicants = ({
       );
 
       if (successes.length > 0) {
+        // Add successfully invited applicants to the invitedApplicants array
+        const successfulApplicants = successes.map(success => success.value.applicant);
+        setInvitedApplicants(prev => [...prev, ...successfulApplicants]);
+        
         toast({
           title: 'Success',
           description: `Sent ${successes.length} invitation${successes.length > 1 ? 's' : ''}`,
@@ -152,6 +159,13 @@ const InviteApplicants = ({
     } finally {
       setIsInviting(false);
     }
+  };
+
+  // Reset invited applicants when job selection changes
+  const handleJobChange = (jobId: string) => {
+    setSelectedJobId(jobId);
+    setInvitedApplicants([]);
+    setSelectedApplicants([]);
   };
 
   return (
@@ -188,7 +202,7 @@ const InviteApplicants = ({
         {!singleJobFlag && jobs && jobs.length > 0 && (
           <Select
             value={selectedJobId}
-            onValueChange={setSelectedJobId}
+            onValueChange={handleJobChange}
             disabled={isInviting}
           >
             <SelectTrigger className="transition-all duration-300">

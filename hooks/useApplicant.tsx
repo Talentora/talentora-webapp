@@ -84,6 +84,7 @@ export type EnrichedApplication = MergeJob & {
   status: 'complete' | 'incomplete';
 }
 
+
 // Main hook that combines all the data
 export const useApplicant = () => {
   const { user } = useUser();

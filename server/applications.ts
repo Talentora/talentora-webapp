@@ -11,8 +11,8 @@ export async function fetchApplicationData(mergeApplicationId: string) {
       headers: {
         'Content-Type': 'application/json'
       },
-      // cache: 'force-cache',
-      // next: { revalidate: 3600 }
+      cache: 'force-cache',
+      next: { revalidate: 3600 }
     });
     
     if (!response.ok) {
@@ -72,8 +72,8 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
       headers: {
         'Content-Type': 'application/json'
       },
-      cache: 'force-cache',
-      next: { revalidate: 3600 }
+      // cache: 'force-cache',
+      // next: { revalidate: 3600 }
     });
     
     if (!response.ok) {
@@ -93,12 +93,12 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
     if (!accountToken) {
         throw new Error('Account token not found');
     }
-    
+
     const params = new URLSearchParams({
         account_token: accountToken
     });
     
-    const url = `${API_URL}/application-id/${jobId}/${candidateId}?${params.toString()}`;
+    const url = `${API_URL}/merge/application-id/${jobId}/${candidateId}?${params.toString()}`;
     
     const response = await fetch(url, {
         credentials: 'include',

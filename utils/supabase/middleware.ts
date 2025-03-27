@@ -13,6 +13,7 @@ export const unprotectedRoutes = [
   /^\/password_signin(\/.*)?$/,
   /^\/demo(\/.*)?$/,
   /^\/signup(\/.*)?$/,
+  // /^\/signup\/[A-Za-z0-9_-]+$/, // Matches '/signup/{id}' for candidate sign-up
   /^\/about$/, // Matches '/about'
   /^\/contact$/, // Matches '/contact'
   /^\/product(\/.*)?$|^$/, // Matches '/product', '/product/', and any subpath like '/product/feature'
@@ -60,9 +61,12 @@ export async function handleSamlRedirect(request: NextRequest) {
 
 export async function handleAuthRedirects(request: NextRequest, user: any) {
   const { pathname } = request.nextUrl;
-
-  // Redirect authenticated users away from signin/signup routes to /dashboard
-  if (/^\/(signin|signup)(\/.*)?$/.test(pathname)) {
+  
+  // Check if it's a signup/[id] URL - these are allowed for authenticated users
+  const isSignupWithId = /^\/signup\/[A-Za-z0-9_-]+$/.test(pathname);
+  
+  // Only redirect for signin and signup pages that aren't signup/[id]
+  if (/^\/(signin|signup)(\/.*)?$/.test(pathname) && !isSignupWithId) {
     if (user) {
       console.log('[Middleware] Redirecting user to dashboard:', user);
       return NextResponse.redirect(new URL('/dashboard', request.url));
@@ -71,8 +75,11 @@ export async function handleAuthRedirects(request: NextRequest, user: any) {
   }
 
   // For protected routes, if no user is found, redirect to signin
-  if (!allUnprotectedRoutes.some((route) => route.test(pathname)) && !user) {
-    console.log('[Middleware] Redirecting user to signin:', user);
+  // Add isSignupWithId to allUnprotectedRoutes check
+  if (!allUnprotectedRoutes.some((route) => route.test(pathname)) && 
+      !isSignupWithId && 
+      !user) {
+    console.log('[Middleware] Redirecting user to signin:', pathname);
     return NextResponse.redirect(
       new URL('/signin', process.env.NEXT_PUBLIC_SITE_URL || request.url)
     );

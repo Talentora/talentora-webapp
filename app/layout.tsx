@@ -13,6 +13,7 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { getUserRole } from '@/utils/supabase/queries';
 import DynamicSidebar from '@/components/Layout/Sidebar/DynamicSidebar';
 import AuthListener from '@/components/AuthListener';
+import { headers } from 'next/headers';
 
 const title = 'Talentora';
 const description = 'Talentora is a platform for creating and managing AI-powered interviews.';

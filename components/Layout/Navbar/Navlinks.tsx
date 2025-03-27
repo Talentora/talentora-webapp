@@ -5,12 +5,16 @@ import { BrandLogo } from './BrandLogo';
 import { NavigationItems } from './NavigationItems';
 import { UserActions } from './UserActions';
 import { Skeleton } from '@/components/ui/skeleton';
-import { User } from '@supabase/supabase-js';
+import { usePathname } from 'next/navigation';
 
 export default function Navlinks({ visible }: { visible: boolean }) {
   const { user, company } = useUser();
   const userData = user.data;
   const companyData = company.data;
+  const pathname = usePathname();
+
+  // Check if current page is a signup/[id] page
+  const isSignupIdPage = pathname?.startsWith('/signup/') && pathname !== '/signup';
 
   const isRecruiter =
     userData?.user_metadata?.role === 'applicant' ? false : true;
@@ -45,10 +49,10 @@ export default function Navlinks({ visible }: { visible: boolean }) {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             {!visible && <BrandLogo />}
-            <NavigationItems isUser={!!userData} isRecruiter={isRecruiter} />
+            {!isSignupIdPage && <NavigationItems isUser={!!userData} isRecruiter={isRecruiter} />}
           </div>
           <div className="flex items-center space-x-4">
-            <UserActions user={userData} role={role} company={companyData} />
+            {!isSignupIdPage && <UserActions user={userData} role={role} company={companyData} />}
           </div>
         </div>
       </div>

@@ -55,14 +55,30 @@ const ApplicantCountCard = ({
   const factWindowDaysAgo = new Date();
   factWindowDaysAgo.setDate(factWindowDaysAgo.getDate() - factWindow);
 
-  const lastFactWindowDaysApplicants = Array.isArray(applicants)
-    ? applicants.filter((applicant) => {
-        const appliedDate = new Date(applicant.application.applied_at);
-        return appliedDate >= factWindowDaysAgo;
-      }).length
-    : [];
+  // Calculate applicants in current period (last factWindow days)
+  const currentPeriodApplicants = applicants.length;
+  // Array.isArray(applicants)
+  //   ? applicants.filter((applicant) => {
+  //       const appliedDate = new Date(applicant.application?.created_at);
+  //       console.log(appliedDate, factWindowDaysAgo);
+  //       return appliedDate >= factWindowDaysAgo;
+  //     }).length
+  //   : 0;
 
-  const percentageChange = 0; // Since we're only looking at the last fact window days, there's no previous period to compare to.
+  const previousPeriodStart = new Date();
+  previousPeriodStart.setDate(previousPeriodStart.getDate() - (factWindow * 2));
+  
+  const previousPeriodApplicants = Array.isArray(applicants)
+    ? applicants.filter((applicant) => {
+        const appliedDate = new Date(applicant.application?.created_at);
+        return appliedDate >= previousPeriodStart && appliedDate < factWindowDaysAgo;
+      }).length
+    : 0;
+
+  // Calculate percentage change
+  const percentageChange = previousPeriodApplicants === 0
+    ? (currentPeriodApplicants > 0 ? 100 : 0)
+    : ((currentPeriodApplicants - previousPeriodApplicants) / previousPeriodApplicants) * 100;
 
   return (
     <Card className="max-h-[100px] group p-2 border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 transition duration-300 ease-in-out hover:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))]">
@@ -78,11 +94,11 @@ const ApplicantCountCard = ({
       </CardHeader>
       <CardContent className="relative">
         <div className="ml-4 -mt-6 text-lg sm:text-xl md:text-2xl font-bold">
-          {lastFactWindowDaysApplicants}
+          {currentPeriodApplicants}
         </div>
         <div className="absolute right-2 -mt-4 text-sm text-gray-500">
-          {percentageChange >= 0 ? '' : ''}
-          {percentageChange.toFixed(2)}%
+          {percentageChange >= 0 ? '↑ ' : '↓ '}
+          {Math.abs(percentageChange).toFixed(2)}%
         </div>
       </CardContent>
     </Card>
