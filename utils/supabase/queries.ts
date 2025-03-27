@@ -432,6 +432,55 @@ export const getMergeApiKey = async (): Promise<string | null> => {
 };
 
 /**
+ * Fetches a job by its merge_id along with the associated company's merge_account_token.
+ *
+ * @param jobId - The merge_id of the job to fetch.
+ * @returns An object containing job and company data, including the merge_account_token.
+ * @throws Error if there's an issue fetching the data.
+ */
+export const fetchJobTokenById = async (jobId: string): Promise<{ 
+  accountToken: string | null;
+}> => {
+  try {
+    const supabase = createClient();
+    
+    // First fetch the job to get the company_id
+    const { data: job, error: jobError } = await supabase
+      .from('jobs')
+      .select('*')
+      .eq('merge_id', jobId)
+      .single();
+    
+    if (jobError) {
+      console.error('Error fetching job:', jobError);
+      throw new Error(`Job not found with ID: ${jobId}`);
+    }
+    
+    if (!job.company_id) {
+      throw new Error(`Job with ID ${jobId} has no associated company`);
+    }
+    
+    // Then fetch the company using company_id
+    const { data: company, error: companyError } = await supabase
+      .from('companies')
+      .select('*')
+      .eq('id', job.company_id)
+      .single();
+      
+    if (companyError) {
+      console.error('Error fetching company:', companyError);
+      throw new Error(`Company not found for job ${jobId}`);
+    }
+    
+    return {accountToken: company?.merge_account_token}
+    
+  } catch (error) {
+    console.error('Error in fetchJobById:', error);
+    throw error;
+  }
+};
+
+/**
  * Creates a new scout in the database.
  *
  * @param scoutData - The data for the new scout.

@@ -22,8 +22,7 @@ export default function JobPortal() {
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
   }, [enrichedApplications]);
-
-  console.log(enrichedApplications, 'enrichedApplications');
+  console.log(sortedApplications);
   return (
     <div className="min-h-screen">
       <header className="py-8 px-6">
@@ -82,7 +81,7 @@ export default function JobPortal() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Thanks for choosing out Talentora! You currently have
+                    Thanks for choosing out Talentora! You currently have 
                     {sortedApplications?.length} applications. To prepare, train
                     your interview skills by practicing with our{' '}
                     <Link

@@ -43,7 +43,7 @@ export async function GET(
         { status: 403 }
       );
     }
-
+    console.log("reaches here")
     if (!apiKey || !accountToken) {
       return NextResponse.json(
         { error: 'API credentials not found' },

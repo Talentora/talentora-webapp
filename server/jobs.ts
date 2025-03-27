@@ -1,5 +1,5 @@
 import { getURL } from '@/utils/helpers';
-import { getMergeApiKey } from '@/utils/supabase/queries';
+import { getMergeApiKey, fetchJobTokenById } from '@/utils/supabase/queries';
 
 const API_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
 
@@ -23,13 +23,22 @@ export async function fetchJobsData() {
 
 // fetch jobs by id
 export async function fetchJobById(jobId: string) {
+    const {accountToken} = await fetchJobTokenById(jobId);
+
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+    
+    if (accountToken) {
+      headers['X-Account-Token'] = accountToken;
+    }
+
     const response = await fetch(getURL(`api/jobs/${jobId}`), {
       credentials: 'include',
-      headers: { 
-        'Content-Type': 'application/json' 
-      },
+      headers,
       cache: 'force-cache',
       next: { revalidate: 3600 }
+      // cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -38,8 +47,6 @@ export async function fetchJobById(jobId: string) {
     
     return response.json();
   }
-
-
 
 // fetch job configuration data, and the job. JobID is merge job id
 export async function fetchJobConfigurationData(jobId: string) {

@@ -98,7 +98,6 @@ export const useApplicant = () => {
   useEffect(() => {
     const enrichApplications = async () => {
       if (!applications) return;
-
       try {
         const tokens: {[key: string]: string | null} = {};
         const enriched: EnrichedApplication[] = [];
@@ -112,6 +111,7 @@ export const useApplicant = () => {
           const status = aiSummary ? 'complete' : 'incomplete';
 
           const jobDetails = await fetchJobById(application.job_id); // using functions.ts instead
+
           if (jobDetails) {
             enriched.push({
               ...jobDetails, 
