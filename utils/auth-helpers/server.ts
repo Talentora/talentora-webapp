@@ -81,6 +81,44 @@ export async function signInWithEmail(formData: FormData) {
       'Please try again.'
     );
   }
+
+  const supabase = createClient();
+  let options = {
+    emailRedirectTo: callbackURL,
+    shouldCreateUser: true
+  };
+
+  // If allowPassword is false, do not create a new user
+  const { allowPassword } = getAuthTypes();
+  if (allowPassword) options.shouldCreateUser = false;
+  const { data, error } = await supabase.auth.signInWithOtp({
+    email,
+    options: options
+  });
+
+  if (error) {
+    redirectPath = getErrorRedirect(
+      '/signin/email_signin',
+      'You could not be signed in.',
+      error.message
+    );
+  } else if (data) {
+    cookieStore.set('preferredSignInView', 'email_signin', { path: '/' });
+    redirectPath = getStatusRedirect(
+      '/signin/email_signin',
+      'Success!',
+      'Please check your email for a magic link. You may now close this tab.',
+      true
+    );
+  } else {
+    redirectPath = getErrorRedirect(
+      '/signin/email_signin',
+      'Hmm... Something went wrong.',
+      'You could not be signed in.'
+    );
+  }
+
+  return redirectPath;
 }
 
 export async function signInWithPassword(formData: FormData) {

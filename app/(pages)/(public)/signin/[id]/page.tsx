@@ -68,18 +68,20 @@ export default async function SignInPage({
   }
 
   return (
-    <div className=" flex w-full flex-col min-h-screen">
-      <div className="flex justify-center flex-1">
-        <div className="flex flex-col justify-between max-w-lg p-3 m-auto w-80">
+    <div className="flex w-full flex-col min-h-screen">
+      <div className="flex flex-col items-center flex-1">
+        <div className="flex flex-col justify-between p-3 w-80">
           <div
             style={{ height: '80%', display: 'flex', alignItems: 'center' }}
             className="flex justify-center pb-6"
           >
             <Logo width="30px" height="30px" />
           </div>
-          <Card shadow className="p-4 w-full max-w-lg">
+        </div>
+        <div className="flex flex-col justify-between p-3">
+          <Card shadow className="p-4 w-full">
             <CardHeader>
-              <CardTitle className=" text-center">
+              <CardTitle className="text-center">
                 {viewProp === 'forgot_password'
                   ? 'Reset Password'
                   : viewProp === 'update_password'
@@ -89,7 +91,7 @@ export default async function SignInPage({
                       : 'Recruiter Login'}
               </CardTitle>
             </CardHeader>
-            <CardContent className="py-4 ">
+            <CardContent className="py-0">
               {viewProp === 'password_signin' && (
                 <PasswordSignIn
                   allowEmail={allowEmail}
