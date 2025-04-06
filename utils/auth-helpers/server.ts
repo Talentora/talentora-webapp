@@ -67,6 +67,22 @@ export async function requestPasswordUpdate(formData: FormData) {
   return redirectPath;
 }
 
+export async function signInWithEmail(formData: FormData) {
+  const cookieStore = cookies();
+  const callbackURL = getURL('/auth/callback');
+
+  const email = String(formData.get('email')).trim();
+  let redirectPath: string;
+
+  if (!isValidEmail(email)) {
+    redirectPath = getErrorRedirect(
+      '/signin/email_signin',
+      'Invalid email address.',
+      'Please try again.'
+    );
+  }
+}
+
 export async function signInWithPassword(formData: FormData) {
   const cookieStore = cookies();
   const email = String(formData.get('email')).trim();
