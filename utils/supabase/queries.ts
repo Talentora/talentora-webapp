@@ -406,6 +406,7 @@ export const getRecruiter = async (
 export const getMergeApiKey = async (): Promise<string | null> => {
   try {
     const user = await getUser();
+
     if (!user || user?.user_metadata.role === 'applicant') {
       // throw new Error('User not found');
       console.log("User not found")
