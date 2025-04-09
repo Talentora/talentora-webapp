@@ -1,136 +1,119 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
-  useRTVIClient,
-  useRTVIClientTransportState,
-  useRTVIClientMediaDevices
-} from '@pipecat-ai/client-react';
-import { usePermissions } from '@daily-co/daily-react';
-import DailyIframe from '@daily-co/daily-js';
-import InterviewHeader from './InterviewHeader';
-import AIInterviewer from './AIInterviewer';
-import CandidateVideo from './CandidateVideo';
-import TranscriptPanel from './TranscriptPanel';
-import ControlPanel from './ControlPanel';
-import MediaDevicePopup from './MediaDevicePopup';
-import { Job as MergeJob } from '@/types/merge';
-import { Tables } from '@/types/types_db';
-import { InterviewTranscript } from '@/types/transcript';
-import { useToast } from '@/hooks/use-toast';
+  GridLayout,
+  ParticipantTile,
+  useTracks,
+  ControlBar,
+  TrackToggle,
+  DisconnectButton,
+  MediaDeviceMenu,
+  Toast,
+  ConnectionStateToast,
+  useConnectionState,
+  BarVisualizer,
+  useVoiceAssistant,
+  useTrackTranscription,
+  RoomAudioRenderer
+} from '@livekit/components-react';
+import { Track, ConnectionState, TrackPublication } from 'livekit-client';
+import { useBotContext } from '@/components/Bot/BotContext';
+import Transcript from './Transcript';
 
-type Company = Tables<'companies'>;
+interface DisplayTranscriptionSegment {
+  id: string;
+  text: string;
+  startTime?: number;
+  endTime?: number;
+  final: boolean;
+  participantIdentity?: string;
+}
 
 interface VideoInterviewSessionProps {
   onLeave: () => void;
-  startAudioOff?: boolean;
-  job: MergeJob | null;
-  company: Company;
-  demo: boolean;
-  transcript: InterviewTranscript;
 }
 
-export default function VideoInterviewSession({
-  onLeave,
-  startAudioOff = false,
-  job,
-  company,
-  demo,
-  transcript
-}: VideoInterviewSessionProps) {
-  const client = useRTVIClient()!;
-  const transportState = useRTVIClientTransportState();
-  const {
-    availableMics,
-    availableCams,
-    selectedMic,
-    selectedCam,
-    updateMic,
-    updateCam
-  } = useRTVIClientMediaDevices();
-  const { toast } = useToast();
-
-  function startRecording() {
-    const callInstance = DailyIframe.getCallInstance();
-    console.log('[RECORDING] Call instance:', callInstance);
-    if (callInstance) {
-      callInstance.startRecording();
-    }
-  }
-
-  // Initialize devices when they become available
-  useEffect(() => {
-    if (transportState === 'ready') {
-      // Set default devices if none selected
-      if (availableMics.length > 0 && !selectedMic) {
-        console.log('[DEVICES] Setting default mic:', availableMics[0].label);
-        updateMic(availableMics[0].deviceId);
-      }
-      if (availableCams.length > 0 && !selectedCam) {
-        console.log(
-          '[DEVICES] Setting default camera:',
-          availableCams[0].label
-        );
-        updateCam(availableCams[0].deviceId);
-      }
-      startRecording();
-
-      // Enable/disable devices based on props
-      client.enableMic(!startAudioOff);
-      client.enableCam(true);
-    }
-  }, [
-    transportState,
-    availableMics,
-    availableCams,
-    selectedMic,
-    selectedCam,
-    updateMic,
-    updateCam,
-    client,
-    startAudioOff
+export default function VideoInterviewSession({ onLeave }: VideoInterviewSessionProps) {
+  const tracks = useTracks([
+    { source: Track.Source.Camera, withPlaceholder: true },
   ]);
+  const connectionState = useConnectionState();
+  const { state, audioTrack } = useVoiceAssistant();
+  
 
-  useEffect(() => {
-    if (transportState === 'error') {
-      onLeave();
-    }
-  }, [transportState, onLeave]);
-
-  const handleTimeUp = () => {
-    toast({
-      title: 'Interview Time Up',
-      description:
-        'The interview time has ended. Please wrap up your conversation.',
-      variant: 'default'
-    });
-  };
 
   return (
-    <div className="flex flex-col h-screen w-screen">
-      <div className="basis-1/6">
-        <InterviewHeader job={job} company={company} demo={demo} />
-      </div>
-      <main className="flex basis-1/3 gap-4 p-4 m-5">
-        {/* Sidebar */}
-        <div className="flex flex-col h-full w-1/3 gap-5">
-          <div className="flex-1">
-            <AIInterviewer isReady={transportState === 'ready'} />
-          </div>
-          <div className="flex basis-1/2 w-full overflow-y-auto">
-            <TranscriptPanel transcripts={transcript} />
-          </div>
+    <div className="flex flex-col h-screen relative">
+      <RoomAudioRenderer />
+      
+      <div>
+        {/* Connection state toast */}
+        <div className="absolute top-4 right-4 z-50">
+          <ConnectionStateToast />
         </div>
-        {/* Main Content */}
-        <div className="w-2/3 h-full">
-          <CandidateVideo />
+
+        {/* Custom status messages */}
+        {connectionState === ConnectionState.Connecting && (
+          <div className="absolute top-16 right-4 z-50">
+            <Toast>Connecting to interview...</Toast>
+          </div>
+        )}
+        {connectionState === ConnectionState.Reconnecting && (
+          <div className="absolute top-16 right-4 z-50">
+            <Toast>Connection lost. Trying to reconnect...</Toast>
+          </div>
+        )}
+        {connectionState === ConnectionState.Disconnected && (
+          <div className="absolute top-16 right-4 z-50">
+            <Toast>Disconnected from interview</Toast>
+          </div>
+        )}
+      </div>
+      <main className="flex-1 p-4">
+        <div className="flex flex-row gap-4 h-full">
+          {/* Left panel: Visualizer and Transcript */}
+          <div className="w-1/3 flex flex-col gap-4">
+            <div className="h-32 border rounded-lg p-4 bg-white shadow-sm">
+              <h3 className="text-sm font-medium text-gray-500 mb-2">Audio Level</h3>
+              <BarVisualizer 
+                state={state} 
+                trackRef={audioTrack}
+                barCount={10}
+              />
+            </div>
+            <div className="flex-1 border rounded-lg bg-white shadow-sm overflow-hidden" style={{ maxHeight: "305h" }}>
+              {/* Container div for sticky header and scrollable content */}
+              <div className="h-full flex flex-col">
+                <h3 className="text-sm font-medium text-gray-500 p-4 border-b sticky top-0 bg-white z-10">Transcript</h3>
+                <div className="flex-1 overflow-y-auto">
+                  <Transcript />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right panel: Video Grid */}
+          <div className="w-2/3 border rounded-lg p-4 bg-white shadow-sm">
+            <h3 className="text-sm font-medium text-gray-500 mb-2">Participants</h3>
+            <div className="h-full">
+              <GridLayout tracks={tracks} className="h-full">
+                <ParticipantTile style={{ width: "auto", height: "auto" }} />
+              </GridLayout>
+              
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="basis-1/6">
-        <ControlPanel onLeave={onLeave} onTimeUp={handleTimeUp} />
+      
+      <footer className="p-4 bg-background border-t">
+        <ControlBar saveUserChoices={true} variation="minimal">
+          <TrackToggle source={Track.Source.Microphone} />
+          <TrackToggle source={Track.Source.Camera} />
+          <MediaDeviceMenu />
+          <DisconnectButton onClick={onLeave} />
+        </ControlBar>
       </footer>
-      {/* Media Device Settings Popup */}
-      <MediaDevicePopup />
     </div>
   );
 }

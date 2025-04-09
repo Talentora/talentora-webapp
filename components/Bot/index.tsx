@@ -1,19 +1,12 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
-import { RTVIClientProvider, RTVIClientAudio } from '@pipecat-ai/client-react';
-import { RTVIClient } from '@pipecat-ai/client-js';
+import React, { useState } from 'react';
 import App from '@/components/Bot/App';
-import { DailyTransport } from '@pipecat-ai/daily-transport';
 import { Tables } from '@/types/types_db';
 import { Job as MergeJob } from '@/types/merge';
 import Splash from '@/components/Bot/Splash';
-import { BOT_READY_TIMEOUT } from '@/utils/rtvi.config';
-import { useToast } from '@/hooks/use-toast';
-import { TranscriptData, BotReadyData } from '@pipecat-ai/client-js';
-import {
-  InterviewTranscript,
-  InterviewTranscriptEntry
-} from '@/types/transcript';
+import { BotProvider } from '@/components/Bot/BotContext';
+import { useUser } from '@/hooks/useUser';
+import { User } from '@supabase/supabase-js';
 
 type Job = Tables<'jobs'>;
 type Company = Tables<'companies'>;
@@ -31,25 +24,12 @@ interface BotProps {
   scoutTest: boolean;
 }
 
-type TransportState =
-  | 'disconnected'
-  | 'initializing'
-  | 'initialized'
-  | 'authenticating'
-  | 'connecting'
-  | 'connected'
-  | 'ready'
-  | 'disconnecting'
-  | 'error';
-
 export default function Bot(botProps: BotProps) {
-  const clientRef = useRef<RTVIClient | null>(null);
-  const [transportState, setTransportState] =
-    useState<TransportState>('disconnected');
   const [showSplash, setShowSplash] = useState(true);
-  const [transcript, setTranscript] = useState<InterviewTranscript>([]);
-  const mountedRef = useRef(false);
-  const { toast } = useToast();
+  const [transcript, setTranscript] = useState([]);
+  const userHookValue = useUser();
+  const user: User | null = userHookValue.user;
+  const role: string | null = user?.app_metadata?.role ?? user?.user_metadata?.role ?? null;
 
   const {
     job,
@@ -63,129 +43,22 @@ export default function Bot(botProps: BotProps) {
     demo,
     scoutTest
   } = botProps;
-  
-  const voice = scout.voice;
-  const emotion = scout.emotion;
 
-  // Set mounted ref on component mount
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
-
-  // Initialize client only once
-  useEffect(() => {
-    if (!showSplash || clientRef.current || !mountedRef.current) {
-      return;
-    }
-
-    console.log('[INIT] Creating new client instance');
-
-    const dailyTransport = new DailyTransport();
-    const pipecatClient = new RTVIClient({
-      transport: dailyTransport,
-      enableMic: true, // Start with mic off until user explicitly enables
-      enableCam: true, // Start with camera off until user explicitly enables
-      params: {
-        baseUrl: '/api/bot',
-        endpoints: {
-          connect: '/connect'
-        },
-        requestData: {
-          data: {
-            voice: voice,
-            job: mergeJob,
-            company: company,
-            jobInterviewConfig: jobInterviewConfig,
-            application: application,
-            bot: scout,
-            companyContext: companyContext,
-            emotion: emotion,
-            enableRecording: enableRecording,
-            scoutTest: scoutTest,
-            demo: demo
-          }
-        },
-        timeout: BOT_READY_TIMEOUT
-      }
-    });
-
-    clientRef.current = pipecatClient;
-    console.log('[INIT] Client created successfully');
-
-    // Set up event listeners
-    const eventHandlers = {
-      onBotReady: (data: BotReadyData) => {
-        console.log(`BOT READY: ${data.config}`);
-      },
-      transportStateChanged: (state: string) => {
-        console.log('[EVENT] Transport state:', state);
-        setTransportState(state as TransportState);
-      },
-      onUserTranscript: (data: TranscriptData) => {
-        const userEntry: InterviewTranscriptEntry = {
-          ...data,
-          role: 'user',
-          timestamp: new Date().toISOString()
-        };
-        setTranscript((prev) => [...prev, userEntry]);
-      },
-      onBotTranscript: (data: TranscriptData) => {
-        const botEntry: InterviewTranscriptEntry = {
-          ...data,
-          role: 'bot',
-          timestamp: new Date().toISOString()
-        };
-        setTranscript((prev) => [...prev, botEntry]);
-      },
-      error: (error: any) => {
-        console.error('[EVENT] Bot error:', error);
-        toast({
-          title: 'Error',
-          description: error.message || 'An unknown error occurred',
-          variant: 'destructive'
-        });
-      },
-      disconnected: () => {
-        console.log('[EVENT] Bot disconnected');
-        toast({
-          title: 'Disconnected',
-          description: 'Bot disconnected from session',
-          variant: 'destructive'
-        });
-      }
-    };
-
-    // Attach event handlers
-    Object.entries(eventHandlers).forEach(([event, handler]) => {
-      pipecatClient.on(event as any, handler);
-    });
-
-    // Cleanup event handlers
-    return () => {
-      if (pipecatClient) {
-        Object.entries(eventHandlers).forEach(([event, handler]) => {
-          pipecatClient.off(event as any, handler);
-        });
-      }
-    };
-  }, [
-    showSplash,
-    voice,
-    mergeJob,
-    company,
-    jobInterviewConfig,
-    application,
+  const contextValue = {
+    user,
+    role,
     scout,
+    jobInterviewConfig,
     companyContext,
-    emotion,
+    job,
+    company,
+    mergeJob,
+    application,
     enableRecording,
-    scoutTest,
     demo,
-    toast
-  ]);
+    scoutTest,
+    transcript,
+  };
 
   if (showSplash) {
     return (
@@ -204,21 +77,9 @@ export default function Bot(botProps: BotProps) {
     );
   }
 
-  if (!demo && (!job || !company || !jobInterviewConfig)) {
-    return null;
-  }
-
-  if (!clientRef.current) {
-    console.log('Waiting for client to be initialized...');
-    return null;
-  }
-
   return (
-    <>
-      <RTVIClientProvider client={clientRef.current}>
-        <App {...botProps} transcript={transcript} />
-        <RTVIClientAudio />
-      </RTVIClientProvider>
-    </>
+    <BotProvider value={contextValue}>
+      <App />
+    </BotProvider>
   );
 }
