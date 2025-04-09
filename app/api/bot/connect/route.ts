@@ -2,7 +2,7 @@ import { AccessToken } from 'livekit-server-sdk';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
-  const { roomName, participantName } = await request.json();
+  const { roomName, participantName, contextData } = await request.json();
 
   if (!roomName) {
     return NextResponse.json(
@@ -27,9 +27,40 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const at = new AccessToken(apiKey, apiSecret, { identity: participantName });
+  try {
+    // Create the AccessToken with the participant identity
+    const at = new AccessToken(apiKey, apiSecret, { identity: participantName });
 
-  at.addGrant({ roomJoin: true, room: roomName });
+    // Add the basic room grant with recording enabled
+    at.addGrant({ 
+      roomJoin: true, 
+      room: roomName,
+      canPublish: true,
+      canSubscribe: true,
+      canPublishData: true,
+      // recorder: true // Enable recording capabilities
+    });
 
-  return NextResponse.json({ token: await at.toJwt() });
+    // If context data is provided, add it as metadata to the token
+    if (contextData) {
+      // Ensure contextData is serialized properly for token metadata
+      at.metadata = JSON.stringify({
+        type: 'interview_context',
+        isRecruiter: true,
+        enableRecording: true, // Flag to indicate recording should be enabled
+        ...contextData
+      });
+    }
+
+    // Generate the JWT
+    const token = await at.toJwt();
+
+    return NextResponse.json({ token });
+  } catch (error) {
+    console.error('Error generating token:', error);
+    return NextResponse.json(
+      { error: 'Failed to generate access token' },
+      { status: 500 }
+    );
+  }
 }
