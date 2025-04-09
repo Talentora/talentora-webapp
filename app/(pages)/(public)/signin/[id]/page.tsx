@@ -77,7 +77,12 @@ export default async function SignInPage({
           <Card className="w-full border-none">
             <CardContent className="text-foreground">
               {role === 'recruiter' ? (
-                <RecruiterSSO />
+                // <RecruiterSSO />
+                <PasswordSignIn
+                allowEmail={allowEmail}
+                redirectMethod={redirectMethod}
+                role={role || 'recruiter'}
+              />
               ) : (
                 <>
                   {viewProp === 'password_signin' && (

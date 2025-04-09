@@ -42,8 +42,8 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
       headers: {
         'Content-Type': 'application/json'
       },
-      // cache: 'force-cache',
-      // next: { revalidate: 3600 }
+      cache: 'force-cache',
+      next: { revalidate: 3600 }
     });
     
     if (!response.ok) {
@@ -56,8 +56,9 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
 
 
   export async function fetchAllApplications() {
-
+    console.log("fetchAllApplicationshere");
     const accountToken = await getMergeApiKey();
+    console.log("accountToken", accountToken);
     if (!accountToken) {
       throw new Error('Account token not found');
     }
@@ -72,8 +73,8 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
       headers: {
         'Content-Type': 'application/json'
       },
-      // cache: 'force-cache',
-      // next: { revalidate: 3600 }
+      cache: 'force-cache',
+      next: { revalidate: 3600 }
     });
     
     if (!response.ok) {
