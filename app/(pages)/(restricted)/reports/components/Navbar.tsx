@@ -16,35 +16,41 @@ import { Card } from "@/components/ui/card";
 
 interface NavbarProps {
   uniqueLocations: string[];
-  uniqueSkills: string[];
-  uniqueEducation: string[];
+  uniqueJobNames: string[];
+  uniqueStages: string[];
+  uniqueJobStatuses: string[];
   filters: {
     locations: string[];
-    skills: string[];
-    education: string[];
-    minExperience: number;
-    maxExperience: number;
-    jobs: string[];
+    jobNames: string[];
+    stages: string[];
+    jobStatuses: string[];
+    dateRange: {
+      start: Date | null;
+      end: Date | null;
+    };
     jobSearch: string;
   };
   setFilters: React.Dispatch<React.SetStateAction<{
     locations: string[];
-    skills: string[];
-    education: string[];
-    minExperience: number;
-    maxExperience: number;
-    jobs: string[];
+    jobNames: string[];
+    stages: string[];
+    jobStatuses: string[];
+    dateRange: {
+      start: Date | null;
+      end: Date | null;
+    };
     jobSearch: string;
   }>>;
   applyFilters: () => void;
-  filteredData: ApplicantData[];
-  mockData: ApplicantData[];
+  filteredData: any[];
+  mockData: any[];
 }
 
 export const Navbar = ({
   uniqueLocations,
-  uniqueSkills,
-  uniqueEducation,
+  uniqueJobNames,
+  uniqueStages,
+  uniqueJobStatuses,
   filters,
   setFilters,
   applyFilters,
@@ -53,19 +59,13 @@ export const Navbar = ({
 }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   
-  // Extract unique jobs from mock data
-  const uniqueJobs = useMemo(() => 
-    Array.from(new Set(mockData.map(d => d.job))), 
-    [mockData]
-  );
-  
   // Filter jobs based on search term
   const filteredJobs = useMemo(() => {
-    if (!filters.jobSearch) return uniqueJobs;
-    return uniqueJobs.filter(job => 
+    if (!filters.jobSearch) return uniqueJobNames;
+    return uniqueJobNames.filter(job => 
       job.toLowerCase().includes(filters.jobSearch.toLowerCase())
     );
-  }, [uniqueJobs, filters.jobSearch]);
+  }, [uniqueJobNames, filters.jobSearch]);
 
   // Apply filters whenever filters state changes
   useEffect(() => {
@@ -119,10 +119,10 @@ export const Navbar = ({
                         onValueChange={(values) => {
                           setFilters(prev => ({
                             ...prev,
-                            jobs: values
+                            jobNames: values
                           }));
                         }}
-                        value={filters.jobs.filter(job => filteredJobs.includes(job))}
+                        value={filters.jobNames.filter(job => filteredJobs.includes(job))}
                         placeholder="Select job titles"
                         className="max-h-40 overflow-y-auto"
                       />
@@ -149,63 +149,81 @@ export const Navbar = ({
                     </div>
                     
                     <div className="space-y-2">
-                      <h4 className="text-sm font-medium">Education</h4>
+                      <h4 className="text-sm font-medium">Job Status</h4>
                       <MultiSelect
-                        options={uniqueEducation.map(edu => ({
-                          label: edu,
-                          value: edu
+                        options={uniqueJobStatuses.map(status => ({
+                          label: status,
+                          value: status
                         }))}
                         onValueChange={(values) => {
                           setFilters(prev => ({
                             ...prev,
-                            education: values
+                            jobStatuses: values
                           }));
                         }}
-                        value={filters.education}
-                        placeholder="Select education"
+                        value={filters.jobStatuses}
+                        placeholder="Select job status"
                       />
                     </div>
                   </div>
                   
                   <div className="space-y-2">
-                    <h4 className="text-sm font-medium">Skills</h4>
+                    <h4 className="text-sm font-medium">Application Stage</h4>
                     <MultiSelect
-                      options={uniqueSkills.map(skill => ({
-                        label: skill,
-                        value: skill
+                      options={uniqueStages.map(stage => ({
+                        label: stage,
+                        value: stage
                       }))}
                       onValueChange={(values) => {
                         setFilters(prev => ({
                           ...prev,
-                          skills: values
+                          stages: values
                         }));
                       }}
-                      value={filters.skills}
-                      placeholder="Select skills"
+                      value={filters.stages}
+                      placeholder="Select application stages"
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <h4 className="text-sm font-medium">Experience Range</h4>
+                    <h4 className="text-sm font-medium">Application Date Range</h4>
                     <div className="flex flex-col space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-xs">{filters.minExperience} years</span>
-                        <span className="text-xs">{filters.maxExperience} years</span>
+                      <div className="flex items-center justify-between space-x-2">
+                        <div className="w-1/2">
+                          <Label>From</Label>
+                          <Input
+                            type="date"
+                            value={filters.dateRange.start ? filters.dateRange.start.toISOString().substring(0, 10) : ""}
+                            onChange={(e) => {
+                              const date = e.target.value ? new Date(e.target.value) : null;
+                              setFilters(prev => ({
+                                ...prev,
+                                dateRange: {
+                                  ...prev.dateRange,
+                                  start: date
+                                }
+                              }));
+                            }}
+                          />
+                        </div>
+                        <div className="w-1/2">
+                          <Label>To</Label>
+                          <Input
+                            type="date"
+                            value={filters.dateRange.end ? filters.dateRange.end.toISOString().substring(0, 10) : ""}
+                            onChange={(e) => {
+                              const date = e.target.value ? new Date(e.target.value) : null;
+                              setFilters(prev => ({
+                                ...prev,
+                                dateRange: {
+                                  ...prev.dateRange,
+                                  end: date
+                                }
+                              }));
+                            }}
+                          />
+                        </div>
                       </div>
-                      <Slider
-                        defaultValue={[filters.minExperience, filters.maxExperience]}
-                        min={0}
-                        max={15}
-                        step={1}
-                        onValueChange={([min, max]) => 
-                          setFilters(prev => ({
-                            ...prev,
-                            minExperience: min,
-                            maxExperience: max
-                          }))
-                        }
-                        className="w-full"
-                      />
                     </div>
                   </div>
                 </div>

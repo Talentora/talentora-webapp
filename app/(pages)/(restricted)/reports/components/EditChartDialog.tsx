@@ -3,7 +3,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -11,138 +14,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { ChartConfig, ChartType } from "../data/mock-data";
-import { useState, useEffect, useRef } from "react";
-import { DndContext, DragEndEvent, MouseSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
-import { restrictToWindowEdges } from "@dnd-kit/modifiers";
+import { ChartConfig, ApplicantData } from "../data/mock-data";
+import { useState, useEffect } from "react";
+import { GraphComponent } from "./Graph";
+import { 
+  DndContext, 
+  closestCenter, 
+  DragEndEvent, 
+  useSensor, 
+  useSensors, 
+  PointerSensor,
+  useDroppable
+} from "@dnd-kit/core";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useDraggable, useDroppable } from "@dnd-kit/core";
+import { BarChart2, LineChart as LineChartIcon, PieChart, Table, Hash, Type } from "lucide-react";
 
-// Field type definitions
-type FieldType = "string" | "number";
-
-interface Field {
-  name: string;
-  type: FieldType;
-  label: string;
-}
-
-// Field areas
-type FieldArea = "available" | "rows" | "columns" | "values";
-
-// Draggable field item
-interface DraggableFieldProps {
-  field: Field;
-  id: string;
-  area: FieldArea;
-  onRemove?: () => void;
-}
-
-const FIELD_DEFINITIONS: Field[] = [
-  { name: "experience", type: "number", label: "Experience 🔢" },
-  { name: "age", type: "number", label: "Age 🔢" },
-  { name: "education", type: "string", label: "Education 📝" },
-  { name: "location", type: "string", label: "Location 📝" },
-  { name: "skills", type: "string", label: "Skills 📝" },
-  { name: "job", type: "string", label: "Job Title 📝" }
+const availableFields = [
+  { value: "candidate.first_name", label: "First Name", type: "text" },
+  { value: "candidate.last_name", label: "Last Name", type: "text" },
+  { value: "candidate.email_addresses", label: "Email", type: "text" },
+  { value: "candidate.title", label: "Title", type: "text" },
+  { value: "job.name", label: "Job Name", type: "text" },
+  { value: "job.status", label: "Job Status", type: "text" },
+  { value: "application.current_stage", label: "Application Stage", type: "text" },
+  { value: "application.created_at", label: "Application Date", type: "text" },
+  { value: "interviewStages.name", label: "Stage Name", type: "text" },
+  { value: "application.count", label: "Application Count", type: "number" },
+  { value: "candidate.age", label: "Age", type: "number" },
+  { value: "job.salary", label: "Salary", type: "number" },
 ];
-
-const NUMERIC_OPERATIONS = [
-  { value: "count", label: "Count (#)" },
-  { value: "sum", label: "Sum (Σ)" },
-  { value: "average", label: "Average (μ)" },
-  { value: "min", label: "Minimum (↓)" },
-  { value: "max", label: "Maximum (↑)" }
-];
-
-// Draggable Field Component
-function DraggableField({ field, id, area, onRemove }: DraggableFieldProps) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id,
-    data: { field, fromArea: area },
-  });
-
-  const style = {
-    transform: CSS.Translate.toString(transform),
-    opacity: isDragging ? 0.5 : 1,
-    cursor: "grab",
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="flex items-center justify-between px-3 py-2 bg-white border rounded-md shadow-sm"
-      {...attributes}
-      {...listeners}
-    >
-      <div className="flex-grow">
-        {field.label}
-      </div>
-      {onRemove && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove();
-          }}
-          className="ml-2 text-xs text-gray-500 hover:text-gray-700"
-        >
-          ✕
-        </button>
-      )}
-    </div>
-  );
-}
-
-// Droppable Area Component
-function DroppableArea({ 
-  id, 
-  label, 
-  fields, 
-  accept = ["available", "rows", "columns", "values"],
-  onRemove
-}: { 
-  id: FieldArea; 
-  label: string; 
-  fields: Field[];
-  accept?: FieldArea[];
-  onRemove: (index: number) => void;
-}) {
-  const { isOver, setNodeRef } = useDroppable({
-    id,
-    data: { accepts: accept },
-  });
-
-  return (
-    <div className="space-y-2">
-      <Label>{label}</Label>
-      <div
-        ref={setNodeRef}
-        className={`p-3 min-h-[100px] border rounded-md ${
-          isOver ? "border-blue-500 bg-blue-50" : "border-gray-200"
-        } flex flex-col gap-2`}
-      >
-        {fields.length === 0 && (
-          <div className="flex items-center justify-center h-full text-sm text-gray-400">
-            Drop fields here
-          </div>
-        )}
-        {fields.map((field, index) => (
-          <DraggableField
-            key={`${id}-${field.name}-${index}`}
-            id={`${id}-${field.name}-${index}`}
-            field={field}
-            area={id}
-            onRemove={() => onRemove(index)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
 
 interface EditChartDialogProps {
   isOpen: boolean;
@@ -153,6 +55,116 @@ interface EditChartDialogProps {
   isNewChart: boolean;
 }
 
+interface DraggableFieldProps {
+  field: { value: string; label: string; type: string };
+  id: string;
+}
+
+const DraggableField = ({ field, id }: DraggableFieldProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : undefined,
+    position: isDragging ? 'relative' as const : undefined,
+    backgroundColor: isDragging ? 'white' : undefined,
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="p-2 bg-white border rounded-md shadow-sm mb-2 cursor-move hover:bg-gray-50 flex items-center justify-between"
+    >
+      <span>{field.label}</span>
+      {field.type === "number" ? (
+        <Hash className="h-3 w-3 text-gray-500" />
+      ) : (
+        <Type className="h-3 w-3 text-gray-500" />
+      )}
+    </div>
+  );
+};
+
+const DroppedField = ({ 
+  field, 
+  onRemove 
+}: { 
+  field: { value: string; label: string; type: string }; 
+  onRemove: () => void;
+}) => {
+  return (
+    <div className="p-2 bg-white border rounded-md flex items-center justify-between group">
+      <span>{field.label}</span>
+      <div className="flex items-center gap-2">
+        {field.type === "number" ? (
+          <Hash className="h-3 w-3 text-gray-500" />
+        ) : (
+          <Type className="h-3 w-3 text-gray-500" />
+        )}
+        <button
+          onClick={onRemove}
+          className="opacity-0 group-hover:opacity-100 transition-opacity hover:text-red-500 p-1 -m-1"
+        >
+          ×
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const DropZone = ({ 
+  title, 
+  fields, 
+  onDrop, 
+  onRemove,
+  id 
+}: { 
+  title: string; 
+  fields: string[]; 
+  onDrop: (items: string[]) => void; 
+  onRemove: (field: string) => void;
+  id: string;
+}) => {
+  const { setNodeRef, isOver } = useDroppable({
+    id: id
+  });
+
+  return (
+    <div 
+      ref={setNodeRef}
+      className={`border rounded-md p-4 min-h-[100px] transition-colors ${
+        isOver ? 'bg-gray-100 border-gray-400' : 'bg-gray-50'
+      }`}
+    >
+      <h4 className="text-sm font-medium mb-2">{title}</h4>
+      <div className="space-y-2">
+        {fields.map((fieldValue) => {
+          const field = availableFields.find(f => f.value === fieldValue);
+          return field ? (
+            <DroppedField 
+              key={field.value} 
+              field={field}
+              onRemove={() => onRemove(field.value)}
+            />
+          ) : null;
+        })}
+      </div>
+    </div>
+  );
+};
+
 export function EditChartDialog({
   isOpen,
   onOpenChange,
@@ -161,290 +173,246 @@ export function EditChartDialog({
   onSave,
   isNewChart,
 }: EditChartDialogProps) {
-  // Track initialization to avoid infinite loops
-  const isInitializedRef = useRef(false);
-
-  // DnD sensors
-  const sensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: {
-        distance: 5, // 5px movement required before drag starts
+  const [previewData] = useState<ApplicantData[]>([
+    {
+      candidate: {
+        id: "c1",
+        first_name: "John",
+        last_name: "Doe",
+        title: "Developer",
+        email_addresses: [{ email: "john@example.com" }],
+        locations: [{ name: "New York" }],
+        created_at: "2024-01-01",
+        modified_at: "2024-01-01"
       },
-    }),
-    useSensor(TouchSensor, {
+      job: {
+        id: "j1",
+        name: "Frontend Dev",
+        status: "Open",
+        description: "Frontend Developer position",
+        code: "FE-001"
+      },
+      application: {
+        id: "a1",
+        job_id: "j1",
+        created_at: "2024-01-01",
+        current_stage: "Interview"
+      },
+      interviewStages: {
+        id: "s1",
+        name: "Technical",
+        job: "j1",
+        stage_order: 1
+      },
+      hasSupabaseData: true,
+      hasMergeData: true
+    }
+  ]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
       activationConstraint: {
-        delay: 250, // delay before touch drag starts
-        tolerance: 5, // tolerance for movement
+        distance: 5,
       },
     })
   );
 
-  const chartTypes: { value: ChartType; label: string }[] = [
-    { value: "line", label: "Line 📈" },
-    { value: "bar", label: "Bar 📊" },
-    { value: "scatter", label: "Scatter 📍" },
-    { value: "pie", label: "Pie 🥧" },
-    { value: "area", label: "Area 📉" },
-  ];
-
-  // Fields for different areas
-  const [rowFields, setRowFields] = useState<Field[]>([]);
-  const [columnFields, setColumnFields] = useState<Field[]>([]);
-  const [valueFields, setValueFields] = useState<Field[]>([]);
-  
-  // Track field changes to avoid excessive updates
-  const fieldsUpdateRequiredRef = useRef(false);
-
-  // Reset initialization when dialog opens or chart changes
-  useEffect(() => {
-    if (isOpen) {
-      isInitializedRef.current = false;
-    }
-  }, [isOpen, editingChart]);
-
-  // Initialize fields based on the current editingChart
-  useEffect(() => {
-    if (editingChart && !isInitializedRef.current) {
-      isInitializedRef.current = true;
-
-      // Initialize row field (x-axis)
-      const xField = FIELD_DEFINITIONS.find(
-        f => f.name === editingChart.xAxis.label.toLowerCase()
-      );
-      setRowFields(xField ? [xField] : []);
-
-      // Initialize value field (y-axis)
-      const yField = FIELD_DEFINITIONS.find(
-        f => f.name === editingChart.yAxis?.label.toLowerCase()
-      );
-      if (yField) {
-        const isOperation = NUMERIC_OPERATIONS.some(
-          op => op.value === editingChart.yAxis?.label.toLowerCase()
-        );
-        if (!isOperation) {
-          setValueFields(yField ? [yField] : []);
-        } else {
-          // If it's an operation, use a numeric field
-          const numericField = FIELD_DEFINITIONS.find(f => f.type === "number");
-          setValueFields(numericField ? [numericField] : []);
-        }
-      } else {
-        setValueFields([]);
-      }
-
-      // Initialize column field
-      const columnFieldName = typeof editingChart.columnField === 'string' ? editingChart.columnField : '';
-      if (columnFieldName) {
-        const columnField = FIELD_DEFINITIONS.find(
-          f => f.name === columnFieldName.toLowerCase()
-        );
-        setColumnFields(columnField ? [columnField] : []);
-      } else {
-        setColumnFields([]);
-      }
-    }
-  }, [editingChart, isOpen]);
-
-  // Handle field changes that should update the chart config
-  const markFieldsChanged = () => {
-    fieldsUpdateRequiredRef.current = true;
-  };
-
-  // Update chart config when fields change
-  useEffect(() => {
-    if (!editingChart || !fieldsUpdateRequiredRef.current) return;
-    
-    fieldsUpdateRequiredRef.current = false;
-    
-    if (rowFields.length > 0) {
-      // Only update if values are actually different to prevent infinite loops
-      const newXAxisLabel = rowFields[0].name;
-      const newYAxisLabel = valueFields.length > 0 ? valueFields[0].name : undefined;
-      const newColumnField = columnFields.length > 0 ? columnFields[0].name : undefined;
-      
-      setEditingChart({
-        ...editingChart,
-        xAxis: {
-          type: "category",
-          label: newXAxisLabel
-        },
-        // Update y-axis from value fields
-        yAxis: newYAxisLabel ? {
-          type: "value",
-          label: newYAxisLabel
-        } : undefined,
-        // Update column field
-        columnField: newColumnField
-      });
-    }
-  }, [rowFields, columnFields, valueFields, editingChart, setEditingChart]);
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    
-    if (!over) return;
-    
-    const sourceData = active.data.current as { field: Field; fromArea: FieldArea };
-    const targetArea = over.id.toString() as FieldArea;
-    
-    // Only process if we're dropping to a different area
-    if (sourceData.fromArea === targetArea) return;
-
-    // Handle removal from source area
-    if (sourceData.fromArea === "rows") {
-      setRowFields(prev => prev.filter(f => f.name !== sourceData.field.name));
-    } else if (sourceData.fromArea === "columns") {
-      setColumnFields(prev => prev.filter(f => f.name !== sourceData.field.name));
-    } else if (sourceData.fromArea === "values") {
-      setValueFields(prev => prev.filter(f => f.name !== sourceData.field.name));
+    if (over && editingChart) {
+      const fieldValue = active.id as string;
+      const dropZoneId = over.id as string;
+      
+      // Check if the field is already in any of the zones
+      const allFields = [
+        ...editingChart.rowFields,
+        ...editingChart.colFields,
+        ...editingChart.valueFields
+      ];
+      
+      if (allFields.includes(fieldValue)) {
+        return; // Field is already used
+      }
+      
+      if (dropZoneId === "rows") {
+        setEditingChart({
+          ...editingChart,
+          rowFields: [...editingChart.rowFields, fieldValue]
+        });
+      } else if (dropZoneId === "columns") {
+        setEditingChart({
+          ...editingChart,
+          colFields: [...editingChart.colFields, fieldValue]
+        });
+      } else if (dropZoneId === "values") {
+        setEditingChart({
+          ...editingChart,
+          valueFields: [...editingChart.valueFields, fieldValue]
+        });
+      }
     }
-
-    // Handle addition to target area
-    if (targetArea === "rows") {
-      setRowFields([sourceData.field]); // We only allow one row field
-    } else if (targetArea === "columns") {
-      setColumnFields([sourceData.field]); // We only allow one column field
-    } else if (targetArea === "values") {
-      setValueFields([sourceData.field]); // We only allow one value field
-    }
-    
-    // Mark that fields have changed
-    markFieldsChanged();
   };
 
-  const removeField = (area: FieldArea, index: number) => {
-    if (area === "rows") {
-      setRowFields(prev => prev.filter((_, i) => i !== index));
-    } else if (area === "columns") {
-      setColumnFields(prev => prev.filter((_, i) => i !== index));
-    } else if (area === "values") {
-      setValueFields(prev => prev.filter((_, i) => i !== index));
+  const handleRemoveField = (field: string, zone: 'rows' | 'columns' | 'values') => {
+    if (!editingChart) return;
+
+    const updatedChart = { ...editingChart };
+    if (zone === 'rows') {
+      updatedChart.rowFields = updatedChart.rowFields.filter(f => f !== field);
+    } else if (zone === 'columns') {
+      updatedChart.colFields = updatedChart.colFields.filter(f => f !== field);
+    } else if (zone === 'values') {
+      updatedChart.valueFields = updatedChart.valueFields.filter(f => f !== field);
     }
-    
-    // Mark that fields have changed
-    markFieldsChanged();
+    setEditingChart(updatedChart);
   };
+
+  // Get list of available (unused) fields
+  const usedFields = editingChart ? [
+    ...editingChart.rowFields,
+    ...editingChart.colFields,
+    ...editingChart.valueFields
+  ] : [];
   
+  const availableFieldsList = availableFields.filter(
+    field => !usedFields.includes(field.value)
+  );
+
   if (!editingChart) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[800px]">
+      <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle>{isNewChart ? "Create New Chart" : "Edit Chart"}</DialogTitle>
         </DialogHeader>
+        
+        <DndContext 
+          sensors={sensors} 
+          collisionDetection={closestCenter} 
+          onDragEnd={handleDragEnd}
+        >
+          <div className="grid grid-cols-[250px_1fr] gap-4">
+            {/* Left sidebar - Available Fields */}
+            <div className="border-r pr-4">
+              <div className="mb-3">
+                <Label htmlFor="title">Chart Title</Label>
+                <Input
+                  id="title"
+                  value={editingChart.title}
+                  onChange={(e) =>
+                    setEditingChart({ ...editingChart, title: e.target.value })
+                  }
+                />
+              </div>
+              
+              <div className="mb-3">
+                <Label htmlFor="type">Chart Type</Label>
+                <Select
+                  value={editingChart.type}
+                  onValueChange={(value) =>
+                    setEditingChart({ ...editingChart, type: value as any })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="bar">
+                      <div className="flex items-center gap-2">
+                        <BarChart2 className="h-4 w-4" />
+                        <span>Bar Chart</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="line">
+                      <div className="flex items-center gap-2">
+                        <LineChartIcon className="h-4 w-4" />
+                        <span>Line Chart</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="pie">
+                      <div className="flex items-center gap-2">
+                        <PieChart className="h-4 w-4" />
+                        <span>Pie Chart</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="pivot">
+                      <div className="flex items-center gap-2">
+                        <Table className="h-4 w-4" />
+                        <span>Pivot Table</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="title">Chart Title</Label>
-            <Input
-              id="title"
-              value={editingChart.title}
-              onChange={(e) =>
-                setEditingChart({ ...editingChart, title: e.target.value })
-              }
-            />
-          </div>
-          
-          <div className="grid gap-2">
-            <Label htmlFor="type">Chart Type</Label>
-            <Select
-              value={editingChart.type}
-              onValueChange={(value: ChartType) =>
-                setEditingChart({ ...editingChart, type: value })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {chartTypes.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {type.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <DndContext 
-            sensors={sensors} 
-            onDragEnd={handleDragEnd}
-            modifiers={[restrictToWindowEdges]}
-          >
-            <div className="grid grid-cols-1 gap-4 mt-4">
-              {/* Available Fields */}
-              <div className="space-y-2">
+              <div>
                 <Label>Available Fields</Label>
-                <div className="p-3 border rounded-md flex flex-wrap gap-2">
-                  {FIELD_DEFINITIONS.map((field) => (
-                    <DraggableField
-                      key={`available-${field.name}`}
-                      id={`available-${field.name}`}
-                      field={field}
-                      area="available"
-                    />
+                <div className="flex items-center gap-4 text-xs text-gray-500 mt-1 mb-2">
+                  <div className="flex items-center gap-1">
+                    <Type className="h-3 w-3" /> Text
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Hash className="h-3 w-3" /> Numeric
+                  </div>
+                </div>
+                <div className="space-y-1 mt-1 h-[300px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+                  {availableFieldsList.map((field) => (
+                    <DraggableField key={field.value} field={field} id={field.value} />
                   ))}
                 </div>
               </div>
+            </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                {/* Rows (X-Axis) */}
-                <DroppableArea
+            {/* Right side - Drop zones and Preview */}
+            <div className="space-y-4">
+              {/* Drop Zones */}
+              <div className="grid grid-cols-3 gap-3">
+                <DropZone 
                   id="rows"
-                  label="Rows (X-Axis)"
-                  fields={rowFields}
-                  onRemove={(index) => removeField("rows", index)}
+                  title="Rows" 
+                  fields={editingChart.rowFields}
+                  onDrop={(items) => setEditingChart({ ...editingChart, rowFields: items })}
+                  onRemove={(field) => handleRemoveField(field, 'rows')}
                 />
-
-                {/* Columns (Series) */}
-                <DroppableArea
+                <DropZone 
                   id="columns"
-                  label="Columns (Series)"
-                  fields={columnFields}
-                  onRemove={(index) => removeField("columns", index)}
+                  title="Columns" 
+                  fields={editingChart.colFields}
+                  onDrop={(items) => setEditingChart({ ...editingChart, colFields: items })}
+                  onRemove={(field) => handleRemoveField(field, 'columns')}
                 />
-
-                {/* Values (Y-Axis) */}
-                <DroppableArea
+                <DropZone 
                   id="values"
-                  label="Values (Y-Axis)"
-                  fields={valueFields}
-                  onRemove={(index) => removeField("values", index)}
+                  title="Values" 
+                  fields={editingChart.valueFields}
+                  onDrop={(items) => setEditingChart({ ...editingChart, valueFields: items })}
+                  onRemove={(field) => handleRemoveField(field, 'values')}
                 />
               </div>
-            </div>
-          </DndContext>
-        </div>
 
-        <div className="flex justify-end gap-2">
-          <Button onClick={() => {
-            // Make sure any pending field changes are applied before saving
-            if (rowFields.length > 0) {
-              const newXAxisLabel = rowFields[0].name;
-              const newYAxisLabel = valueFields.length > 0 ? valueFields[0].name : undefined;
-              const newColumnField = columnFields.length > 0 ? columnFields[0].name : undefined;
-              
-              setEditingChart({
-                ...editingChart,
-                xAxis: {
-                  type: "category",
-                  label: newXAxisLabel
-                },
-                yAxis: newYAxisLabel ? {
-                  type: "value",
-                  label: newYAxisLabel
-                } : undefined,
-                columnField: newColumnField
-              });
-            }
-            
-            // Allow the state update to take effect before calling onSave
-            setTimeout(onSave, 0);
-          }}>
-            {isNewChart ? "Create" : "Save Changes"}
+              {/* Chart Preview */}
+              <div className="border rounded-lg p-3 bg-white">
+                <h4 className="text-sm font-medium mb-2">Preview</h4>
+                <div className="h-[250px]">
+                  <GraphComponent
+                    config={editingChart}
+                    data={previewData}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </DndContext>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
           </Button>
-        </div>
+          <Button onClick={onSave}>
+            {isNewChart ? "Create Chart" : "Save Changes"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
