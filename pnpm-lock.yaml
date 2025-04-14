@@ -248,6 +248,9 @@ importers:
       react-merge-refs:
         specifier: ^2.1.1
         version: 2.1.1
+      react-pivottable:
+        specifier: ^0.11.0
+        version: 0.11.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-quill:
         specifier: ^2.0.0
         version: 2.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -4062,6 +4065,9 @@ packages:
     resolution: {integrity: sha512-bAH5jbK/F3T3Jls4I0SO1hmPR0dKU0a7+SY6n1yzRtG54FLO8d6w/nxLFX2Nb7dBu6cCWXPaAME6cYqFUMmuCA==}
     engines: {node: '>= 4'}
 
+  immutability-helper@2.9.1:
+    resolution: {integrity: sha512-r/RmRG8xO06s/k+PIaif2r5rGc3j4Yhc01jSBfwPCXDLYZwp/yxralI37Df1mwmuzcCsen/E/ITKcTEvc1PQmQ==}
+
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
     engines: {node: '>=6'}
@@ -4092,6 +4098,9 @@ packages:
   internmap@2.0.3:
     resolution: {integrity: sha512-5Hh7Y1wQbvY5ooGgPbDaL5iYLAPzMTUrjMulskHLH6wnv/A+1q5rgEaiuqEjB+oxGXIVZs1FF+R/KPN3ZSQYYg==}
     engines: {node: '>=12'}
+
+  invariant@2.2.4:
+    resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
 
   is-alphabetical@2.0.1:
     resolution: {integrity: sha512-FWyyY60MeTNyeSRpkM2Iry0G9hpr7/9kD40mD/cGQEuilcZYS4okz8SN2Q6rLCJ8gbCt6fN+rC+6tMGS99LaxQ==}
@@ -4551,6 +4560,7 @@ packages:
 
   livekit-client@2.10.0:
     resolution: {integrity: sha512-JASed3gLyr6Ros4lSFpRQSYPlxSjX0Pv/rSmHb3mxo+iqYOW5bPSdkM5wPbV8R+Te5gKu0xAO5ObyWgRdAHTdw==}
+    deprecated: This version has a bug in connection handling for older browsers
 
   livekit-server-sdk@2.11.0:
     resolution: {integrity: sha512-SmUkVHwO9lYUstsJgt3rw9aC4E3dFBfreTLGXqxEWWegjaqcVDxropfYX57Tfs8eRiawd8ndk+AavF5QJGiWpg==}
@@ -5414,6 +5424,12 @@ packages:
     peerDependencies:
       react: ^18.3.1
 
+  react-draggable@3.3.2:
+    resolution: {integrity: sha512-oaz8a6enjbPtx5qb0oDWxtDNuybOylvto1QLydsXgKmwT7e3GXC2eMVDwEMIUYJIFqVG72XpOv673UuuAq6LhA==}
+    peerDependencies:
+      react: '>= 16.3.0'
+      react-dom: '>= 16.3.0'
+
   react-hook-form@7.54.2:
     resolution: {integrity: sha512-eHpAUgUjWbZocoQYUHposymRb4ZP6d0uwUnooL2uOybA9/3tPUvoAKqEWK1WaSiTxxOfTpffNZP7QwlnM3/gEg==}
     engines: {node: '>=18.0.0'}
@@ -5449,6 +5465,12 @@ packages:
 
   react-merge-refs@2.1.1:
     resolution: {integrity: sha512-jLQXJ/URln51zskhgppGJ2ub7b2WFKGq3cl3NYKtlHoTG+dN2q7EzWrn3hN3EgPsTMvpR9tpq5ijdp7YwFZkag==}
+
+  react-pivottable@0.11.0:
+    resolution: {integrity: sha512-hFU10XYL28NWVRnm+RRyHrzsAn/xIJzPgwPebUE2Hx5JZQl/Zxty3WUL/5cAcdK4AmTb9FQBRopLKLwuiI6VlA==}
+    peerDependencies:
+      react: '>=15.0.0'
+      react-dom: '>=15.0.0'
 
   react-quill@2.0.0:
     resolution: {integrity: sha512-4qQtv1FtCfLgoD3PXAur5RyxuUbPXQGOHgTlFie3jtxp43mXDtzCKaOgQ3mLyZfi1PUlyjycfivKelFhy13QUg==}
@@ -5493,6 +5515,13 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  react-sortablejs@1.5.1:
+    resolution: {integrity: sha512-bKIc1UVhjZt55Nb6WZFxZ8Jwyngg8CTt+w+iG1pA5k9LQsg1J0X6nLppHatSSDZDECtRZKp2z47tmmhPRJNj4g==}
+    peerDependencies:
+      react: '>=15.0.0'
+      react-dom: '>=15.0.0'
+      sortablejs: ^1.6.1
 
   react-sparklines@1.7.0:
     resolution: {integrity: sha512-bJFt9K4c5Z0k44G8KtxIhbG+iyxrKjBZhdW6afP+R7EnIq+iKjbWbEFISrf3WKNFsda+C46XAfnX0StS5fbDcg==}
@@ -5775,6 +5804,9 @@ packages:
 
   snake-case@3.0.4:
     resolution: {integrity: sha512-LAOh4z89bGQvl9pFfNF8V146i7o7/CqFPbqzYgP+yYzDIDeS9HaNFtXABamRW+AQzEVODcvE79ljJ+8a9YSdMg==}
+
+  sortablejs@1.15.6:
+    resolution: {integrity: sha512-aNfiuwMEpfBM/CN6LY0ibyhxPfPbyFeBTYJKCvzkJ2GkUpazIt3H+QIPAMHwqQ7tMKaHz1Qj+rJJCqljnf4p3A==}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -10844,6 +10876,10 @@ snapshots:
 
   ignore@7.0.3: {}
 
+  immutability-helper@2.9.1:
+    dependencies:
+      invariant: 2.2.4
+
   import-fresh@3.3.1:
     dependencies:
       parent-module: 1.0.1
@@ -10872,6 +10908,10 @@ snapshots:
       side-channel: 1.1.0
 
   internmap@2.0.3: {}
+
+  invariant@2.2.4:
+    dependencies:
+      loose-envify: 1.4.0
 
   is-alphabetical@2.0.1: {}
 
@@ -12451,6 +12491,13 @@ snapshots:
       react: 18.3.1
       scheduler: 0.23.2
 
+  react-draggable@3.3.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      classnames: 2.5.1
+      prop-types: 15.8.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   react-hook-form@7.54.2(react@18.3.1):
     dependencies:
       react: 18.3.1
@@ -12495,6 +12542,16 @@ snapshots:
       - supports-color
 
   react-merge-refs@2.1.1: {}
+
+  react-pivottable@0.11.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      immutability-helper: 2.9.1
+      prop-types: 15.8.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-draggable: 3.3.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-sortablejs: 1.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sortablejs@1.15.6)
+      sortablejs: 1.15.6
 
   react-quill@2.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -12542,6 +12599,13 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-transition-group: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+
+  react-sortablejs@1.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sortablejs@1.15.6):
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      sortablejs: 1.15.6
 
   react-sparklines@1.7.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -12899,6 +12963,8 @@ snapshots:
     dependencies:
       dot-case: 3.0.4
       tslib: 2.8.1
+
+  sortablejs@1.15.6: {}
 
   source-map-js@1.2.1: {}
 
