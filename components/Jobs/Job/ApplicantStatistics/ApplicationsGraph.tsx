@@ -152,24 +152,26 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
       )}
 
       <CardContent style={{ paddingBottom: 0 }}>
-        <ChartContainer config={chartConfig} style={{ maxHeight: '300px', width: '100%', overflow: 'hidden' }}>
-          {isLoading ? (
-            <div className="flex justify-center items-center">
-              <Skeleton className="w-full" />
-            </div>
-          ) : (
-            <BarChart data={chartData} width={1000} height={100} layout="horizontal">
-              <CartesianGrid vertical={false} />
-              <XAxis dataKey="displayDate" tickLine={false} tickMargin={5} axisLine={false} />
-              <YAxis tickLine={false} tickMargin={5} axisLine={false} />
-              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-              <ChartLegend content={<ChartLegendContent />} />
-              {Object.keys(chartConfig).map(jobId => (
-                <Bar key={jobId} dataKey={jobId} stackId="a" fill="#5650F0" radius={[0, 0, 4, 4]} />
-              ))}
-            </BarChart>
-          )}
-        </ChartContainer>
+        <div style={{ maxHeight: '300px', width: '100%', overflow: 'hidden' }}>
+          <ChartContainer config={chartConfig}>
+            {isLoading ? (
+              <div className="flex justify-center items-center">
+                <Skeleton className="w-full" />
+              </div>
+            ) : (
+              <BarChart data={chartData} width={1000} height={100} layout="horizontal">
+                <CartesianGrid vertical={false} />
+                <XAxis dataKey="displayDate" tickLine={false} tickMargin={5} axisLine={false} />
+                <YAxis tickLine={false} tickMargin={5} axisLine={false} />
+                <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                <ChartLegend content={<ChartLegendContent />} />
+                {Object.keys(chartConfig).map(jobId => (
+                  <Bar key={jobId} dataKey={jobId} stackId="a" fill="#5650F0" radius={[0, 0, 4, 4]} />
+                ))}
+              </BarChart>
+            )}
+          </ChartContainer>
+        </div>
       </CardContent>
     </Card>
   );

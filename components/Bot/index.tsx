@@ -28,7 +28,7 @@ export default function Bot(botProps: BotProps) {
   const [showSplash, setShowSplash] = useState(true);
   const [transcript, setTranscript] = useState([]);
   const userHookValue = useUser();
-  const user: User | null = userHookValue.user;
+  const user: User | null = userHookValue.user.data;
   const role: string | null = user?.app_metadata?.role ?? user?.user_metadata?.role ?? null;
 
   const {

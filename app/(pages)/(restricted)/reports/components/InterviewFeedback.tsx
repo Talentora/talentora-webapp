@@ -194,14 +194,8 @@ const Section = ({ data, color }: SectionProps) => {
                     : value.toFixed(1);
                 }}
                 style={{
-                  fontWeight: (entry: any) => {
-                    if (!entry || !entry.payload) return 'normal';
-                    return entry.payload.isOverall ? 'bold' : 'normal';
-                  },
-                  fontSize: (entry: any) => {
-                    if (!entry || !entry.payload) return 12;
-                    return entry.payload.isOverall ? 14 : 12;
-                  }
+                  fontWeight: 'normal',
+                  fontSize: 12
                 }}
               />
             </Scatter>
@@ -229,18 +223,9 @@ const Section = ({ data, color }: SectionProps) => {
                     : `Avg: ${value.toFixed(1)}`;
                 }}
                 style={{
-                  fontSize: (entry: any) => {
-                    if (!entry || !entry.payload) return 10;
-                    return entry.payload.isOverall ? 12 : 10;
-                  },
-                  fill: (entry: any) => {
-                    if (!entry || !entry.payload) return '#888';
-                    return entry.payload.isOverall ? '#555' : '#888';
-                  },
-                  fontWeight: (entry: any) => {
-                    if (!entry || !entry.payload) return 'normal';
-                    return entry.payload.isOverall ? 'bold' : 'normal';
-                  }
+                  fontSize: 10,
+                  fill: '#888',
+                  fontWeight: 'normal'
                 }}
               />
             </Scatter>

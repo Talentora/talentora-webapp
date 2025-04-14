@@ -11,6 +11,7 @@ interface GraphComponentProps {
   onEdit?: (chart: ChartConfig) => void;
   onDuplicate?: (chart: ChartConfig) => void;
   onDelete?: (chartId: string) => void;
+  onElementClick?: (field: string, value: string) => void;
 }
 
 export const GraphComponent: React.FC<GraphComponentProps> = ({
@@ -19,6 +20,7 @@ export const GraphComponent: React.FC<GraphComponentProps> = ({
   onEdit,
   onDuplicate,
   onDelete,
+  onElementClick,
 }) => {
   const renderChart = useMemo(() => {
     const props = {
@@ -27,6 +29,7 @@ export const GraphComponent: React.FC<GraphComponentProps> = ({
       onEdit,
       onDuplicate,
       onDelete,
+      onElementClick,
     };
 
     switch (config.type) {
@@ -41,7 +44,7 @@ export const GraphComponent: React.FC<GraphComponentProps> = ({
       default:
         return <div>Unsupported chart type: {config.type}</div>;
     }
-  }, [config, data, onEdit, onDuplicate, onDelete]);
+  }, [config, data, onEdit, onDuplicate, onDelete, onElementClick]);
 
   return renderChart;
 };
