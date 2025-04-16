@@ -41,28 +41,28 @@ export default function PasswordSignIn({
 
     try {
       const formData = new FormData(e.currentTarget);
-      
+
       // Make sure to use state values
       formData.set('email', email);
       formData.set('password', password);
       formData.set('role', role);
-      
+
       // Add candidateId and jobId if available
       if (candidateId) {
         formData.set('candidateId', candidateId);
       }
-      
+
       if (jobId) {
         formData.set('jobId', jobId);
       }
-      
+
       // Add applicationId if available
       if (applicationId) {
         formData.set('applicationId', applicationId);
       }
 
       const response = await handleRequest(e, signInWithPassword, router);
-      
+
       // If sign-in was successful, call the callback if provided
       if (response === true && onSuccessfulSignIn) {
         await onSuccessfulSignIn();
@@ -78,7 +78,7 @@ export default function PasswordSignIn({
   };
 
   return (
-    <div className="my-8 w-1/3 mx-auto border shadow-lg rounded-xl p-10">
+    <div className="my-8 w-full mx-auto rounded-xl px-10">
       <h1 className="text-2xl font-bold mb-4 text-center">
         Sign in to your account
       </h1>
@@ -91,9 +91,7 @@ export default function PasswordSignIn({
         {candidateId && (
           <input type="hidden" name="candidateId" value={candidateId} />
         )}
-        {jobId && (
-          <input type="hidden" name="jobId" value={jobId} />
-        )}
+        {jobId && <input type="hidden" name="jobId" value={jobId} />}
         {applicationId && (
           <input type="hidden" name="applicationId" value={applicationId} />
         )}
@@ -149,7 +147,9 @@ export default function PasswordSignIn({
       </p>
       <p>
         <Link
-          href={signUpRedirectLink ? signUpRedirectLink: `/signup?role=${role}` }
+          href={
+            signUpRedirectLink ? signUpRedirectLink : `/signup?role=${role}`
+          }
           className="font-light text-sm text-muted-foreground"
         >
           Don&apos;t have an account? Sign up
