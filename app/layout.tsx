@@ -7,13 +7,12 @@ import { getURL } from '@/utils/helpers';
 import '@/styles/main.css';
 import Loading from '@/components/Layout/Loading';
 import NextTopLoader from 'nextjs-toploader';
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/client';
 import ReactQueryProvider from '@/components/Providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { getUserRole } from '@/utils/supabase/queries';
 import DynamicSidebar from '@/components/Layout/Sidebar/DynamicSidebar';
 import AuthListener from '@/components/AuthListener';
-import { headers } from 'next/headers';
 
 const title = 'Talentora';
 const description = 'Talentora is a platform for creating and managing AI-powered interviews.';
@@ -25,6 +24,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: PropsWithChildren) {
+
   const supabase = createClient();
   const {
     data: { user }

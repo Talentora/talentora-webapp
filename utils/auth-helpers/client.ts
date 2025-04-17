@@ -1,21 +1,23 @@
 'use client';
 
-import { createClient } from '@/utils/supabase/client';
-import { type Provider } from '@supabase/supabase-js';
-import { getURL } from '@/utils/helpers';
 import { redirectToPath } from './server';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 export async function handleRequest(
-  e: React.FormEvent<HTMLFormElement>,
+  e: React.FormEvent<HTMLFormElement> | FormData,
   requestFunc: (formData: FormData) => Promise<string>,
   router: AppRouterInstance | null = null
 ): Promise<boolean | void> {
-  e.preventDefault();
-
-  const formData = new FormData(e.currentTarget);
+  let formData: FormData;
+  
+  if (e instanceof FormData) {
+    formData = e;
+  } else {
+    e.preventDefault();
+    formData = new FormData(e.currentTarget);
+  }
+  
   const role = formData.get('role') || 'applicant'; // Default to applicant
-
   const redirectUrl: string = await requestFunc(formData);
 
   if (router) {

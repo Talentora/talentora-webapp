@@ -96,22 +96,23 @@ export async function handleRecruiterRedirects(
   const { pathname } = request.nextUrl;
   const role = await getUserRole(supabase, user.id);
   const isOnboardingPage = pathname === '/settings/onboarding';
-
-  if (role === 'recruiter') {
+  console.log('[Middleware] Recruiter redirect:', role, pathname);
+  
+  // Only redirect on protected routes
+  const isProtectedRoute = !allUnprotectedRoutes.some((route) => route.test(pathname));
+  
+  if (role === 'recruiter' && !isOnboardingPage && isProtectedRoute) {
     const { data: recruitData, error } = await supabase
       .from('recruiters')
       .select('company_id')
       .eq('id', user.id)
       .single();
 
-    if (
-      (error || !recruitData || !recruitData.company_id) &&
-      !isOnboardingPage
-    ) {
+    if (error || !recruitData || !recruitData.company_id) {
       return NextResponse.redirect(
         new URL('/settings/onboarding', request.url)
       );
-    } else if (recruitData?.company_id && !isOnboardingPage) {
+    } else if (recruitData?.company_id) {
       const company = await getCompany(recruitData.company_id);
       if (!company?.Configured) {
         return NextResponse.redirect(
@@ -126,16 +127,14 @@ export async function handleRecruiterRedirects(
 
 export async function updateSession(request: NextRequest) {
   console.log('[Middleware] Updating session...');
-  
   let supabaseResponse = NextResponse.next({
     request
   });
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Cache user data to avoid multiple calls
-  const userPromise = supabase.auth.getUser();
-  const { data: { user } } = await userPromise;
+  const { data: { user } } = await supabase.auth.getUser();
 
   console.log('[Middleware] Got user:', user ? 'Present' : 'None');
   console.log(

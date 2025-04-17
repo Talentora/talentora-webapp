@@ -6,7 +6,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 
 export async function POST(request: Request) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Sign out the user with global scope to clear all sessions
   const { error } = await supabase.auth.signOut();

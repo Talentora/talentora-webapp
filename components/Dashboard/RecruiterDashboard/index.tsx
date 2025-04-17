@@ -26,17 +26,33 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import InviteApplicants from '@/components/Jobs/Job/JobConfig/InviteApplicants';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
-import { fetchAllApplications } from '@/server/applications';
+import { fetchAllApplications, fetchRecentApplications, getApplicationCount } from '@/server/applications';
 import { fetchJobsData } from '@/server/jobs';
 
 export default function RecruiterDashboard() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Fetch all applicants data
   const { data: applicants = [], isLoading: applicantsLoading } = useQuery<ApplicantCandidate[]>({
-    queryKey: ['applications'],
+    queryKey: ['allApplications'],
     queryFn: fetchAllApplications,
   });
+
+  // Modified to match the actual return type from fetchRecentApplications
+  const { data: recentApplications = [], isLoading: recentApplicationsLoading } = useQuery<
+    { 
+      applicant_id: string | null; 
+      created_at: string; 
+      id: string; 
+      job_id: string; 
+      merge_application_id: string | null; 
+    }[]
+  >({
+    queryKey: ['recentApplications'],
+    queryFn: fetchRecentApplications,
+  });
+  
 
 
   const { data: mergeJobs = [], isLoading: jobsLoading } = useQuery<Job[]>({
@@ -69,7 +85,7 @@ export default function RecruiterDashboard() {
             </div>
 
             <div className="flex items-center gap-4">
-              {applicantsLoading ? (
+              {/* {recentApplicationsLoading || applicantsLoading ? (
                 <Skeleton className="h-10 w-64" />
               ) : (
                 <SearchBar
@@ -88,7 +104,7 @@ export default function RecruiterDashboard() {
                 ) : (
                   'Invite Candidates'
                 )}
-              </Button>
+              </Button> */}
               {inviteModalOpen && (
                 <Dialog
                   open={inviteModalOpen}
@@ -123,7 +139,7 @@ export default function RecruiterDashboard() {
             {/* Left Column: Graph + Recent Applicants */}
             <div className="flex flex-col gap-6 w-full col-span-2">
               {/* Graph */}
-              <Card className="max-h-[500px] mb-4 dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] p-5 border border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 w-full">
+              {/* <Card className="max-h-[500px] mb-4 dark:bg-[linear-gradient(to_right,rgba(129,140,248,0.15),rgba(196,181,253,0.15))] p-5 border border-transparent bg-background rounded-2xl shadow-md shadow-[#5650F0]/20 w-full">
                 <CardContent>
                   <ApplicationsGraph
                     applicants={applicants}
@@ -131,7 +147,7 @@ export default function RecruiterDashboard() {
                     hideHeader={false}
                   />
                 </CardContent>
-              </Card>
+              </Card> */}
 
               {/* Recent Applicants */}
               <RecentApplicantsCard

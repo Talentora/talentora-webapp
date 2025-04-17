@@ -1,11 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { createClient } from '@/utils/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { type Database } from '@/types/types_db';
-import { getUserRole } from '@/utils/supabase/queries';
 
 type Recruiter = Database['public']['Tables']['recruiters']['Row'];
 type Company = Database['public']['Tables']['companies']['Row'];
@@ -32,7 +30,6 @@ interface UseUserReturn {
 
 export function useUser(): UseUserReturn {
   const supabase = createClient();
-  const queryClient = useQueryClient();
 
   // Fetch authenticated user data using React Query with proper error handling
   const {
@@ -65,11 +62,11 @@ export function useUser(): UseUserReturn {
       return user;
     },
     retry: false, // Don't retry on auth errors
-    staleTime: 1000 * 60 * 5 // Cache for 5 minutes
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    refetchOnWindowFocus: false
   });
 
   const userId = userData?.id ?? '';
-  // console.log("userdata in useuser", userData);
 
   const role =
     userData?.user_metadata.role === 'applicant'
@@ -77,7 +74,7 @@ export function useUser(): UseUserReturn {
       : 'recruiter';
 
   const isRecruiter = role === 'recruiter';
-
+  
   // Fetch recruiter or applicant data based on the user's role using React Query
   const {
     data: recruiterData,
@@ -108,7 +105,10 @@ export function useUser(): UseUserReturn {
         if (error) throw error;
         return data;
       }
-    }
+    },
+    retry: false, // Don't retry on auth errors
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    refetchOnWindowFocus: false
   });
 
   const recruiterRecord: Recruiter | null =
@@ -116,7 +116,7 @@ export function useUser(): UseUserReturn {
       ? (recruiterData as Recruiter)
       : null;
 
-  // Fetch company data if recruiter exists and has a company_id
+      // Fetch company data if recruiter exists and has a company_id
   const {
     data: companyData,
     error: companyError,
@@ -133,7 +133,10 @@ export function useUser(): UseUserReturn {
         .single();
       if (error) throw error;
       return data;
-    }
+    },
+    retry: false, // Don't retry on auth errors
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    refetchOnWindowFocus: false
   });
 
   return {

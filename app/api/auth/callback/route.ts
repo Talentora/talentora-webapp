@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       )
     );
     
-    const supabase = createClient();
+    const supabase = await createClient();
 
     console.log('[Auth Callback] Exchanging code for session...');
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);

@@ -68,6 +68,7 @@ export async function requestPasswordUpdate(formData: FormData) {
 }
 
 export async function signInWithPassword(formData: FormData) {
+
   const cookieStore = cookies();
   const email = String(formData.get('email')).trim();
   const password = String(formData.get('password')).trim();
@@ -83,7 +84,7 @@ export async function signInWithPassword(formData: FormData) {
   let application_id = String(formData.get('applicationId'))
   if (application_id) { application_id = application_id.trim(); }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error, data } = await supabase.auth.signInWithPassword({
     email,
     password
@@ -106,7 +107,7 @@ export async function signInWithPassword(formData: FormData) {
       'You are now signed in.'
     );
 
-    if (candidate_id && job_id) { // special token sign in
+    if (candidate_id && job_id && role === 'applicant') { // special token sign in
       const applicantId = data.user.id;
 
       try {
@@ -160,6 +161,14 @@ export async function signUp(formData: FormData) {
   const password = String(formData.get('password')).trim();
   const fullName = String(formData.get('full_name')).trim();
   const role = String(formData.get('role')).trim();
+  
+  // Get company ID for recruiters
+  let companyId: string | null = null;
+  const companyIdValue = formData.get('companyId');
+  if (companyIdValue !== null && role === 'recruiter') {
+    companyId = String(companyIdValue).trim();
+  }
+  
   let candidate_id: string | null = null;
   const candidateIdValue = formData.get('candidateId');
   if (candidateIdValue !== null) {
@@ -176,7 +185,10 @@ export async function signUp(formData: FormData) {
 
   console.log(`Signing up as a ${role}`);
   console.log(`Email: ${email}`);
-  console.log(`Password: ${'*'.repeat(password.length)}`); // Masking the password for security
+  console.log(`Password: ${'*'.repeat(password.length)}`);
+  if (role === 'recruiter') {
+    console.log(`Company ID: ${companyId}`);
+  }
 
   if (!isValidEmail(email)) {
     console.log('Invalid email format detected.');
@@ -188,11 +200,40 @@ export async function signUp(formData: FormData) {
     return redirectPath;
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   console.log('Supabase client created. Attempting to sign up user...');
   
   try {
+    // For recruiters with company ID, validate company exists and is not configured
+    if (role === 'recruiter' && companyId) {
+      const { data: company, error: companyError } = await supabase
+        .from('companies')
+        .select('id, Configured')
+        .eq('id', companyId)
+        .single();
+      
+      if (companyError || !company) {
+        console.error('Company validation error:', companyError);
+        redirectPath = getErrorRedirect(
+          `/signin/signup?role=${role}`,
+          'Invalid Company ID',
+          'The company ID provided does not exist.'
+        );
+        return redirectPath;
+      }
+      
+      if (company.Configured) {
+        console.error('Company already configured');
+        redirectPath = getErrorRedirect(
+          `/signin/signup?role=${role}`,
+          'Company Already Set Up',
+          'This company already has recruiter accounts. Please contact your administrator.'
+        );
+        return redirectPath;
+      }
+    }
+
     const { error, data } = await supabase.auth.signUp({
       email,
       password,
@@ -221,7 +262,7 @@ export async function signUp(formData: FormData) {
           error.message
         );
       }
-    } else if ( // sign up was successful
+    } else if (
       data.user &&
       data.user.identities &&
       data.user.identities.length == 0
@@ -238,6 +279,7 @@ export async function signUp(formData: FormData) {
       
       // Add user to applicants table if role is applicant
       if (role === 'applicant' && data.user) {
+        console.log('Adding user to applicants table');
         await addUserToApplicantsTable(supabase, data.user.id, email, fullName, candidate_id);
         
         // If we have a candidate_id, link the user to their application
@@ -246,6 +288,22 @@ export async function signUp(formData: FormData) {
           if (jobId) {
             await addUserToApplicationsTable(supabase, data.user.id, candidate_id, jobId, application_id);
           }
+        }
+      }
+      
+      // Add user to recruiters table and update company if role is recruiter
+      if (role === 'recruiter' && data.user && companyId) {
+        // Add user to recruiters table
+        const { error: recruiterError } = await supabase
+          .from('recruiters')
+          .insert({
+            id: data.user.id,
+            email: email,
+            full_name: fullName,
+            company_id: companyId
+          }); 
+        if (recruiterError) {
+          console.error('Error adding user to recruiters table:', recruiterError);
         }
       }
       
