@@ -528,7 +528,6 @@ export async function getUserRole(supabase: SupabaseClient, user_id: string) {
     .select('id')
     .eq('id', user_id)
     .single();
-
   if (recruiterData && !recruiterError) {
       console.log('User is a recruiter');
       return 'recruiter'

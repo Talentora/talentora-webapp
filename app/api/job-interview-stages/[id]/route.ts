@@ -10,7 +10,7 @@ export async function GET(
   try {
     const stageId = params.id;
     
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get authenticated user
     const authResponse = await supabase.auth.getUser();
