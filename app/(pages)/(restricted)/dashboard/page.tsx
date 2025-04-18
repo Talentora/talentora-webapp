@@ -1,10 +1,10 @@
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/utils/supabase/client';
 import DashboardPage from '@/components/Dashboard';
 import { getUserRole } from '@/utils/supabase/queries';
 
 export default async function Page() {
-  const supabase = createClient();
-  
+  const supabase = await createClient();
+
   const {
     data: { user }
   } = await supabase.auth.getUser();

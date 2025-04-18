@@ -16,9 +16,7 @@ interface CompanyContextProps {
   onCompletion: (isComplete: boolean) => void;
 }
 
-export const CompanyContext3: React.FC<CompanyContextProps> = ({
-  onCompletion
-}) => {
+export const CompanyContext3: React.FC<CompanyContextProps> = ({ onCompletion }) => {
   const { toast } = useToast();
   const [companyDescription, setCompanyDescription] = useState('');
   const [companyCulture, setCompanyCulture] = useState('');
@@ -27,30 +25,28 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({
   const [companyProducts, setCompanyProducts] = useState('');
   const [companyCustomers, setCompanyCustomers] = useState('');
   const [companyContextExists, setCompanyContextExists] = useState(false);
-  const { data } = useUser().company;
-
-  // if (!company) {
-  //   return null;
-  // }
-
+  const companyData = useUser().company;
+  
+  
+  // Fetch company context when company data is available
   useEffect(() => {
     const checkCompanyContext = async () => {
-      if (data?.id) {
-        const context = await getCompanyContext(data.id);
+      if (companyData?.data?.id) {
+        const context = await getCompanyContext(companyData.data.id);
         if (context) {
-          setCompanyDescription(context.description);
-          setCompanyCulture(context.culture);
-          setCompanyGoals(context.goals);
-          setCompanyHistory(context.history);
-          setCompanyProducts(context.products);
-          setCompanyCustomers(context.customers);
+          setCompanyDescription(context.description || '');
+          setCompanyCulture(context.culture || '');
+          setCompanyGoals(context.goals || '');
+          setCompanyHistory(context.history || '');
+          setCompanyProducts(context.products || '');
+          setCompanyCustomers(context.customers || '');
           setCompanyContextExists(true);
         }
       }
     };
 
     checkCompanyContext();
-  }, [data?.id]);
+  }, [companyData]);
 
   const handleChange = () => {
     // Mark as complete if all fields meet minimum length requirement
@@ -73,16 +69,16 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({
       description: companyDescription,
       culture: companyCulture,
       history: companyHistory,
-      id: data?.id
+      id: companyData?.data?.id
     };
 
     try {
       if (companyContextExists) {
-        if (!data?.id) {
+        if (!companyData?.data?.id) {
           throw new Error('Company ID is required');
         }
         const updatedCompanyContext = await updateCompanyContext(
-          data.id,
+          companyData.data.id,
           companyContext
         );
         console.log('Updating company context:', updatedCompanyContext);

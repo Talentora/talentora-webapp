@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const jobId = url.searchParams.get('job_id');
     
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get authenticated user
     const authResponse = await supabase.auth.getUser();

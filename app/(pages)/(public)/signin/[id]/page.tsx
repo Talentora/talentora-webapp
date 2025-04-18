@@ -1,7 +1,4 @@
 import '@/styles/main.css';
-import Loading from '@/components/Layout/Loading';
-import NextTopLoader from 'nextjs-toploader'; // Import NextTopLoader
-// import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import {
@@ -14,9 +11,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import PasswordSignIn from '@/components/AuthForms/PasswordSignIn';
 import ForgotPassword from '@/components/AuthForms/ForgotPassword';
 import UpdatePassword from '@/components/AuthForms/UpdatePassword';
-import { createClient } from '@/utils/supabase/server';
-import Logo from '@/components/ui/icons/Logo';
-import RecruiterSSO from '@/components/AuthForms/RecruiterSSO';
+import { createClient } from '@/utils/supabase/client';
 // import { useUser } from '@/hooks/useUser';
 
 export default async function SignInPage({

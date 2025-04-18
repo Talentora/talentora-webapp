@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -9,28 +9,27 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { useToast } from '@/components/Toasts/use-toast';
 import { OnboardingSteps } from './OnboardingSteps';
 import { OnboardingNavigation } from './OnboardingNavigation';
 import { updateCompany } from '@/utils/supabase/queries';
 import { useUser } from '@/hooks/useUser';
+
 export default function OnboardingPage() {
+
   const totalSteps = 7;
   const [step, setStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(
     new Set([1, 3, 4, 5, 7])
   ); // Initialize step 1 and 4 as completed
   const { user, recruiter } = useUser();
+  const [companyId, setCompanyId] = useState<string | null>(null);
 
-  console.log(recruiter.data);
-  if (
-    !recruiter.data ||
-    !('company_id' in recruiter.data) ||
-    !recruiter.data.company_id
-  ) {
-    return <p>Error: Company ID is undefined. Please contact support.</p>;
-  }
-  const companyId = recruiter.data.company_id;
+  useEffect(() => {
+    if (recruiter.data && 'company_id' in recruiter.data) {
+      setCompanyId(recruiter.data.company_id);
+    }
+  }, [recruiter.data]);
+
 
   const nextStep = async () => {
     const newStep = Math.min(step + 1, totalSteps);
@@ -54,7 +53,7 @@ export default function OnboardingPage() {
     });
 
     // If completing final step, update company
-    if (stepNumber === totalSteps && isComplete) {
+    if (stepNumber === totalSteps && isComplete && companyId) {
       try {
         await updateCompany(companyId, { configured: true });
       } catch (error) {

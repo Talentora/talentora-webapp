@@ -1,43 +1,37 @@
-import { Metadata } from 'next';
 import Navbar from '@/components/Layout/Navbar';
 import BreadcrumbsContainer from '@/components/Layout/BreadcrumbsContainer';
 import { Toaster } from '@/components/Toasts/toaster';
 import { PropsWithChildren, Suspense } from 'react';
-import { getURL } from '@/utils/helpers';
 import '@/styles/main.css';
 import Loading from '@/components/Layout/Loading';
 import NextTopLoader from 'nextjs-toploader';
 import { createClient } from '@/utils/supabase/server';
 import ReactQueryProvider from '@/components/Providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { getUserRole } from '@/utils/supabase/queries';
 import DynamicSidebar from '@/components/Layout/Sidebar/DynamicSidebar';
 import AuthListener from '@/components/AuthListener';
-import { headers } from 'next/headers';
 
 const title = 'Talentora';
 const description = 'Talentora is a platform for creating and managing AI-powered interviews.';
 
-export const metadata: Metadata = {
-  metadataBase: new URL(getURL()),
-  title: title,
-  description: description
-};
-
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const supabase = createClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-
   let role = null;
   let isSidebarVisible = false;
 
-  if (user) {
-    role = await getUserRole(supabase, user.id);
-    isSidebarVisible = role === 'recruiter';
-  } else {
-    isSidebarVisible = false;
+  try {
+    // Create the Supabase client
+    const supabase = await createClient();
+    
+    // Get the session
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      role = user.user_metadata.role;
+      isSidebarVisible = role === 'recruiter';
+    }
+
+   
+  } catch (error) {
+    console.error("Error in layout:", error);
   }
 
   return (

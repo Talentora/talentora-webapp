@@ -1,4 +1,3 @@
-import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getErrorRedirect, getStatusRedirect } from '@/utils/helpers';
@@ -23,7 +22,7 @@ export async function GET(request: NextRequest) {
       )
     );
     
-    const supabase = createClient();
+    const supabase = await createClient();
 
     console.log('[Auth Callback] Exchanging code for session...');
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);

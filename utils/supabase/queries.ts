@@ -28,7 +28,7 @@ export const getCompany = async (
   companyId: string
 ): Promise<Company | null> => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: company, error } = await supabase
       .from('companies')
       .select('*')
@@ -57,20 +57,31 @@ export const getCompany = async (
 export const createCompany = async (
   companyData: any,
   userId: string
-  // userId: string
 ): Promise<Company> => {
-  const supabase = createClient();
+  const supabase = await createClient();
+
+  const { data: userCompanyId, error: userCompanyError } = await supabase
+    .from('recruiters')
+    .select('company_id')
+    .eq('id', userId)
+    .single();
+
+  if (userCompanyError) {
+    throw new Error(`Failed to get user company: ${userCompanyError.message}`);
+  }
 
   // Set configured to false by default
   const companyDataWithConfig = {
+    id: userCompanyId.company_id,
     ...companyData,
-    configured: false
+    Configured: false,
   };
+
 
   // Insert the company
   const { data: createdCompany, error: companyError } = await supabase
     .from('companies')
-    .insert(companyDataWithConfig)
+    .upsert(companyDataWithConfig)
     .select()
     .single();
 
@@ -111,14 +122,14 @@ export const updateCompany = async (
   id: string,
   companyData: any
 ): Promise<Company | null> => {
-  const supabase = createClient();
+  const supabase = await createClient();
+
   // Filter out undefined/null values from companyData
   const filteredCompanyData = Object.fromEntries(
     Object.entries(companyData).filter(
       ([_, value]) => value !== null && value !== undefined
     )
   );
-
   const { data, error } = await supabase
     .from('companies')
     .update(filteredCompanyData)
@@ -140,7 +151,7 @@ export const updateCompany = async (
 */
 
 export const deleteCompany = async (id: number): Promise<boolean> => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.from('companies').delete().eq('id', String(id));
 
   if (error) {
@@ -153,7 +164,7 @@ export const deleteCompany = async (id: number): Promise<boolean> => {
 };
 
 export const getUser = async () => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const {
     data: { user }
@@ -162,7 +173,7 @@ export const getUser = async () => {
 };
 
 export const getSubscription = async () => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: subscription, error } = await supabase
     .from('subscriptions')
     .select('*, prices(*, products(*))')
@@ -173,7 +184,7 @@ export const getSubscription = async () => {
 };
 
 export const getProducts = async () => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: products, error } = await supabase
     .from('products')
     .select('*, prices(*)')
@@ -191,7 +202,7 @@ export async function inviteRecruiter(
 ): Promise<{ data?: any; error?: string | null }> {
   try {
     // Check if user already exists in auth.users
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: existingUser, error: userCheckError } =
       await listUsersAdmin();
     const userExists = existingUser?.users?.some(
@@ -274,7 +285,7 @@ export async function inviteCandidate(
 ): Promise<{ data?: any; error?: string | null }> {
 
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // First, get the job information including company_id
     const { data: jobData, error: jobError } = await supabase
@@ -373,7 +384,7 @@ export const getRecruiter = async (
   id: string
 ): Promise<Recruiter | null> => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: recruiter, error } = await supabase
       .from('recruiters')
       .select('*')
@@ -443,7 +454,7 @@ export const fetchJobTokenById = async (jobId: string): Promise<{
   accountToken: string | null;
 }> => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // First fetch the job to get the company_id
     const { data: job, error: jobError } = await supabase
@@ -489,7 +500,7 @@ export const fetchJobTokenById = async (jobId: string): Promise<{
  * @throws Error if the creation operation fails.
  */
 export const createscout = async (scoutData: any): Promise<Tables<'bots'>> => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('bots')
@@ -517,7 +528,6 @@ export async function getUserRole(supabase: SupabaseClient, user_id: string) {
     .select('id')
     .eq('id', user_id)
     .single();
-
   if (recruiterData && !recruiterError) {
       console.log('User is a recruiter');
       return 'recruiter'
@@ -535,7 +545,7 @@ export async function getUserRole(supabase: SupabaseClient, user_id: string) {
  * @throws Error if the deletion operation fails.
  */
 export const deletescout = async (id: number) => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Delete the scout
   const { error: scoutError } = await supabase.from('bots').delete().eq('id', id);
@@ -570,7 +580,7 @@ export const getScouts = async (): Promise<ScoutWithJobs[] | null> => {
  * @throws Error if the fetch operation fails.
  */
 export const getscoutById = async (id: string): Promise<scout | null> => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('bots')
@@ -597,7 +607,7 @@ export const updateScout = async (
   id: string,
   scoutData: any
 ): Promise<scout | null> => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Filter out undefined/null values from scoutData
   const filteredscoutData = Object.fromEntries(
@@ -634,7 +644,7 @@ export const createInterviewQuestion = async (
   order: number,
   jobId: string
 ): Promise<any> => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   if (!question || !sampleResponse || !jobId) {
     throw new Error(
@@ -713,7 +723,7 @@ export const updateInterviewQuestion = async (
     sample_response?: string; // Changed from 'response' to 'sample_response' to match data structure
   }
 ): Promise<void> => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: config, error: fetchError } = await supabase
     .from('job_interview_config')
@@ -754,7 +764,7 @@ export const updateInterviewQuestion = async (
  * @throws Error if fetch fails
  */
 export const getInterviewQuestions = async (jobId: string): Promise<any[]> => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from('job_interview_config')
@@ -772,30 +782,7 @@ export const getInterviewQuestions = async (jobId: string): Promise<any[]> => {
     : [];
 };
 
-// /**
-//  * Updates the order of multiple interview questions.
-//  *
-//  * @param questions - Array of questions with updated order values
-//  * @throws Error if reordering fails
-//  */
-// export const reorderInterviewQuestions = async (
-//   questions: { id: string; order: number }[]
-// ): Promise<void> => {
-//   const supabase = createClient();
 
-//   const { error } = await supabase
-//     .from('interview_questions')
-//     .upsert(
-//       questions.map(q => ({
-//         id: q.id,
-//         order: q.order
-//       }))
-//     );
-
-//   if (error) {
-//     throw new Error(`Failed to reorder interview questions: ${error.message}`);
-//   }
-// };
 
 /**
  * Creates a new company context in the database.
@@ -807,11 +794,8 @@ export const getInterviewQuestions = async (jobId: string): Promise<any[]> => {
 export const createCompanyContext = async (
   companyContextData: any
 ): Promise<any> => {
-  console.log(
-    'Attempting to create company context with data:',
-    companyContextData
-  );
-  const supabase = createClient();
+ 
+  const supabase = await createClient();
 
   const { data: createdCompanyContext, error: companyContextError } =
     await supabase
@@ -847,7 +831,7 @@ export const createCompanyContext = async (
  */
 export const getCompanyContext = async (id: string): Promise<any | null> => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: companyContext, error } = await supabase
       .from('company_context')
       .select('*')
@@ -877,7 +861,7 @@ export const updateCompanyContext = async (
   id: string,
   companyContextData: any
 ): Promise<any | null> => {
-  const supabase = createClient();
+  const supabase = await createClient();
   // Filter out undefined/null values from companyContextData
   const filteredCompanyContextData = Object.fromEntries(
     Object.entries(companyContextData).filter(
@@ -905,7 +889,7 @@ export const updateCompanyContext = async (
  * @throws Error if deletion fails
  */
 export const deleteCompanyContext = async (id: string): Promise<void> => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { error } = await supabase
     .from('company_context')
@@ -935,7 +919,7 @@ export const updateJobInterviewConfig = async (
     hiring_manager_notes: string | null;
   }>
 ): Promise<any> => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Filter out undefined values to ensure only provided fields are updated
   const filteredConfigData = Object.fromEntries(
@@ -980,7 +964,7 @@ export const deleteInterviewQuestion = async (
   questionId: string,
   jobId: string
 ): Promise<void> => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: config, error: fetchError } = await supabase
     .from('job_interview_config')
@@ -1024,7 +1008,7 @@ export const getJobInterviewConfig = async (
   jobId: string
 ): Promise<any | null> => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: interviewConfig, error } = await supabase
       .from('job_interview_config')
       .select('*')
@@ -1048,7 +1032,7 @@ export const getJobInterviewConfig = async (
 
 
 export const getJob = async (jobId: string): Promise<any | null> => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('jobs')
     .select('*')
@@ -1063,7 +1047,7 @@ export const getJob = async (jobId: string): Promise<any | null> => {
 //   jobId: string
 // ): Promise<string | null> => {
 //   try {
-//     const supabase = createClient();
+//     const supabase = await createClient();
 
 //     const { data, error } = await supabase
 //       .from('applications')
@@ -1087,7 +1071,7 @@ export const getJob = async (jobId: string): Promise<any | null> => {
 
 export const getEvaluation = async (AISummaryId: string): Promise<AI_Summary | null> => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, error } = await supabase
       .from('AI_summary')
       .select('*')
@@ -1108,7 +1092,7 @@ export const getEvaluation = async (AISummaryId: string): Promise<AI_Summary | n
 
 export const getAllEvaluation = async (AISummaryId: string): Promise<Json[] | null> => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, error } = await supabase
       .from('AI_summary')
       .select('text_eval')
@@ -1137,7 +1121,7 @@ export const getAccountTokenFromApplication = async (
   applicationId: string
 ): Promise<{token: string | null,company: any | null}> => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Join applications -> jobs -> companies to get the account token
     // First get the application to get the job_id
@@ -1198,7 +1182,7 @@ export const getAccountTokenFromApplication = async (
  */
 export const getApplication = async (applicationId: string): Promise<Tables<'applications'> | null> => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: application, error } = await supabase
       .from('applications')
       .select('*')
@@ -1228,7 +1212,7 @@ export const getApplication = async (applicationId: string): Promise<Tables<'app
  * @returns A promise that resolves to an array of scoutWithJobs objects or throws an error if the query fails.
  */
 export const getScoutsWithJobIds = async (): Promise<ScoutWithJobs[]> => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Query to fetch all scouts with their job_interview_configs where bot_id is not null
   const { data: scoutsWithJobs, error } = await supabase

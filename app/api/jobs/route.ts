@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
-import { Job } from '@/types/merge';
 import { getMergeApiKey } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/server';
 import { getUserRole } from '@/utils/supabase/queries';
 
 export async function GET() {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Add debug logging for auth
     const authResponse = await supabase.auth.getUser();
@@ -81,8 +80,6 @@ export async function GET() {
     const jobsData = await jobsResponse.json();
     const jobs = Array.isArray(jobsData.results) ? jobsData.results : [];
 
-    console.log('\n=== API Response Structure ===');
-    console.log('Sample Job Structure:', JSON.stringify(jobs[0], null, 2));
 
     // Fetch departments and offices once for all jobs
     const [departmentsResponse, officesResponse] = await Promise.all([

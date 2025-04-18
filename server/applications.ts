@@ -56,9 +56,7 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
 
 
   export async function fetchAllApplications() {
-    console.log("fetchAllApplicationshere");
     const accountToken = await getMergeApiKey();
-    console.log("accountToken", accountToken);
     if (!accountToken) {
       throw new Error('Account token not found');
     }
@@ -83,6 +81,41 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
     
     const result = await response.json();
     return result.data;
+  }
+
+
+  export async function fetchRecentApplications() {
+    const accountToken = await getMergeApiKey();
+    if (!accountToken) {
+      throw new Error('Account token not found');
+    }
+    const supabase = createClient();
+    const { data: applications, error } = await supabase
+      .from('applications')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(30);
+
+    if (error) {
+      throw new Error('Error fetching applications');
+    }
+
+    return applications;
+  }
+  
+
+  export async function getApplicationCount(jobId: string) {
+    const accountToken = await getMergeApiKey();
+    if (!accountToken) {
+      throw new Error('Account token not found');
+    }
+    const supabase = createClient();
+    const { data, count, error } = await supabase
+    .from('applications')
+    .select('*', { count: 'exact' })
+    .eq('job_id', jobId);
+
+    return count || 0;
   }
 
 

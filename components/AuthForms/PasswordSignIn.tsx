@@ -148,12 +148,31 @@ export default function PasswordSignIn({
         </Link>
       </p>
       <p>
-        <Link
-          href={signUpRedirectLink ? signUpRedirectLink: `/signup?role=${role}` }
-          className="font-light text-sm text-muted-foreground"
-        >
-          Don&apos;t have an account? Sign up
-        </Link>
+        {role === 'applicant' ? (
+          <Link
+            href={signUpRedirectLink ? signUpRedirectLink: `/signup?role=${role}` }
+            className="font-light text-sm text-muted-foreground"
+          >
+            Don&apos;t have an account? Sign up
+          </Link>
+        ) : (
+          <>
+            <Link
+              href={signUpRedirectLink ? signUpRedirectLink: `/contact` }
+              className="font-light text-sm text-muted-foreground"
+            >
+              Contact sales
+            </Link>
+            <p>
+              <Link
+              href={signUpRedirectLink ? signUpRedirectLink: `/signup?role=${role}` }
+              className="font-light text-sm text-muted-foreground"
+            >
+              Company initial sign up
+            </Link>
+            </p>
+          </>
+        )}
       </p>
     </div>
   );

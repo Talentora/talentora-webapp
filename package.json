@@ -21,7 +21,13 @@
     "supabase:generate-migration": "npx supabase db diff | npx supabase migration new newmigration",
     "supabase:generate-seed": "npx supabase db dump --data-only -f supabase/seed.sql",
     "supabase:push": "npx supabase db push",
-    "supabase:pull": "npx supabase db pull"
+    "supabase:pull": "npx supabase db pull",
+    "test:load": "k6 run tests/load-test.js --env TARGET_URL=https://talentora:io",
+    "test:load:smoke": "k6 run tests/load-test.js --env TARGET_URL=https://talentora:io -e scenario=smoke",
+    "test:load:stress": "k6 run tests/load-test.js --env TARGET_URL=https://talentora:io -e scenario=stress",
+    "test:load:spike": "k6 run tests/load-test.js --env TARGET_URL=https://talentora:io -e scenario=spike",
+    "test:load:soak": "k6 run tests/load-test.js --env TARGET_URL=https://talentora:io -e scenario=soak",
+    "test:load:prod": "k6 run tests/load-test.js --env TARGET_URL=https://talentora:io -e scenario=load"
   },
   "typescriptreact": {
     "editor.formatOnSave": true
@@ -85,6 +91,7 @@
     "framer-motion": "10.16.4",
     "google": "^2.1.0",
     "jsonwebtoken": "^9.0.2",
+    "k6": "^0.0.0",
     "livekit-client": "^2.11.2",
     "livekit-server-sdk": "^2.11.0",
     "lucide-react": "^0.378.0",

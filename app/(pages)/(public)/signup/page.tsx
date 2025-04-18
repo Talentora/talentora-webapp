@@ -18,14 +18,8 @@ export default function SignUpPage() {
   const redirectMethod = getRedirectMethod();
 
   useEffect(() => {
-    // If role is recruiter, redirect to signin page
-    if (roleParam === 'recruiter') {
-      router.push('/signin?role=recruiter');
-      return;
-    }
-    
-    // Only handle applicant role for signup
-    if (roleParam === 'applicant') {
+    // Handle role param from URL
+    if (roleParam === 'applicant' || roleParam === 'recruiter') {
       setSelectedType(roleParam);
       setShowForm(true);
     }
@@ -37,17 +31,12 @@ export default function SignUpPage() {
 
   const handleContinue = () => {
     if (selectedType) {
-      if (selectedType === 'recruiter') {
-        // Redirect recruiters to sign in page
-        router.push('/signin?role=recruiter');
-      } else {
-        // Show signup form for applicants
-        setShowForm(true);
-        // Update URL to include role without page reload
-        const url = new URL(window.location.href);
-        url.searchParams.set('role', selectedType);
-        window.history.pushState({}, '', url);
-      }
+      // Show signup form for both recruiters and applicants
+      setShowForm(true);
+      // Update URL to include role without page reload
+      const url = new URL(window.location.href);
+      url.searchParams.set('role', selectedType);
+      window.history.pushState({}, '', url);
     }
   };
 
@@ -59,7 +48,7 @@ export default function SignUpPage() {
     window.history.pushState({}, '', url);
   };
 
-  if (showForm && selectedType === 'applicant') {
+  if (showForm && selectedType) {
     return (
       <div className="flex flex-col min-h-screen justify-center mx-auto">
         <div className="flex justify-center flex-1">
@@ -69,7 +58,7 @@ export default function SignUpPage() {
                 <SignUp
                   allowEmail={allowEmail}
                   redirectMethod={redirectMethod}
-                  role="applicant"
+                  role={selectedType}
                 />
                 <div className="flex justify-center mt-4">
                   <Button variant="outline" onClick={handleBack}>
@@ -103,10 +92,7 @@ export default function SignUpPage() {
           <p className="text-center text-gray-600">
             I'm looking to hire talent
           </p>
-          <span className="text-sm text-primary mt-2">Sign in with SSO</span>
-          <span className="text-xs text-muted-foreground mt-1">
-            (Recruiters should use the sign in page)
-          </span>
+          <span className="text-xs text-primary mt-2">Create recruiting account</span>
         </div>
         <div
           className={`flex-1 flex flex-col items-center justify-center p-8 rounded-lg bg-background shadow-md cursor-pointer transition-all duration-300 hover:shadow-lg ${
