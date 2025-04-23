@@ -22,12 +22,13 @@
     "supabase:generate-seed": "npx supabase db dump --data-only -f supabase/seed.sql",
     "supabase:push": "npx supabase db push",
     "supabase:pull": "npx supabase db pull",
-    "test:load": "k6 run tests/load-test.js --env TARGET_URL=https://talentora:io",
-    "test:load:smoke": "k6 run tests/load-test.js --env TARGET_URL=https://talentora:io -e scenario=smoke",
-    "test:load:stress": "k6 run tests/load-test.js --env TARGET_URL=https://talentora:io -e scenario=stress",
-    "test:load:spike": "k6 run tests/load-test.js --env TARGET_URL=https://talentora:io -e scenario=spike",
-    "test:load:soak": "k6 run tests/load-test.js --env TARGET_URL=https://talentora:io -e scenario=soak",
-    "test:load:prod": "k6 run tests/load-test.js --env TARGET_URL=https://talentora:io -e scenario=load"
+    "test:load": "k6 run tests/load-test.js --env TARGET_URL=https://talentora.io",
+    "test:load:smoke": "k6 run tests/load-test.js --env TARGET_URL=https://talentora.io -e scenario=smoke",
+    "test:load:stress": "k6 run tests/load-test.js --env TARGET_URL=https://talentora.io -e scenario=stress",
+    "test:load:spike": "k6 run tests/load-test.js --env TARGET_URL=https://talentora.io -e scenario=spike",
+    "test:load:soak": "k6 run tests/load-test.js --env TARGET_URL=https://talentora.io -e scenario=soak",
+    "test:load:prod": "k6 run tests/load-test.js --env TARGET_URL=https://talentora.io -e scenario=load",
+    "test:load:bot": "k6 run tests/load-test.js --env TARGET_URL=https://talentora.io -e scenario=bot_connect"
   },
   "typescriptreact": {
     "editor.formatOnSave": true

@@ -25,6 +25,7 @@ The test suite includes several test scenarios:
 - **Stress Test**: Heavy load with up to 200 concurrent users for 16 minutes
 - **Spike Test**: Sudden burst of 500 users for 1 minute 20 seconds
 - **Soak Test**: Extended duration test with 50 users for 14 minutes
+- **Bot Connect Test**: Specific test for the LiveKit token generation endpoint with 100 users over 3 minutes
 
 ## Running the Tests
 
@@ -49,6 +50,9 @@ npm run test:load:spike
 # Run soak test
 npm run test:load:soak
 
+# Run bot/connect endpoint test
+npm run test:load:bot
+
 # Run against production
 npm run test:load:prod
 ```
@@ -72,8 +76,10 @@ K6 will output various metrics including:
 - **Custom metrics**:
   - failed_requests: Count of all failed requests
   - successful_logins: Count of successful login attempts
+  - successful_bot_connections: Count of successful LiveKit token generations
   - page_load_time: Trend metric for page load times
   - api_response_time: Trend metric for API response times
+  - bot_connect_response_time: Trend metric for bot/connect endpoint response times
   - error_rate: Rate of errors across all requests
 
 ### Success Criteria
@@ -84,7 +90,24 @@ The test defines the following thresholds:
 - Less than 1% of requests fail
 - 95% of page loads complete in under 3 seconds
 - 95% of API calls respond within 200ms
+- 95% of bot/connect calls respond within 300ms
 - Overall error rate less than 5%
+
+## Testing LiveKit Token Generation
+
+The test suite includes specific tests for the `/api/bot/connect` endpoint, which is responsible for generating LiveKit tokens for video conferencing. This endpoint is critical for your application's core functionality and needs to handle multiple concurrent requests efficiently.
+
+The bot connection test:
+- Simulates 100 users requesting tokens simultaneously
+- Creates unique room and participant names for each request
+- Provides realistic interview context data
+- Validates that valid tokens are returned
+- Measures response time and success rate
+
+This test is particularly important because:
+1. Token generation must be fast to ensure smooth user experience
+2. The endpoint must handle high load during peak usage periods
+3. Each user requires a unique token, creating database and compute load
 
 ## Visualizing Results
 
