@@ -1,4 +1,4 @@
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Card,
@@ -15,8 +15,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { ApplicantCandidate } from '@/types/merge';
-import React, { useState, useMemo } from 'react';
-import { Button } from "@/components/ui/button";
+import React, { useState, useMemo, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from '@/components/ui/select';
 
 interface ApplicationsGraphProps {
@@ -29,23 +28,37 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
   const [interval, setInterval] = useState('1 week');
   const [selectedJob, setSelectedJob] = useState('all'); // "all" means no filtering
 
+  // Debug data to help troubleshoot
+  useEffect(() => {
+    console.log('ApplicationsGraph data:', { 
+      applicantsCount: applicants?.length,
+      isLoading, 
+      firstApplicant: applicants?.[0]
+    });
+  }, [applicants, isLoading]);
+
   // Get unique job names for the filter dropdown
   const jobOptions = useMemo(() => {
     const uniqueJobs = new Set<string>();
 
-    applicants.forEach(applicant => {
-      uniqueJobs.add(applicant.job.name);
+    applicants?.forEach(applicant => {
+      if (applicant?.job?.name) {
+        uniqueJobs.add(applicant.job.name);
+      }
     });
     return Array.from(uniqueJobs);
   }, [applicants]);
 
   // Filter applicants based on selected job
   const filteredApplicants = useMemo(() => {
-    return selectedJob === 'all' ? applicants : applicants.filter(app => app.job.name === selectedJob);
+    if (!applicants?.length) return [];
+    return selectedJob === 'all' ? applicants : applicants.filter(app => app?.job?.name === selectedJob);
   }, [applicants, selectedJob]);
 
   // Process data for the chart
   const chartData = useMemo(() => {
+    if (!filteredApplicants?.length) return [];
+    
     const now = new Date();
     const timeRangeInDays = 90; // Default time range to 3 months
     const intervalInDays = {
@@ -71,6 +84,8 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
 
     // Fill bins with data
     filteredApplicants.forEach(applicant => {
+      if (!applicant?.application?.created_at || !applicant?.job?.id) return;
+      
       const createdAt = new Date(applicant.application.created_at);
       if (createdAt >= startDate && createdAt <= now) {
         const binDate = new Date(createdAt);
@@ -81,7 +96,7 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
         const jobId = applicant.job.id;
 
         if (!bins[binKey]) {
-          let displayDate = binKey;
+          let displayDate = binDate.toLocaleString('default', { month: 'short', day: 'numeric' });
           if (interval === '1 month') {
             displayDate = binDate.toLocaleString('default', { month: 'short', year: 'numeric' });
           }
@@ -94,27 +109,71 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
         (bins[binKey][jobId] as number) += 1;
       }
     });
-
+    
     return Object.values(bins).sort((a, b) => a.date.localeCompare(b.date));
   }, [filteredApplicants, interval]);
+
 
   const chartConfig = useMemo(() => {
     const config: ChartConfig = {};
     filteredApplicants.forEach(applicant => {
+      if (!applicant?.job?.id) return;
+      
       const jobId = applicant.job.id;
-      config[jobId] = {
-        label: applicant.job.name || `Job ${jobId}`,
-        color: '#5650F0',
-      };
+      if (!config[jobId]) {
+        config[jobId] = {
+          label: applicant.job.name || `Job ${jobId}`,
+          color: '#5650F0',
+        };
+      }
     });
     return config;
   }, [filteredApplicants]);
 
+  // Check if we have data to display
+  const hasData = chartData.length > 0 && Object.keys(chartConfig).length > 0;
+
+  // Debug output for chart data
+  useEffect(() => {
+    console.log('Chart data:', { 
+      chartDataLength: chartData.length, 
+      configKeys: Object.keys(chartConfig).length,
+      hasData,
+      chartConfig // Log the actual config object
+    });
+  }, [chartData, chartConfig, hasData]);
+
+  // Use recharts directly if ChartContainer has issues
+  const renderDirectChart = () => {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="displayDate" tickLine={false} tickMargin={10} axisLine={false} />
+          <YAxis tickLine={false} tickMargin={10} axisLine={false} />
+          {/* Use native recharts components instead of custom components */}
+          <Tooltip />
+          <Legend />
+          {Object.keys(chartConfig).map(jobId => (
+            <Bar 
+              key={jobId} 
+              dataKey={jobId} 
+              name={String(chartConfig[jobId]?.label || jobId)}
+              stackId="a" 
+              fill={chartConfig[jobId]?.color || "#5650F0"} 
+              radius={[4, 4, 0, 0]} 
+            />
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
+    );
+  };
+
   return (
-    <Card className="p-5 -mt-6 w-full border border-transparent">
+    <Card className="p-5 w-full border border-transparent">
       {!hideHeader && (
         <CardHeader>
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
             <CardTitle className="text-2xl">Applicants Over Time</CardTitle>
             {/* Job Filter Dropdown */}
             <SelectGroup className="flex flex-row gap-2 items-center">
@@ -151,26 +210,44 @@ const ApplicationsGraph = ({ applicants = [], isLoading, hideHeader = false }: A
         </CardHeader>
       )}
 
-      <CardContent style={{ paddingBottom: 0 }}>
-        <div style={{ maxHeight: '300px', width: '100%', overflow: 'hidden' }}>
-          <ChartContainer config={chartConfig}>
-            {isLoading ? (
-              <div className="flex justify-center items-center">
-                <Skeleton className="w-full" />
-              </div>
-            ) : (
-              <BarChart data={chartData} width={1000} height={100} layout="horizontal">
-                <CartesianGrid vertical={false} />
-                <XAxis dataKey="displayDate" tickLine={false} tickMargin={5} axisLine={false} />
-                <YAxis tickLine={false} tickMargin={5} axisLine={false} />
-                <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-                <ChartLegend content={<ChartLegendContent />} />
-                {Object.keys(chartConfig).map(jobId => (
-                  <Bar key={jobId} dataKey={jobId} stackId="a" fill="#5650F0" radius={[0, 0, 4, 4]} />
-                ))}
-              </BarChart>
-            )}
-          </ChartContainer>
+      <CardContent>
+        <div className="h-[300px] w-full">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-full">
+              <Skeleton className="w-full h-4/5" />
+            </div>
+          ) : !hasData ? (
+            <div className="flex justify-center items-center h-full text-gray-500">
+              No application data available
+            </div>
+          ) : ( 
+            // Display the direct implementation which should definitely work
+            renderDirectChart()
+            
+            // ChartContainer approach is now commented out to ensure we get a working chart
+            /*
+            <ChartContainer config={chartConfig}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="displayDate" tickLine={false} tickMargin={10} axisLine={false} />
+                  <YAxis tickLine={false} tickMargin={10} axisLine={false} />
+                  <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                  <ChartLegend content={<ChartLegendContent />} />
+                  {Object.keys(chartConfig).map(jobId => (
+                    <Bar 
+                      key={jobId} 
+                      dataKey={jobId} 
+                      stackId="a" 
+                      fill={chartConfig[jobId]?.color || "#5650F0"} 
+                      radius={[4, 4, 0, 0]} 
+                    />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+            */
+          )}
         </div>
       </CardContent>
     </Card>
