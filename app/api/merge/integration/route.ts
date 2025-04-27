@@ -57,7 +57,6 @@ export async function GET(request: NextRequest) {
     });
 
     const data = await mergeResponse.json();
-    console.log('data', data);
 
     return NextResponse.json({ data, integration_status: 'connected' }, { status: 200 });
   } catch (error) {

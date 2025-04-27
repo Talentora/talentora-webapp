@@ -4,7 +4,6 @@ import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getURL, getErrorRedirect, getStatusRedirect } from '@/utils/helpers';
-import { getAuthTypes } from '@/utils/auth-helpers/settings';
 import { fetchApplicationMergeId } from '@/server/applications';
 
 function isValidEmail(email: string) {
@@ -442,7 +441,11 @@ async function addUserToApplicationsTable(
     if (existingApplication) {
       const { error: updateError } = await supabase
         .from('applications')
-        .update({ applicant_id: applicantId })
+        .upsert({ 
+          applicant_id: applicantId,
+          status: 'in_progress',
+          job_id: jobId
+         })
         .eq('merge_application_id', mergeApplicationId);
 
       if (updateError) {
@@ -457,7 +460,8 @@ async function addUserToApplicationsTable(
         .insert({
           merge_application_id: mergeApplicationId,
           applicant_id: applicantId,
-          job_id: jobId
+          job_id: jobId,
+          status: 'in_progress',
         });
 
       if (insertError) {

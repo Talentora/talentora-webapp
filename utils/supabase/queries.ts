@@ -10,7 +10,7 @@ type Recruiter = Tables<'recruiters'>;
 type Company = Tables<'companies'>;
 type scout = Tables<'bots'>;
 type AI_Summary = Tables<'AI_summary'>;
-import { inviteRecruiterAdmin, inviteCandidateAdmin, listUsersAdmin } from '@/utils/supabase/admin';
+import { inviteRecruiterAdmin, listUsersAdmin } from '@/utils/supabase/admin';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { fetchApplicationMergeId } from '@/server/applications';
 import { sendAuthEmail } from '../email_helpers';
@@ -316,7 +316,7 @@ export async function inviteCandidate(
     const application_id = await fetchApplicationMergeId(job_id, merge_candidate_id);
     
     // Send authentication email with both signup and signin links
-    const emailSend = await sendAuthEmail("bengardiner18@gmail.com", merge_candidate_id, companyName, application_id);
+    const emailSend = await sendAuthEmail(email, merge_candidate_id, companyName, application_id);
 
     if (!emailSend || !companyName) {
       return { data: null, error: "Failed to send email" };
@@ -326,45 +326,27 @@ export async function inviteCandidate(
     // Check if application already exists
     const { data: existingApplication, error: checkError } = await supabase
       .from('applications')
-      .select('id')
-      .eq('merge_application_id', application_id)
-      .single();
+      .upsert({
+        merge_application_id: application_id,
+        applicant_id: null,
+        job_id: job_id,
+        status: 'pending_interview'
+      })
       
+    if (checkError) {
+      console.error('Error checking application:', checkError);
+      return { data: null, error: checkError.message };
+    }
+
     if (existingApplication) {
       // Application already exists, return it
       return { data: existingApplication, error: null };
     }
-    
-    // If no existing application found, insert new one
-    const { data: application, error: applicationError } = await supabase
-      .from('applications')
-      .insert({
-        merge_application_id: application_id,
-        applicant_id: null,
-        job_id // This is the Merge job ID
-      })
-      .select()
-      .single();
+    return { data: null, error: null };
 
-    if (applicationError) {
-      console.error(
-        'Error creating application record:',
-        applicationError
-      );
-      return { data: null, error: applicationError.message };
-    }
-
-    return { data: application, error: null };
-
-  } catch (err) {
-    console.error('Unexpected error in inviteCandidate:', err);
-    return {
-      data: null,
-      error:
-        err instanceof Error
-          ? err.message
-          : 'An unknown error occurred while inviting the candidate'
-    };
+  } catch (error) {
+    console.error('Error inviting candidate:', error);
+    return { data: null, error: 'Failed to invite candidate' };
   }
 }
 

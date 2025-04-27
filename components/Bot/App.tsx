@@ -15,7 +15,7 @@ import VideoInterviewSession from './VideoInterviewSession';
 // App no longer accepts props directly
 export default function App() {
   const { 
-    application, 
+    application,
     demo, 
     scoutTest,
     scout,
@@ -38,6 +38,8 @@ export default function App() {
     try {
       // Create context data to send to backend
       const contextData = {
+        applicant_id: application?.applicant_id,
+        job_id: application?.job_id,
         scout_name: scout.name,
         scout_role: scout.role,
         scout_prompt: scout.prompt,
@@ -46,6 +48,7 @@ export default function App() {
         company_description: companyContext.description,
         company_culture: companyContext.culture,
         interview_questions: jobInterviewConfig?.interview_questions,
+        is_demo: demo,
         interview_context: {
           company_info: {
             name: company.name,
@@ -118,6 +121,7 @@ export default function App() {
 
   // Connected state with LiveKit room
   const livekitUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL;
+
   if (!livekitUrl) {
     setError("LiveKit URL is not configured.");
     return null;

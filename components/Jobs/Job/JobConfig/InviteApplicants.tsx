@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import {
@@ -9,7 +8,7 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
-import { Sparkles, Search, Loader2 } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
 import { inviteCandidate } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 import { ApplicantCandidate, Job } from '@/types/merge';

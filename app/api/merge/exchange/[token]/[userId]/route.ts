@@ -4,10 +4,11 @@ import { NextResponse } from 'next/server';
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { token: string, userId: string } }
 ) {
-  const public_token = params.id;
-  console.log('Public token:', public_token);
+  const public_token = params.token;
+  const userId = params.userId;
+
 
   try {
     const response = await fetch(
@@ -28,7 +29,32 @@ export async function GET(
     const data = await response.json();
     const accountToken = data.account_token;
 
-    return NextResponse.json({ account_token: accountToken });
+    const linkedAccountResponse = await fetch('https://api.merge.dev/api/ats/v1/linked-accounts', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${process.env.NEXT_PUBLIC_MERGE_API_KEY}`,
+        'X-Account-Token': accountToken,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!linkedAccountResponse.ok) {
+      const errorData = await linkedAccountResponse.json();
+      return NextResponse.json(errorData, { status: linkedAccountResponse.status });
+    }
+
+    const linkedAccountData = await linkedAccountResponse.json();
+
+    const linkedAccountId = linkedAccountData.results.find((result: any) => result.end_user_origin_id === userId)?.id;
+
+    return NextResponse.json(
+      { 
+        account_token: accountToken, 
+        linked_account_id: linkedAccountId
+      }
+    );
+
+
   } catch (error) {
     console.error('Error exchanging tokens:', error);
     if (error instanceof Error) {
