@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 import InviteApplicantsTable from '@/components/Applicants/InviteApplicantsTable';
 import { Loader2, Send, Clock, CheckCircle, Briefcase } from 'lucide-react';
 import { fetchJobsData } from '@/server/jobs';
-import { fetchAllApplications } from '@/server/applications';
+import { fetchApplicationsByJobId } from '@/server/applications';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -28,60 +28,61 @@ export default function ApplicantList() {
   const [activeTab, setActiveTab] = useState<string>("not-invited");
   const [selectedJobFilter, setSelectedJobFilter] = useState<string>("");
 
+  // Fetch jobs data on component mount
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchJobs = async () => {
       try {
-        // Fetch both joined applicants and jobs data
-        const [applicantsData, jobsData] = await Promise.all([
-          await fetchAllApplications(),
-          await fetchJobsData()
-        ]);
-        
-        if (!Array.isArray(applicantsData)) {
-          console.error('Applicants data is not an array:', applicantsData);
-          return;
-        }
-        
-        setApplicantCandidates(applicantsData);
+        const jobsData = await fetchJobsData();
         setJobs(jobsData);
-        
+
         // Set the first job as default selected job
         if (jobsData.length > 0) {
           setSelectedJobFilter(jobsData[0].id);
         }
-        
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  // Fetch applications when selected job changes
+  useEffect(() => {
+    const fetchApplications = async () => {
+      if (!selectedJobFilter) return;
+      
+      setIsLoading(true);
+      try {
+        const applicationsData = await fetchApplicationsByJobId(selectedJobFilter);
+        setApplicantCandidates(applicationsData);
         setIsLoading(false);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching applications:', error);
         setIsLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
+    fetchApplications();
+  }, [selectedJobFilter]);
 
-  // Filter applicants based on selected job
-  const filteredByJobApplicants = useMemo(() => {
-    // No more "all" option, always filter by job
-    return applicantCandidates.filter(app => 
-      app.job?.id === selectedJobFilter
-    );
-  }, [applicantCandidates, selectedJobFilter]);
+  // Filter applicants based on status
+  const notInvitedApplicants = useMemo(() => 
+    applicantCandidates.filter(app => 
+      !app.application?.supabase_application_id && !app.ai_summary
+    ), [applicantCandidates]);
 
-  // Filter applicants based on status after job filter
-  const notInvitedApplicants = filteredByJobApplicants.filter(app => 
-    !app.application?.supabase_application_id && !app.ai_summary
-  );
+  const inProgressApplicants = useMemo(() => 
+    applicantCandidates.filter(app => 
+      app.application?.supabase_application_id && (!app.ai_summary || 
+      (Array.isArray(app.ai_summary) && app.ai_summary.length === 0))
+    ), [applicantCandidates]);
 
-  const inProgressApplicants = filteredByJobApplicants.filter(app => 
-    app.application?.supabase_application_id && (!app.ai_summary || 
-    (Array.isArray(app.ai_summary) && app.ai_summary.length === 0))
-  );
-
-  const completedApplicants = filteredByJobApplicants.filter(app => 
-    app.ai_summary && 
-    !(Array.isArray(app.ai_summary) && app.ai_summary.length === 0)
-  );
+  const completedApplicants = useMemo(() => 
+    applicantCandidates.filter(app => 
+      app.ai_summary && 
+      !(Array.isArray(app.ai_summary) && app.ai_summary.length === 0)
+    ), [applicantCandidates]);
 
   // Filter based on search term and apply sorting
   const filterAndSortApplicants = (applicants: any[]) => {
@@ -161,15 +162,15 @@ export default function ApplicantList() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div className="ml-auto flex items-center gap-2">
                     <span className="text-gray-600 font-medium">Total:</span>
                     <Badge variant="outline" className="bg-blue-50 border-blue-200 text-blue-800 font-medium py-1.5">
-                      {filteredByJobApplicants.length} applicants
+                      {applicantCandidates.length} applicants
                     </Badge>
                   </div>
                 </div>
-                
+
                 {selectedJobFilter && (
                   <div className="mt-4 pt-3 border-t border-gray-100">
                     <div className="flex flex-wrap gap-3">
@@ -205,8 +206,8 @@ export default function ApplicantList() {
                       value="not-invited" 
                       className="flex items-center gap-2 px-6 py-3 rounded-t-lg data-[state=active]:bg-blue-100 data-[state=active]:text-blue-700 data-[state=active]:font-medium data-[state=active]:border-b-2 data-[state=active]:border-blue-600 transition-all hover:bg-blue-50 flex-1 justify-center"
                     >
-                      <Send size={16} />
-                      Not Invited
+                      <Send size={16} /> 
+                       Not Invited
                       <Badge variant="outline" className="ml-1 bg-white">
                         {notInvitedApplicants.length}
                       </Badge>
@@ -216,8 +217,8 @@ export default function ApplicantList() {
                       value="in-progress" 
                       className="flex items-center gap-2 px-6 py-3 rounded-t-lg data-[state=active]:bg-amber-100 data-[state=active]:text-amber-700 data-[state=active]:font-medium data-[state=active]:border-b-2 data-[state=active]:border-amber-600 transition-all hover:bg-amber-50 flex-1 justify-center"
                     >
-                      <Clock size={16} />
-                      Interview In Progress
+                      <Clock size={16} /> 
+                       Interview In Progress
                       <Badge variant="outline" className="ml-1 bg-white">
                         {inProgressApplicants.length}
                       </Badge>
@@ -227,7 +228,7 @@ export default function ApplicantList() {
                       value="completed" 
                       className="flex items-center gap-2 px-6 py-3 rounded-t-lg data-[state=active]:bg-green-100 data-[state=active]:text-green-700 data-[state=active]:font-medium data-[state=active]:border-b-2 data-[state=active]:border-green-600 transition-all hover:bg-green-50 flex-1 justify-center"
                     >
-                      <CheckCircle size={16} />
+                      <CheckCircle size={16}/>
                       Interview Completed
                       <Badge variant="outline" className="ml-1 bg-white">
                         {completedApplicants.length}
@@ -235,7 +236,7 @@ export default function ApplicantList() {
                     </TabsTrigger>
                   </TabsList>
                 </div>
-                
+
                 <div className="flex-1 overflow-hidden shadow-sm rounded-md">
                   <TabsContent value="not-invited" className="h-full m-0 border-t-4 border-blue-600 rounded-t-none bg-blue-50/30">
                     <InviteApplicantsTable 

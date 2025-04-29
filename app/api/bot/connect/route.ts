@@ -1,3 +1,5 @@
+'use server';
+
 import { AccessToken } from 'livekit-server-sdk';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -16,11 +18,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const apiKey = process.env.NEXT_PUBLIC_LIVEKIT_API_KEY;
-  const apiSecret = process.env.NEXT_PUBLIC_LIVEKIT_API_SECRET;
+  const apiKey = process.env.LIVEKIT_API_KEY;
+  const apiSecret = process.env.LIVEKIT_API_SECRET;
   const wsUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL;
 
   if (!apiKey || !apiSecret || !wsUrl) {
+
     return NextResponse.json(
       { error: 'Server misconfigured' },
       { status: 500 }
@@ -30,7 +33,6 @@ export async function POST(request: NextRequest) {
   try {
     // Create the AccessToken with the participant identity
     const at = new AccessToken(apiKey, apiSecret, { identity: participantName });
-
     // Add the basic room grant with recording enabled
     at.addGrant({ 
       roomJoin: true, 
@@ -54,7 +56,6 @@ export async function POST(request: NextRequest) {
 
     // Generate the JWT
     const token = await at.toJwt();
-
     return NextResponse.json({ token });
   } catch (error) {
     console.error('Error generating token:', error);

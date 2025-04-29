@@ -1,4 +1,4 @@
-import { getScouts } from "@/utils/supabase/queries";
+import { getScouts, getUserCompanyId } from "@/utils/supabase/queries";
 
 
 export async function fetchScoutsData() {

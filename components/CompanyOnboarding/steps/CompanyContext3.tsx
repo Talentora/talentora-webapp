@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import {
   createCompanyContext,
   getCompanyContext,
-  updateCompanyContext
+  updateCompanyContext,
+  updateCompany
 } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 import { useUser } from '@/hooks/useUser';
@@ -46,7 +47,7 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({ onCompletion })
     };
 
     checkCompanyContext();
-  }, [companyData]);
+  }, []);
 
   const handleChange = () => {
     // Mark as complete if all fields meet minimum length requirement
@@ -82,6 +83,14 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({ onCompletion })
           companyContext
         );
         console.log('Updating company context:', updatedCompanyContext);
+        
+        // Link company to company_context
+        if (companyData?.data?.id) {
+          await updateCompany(companyData.data.id, {
+            company_context: companyData.data.id
+          });
+        }
+        
         toast({
           title: 'Company Context',
           description: 'Company context updated successfully!',
@@ -91,6 +100,14 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({ onCompletion })
         const createdCompanyContext =
           await createCompanyContext(companyContext);
         console.log('Saving company context:', createdCompanyContext);
+        
+        // Link company to company_context
+        if (companyData?.data?.id) {
+          await updateCompany(companyData.data.id, {
+            company_context: companyData.data.id
+          });
+        }
+        
         toast({
           title: 'Company Context',
           description: 'Company context saved successfully!',

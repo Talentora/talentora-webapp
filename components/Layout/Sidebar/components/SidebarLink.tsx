@@ -59,11 +59,11 @@ export function SidebarLink({
   );
 }
 
-export function SubLink({ href, children }: { href: string; children: React.ReactNode }) {
+export function SubLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
   return (
     <Link 
       href={href} 
-      className="block text-sm text-white transition-colors py-1 pl-3"
+      className={cn("block text-sm text-white transition-colors py-1 pl-3", className)}
     >
       {children}
     </Link>

@@ -25,10 +25,7 @@ export function JobHeader({ job }: JobHeaderProps) {
     setIsDescriptionOpen(!isDescriptionOpen);
   };
 
-  console.log('JobHeader received job:', {
-    name: job.name,
-    departments: job.departments.map((d: any) => ({ id: d.id, name: d.name }))
-  });
+  console.log(job, "job");
 
   return (
     <Card className="rounded-lg hover:bg-accent/50 transition-colors p-4 dark:bg-transparent border border-border">

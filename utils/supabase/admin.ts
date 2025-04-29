@@ -19,55 +19,6 @@ const supabaseAdmin = createClient<Database>(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
-const inviteCandidateAdmin = async (name: string, email: string) => {
-  try {
-    // First check if user exists
-    const { data: existingUsers, error: listError } = await supabaseAdmin.auth.admin.listUsers();
-    
-    if (listError) {
-      console.error('Error checking existing users:', listError);
-      return { data: null, error: listError };
-    }
-
-    const existingUser = existingUsers.users.find(user => user.email === email);
-
-    if (existingUser) {
-      console.log('User already exists:', existingUser);
-      // User exists, return success with existing user data
-      return { 
-        data: { user: existingUser }, 
-        error: null 
-      };
-    }
-
-    // User doesn't exist, invite them
-    const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(
-      email, 
-      { 
-        data: { 
-          role: 'applicant', 
-          full_name: name 
-        },
-        redirectTo: ""
-      }
-    );
-
-    if (error) {
-      console.error('Error inviting candidate:', error);
-      console.error('Data sent:', { user_metadata: { role: 'candidate', full_name: name } });
-      return { data: null, error: error };
-    }
-
-    return { data, error: null };
-  } catch (err) {
-    console.error('Unexpected error inviting candidate:', err);
-    return { 
-      data: null, 
-      error: err instanceof Error ? err.message : 'An unexpected error occurred'
-    };
-  }
-};
-
 
 const inviteRecruiterAdmin = async (name: string, email: string, company_id: string) => {
   console.log('inviting recruiter', name, email, company_id);
@@ -370,7 +321,6 @@ export {
   deletePriceRecord,
   createOrRetrieveCustomer,
   manageSubscriptionStatusChange,
-  inviteCandidateAdmin,
   inviteRecruiterAdmin,
   listUsersAdmin
 };

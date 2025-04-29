@@ -21,6 +21,7 @@ export async function fetchJobsData() {
   return response.json();
 }
 
+
 // fetch jobs by id
 export async function fetchJobById(jobId: string) {
     const {accountToken} = await fetchJobTokenById(jobId);
@@ -38,7 +39,6 @@ export async function fetchJobById(jobId: string) {
       headers,
       cache: 'force-cache',
       next: { revalidate: 3600 }
-      // cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -50,7 +50,6 @@ export async function fetchJobById(jobId: string) {
 
 // fetch job configuration data, and the job. JobID is merge job id
 export async function fetchJobConfigurationData(jobId: string) {
-    console.log("reaches here")
    const accountToken = await getMergeApiKey();
 
       if (!accountToken) {

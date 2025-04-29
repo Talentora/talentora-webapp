@@ -24,11 +24,9 @@ interface BotSelectProps {
 }
 import { Tables } from '@/types/types_db';
 type Bot = Tables<'bots'>;
-import { useScouts } from '@/hooks/useScouts';
-import CreateBot from '@/components/ScoutLibrary/CreateScout';
 import { updateJobInterviewConfig } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
-import { getScouts } from '@/utils/supabase/queries';
+import { fetchScoutsData } from '@/server/scouts';
 import { createClient } from '@/utils/supabase/client';
 
 const BotSelect = ({ onCompletion }: BotSelectProps) => {
@@ -40,11 +38,12 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
   const pathname = window.location.pathname;
   const mergedId = pathname.split('/')[2];
 
+
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
         // Fetch bots
-        const botsData = await getScouts();
+        const botsData = await fetchScoutsData();
         setBots(botsData || []);
 
         // Fetch existing configuration
@@ -180,7 +179,7 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
         ) : (
           <div className="flex flex-col justify-center items-center">
             <h1 className="text-2xl font-semibold">No Ora Scouts found</h1>
-            <Link href="/bot">
+            <Link href="/scouts">
               <Button>Create your first Ora Scout</Button>
             </Link>
           </div>

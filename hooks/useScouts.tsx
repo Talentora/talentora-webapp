@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getScouts } from '@/utils/supabase/queries';
 import { ScoutWithJobs } from '@/types/custom';
+import { fetchScoutsData } from '@/server/scouts';
 
 export const useScouts = () => {
   const [scouts, setScouts] = useState<ScoutWithJobs[]>([]);
@@ -9,10 +9,8 @@ export const useScouts = () => {
 
   useEffect(() => {
     const fetchScouts = async () => {
-
-
       try {
-        const data = await getScouts();
+        const data = await fetchScoutsData();
         
         if (data) {
           setScouts(data);

@@ -1,4 +1,4 @@
-// app/api/merge/link/route.ts
+// app/api/merge/token/route.ts
 
 import { NextResponse } from 'next/server';
 

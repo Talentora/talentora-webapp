@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useUser } from '@/hooks/useUser';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
@@ -13,27 +13,31 @@ interface MergeLinkProps {
 const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
   const { user, company } = useUser();
   const [linkToken, setLinkToken] = useState<string | null>(null);
+  // Flag to track if we've already tried to create a token
+  const [tokenRequested, setTokenRequested] = useState(false);
 
+  // Memoize these values to prevent recreating them on every render
+  const userId = user.data?.id;
+  const userEmail = user.data?.email;
+  const companyName = company.data?.name;
+  const companyId = company.data?.id;
   const hasMergeApiKey = company.data?.merge_account_token ? true : false;
 
   const createMergeLinkToken = useCallback(async () => {
-    if (!user.data || !company.data) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'User or company information is missing.'
-      });
+    if (!userId || !companyName || !userEmail || tokenRequested) {
       return;
     }
+
+    setTokenRequested(true);
 
     try {
       const response = await fetch('/api/merge/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          end_user_origin_id: user.data.id,
-          end_user_organization_name: company.data.name,
-          end_user_email_address: user.data.email,
+          end_user_origin_id: userId,
+          end_user_organization_name: companyName,
+          end_user_email_address: userEmail,
           categories: ['ats']
         })
       });
@@ -51,43 +55,61 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
         description: 'Error creating link token. Please try again.'
       });
       console.error('Error creating link token:', err);
+      // Reset flag to allow retrying
+      setTokenRequested(false);
     }
-  }, [company.data, user.data]);
+  }, [userId, userEmail, companyName, tokenRequested]);
 
+  // Only run once when data is available and token hasn't been requested yet
   useEffect(() => {
-    createMergeLinkToken();
-  }, [createMergeLinkToken]);
+    if (!linkToken && !user.loading && !company.loading && !tokenRequested) {
+      createMergeLinkToken();
+    }
+  }, [createMergeLinkToken, linkToken, user.loading, company.loading, tokenRequested]);
 
+
+  // Completion effect
   useEffect(() => {
     // Only mark as complete if we have a Merge API key
     if (hasMergeApiKey) {
       onCompletion(true);
     }
-  }, [hasMergeApiKey, onCompletion]);
+  }, [hasMergeApiKey]);
+
+
 
   const onSuccess = useCallback(
     async (public_token: string) => {
+      if (!companyId) {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Company ID is missing.'
+        });
+        return;
+      }
+
       try {
-        const response = await fetch(`/api/merge/exchange/${public_token}`, {
+        const accountTokenResponse = await fetch(`/api/merge/exchange/${public_token}/${userId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
           }
         });
 
-        if (!response.ok) {
+        if (!accountTokenResponse.ok) {
           throw new Error('Failed to exchange token');
         }
 
-        const data = await response.json();
+        const data = await accountTokenResponse.json();
         const accountToken = data.account_token;
+        const linkedAccountId = data.linked_account_id;
 
-        if (!company.data) {
-          throw new Error('Company not found');
-        }
-
-        const updatedCompany = await updateCompany(company.data.id, {
-          merge_account_token: accountToken
+        
+        const updatedCompany = await updateCompany(
+          companyId, {
+          merge_account_token: accountToken,
+          merge_linked_account_id: linkedAccountId
         });
 
         if (!updatedCompany) {
@@ -104,13 +126,16 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
         console.error('Error in token exchange:', err);
       }
     },
-    [company.data, onCompletion]
+    [companyId, onCompletion]
   );
 
-  const { open, isReady } = useMergeLink({
+  // Memoize the Merge Link config
+  const mergeLinkConfig = useMemo(() => ({
     linkToken: linkToken || '',
     onSuccess
-  });
+  }), [linkToken, onSuccess]);
+
+  const { open, isReady } = useMergeLink(mergeLinkConfig);
 
   if (user.loading || company.loading || !linkToken || !isReady) {
     return (
