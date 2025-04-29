@@ -15,12 +15,6 @@ import {
   SidebarProvider,
   Sidebar as SidebarComponent
 } from '@/components/ui/sidebar';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
 import { useSidebarData } from '@/hooks/useSidebarData';
 import {
@@ -62,18 +56,16 @@ interface scout {
 }
 
 const Sidebar = () => {
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isJobsOpen, setIsJobsOpen] = useState(false);
-  const [isApplicantsOpen, setIsApplicantsOpen] = useState(false);
   const [isScoutsOpen, setIsScoutsOpen] = useState(false);
-  const [isStagesOpen, setIsStagesOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
-  const { jobs, applications, scouts, isLoading, isError, isInitialized } =
+  const { jobs, scouts, isLoading, isError, isInitialized } =
     useSidebarData();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isRouteLoading, setIsRouteLoading] = useState(false);
@@ -119,12 +111,12 @@ const Sidebar = () => {
           href: `/jobs/${job.id}`,
           icon: BriefcaseIcon
         })) || []),
-        ...(applications?.map((app: ApplicationWithCandidate) => ({
-          type: 'applicant',
-          name: `${app.candidate?.first_name} ${app.candidate?.last_name}`,
-          href: `/applicants/${app.application.id}`,
-          icon: User
-        })) || []),
+        // ...(applications?.map((app: ApplicationWithCandidate) => ({
+        //   type: 'applicant',
+        //   name: `${app.candidate?.first_name} ${app.candidate?.last_name}`,
+        //   href: `/applicants/${app.application.id}`,
+        //   icon: User
+        // })) || []),
         ...(scouts?.map((scout: ScoutWithJobs) => ({
           type: 'scout',
           name: scout.name || 'Untitled scout',
@@ -236,7 +228,7 @@ const Sidebar = () => {
       <SidebarComponent
         className={cn(
           'bg-background text-foreground border-r border-border transition-all duration-300 ease-in-out z-50',
-          isSidebarOpen ? 'w-50' : 'w-20'
+          isSidebarOpen ? 'w-[215px]' : 'w-[80px]'
         )}
       >
         <NewSidebarHeader
@@ -311,7 +303,7 @@ const Sidebar = () => {
                   );
                   return jobItems.length > 0
                     ? jobItems.map((job, index) => (
-                        <SubLink key={index} href={job.href}>
+                        <SubLink key={index} href={job.href} className="truncate">
                           {job.name}
                         </SubLink>
                       ))

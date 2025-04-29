@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useUser } from '@/hooks/useUser';
-import { updateCompany } from '@/utils/supabase/queries';
+import { updateCompany, getSupabaseJobs, createJob } from '@/utils/supabase/queries';
 import { toast } from '@/components/Toasts/use-toast';
+import { fetchJobsData } from '@/server/jobs';
 
 export const CompletionStep: React.FC = () => {
   const { data, loading } = useUser().company;
+  const syncPerformed = useRef(false);
 
   useEffect(() => {
     const markConfigured = async () => {
@@ -27,7 +29,32 @@ export const CompletionStep: React.FC = () => {
       }
     };
 
+    const syncJobs = async () => {
+      // Only run if we have company data and haven't synced yet
+      if (!data || loading || syncPerformed.current) return;
+      
+      try {
+        syncPerformed.current = true; // Mark as performed immediately to prevent duplicate runs
+        
+        const jobs = await fetchJobsData();
+        const existingJobs = await getSupabaseJobs();
+
+        const jobsToCreate = jobs.filter((job: any) => !existingJobs.some((existingJob: any) => existingJob.merge_id === job.id));
+
+        for (const job of jobsToCreate) {
+          await createJob(data?.id, job.id);
+        }
+        
+        console.log('Job sync completed successfully');
+      } catch (error) {
+        console.error('Error syncing jobs:', error);
+        // Reset sync flag if there was an error so we can try again
+        syncPerformed.current = false;
+      }
+    };
+
     markConfigured();
+    syncJobs();
   }, [data, loading]);
 
   return (

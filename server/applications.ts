@@ -11,8 +11,8 @@ export async function fetchApplicationData(mergeApplicationId: string) {
       headers: {
         'Content-Type': 'application/json'
       },
-      // cache: 'force-cache',
-      // next: { revalidate: 3600 }
+      cache: 'force-cache',
+      next: { revalidate: 3600 }
     });
     
     if (!response.ok) {
@@ -42,8 +42,8 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
       headers: {
         'Content-Type': 'application/json'
       },
-      // cache: 'force-cache',
-      // next: { revalidate: 3600 }
+      cache: 'force-cache',
+      next: { revalidate: 3600 }
     });
     
     if (!response.ok) {
@@ -79,6 +79,35 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
       throw new Error(`Applications fetch failed: ${response.status}`);
     }
     
+    const result = await response.json();
+    return result.data;
+  }
+
+
+  export async function fetchApplicationsByJobId(jobId: string) {
+    const accountToken = await getMergeApiKey();
+    if (!accountToken) {
+      throw new Error('Account token not found');
+    }
+
+    const params = new URLSearchParams({
+      account_token: accountToken,
+      add_AI_summary: "true"
+    });
+
+    const response = await fetch(`${API_URL}/merge/applications/job/${jobId}?${params.toString()}`, {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      cache: 'force-cache',
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Applications fetch failed: ${response.status}`);
+    }
+
     const result = await response.json();
     return result.data;
   }

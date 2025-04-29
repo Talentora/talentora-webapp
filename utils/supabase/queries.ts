@@ -47,6 +47,23 @@ export const getCompany = async (
   }
 };
 
+export const getUserCompanyId = async (): Promise<string | null> => {
+  const supabase = await createClient();
+  const { data: session, error } = await supabase.auth.getSession();
+
+  const userId = session?.session?.user?.id;
+  if (!userId) {
+    throw new Error('No user found');
+  }
+  const { data: recruiter, error: recruiterError } = await supabase
+    .from('recruiters')
+    .select('company_id')
+    .eq('id', userId)
+    .single();
+
+  return recruiter?.company_id || null;
+};
+
 /**
  * Creates a new company in the database.
  *
@@ -159,7 +176,6 @@ export const deleteCompany = async (id: number): Promise<boolean> => {
     return false;
   }
 
-  console.log('Company deleted successfully');
   return true;
 };
 
@@ -228,7 +244,6 @@ export async function inviteRecruiter(
     const recruiter = await getRecruiter(user?.id ?? '');
     const company = await getCompany(recruiter?.company_id ?? '');
 
-    console.log('company', company);
 
     if (!company) {
       return {
@@ -242,7 +257,6 @@ export async function inviteRecruiter(
       email,
       company?.id ?? ''
     );
-    console.log('data', data);
     // Return early if invitation failed
     if (!data) {
       return {
@@ -504,7 +518,6 @@ export const createscout = async (scoutData: any): Promise<Tables<'bots'>> => {
 
 export async function getUserRole(supabase_temp: SupabaseClient, user_id: string) {
   // Query the recruiters table to check if the user's id exists.
-  console.log('Getting user role for user:', user_id);
   const supabase = await createClient();
   const { data: recruiterData, error: recruiterError } = await supabase
     .from('recruiters')
@@ -512,10 +525,8 @@ export async function getUserRole(supabase_temp: SupabaseClient, user_id: string
     .eq('id', user_id)
     .single();
   if (recruiterData && !recruiterError) {
-      console.log('User is a recruiter');
       return 'recruiter'
   } else {
-      console.log('User is an applicant');
       return 'applicant'
   }
 }
@@ -547,6 +558,7 @@ export const deletescout = async (id: number) => {
 export const getScouts = async (): Promise<ScoutWithJobs[] | null> => {
   try {
     const scoutsWithJobIds = await getScoutsWithJobIds();
+
     return scoutsWithJobIds;
 
   } catch (error) {
@@ -884,6 +896,23 @@ export const deleteCompanyContext = async (id: string): Promise<void> => {
   }
 };
 
+
+export const createJob = async (companyId: string, mergeId: string): Promise<any> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('jobs')
+    .insert({company_id: companyId, merge_id: mergeId})
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to create job: ${error.message}`);
+  }
+
+  return data;
+};
+
+
 /**
  * Updates the job interview configuration with specified columns.
  *
@@ -1024,6 +1053,14 @@ export const getJob = async (jobId: string): Promise<any | null> => {
   return data || null;
 };
 
+
+export const getSupabaseJobs = async (): Promise<any | null> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('jobs')
+    .select('*');
+  return data || null;
+};
 
 // export const getAISummaryId = async (
 //   applicantId: string,
