@@ -518,7 +518,6 @@ export const createscout = async (scoutData: any): Promise<Tables<'bots'>> => {
 
 export async function getUserRole(supabase: SupabaseClient, user_id: string) {
   // Query the recruiters table to check if the user's id exists.
-  // const supabase = await createClient();
   const { data: recruiterData, error: recruiterError } = await supabase
     .from('recruiters')
     .select('id')
