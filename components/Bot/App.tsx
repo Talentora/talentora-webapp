@@ -47,6 +47,7 @@ export default function App() {
         company_name: company.name,
         company_description: companyContext.description,
         company_culture: companyContext.culture,
+        voice: scout.voice,
         interview_questions: jobInterviewConfig?.interview_questions,
         is_demo: demo,
         interview_context: {

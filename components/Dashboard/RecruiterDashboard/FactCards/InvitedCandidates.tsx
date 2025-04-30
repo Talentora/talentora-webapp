@@ -18,6 +18,7 @@ const InvitedCandidatesCard = ({ factWindow }: { factWindow: number }) => {
       const { data: currentApplicationsData, error: applicationsError } = await supabase
         .from('applications')
         .select('*')
+        .or('status.eq.pending_interview,status.eq.interview_completed')
         .gte("created_at", new Date(new Date().setDate(new Date().getDate() - factWindow)).toISOString().split('T')[0]);
 
       if (applicationsError) {
@@ -29,6 +30,7 @@ const InvitedCandidatesCard = ({ factWindow }: { factWindow: number }) => {
         const { data: previousApplicationsData } = await supabase
           .from('applications')
           .select('*')
+          .or('status.eq.pending_interview,status.eq.interview_completed')
           .gte("created_at", new Date(new Date().setDate(new Date().getDate() - 2 * factWindow)).toISOString().split('T')[0])
           .lt("created_at", new Date(new Date().setDate(new Date().getDate() - factWindow)).toISOString().split('T')[0]);
 
