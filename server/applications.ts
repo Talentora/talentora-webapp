@@ -30,6 +30,8 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
     if (!accountToken) {
         throw new Error('Account token not found');
     }
+
+    console.log('fuck goin on type shit');
     
     const params = new URLSearchParams({
         account_token: accountToken,
@@ -49,6 +51,8 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
     if (!response.ok) {
       throw new Error(`Applications fetch failed: ${response.status}`);
     }
+
+    console.log('we good');
     
     return response.json();
   }

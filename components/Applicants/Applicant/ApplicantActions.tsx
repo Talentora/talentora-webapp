@@ -1,22 +1,22 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
-import { CalendarClock, UserPlus } from "lucide-react";
-import { format, isValid } from "date-fns";
+import { Button } from '@/components/ui/button';
+import { CalendarClock, UserPlus } from 'lucide-react';
+import { format, isValid } from 'date-fns';
 import { portalProps } from '@/app/(pages)/(restricted)/applicants/[id]/page';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 
 interface ApplicantActionsProps {
   portalProps: portalProps;
 }
 
 const ApplicantActions = ({ portalProps }: ApplicantActionsProps) => {
-  const { AI_summary, application, mergeApplicant } = portalProps;
+  const { AI_summary, application, mergeApplicant, status } = portalProps;
 
   // Format date safely
   const formatDate = (dateString: string) => {
@@ -33,39 +33,34 @@ const ApplicantActions = ({ portalProps }: ApplicantActionsProps) => {
   if (AI_summary) {
     return (
       <div className="w-full space-y-2">
-        <Button 
-          variant="outline" 
-          className="w-full" 
-          disabled
-        >
+        <Button variant="outline" className="w-full" disabled>
           <CalendarClock className="mr-2 h-4 w-4" />
           🎉 Assessment Completed! 🎉
         </Button>
         <div className="text-center text-sm text-gray-500">
-          {AI_summary.created_at ? 
-            formatDate(AI_summary.created_at) : 
-            'Assessment completed'}
+          {AI_summary.created_at
+            ? formatDate(AI_summary.created_at)
+            : 'Assessment completed'}
         </div>
       </div>
     );
   }
 
   // If there's an application but no AI summary, show invitation status
-  if (application) {
+  if (
+    application &&
+    (status === 'invited_incomplete' || status === 'invited_complete')
+  ) {
     return (
       <div className="w-full space-y-2">
-        <Button 
-          variant="outline" 
-          className="w-full" 
-          disabled
-        >
+        <Button variant="outline" className="w-full" disabled>
           <CalendarClock className="mr-2 h-4 w-4" />
           Invitation Sent
         </Button>
         <div className="text-center text-sm text-gray-500">
-          {application.created_at ? 
-            formatDate(application.created_at) : 
-            'Invitation sent'}
+          {application.created_at
+            ? formatDate(application.created_at)
+            : 'Invitation sent'}
         </div>
       </div>
     );
@@ -78,7 +73,7 @@ const ApplicantActions = ({ portalProps }: ApplicantActionsProps) => {
   //       <Tooltip>
   //         <TooltipTrigger asChild>
   //           <div className="w-full">
-  //             <Button 
+  //             <Button
   //               variant="default"
   //               className="w-full"
   //               disabled
@@ -99,10 +94,7 @@ const ApplicantActions = ({ portalProps }: ApplicantActionsProps) => {
   // Default case: Can invite the candidate
   return (
     <div className="w-full">
-      <Button 
-        variant="default"
-        className="w-full"
-      >
+      <Button variant="default" className="w-full">
         <UserPlus className="mr-2 h-4 w-4" />
         Invite Candidate
       </Button>

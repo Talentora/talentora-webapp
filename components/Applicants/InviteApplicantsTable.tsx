@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   ColumnFiltersState,
   SortingState,
@@ -11,16 +11,16 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+  useReactTable
+} from '@tanstack/react-table';
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  TableRow
+} from '@/components/ui/table';
 import { inviteCandidate } from '@/utils/supabase/queries';
 import { useToast } from '@/components/Toasts/use-toast';
 
@@ -30,7 +30,7 @@ import ApplicantFilters from './ApplicantFilters';
 import ApplicantJobInfo from './ApplicantJobInfo';
 import ApplicantTablePagination from './ApplicantTablePagination';
 import { getApplicantColumns } from './ApplicantTableColumns';
-import { getNotInvitedColumns } from './NotInvitedColumns'; 
+import { getNotInvitedColumns } from './NotInvitedColumns';
 import { getInProgressColumns } from './InProgressColumns';
 import { getCompletedColumns } from './CompletedColumns';
 
@@ -43,25 +43,25 @@ interface InviteApplicantsTableProps {
   customColumns?: 'not-invited' | 'in-progress' | 'completed';
 }
 
-const InviteApplicantsTable = ({ 
-  applicants, 
-  jobs, 
-  onSort, 
-  sortField, 
-  sortDirection, 
-  customColumns 
+const InviteApplicantsTable = ({
+  applicants,
+  jobs,
+  onSort,
+  sortField,
+  sortDirection,
+  customColumns
 }: InviteApplicantsTableProps) => {
   const [selectedApplicants, setSelectedApplicants] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedJobId, setSelectedJobId] = useState<string>("all");
+  const [selectedJobId, setSelectedJobId] = useState<string>('all');
   const [isInviting, setIsInviting] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  
+
   // Initialize sorting state from props if provided
-  const initialSorting: SortingState = sortField 
+  const initialSorting: SortingState = sortField
     ? [{ id: sortField, desc: sortDirection === 'desc' }]
     : [];
-  
+
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -73,8 +73,8 @@ const InviteApplicantsTable = ({
   const router = useRouter();
 
   // Additional filters
-  const [invitationStatus, setInvitationStatus] = useState<string>("all");
-  const [interviewStatus, setInterviewStatus] = useState<string>("all");
+  const [invitationStatus, setInvitationStatus] = useState<string>('all');
+  const [interviewStatus, setInterviewStatus] = useState<string>('all');
   const [scoreThreshold, setScoreThreshold] = useState<number[]>([0, 100]);
 
   const handleViewApplicant = (applicant: any) => {
@@ -87,11 +87,12 @@ const InviteApplicantsTable = ({
       });
       return;
     }
+    console.log(applicant, 'applicantData');
     router.push(`/applicants/${applicant.application.id}`);
   };
 
   const handleInvite = async () => {
-    if (selectedJobId === "all") {
+    if (selectedJobId === 'all') {
       toast({
         title: 'Error',
         description: 'Please select a specific job to invite candidates.',
@@ -112,10 +113,10 @@ const InviteApplicantsTable = ({
           });
           continue;
         }
-        
+
         const name = `${applicant.candidate.first_name} ${applicant.candidate.last_name}`;
         const email = applicant.candidate.email_addresses?.[0]?.value;
-        
+
         if (!email) {
           toast({
             title: 'Error',
@@ -124,9 +125,14 @@ const InviteApplicantsTable = ({
           });
           continue;
         }
-        
-        const { error } = await inviteCandidate(name, email, selectedJobId, applicant.candidate.id);
-        
+
+        const { error } = await inviteCandidate(
+          name,
+          email,
+          selectedJobId,
+          applicant.candidate.id
+        );
+
         if (error) {
           toast({
             title: 'Error',
@@ -158,49 +164,49 @@ const InviteApplicantsTable = ({
   const columns = useMemo(() => {
     // If custom columns are specified, use those instead
     if (customColumns === 'not-invited') {
-      return getNotInvitedColumns({ 
+      return getNotInvitedColumns({
         handleViewApplicant,
-        setSelectedApplicants 
+        setSelectedApplicants
       });
     }
-    
+
     if (customColumns === 'in-progress') {
       return getInProgressColumns({
         handleViewApplicant,
         setSelectedApplicants
       });
     }
-    
+
     if (customColumns === 'completed') {
       return getCompletedColumns({
         handleViewApplicant,
         setSelectedApplicants
       });
     }
-    
+
     // Otherwise, use the regular columns
-    const cols = getApplicantColumns({ 
-      selectedJobId, 
+    const cols = getApplicantColumns({
+      selectedJobId,
       handleViewApplicant,
-      setSelectedApplicants 
+      setSelectedApplicants
     });
 
     // Find the status column and add custom sorting
-    const statusColumn = cols.find(col => {
+    const statusColumn = cols.find((col) => {
       return 'accessorKey' in col && col.accessorKey === 'status';
     });
 
     if (statusColumn && 'accessorKey' in statusColumn) {
       statusColumn.sortingFn = (rowA: any, rowB: any) => {
         const statusOrder: Record<string, number> = {
-          'not_invited': 0,
-          'in_progress': 1,
-          'review_ready': 2
+          not_invited: 0,
+          in_progress: 1,
+          review_ready: 2
         };
-        
+
         const statusA = (rowA.getValue('status') || 'not_invited') as string;
         const statusB = (rowB.getValue('status') || 'not_invited') as string;
-        
+
         return statusOrder[statusA] - statusOrder[statusB];
       };
     }
@@ -210,107 +216,152 @@ const InviteApplicantsTable = ({
 
   // Filter applicants based on search term and selected job
   const filteredApplicants = useMemo(() => {
-    return applicants.filter(applicant => {
+    return applicants.filter((applicant) => {
       // For search term filtering
       let matchesSearch = true;
       if (searchTerm) {
         if (applicant.candidate) {
-          const fullName = `${applicant.candidate.first_name} ${applicant.candidate.last_name}`.toLowerCase();
-          matchesSearch = fullName.includes(searchTerm.toLowerCase()) ||
-            (applicant.candidate.email_addresses && 
-             applicant.candidate.email_addresses[0]?.value.toLowerCase().includes(searchTerm.toLowerCase()));
+          const fullName =
+            `${applicant.candidate.first_name} ${applicant.candidate.last_name}`.toLowerCase();
+          matchesSearch =
+            fullName.includes(searchTerm.toLowerCase()) ||
+            (applicant.candidate.email_addresses &&
+              applicant.candidate.email_addresses[0]?.value
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()));
         } else {
           // If no candidate data but there's a search term, can't match
           matchesSearch = false;
         }
       }
-      
+
       // For job filtering
       let matchesJob = true;
-      if (selectedJobId !== "all") {
+      if (selectedJobId !== 'all') {
         const jobId = applicant.job?.id;
         matchesJob = jobId === selectedJobId;
       }
-      
+
       // For invitation status filtering
       let matchesInvitationStatus = true;
-      if (invitationStatus !== "all") {
+      if (invitationStatus !== 'all') {
         const isInvited = Boolean(applicant.application?.invitation_sent);
-        matchesInvitationStatus = (invitationStatus === "invited" && isInvited) || 
-                                 (invitationStatus === "not_invited" && !isInvited);
+        matchesInvitationStatus =
+          (invitationStatus === 'invited' && isInvited) ||
+          (invitationStatus === 'not_invited' && !isInvited);
       }
-      
+
       // For interview status filtering
       let matchesInterviewStatus = true;
-      if (interviewStatus !== "all") {
+      if (interviewStatus !== 'all') {
         // Check if there's a valid AI_summary property
-        const hasInterview = Boolean(applicant.AI_summary) && 
-          !(Array.isArray(applicant.AI_summary) && applicant.AI_summary.length === 0);
-          
-        matchesInterviewStatus = (interviewStatus === "completed" && hasInterview) || 
-                                (interviewStatus === "not_completed" && !hasInterview);
+        const hasInterview =
+          Boolean(applicant.AI_summary) &&
+          !(
+            Array.isArray(applicant.AI_summary) &&
+            applicant.AI_summary.length === 0
+          );
+
+        matchesInterviewStatus =
+          (interviewStatus === 'completed' && hasInterview) ||
+          (interviewStatus === 'not_completed' && !hasInterview);
       }
-      
+
       // For score threshold filtering
       let matchesScoreThreshold = true;
       let score = null;
-      
+
       // Extract score from AI_summary, always using the most recent one if it's an array
       let resumeScore = null;
       let technicalScore = null;
       let cultureFitScore = null;
       let communicationScore = null;
-      
+
       if (applicant.AI_summary) {
         if (Array.isArray(applicant.AI_summary)) {
           if (applicant.AI_summary.length > 0) {
             // Sort by created_at date in descending order to get the most recent
-            const sortedSummaries = [...applicant.AI_summary].sort((a, b) => 
-              new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            const sortedSummaries = [...applicant.AI_summary].sort(
+              (a, b) =>
+                new Date(b.created_at).getTime() -
+                new Date(a.created_at).getTime()
             );
-            
+
             // Use the most recent summary's score
             if (sortedSummaries[0]?.overall_summary?.score) {
               score = sortedSummaries[0].overall_summary.score;
               // Extract additional scores
-              resumeScore = sortedSummaries[0].overall_summary?.resumeScore || null;
-              technicalScore = sortedSummaries[0].overall_summary?.technicalScore || null;
-              cultureFitScore = sortedSummaries[0].overall_summary?.cultureFitScore || null;
-              communicationScore = sortedSummaries[0].overall_summary?.communicationScore || null;
+              resumeScore =
+                sortedSummaries[0].overall_summary?.resumeScore || null;
+              technicalScore =
+                sortedSummaries[0].overall_summary?.technicalScore || null;
+              cultureFitScore =
+                sortedSummaries[0].overall_summary?.cultureFitScore || null;
+              communicationScore =
+                sortedSummaries[0].overall_summary?.communicationScore || null;
             } else if (sortedSummaries[0]?.resume_analysis) {
               // If no overall score but resume analysis exists, don't filter out
               matchesScoreThreshold = true;
-              return matchesSearch && matchesJob && matchesInvitationStatus && matchesInterviewStatus && matchesScoreThreshold;
+              return (
+                matchesSearch &&
+                matchesJob &&
+                matchesInvitationStatus &&
+                matchesInterviewStatus &&
+                matchesScoreThreshold
+              );
             }
           }
         } else if (applicant.AI_summary?.overall_summary?.score) {
           score = applicant.AI_summary.overall_summary.score;
           // Extract additional scores
-          resumeScore = applicant.AI_summary.overall_summary?.resumeScore || null;
-          technicalScore = applicant.AI_summary.overall_summary?.technicalScore || null;
-          cultureFitScore = applicant.AI_summary.overall_summary?.cultureFitScore || null;
-          communicationScore = applicant.AI_summary.overall_summary?.communicationScore || null;
+          resumeScore =
+            applicant.AI_summary.overall_summary?.resumeScore || null;
+          technicalScore =
+            applicant.AI_summary.overall_summary?.technicalScore || null;
+          cultureFitScore =
+            applicant.AI_summary.overall_summary?.cultureFitScore || null;
+          communicationScore =
+            applicant.AI_summary.overall_summary?.communicationScore || null;
         } else if (applicant.AI_summary?.resume_analysis) {
           // If no overall score but resume analysis exists, don't filter out
           matchesScoreThreshold = true;
-          return matchesSearch && matchesJob && matchesInvitationStatus && matchesInterviewStatus && matchesScoreThreshold;
+          return (
+            matchesSearch &&
+            matchesJob &&
+            matchesInvitationStatus &&
+            matchesInterviewStatus &&
+            matchesScoreThreshold
+          );
         }
       }
-      
+
       if (score !== null) {
         const numScore = parseFloat(score);
         if (!isNaN(numScore)) {
-          matchesScoreThreshold = numScore >= scoreThreshold[0] && numScore <= scoreThreshold[1];
+          matchesScoreThreshold =
+            numScore >= scoreThreshold[0] && numScore <= scoreThreshold[1];
         }
       } else if (scoreThreshold[0] > 0) {
         // If we're filtering for scores above 0 but this applicant has no score
         matchesScoreThreshold = false;
       }
-      
-      return matchesSearch && matchesJob && matchesInvitationStatus && 
-             matchesInterviewStatus && matchesScoreThreshold;
+
+      return (
+        matchesSearch &&
+        matchesJob &&
+        matchesInvitationStatus &&
+        matchesInterviewStatus &&
+        matchesScoreThreshold
+      );
     });
-  }, [applicants, searchTerm, selectedJobId, invitationStatus, interviewStatus, scoreThreshold]);
+  }, [
+    applicants,
+    searchTerm,
+    selectedJobId,
+    invitationStatus,
+    interviewStatus,
+    scoreThreshold
+  ]);
 
   // Reset selected applicants when filter changes
   useEffect(() => {
@@ -319,19 +370,25 @@ const InviteApplicantsTable = ({
   }, [selectedJobId, invitationStatus, interviewStatus, scoreThreshold]);
 
   // Update parent component's sort state when local sorting changes
-  const handleSortingChange = (updaterOrValue: SortingState | ((old: SortingState) => SortingState)) => {
+  const handleSortingChange = (
+    updaterOrValue: SortingState | ((old: SortingState) => SortingState)
+  ) => {
     // Handle both direct value and updater function
-    const newSorting = typeof updaterOrValue === 'function' 
-      ? updaterOrValue(sorting) 
-      : updaterOrValue;
-      
+    const newSorting =
+      typeof updaterOrValue === 'function'
+        ? updaterOrValue(sorting)
+        : updaterOrValue;
+
     setSorting(newSorting);
-    
+
     if (newSorting.length > 0 && onSort && newSorting[0].id) {
       const { id, desc } = newSorting[0];
       onSort(id);
       // Update parent's sort direction if needed
-      if ((desc && sortDirection !== 'desc') || (!desc && sortDirection !== 'asc')) {
+      if (
+        (desc && sortDirection !== 'desc') ||
+        (!desc && sortDirection !== 'asc')
+      ) {
         // This would trigger the parent to update sortDirection
         onSort(id);
       }
@@ -354,15 +411,15 @@ const InviteApplicantsTable = ({
       sorting,
       columnFilters,
       columnVisibility,
-      rowSelection,
-    },
+      rowSelection
+    }
   });
 
   // Count active filters
   const activeFilterCount = [
-    selectedJobId !== "all" ? 1 : 0,
-    invitationStatus !== "all" ? 1 : 0,
-    interviewStatus !== "all" ? 1 : 0,
+    selectedJobId !== 'all' ? 1 : 0,
+    invitationStatus !== 'all' ? 1 : 0,
+    interviewStatus !== 'all' ? 1 : 0,
     scoreThreshold[0] > 0 || scoreThreshold[1] < 100 ? 1 : 0,
     Object.keys(columnVisibility).length > 0 ? 1 : 0
   ].reduce((a, b) => a + b, 0);
@@ -381,14 +438,14 @@ const InviteApplicantsTable = ({
           setIsFilterOpen={setIsFilterOpen}
           activeFilterCount={activeFilterCount}
         />
-        
+
         <ApplicantJobInfo
           selectedJobId={selectedJobId}
           jobs={jobs}
           filteredApplicantsCount={filteredApplicants.length}
         />
       </div>
-      
+
       {/* Filter popup */}
       <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
         <ApplicantFilters
@@ -412,17 +469,20 @@ const InviteApplicantsTable = ({
           </div>
         </ApplicantFilters>
       </div>
-      
+
       {/* Scrollable table section with constrained width */}
-      <div className="flex-1 border rounded-lg overflow-hidden" style={{ maxHeight: 'calc(100vh - 300px)' }}>
+      <div
+        className="flex-1 border rounded-lg overflow-hidden"
+        style={{ maxHeight: 'calc(100vh - 300px)' }}
+      >
         <div className="overflow-auto h-full w-[calc(100vw-80px)] max-w-[1100px]">
           <Table className="w-full">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="border-b">
                   {headerGroup.headers.map((header) => (
-                    <TableHead 
-                      key={header.id} 
+                    <TableHead
+                      key={header.id}
                       className="whitespace-nowrap py-2 px-3"
                     >
                       {header.isPlaceholder
@@ -441,18 +501,24 @@ const InviteApplicantsTable = ({
                 table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id} className="border-b last:border-0">
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell 
-                        key={cell.id} 
+                      <TableCell
+                        key={cell.id}
                         className="py-2 px-3 truncate max-w-[200px]"
                       >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-16 text-center">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-16 text-center"
+                  >
                     No candidates found
                   </TableCell>
                 </TableRow>
@@ -461,7 +527,7 @@ const InviteApplicantsTable = ({
           </Table>
         </div>
       </div>
-      
+
       {/* Pagination with less padding */}
       <div className="py-1">
         <ApplicantTablePagination table={table} />
