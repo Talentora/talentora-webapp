@@ -32,36 +32,42 @@ export default function ApplicantList() {
 
   // Fetch jobs data on component mount
   useEffect(() => {
+    // const fetchJobs = async () => {
+    //   try {
+    //     // Fetch both joined applicants and jobs data
+
+    //     const [applicantsData, jobsData] = await Promise.all([
+    //       // await fetchAllApplications(),
+    //       await fetchJobsData()
+    //     ]);
+
+    //     if (!Array.isArray(applicantsData)) {
+    //       console.error('Applicants data is not an array:', applicantsData);
+    //       return;
+    //     }
+    //     setApplicantCandidates(applicantsData);
+    //     setJobs(jobsData);
+
+    //     // Set the first job as default selected job
+    //     if (jobsData.length > 0) {
+    //       setSelectedJobFilter(jobsData[0].id);
+    //       handleJobPositionChange(jobsData[0].id);
+    //     }
+    //   } catch (error) {
+    //     console.error('Error fetching jobs:', error);
+    //   }
+    // };
+
+    // fetchJobs();
     const fetchJobs = async () => {
       try {
-        // Fetch both joined applicants and jobs data
-
-        // console.log('here1');
-        const [applicantsData, jobsData] = await Promise.all([
-          await fetchAllApplications(),
-          await fetchJobsData()
-        ]);
-
-        // console.log('here2');
-        if (!Array.isArray(applicantsData)) {
-          console.error('Applicants data is not an array:', applicantsData);
-          return;
-        }
-
-        // console.log('here3');
-        // console.log('Fetched applicants data:', applicantsData);
-        // console.log('Fetched jobs data:', jobsData);
-
-        setApplicantCandidates(applicantsData);
+        const jobsData = await fetchJobsData();
         setJobs(jobsData);
 
         // Set the first job as default selected job
         if (jobsData.length > 0) {
           setSelectedJobFilter(jobsData[0].id);
-          handleJobPositionChange(jobsData[0].id);
         }
-
-        // console.log('here4');
       } catch (error) {
         console.error('Error fetching jobs:', error);
       }
@@ -87,9 +93,7 @@ export default function ApplicantList() {
       }
     };
 
-    // console.log('here0');
-
-    fetchData();
+    fetchApplications();
   }, []);
 
   console.log('isLoading', isLoading);
