@@ -1221,6 +1221,41 @@ export const getApplication = async (applicationId: string): Promise<Tables<'app
 };
 
 
+export const getSupabaseApplications = async (): Promise<Tables<'applications'>[] | null> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('applications')
+    .select('*');
+  return data || null;
+};
+
+
+export const createApplication = async (jobId: string, mergeApplicationId: string): Promise<Tables<'applications'> | null> => {  
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('applications')
+    .insert({job_id: jobId, merge_application_id: mergeApplicationId})
+    .select('*')
+    .single();
+
+  if (error) {
+    console.error('Error creating application:', error);
+    return null;
+  }
+
+  return data;
+};
+
+
+export const getApplicationCount = async (): Promise<number> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('applications')
+    .select('*');
+  return data?.length || 0;
+};
+
+
 /**
  * Fetches all scouts along with their associated job interview configurations.
  * 

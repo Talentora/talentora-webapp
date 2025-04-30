@@ -4,12 +4,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  MessageSquareIcon,
-  UserIcon,
-  UsersIcon,
-  Loader2,
   BarChart3,
-  UserPlus
+
 } from 'lucide-react';
 import { Job, ApplicantCandidate } from '@/types/merge';
 import ActiveJobsCard from './ActiveJobsCard';
@@ -31,7 +27,6 @@ import { fetchJobsData } from '@/server/jobs';
 
 export default function RecruiterDashboard() {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch all applicants data
   const { data: applicants = [], isLoading: applicantsLoading } = useQuery<ApplicantCandidate[]>({
@@ -126,8 +121,6 @@ export default function RecruiterDashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full">
             <ApplicantCountCard
               factWindow={factWindow}
-              isLoading={applicantsLoading}
-              applicants={applicants}
             />
             <InvitedCandidatesCard factWindow={factWindow} />
             <CompletedAssessmentsCard factWindow={factWindow} />
