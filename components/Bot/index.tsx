@@ -55,7 +55,6 @@ export default function Bot(botProps: BotProps) {
     mergeJob,
     application,
     enableRecording,
-    voice,
     demo,
     scoutTest,
     transcript,
