@@ -25,21 +25,24 @@ export interface Recording {
 
 export const VideoTranscriptSkeleton = () => (
   <div className="container mx-auto">
-    <h1 className="text-2xl font-semibold">Rewatch the Interview</h1>
-    <div className="flex flex-col gap-4">
+    <h1 className="text-lg font-semibold">Rewatch the Interview</h1>
+    <div className="text-center text-gray-500">
+      Fetching interview video and transcript...
+    </div>
+    {/* <div className="flex flex-col gap-4">
       <div className="flex-1">
-        <Skeleton className="w-full aspect-video rounded-lg" />
+        <Skeleton className="w-full h-40 rounded-lg" />
       </div>
       <div className="flex flex-row flex-1 gap-4">
         <div className="flex-1">
           <Skeleton className="h-[300px] w-full" />
         </div>
         <div className="flex-1">
-          <h2 className="text-2xl font-semibold mb-4">Interview Transcript</h2>
+          <h2 className="text-xl font-semibold mb-4">Interview Transcript</h2>
           <Skeleton className="h-[300px] w-full" />
         </div>
       </div>
-    </div>
+    </div> */}
   </div>
 );
 
@@ -145,7 +148,7 @@ const VideoTranscript = ({ portalProps }: VideoTranscriptProps) => {
     return (
       <div className="container mx-auto">
         {/* <p>{JSON.stringify(aiSummary[0])}</p> */}
-        <h1 className="text-2xl font-semibold">Rewatch the Interview</h1>
+        <h1 className="text-lg font-semibold">Rewatch the Interview</h1>
         <div className="text-center text-gray-500">
           No interview recording or transcript found.
         </div>
@@ -155,7 +158,7 @@ const VideoTranscript = ({ portalProps }: VideoTranscriptProps) => {
 
   return (
     <div className="container mx-auto">
-      <h1 className="text-2xl font-semibold">Rewatch the Interview</h1>
+      <h1 className="text-lg font-semibold">Rewatch the Interview</h1>
       <div className="flex flex-col gap-4">
         <div className="flex-1">
           <VideoPlayer recording={recording} />

@@ -1,5 +1,8 @@
 import ApplicantInfo from '@/components/Applicants/Applicant/ApplicantInfo';
 import ApplicantActions from '@/components/Applicants/Applicant/ApplicantActions';
+import ApplicantSummaries from '@/components/Applicants/Applicant/ApplicantSummaries';
+import ApplicantCard from '@/components/Applicants/Applicant/ApplicantCard';
+import ApplicantScores from '@/components/Applicants/Applicant/ApplicantScores';
 import { portalProps } from '@/app/(pages)/(restricted)/applicants/[id]/page';
 import AnalysisDisplay from '@/components/AnalysisDisplay';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -103,10 +106,17 @@ export default function ApplicantPortal({ portalProps }: ApplicantPortalProps) {
           <div>
             <div className="flex flex-row gap-6">
               <div className="flex-1">
-                <ApplicantInfo ApplicantCandidate={mergeApplicant} />
+                {/* <ApplicantInfo ApplicantCandidate={mergeApplicant} /> */}
+                <ApplicantCard
+                  ApplicantCandidate={mergeApplicant}
+                  ActionProps={portalProps}
+                />
               </div>
-              <div className="w-64">
+              {/* <div className="w-64">
                 <ApplicantActions portalProps={portalProps} />
+              </div> */}
+              <div className="flex-1">
+                <ApplicantScores portalProps={portalProps} />
               </div>
             </div>
 
@@ -116,11 +126,12 @@ export default function ApplicantPortal({ portalProps }: ApplicantPortalProps) {
               </div>
             )}
 
-            {mergeApplicant.job && <ResumeViewer portalProps={portalProps} />}
+            {/* {mergeApplicant.job && <ResumeViewer portalProps={portalProps} />} */}
 
             {AI_summary ? (
               <div>
-                <AnalysisDisplay portalProps={portalProps} />
+                {/* <AnalysisDisplay portalProps={portalProps} /> */}
+                <ApplicantSummaries portalProps={portalProps} />
               </div>
             ) : (
               <>

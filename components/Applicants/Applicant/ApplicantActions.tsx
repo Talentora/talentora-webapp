@@ -16,7 +16,7 @@ interface ApplicantActionsProps {
 }
 
 const ApplicantActions = ({ portalProps }: ApplicantActionsProps) => {
-  const { AI_summary, application, mergeApplicant, status } = portalProps;
+  const { AI_summary, application, status } = portalProps;
 
   // Format date safely
   const formatDate = (dateString: string) => {
@@ -37,7 +37,7 @@ const ApplicantActions = ({ portalProps }: ApplicantActionsProps) => {
           <CalendarClock className="mr-2 h-4 w-4" />
           🎉 Assessment Completed! 🎉
         </Button>
-        <div className="text-center text-sm text-gray-500">
+        <div className="text-sm text-gray-500">
           {AI_summary.created_at
             ? formatDate(AI_summary.created_at)
             : 'Assessment completed'}
@@ -47,10 +47,7 @@ const ApplicantActions = ({ portalProps }: ApplicantActionsProps) => {
   }
 
   // If there's an application but no AI summary, show invitation status
-  if (
-    application &&
-    (status === 'invited_incomplete' || status === 'invited_complete')
-  ) {
+  if (application && status === 'interview_completed') {
     return (
       <div className="w-full space-y-2">
         <Button variant="outline" className="w-full" disabled>
