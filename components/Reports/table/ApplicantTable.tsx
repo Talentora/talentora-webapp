@@ -51,7 +51,7 @@ const STATUS_BAR_COLORS: Record<"not_invited" | "invited" | "invite_completed", 
 const STATUS_BAR_LABELS: Record<"not_invited" | "invited" | "invite_completed", string> = {
   not_invited: "Not Invited",
   invited: "Invited",
-  invite_completed: "Invite Completed",
+  invite_completed: "Interview Completed",
 };
 
 export const ApplicantTable = ({ data, chartFilter }: ApplicantTableProps) => {
@@ -60,7 +60,7 @@ export const ApplicantTable = ({ data, chartFilter }: ApplicantTableProps) => {
   const [sortField, setSortField] = useState<string>("application.created_at");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [tab, setTab] = useState<"not_invited" | "invited" | "invite_completed">("not_invited");
-
+    console.log(data)
   // Filter by tab status
   const tabFilteredData = data.filter(applicant => getApplicantStatus(applicant) === tab);
 
