@@ -1,4 +1,4 @@
- "use client";
+"use client";
 import { ApplicantData } from "@/components/Reports/data/mock-data";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatDistanceToNow } from "date-fns";
@@ -6,7 +6,8 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useReportsDashboard } from "@/components/Reports/context/ReportsDashboardContext";
-import { Send,Clock,CircleCheckBig } from "lucide-react"
+import { Send, Clock, CircleCheckBig } from "lucide-react";
+
 interface ApplicantTableProps {
   data: ApplicantData[];
   chartFilter?: {
@@ -32,20 +33,13 @@ const getNestedValue = (obj: any, path: string): any => {
   }, obj);
 };
 
+// New status logic: 
+// - If hasSupabaseData === true => "invited"
+// - If hasSupabaseData === false/undefined => "not_invited"
+// - "invite_completed" is not used in this logic, but kept for UI compatibility
 function getApplicantStatus(applicant: ApplicantData): "not_invited" | "invited" | "invite_completed" {
-  // Not invited: no application row
-  // Invited: has application row, but no AI summary
-  // Invite completed: has application row and AI summary
-  const hasApplication = !!applicant.application;
-  // const hasAISummary = !!applicant.application?.AI_Summary; // Remove this line, see lint error
-  // For now, treat all with application as "invite_completed" (or adjust as needed)
-  // But to keep the logic, let's check for a property that might exist, or always treat as "invite_completed"
-  // For now, fallback to original logic, but without AI_Summary
-  if (!hasApplication) return "not_invited";
-  // if (hasApplication && !hasAISummary) return "invited";
-  // if (hasApplication && hasAISummary) return "invite_completed";
-  // Instead, treat all with application as "invite_completed"
-  return "invite_completed";
+  if (applicant.hasSupabaseData) return "invited";
+  return "not_invited";
 }
 
 const STATUS_BAR_COLORS: Record<"not_invited" | "invited" | "invite_completed", string> = {
@@ -121,10 +115,11 @@ export const ApplicantTable = ({ data, chartFilter }: ApplicantTableProps) => {
     }
   };
 
-  // Tab counts
+  // Tab counts using new status logic
   const notInvitedCount = data.filter(a => getApplicantStatus(a) === "not_invited").length;
   const invitedCount = data.filter(a => getApplicantStatus(a) === "invited").length;
-  const inviteCompletedCount = data.filter(a => getApplicantStatus(a) === "invite_completed").length;
+  // For compatibility, show 0 for invite_completed
+  const inviteCompletedCount = 0;
 
   // Determine color for the current tab
   const statusBarColor = STATUS_BAR_COLORS[tab];
@@ -143,17 +138,17 @@ export const ApplicantTable = ({ data, chartFilter }: ApplicantTableProps) => {
           <TabsTrigger value="not_invited" className="gap-1">
             <Send className="h-4 w-4" />
             <p>Not Invited </p>
-            <Badge className="ml-2" >{notInvitedCount}</Badge>
+            <Badge className="ml-2">{notInvitedCount}</Badge>
           </TabsTrigger>
           <TabsTrigger value="invited" className="gap-1">
             <Clock className="h-4 w-4" />
-            <p>Invited</p> 
+            <p>Invited</p>
             <Badge className="ml-2">{invitedCount}</Badge>
           </TabsTrigger>
           <TabsTrigger value="invite_completed" className="gap-1">
             <CircleCheckBig className="h-4 w-4" />
             <p>Invite Completed</p>
-            <Badge className="ml-2" >{inviteCompletedCount}</Badge>
+            <Badge className="ml-2">{inviteCompletedCount}</Badge>
           </TabsTrigger>
         </TabsList>
         <TabsContent value="not_invited">
@@ -176,7 +171,7 @@ export const ApplicantTable = ({ data, chartFilter }: ApplicantTableProps) => {
         </TabsContent>
         <TabsContent value="invite_completed">
           <ApplicantStatusTable
-            data={sortedData}
+            data={[]}
             sortField={sortField}
             sortDirection={sortDirection}
             handleSort={handleSort}
@@ -202,7 +197,6 @@ function ApplicantStatusTable({
   handleSort: (field: string) => void;
   status?: "not_invited" | "invited" | "invite_completed";
 }) {
-  // Optionally, you could move the colored bar here if you want it inside the table container instead of above the tabs.
   return (
     <div className="border rounded-lg">
       <Table>
