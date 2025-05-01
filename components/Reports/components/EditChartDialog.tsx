@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { ChartConfig, ApplicantData } from "../data/mock-data";
+import { ChartConfig, ApplicantData } from "../../../app/(pages)/(restricted)/reports/data/mock-data";
 import { useState, useEffect } from "react";
 import { GraphComponent } from "./Graph";
 import { 

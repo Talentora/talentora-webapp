@@ -1,7 +1,7 @@
 "use client";
 
-import { InterviewFeedbackComponent } from "../components/InterviewFeedback";
-import { interviewFeedback } from "../data/interview-feedback";
+import { InterviewFeedbackComponent } from "@/components/AnalysisDisplay/InterviewFeedback";
+import { interviewFeedback } from "@/components/AnalysisDisplay/InterviewFeedback/interview-feedback";
 
 export default function InterviewFeedbackPage() {
   return <InterviewFeedbackComponent feedback={interviewFeedback} />;
