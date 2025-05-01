@@ -32,33 +32,6 @@ export default function ApplicantList() {
 
   // Fetch jobs data on component mount
   useEffect(() => {
-    // const fetchJobs = async () => {
-    //   try {
-    //     // Fetch both joined applicants and jobs data
-
-    //     const [applicantsData, jobsData] = await Promise.all([
-    //       // await fetchAllApplications(),
-    //       await fetchJobsData()
-    //     ]);
-
-    //     if (!Array.isArray(applicantsData)) {
-    //       console.error('Applicants data is not an array:', applicantsData);
-    //       return;
-    //     }
-    //     setApplicantCandidates(applicantsData);
-    //     setJobs(jobsData);
-
-    //     // Set the first job as default selected job
-    //     if (jobsData.length > 0) {
-    //       setSelectedJobFilter(jobsData[0].id);
-    //       handleJobPositionChange(jobsData[0].id);
-    //     }
-    //   } catch (error) {
-    //     console.error('Error fetching jobs:', error);
-    //   }
-    // };
-
-    // fetchJobs();
     const fetchJobs = async () => {
       try {
         const jobsData = await fetchJobsData();
