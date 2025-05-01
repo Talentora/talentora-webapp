@@ -1,5 +1,5 @@
-import { ApplicantTable } from "./ApplicantTable";
-import { useReportsDashboard } from "./ReportsDashboardContext";
+import { ApplicantTable } from "../components/ApplicantTable";
+import { useReportsDashboard } from "../context//ReportsDashboardContext";
 
 export default function DashboardTable() {
   const { filteredData, chartFilter } = useReportsDashboard();

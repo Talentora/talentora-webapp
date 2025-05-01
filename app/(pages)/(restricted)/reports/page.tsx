@@ -1,6 +1,6 @@
 import { fetchAllApplications } from "@/server/applications";
 import { ApplicantData } from "@/components/Reports/data/mock-data";
-import ReportsDashboard from "@/components/Reports/components/ReportsDashboard";
+import ReportsDashboard from "@/components/Reports/dashboard/ReportsDashboard";
 
 export default async function ReportsPage() {
   // Server-side fetch

@@ -1,3 +1,4 @@
+"use client";
 import React, { createContext, useContext, useState, useMemo, useCallback } from "react";
 import { initialCharts, type ChartConfig, type ApplicantData } from "@/components/Reports/data/mock-data";
 
@@ -42,6 +43,8 @@ interface ReportsDashboardContextType {
   saveChartChanges: () => void;
   handleChartElementClick: (field: string, value: string) => void;
   clearChartFilter: () => void;
+  searchQuery: string;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const ReportsDashboardContext = createContext<ReportsDashboardContextType | undefined>(undefined);
@@ -49,6 +52,7 @@ const ReportsDashboardContext = createContext<ReportsDashboardContextType | unde
 export function ReportsDashboardProvider({ applicantData, children }: { applicantData: ApplicantData[]; children: React.ReactNode }) {
   const [charts, setCharts] = useState<ChartConfig[]>(initialCharts);
   const [filteredData, setFilteredData] = useState<ApplicantData[]>(applicantData);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const uniqueLocations = useMemo(() => 
     Array.from(new Set(applicantData
@@ -226,6 +230,8 @@ export function ReportsDashboardProvider({ applicantData, children }: { applican
         saveChartChanges,
         handleChartElementClick,
         clearChartFilter,
+        searchQuery,
+        setSearchQuery,
       }}
     >
       {children}

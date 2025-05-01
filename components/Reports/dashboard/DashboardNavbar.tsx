@@ -1,3 +1,4 @@
+"use client"
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MultiSelect } from "@/components/ui/multi-select";
@@ -6,7 +7,7 @@ import { Search, Filter, ChevronDown } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { useState, useMemo, useEffect } from "react";
-import { useReportsDashboard } from "./ReportsDashboardContext";
+import { useReportsDashboard } from "../context/ReportsDashboardContext";
 
 export default function DashboardNavbar() {
   const {
@@ -15,6 +16,8 @@ export default function DashboardNavbar() {
     applyFilters,
     filteredData,
     applicantData,
+    searchQuery,
+    setSearchQuery,
   } = useReportsDashboard();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -49,12 +52,23 @@ export default function DashboardNavbar() {
 
   return (
     <div className="w-full sticky top-0">
-      <div className="container mx-auto">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Applicant Reports</h1>
+      <div className="container mx-auto py-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="text-sm text-muted-foreground">
+            <h1 className="text-2xl font-bold">Applicant Reports</h1>
+            {/* <div className="text-sm text-muted-foreground">
               {filteredData.length} of {applicantData.length} applicants
+            </div> */}
+          </div>
+          <div className="flex flex-col md:flex-row md:items-center gap-4 w-full md:w-auto">
+            <div className="relative w-full md:w-64">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search applicants..."
+                className="pl-8"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
             <Popover open={isOpen} onOpenChange={setIsOpen}>
               <PopoverTrigger asChild>

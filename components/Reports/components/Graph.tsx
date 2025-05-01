@@ -1,4 +1,4 @@
-import { ChartConfig, ApplicantData } from "../../../app/(pages)/(restricted)/reports/data/mock-data";
+import { ChartConfig, ApplicantData } from "@/components/Reports/data/mock-data";
 import { useMemo } from "react";
 import { BarChart } from "./graphs/BarChart";
 import { LineChart } from "./graphs/LineChart";
