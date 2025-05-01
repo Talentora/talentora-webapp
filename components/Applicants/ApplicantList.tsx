@@ -39,7 +39,7 @@ export default function ApplicantList() {
 
         // Set the first job as default selected job
         if (jobsData.length > 0) {
-          setSelectedJobFilter(jobsData[0].id);
+          setSelectedJobFilter(jobsData[jobsData.length - 1].id);
         }
       } catch (error) {
         console.error('Error fetching jobs:', error);
@@ -54,11 +54,27 @@ export default function ApplicantList() {
     const fetchApplications = async () => {
       if (!selectedJobFilter) return;
 
+      console.log('Fetching applications for job ID:', selectedJobFilter);
+
       setIsLoading(true);
       try {
+        // merge API call
         const applicationsData =
           await fetchApplicationsByJobId(selectedJobFilter);
+        console.log('Fetched mergeAPI applications data:', applicationsData);
         setApplicantCandidates(applicationsData);
+
+        // supabase query call
+        const activeApplicantsData =
+          await getApplicationsByJobId(selectedJobFilter);
+        console.log(
+          'Fetched supbase applicantions data:',
+          activeApplicantsData
+        );
+        if (activeApplicantsData) {
+          setActiveJobApplicantsData(activeApplicantsData);
+        }
+
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching applications:', error);
@@ -67,82 +83,74 @@ export default function ApplicantList() {
     };
 
     fetchApplications();
-  }, []);
-
-  console.log('isLoading', isLoading);
-
-  const handleJobPositionChange = async (jobId: string) => {
-    setSelectedJobFilter(jobId);
-    const activeApplicantsData = await getApplicationsByJobId(jobId);
-    console.log('Fetched active applicants data:', activeApplicantsData);
-    if (activeApplicantsData && activeApplicantsData.length > 0) {
-      setActiveJobApplicantsData(activeApplicantsData);
-    }
-  };
-
-  useEffect(() => {
-    // Fetch active applicants data when selected job changes
-    if (!selectedJobFilter && selectedJobFilter === '') return;
-    console.log('selectedJobFilter', selectedJobFilter);
-    handleJobPositionChange(selectedJobFilter);
   }, [selectedJobFilter]);
 
-  // Filter applicants based on selected job
-  const filteredByJobApplicants = useMemo(() => {
-    // No more "all" option, always filter by job
-    return applicantCandidates.filter(
-      (app) => app.job?.id === selectedJobFilter
-    );
-  }, [applicantCandidates, selectedJobFilter]);
+  // v1
+  // Filter applicants based on status
+  const notInvitedApplicants = useMemo(
+    () =>
+      applicantCandidates.filter(
+        (app) => !app.application?.supabase_application_id && !app.ai_summary
+      ),
+    [applicantCandidates]
+  );
 
-  // Filter applicants based on status after job filter
-  // const notInvitedApplicants = filteredByJobApplicants.filter(
-  //   (app) => !app.application?.supabase_application_id && !app.ai_summary
-  // );
-  const notInvitedApplicants = useMemo(() => {
-    console.log('activeJobApplicantData', activeJobApplicantsData);
-    return filteredByJobApplicants.filter((app) => {
-      const mergeId = app.application?.id;
-      if (!mergeId) return false;
-      const record = activeJobApplicantsData.find(
-        (r) => r.merge_application_id === mergeId
-      );
-      return record?.status === 'not_invited';
-    });
-  }, [filteredByJobApplicants, activeJobApplicantsData]);
+  const inProgressApplicants = useMemo(
+    () =>
+      applicantCandidates.filter(
+        (app) =>
+          app.application?.supabase_application_id &&
+          (!app.ai_summary ||
+            (Array.isArray(app.ai_summary) && app.ai_summary.length === 0))
+      ),
+    [applicantCandidates]
+  );
 
-  // const inProgressApplicants = filteredByJobApplicants.filter(
-  //   (app) =>
-  //     app.application?.supabase_application_id &&
-  //     (!app.ai_summary ||
-  //       (Array.isArray(app.ai_summary) && app.ai_summary.length === 0))
-  // );
-  const inProgressApplicants = useMemo(() => {
-    return filteredByJobApplicants.filter((app) => {
-      const mergeId = app.application?.id;
-      if (!mergeId) return false;
-      const record = activeJobApplicantsData.find(
-        (r) => r.merge_application_id === mergeId
-      );
-      return record?.status === 'invited_incomplete';
-    });
-  }, [filteredByJobApplicants, activeJobApplicantsData]);
+  const completedApplicants = useMemo(
+    () =>
+      applicantCandidates.filter(
+        (app) =>
+          app.ai_summary &&
+          !(Array.isArray(app.ai_summary) && app.ai_summary.length !== 0)
+      ),
+    [applicantCandidates]
+  );
 
-  // const completedApplicants = filteredByJobApplicants.filter(
-  //   (app) =>
-  //     app.ai_summary &&
-  //     !(Array.isArray(app.ai_summary) && app.ai_summary.length === 0)
-  // );
-  const completedApplicants = useMemo(() => {
-    return filteredByJobApplicants.filter((app) => {
-      const mergeId = app.application?.id;
-      if (!mergeId) return false;
-      const record = activeJobApplicantsData.find(
-        (r) => r.merge_application_id === mergeId
-      );
-      return record?.status === 'invited_complete';
-    });
-  }, [filteredByJobApplicants, activeJobApplicantsData]);
+  // v2
+  // Filter applicants based on status
+  // const notInvitedApplicants = useMemo(() => {
+  //   console.log('activeJobApplicantData', activeJobApplicantsData);
+  //   return applicantCandidates.filter((app) => {
+  //     const mergeId = app.application?.id;
+  //     if (!mergeId) return false;
+  //     const record = activeJobApplicantsData.find(
+  //       (r) => r.merge_application_id === mergeId
+  //     );
+  //     return record?.status === 'not_invited';
+  //   });
+  // }, [applicantCandidates]);
+
+  // const inProgressApplicants = useMemo(() => {
+  //   return applicantCandidates.filter((app) => {
+  //     const mergeId = app.application?.id;
+  //     if (!mergeId) return false;
+  //     const record = activeJobApplicantsData.find(
+  //       (r) => r.merge_application_id === mergeId
+  //     );
+  //     return record?.status === 'pending_interview';
+  //   });
+  // }, [applicantCandidates]);
+
+  // const completedApplicants = useMemo(() => {
+  //   return applicantCandidates.filter((app) => {
+  //     const mergeId = app.application?.id;
+  //     if (!mergeId) return false;
+  //     const record = activeJobApplicantsData.find(
+  //       (r) => r.merge_application_id === mergeId
+  //     );
+  //     return record?.status === 'interview_completed';
+  //   });
+  // }, [applicantCandidates]);
 
   // Filter based on search term and apply sorting
   const filterAndSortApplicants = (applicants: any[]) => {

@@ -1292,14 +1292,21 @@ export const getApplicationsByJobId = async (jobId: string): Promise<Tables<'app
   console.log("jobId", jobId)
   try {
     const supabase = await createClient();
+    const { data } = await supabase.from('applications').select();
+    console.log(data);
+    // why is the table emptyy???
+
     const { data: applications, error } = await supabase
       .from('applications')
       .select('*')
       .eq('job_id', jobId);
+
     if (error) {
       console.error('Error fetching applications:', error);
       return null;
     }
+
+    console.log("data", applications)
     return applications;
   } catch (err) {
     console.error('Unexpected error fetching applications:', err);
