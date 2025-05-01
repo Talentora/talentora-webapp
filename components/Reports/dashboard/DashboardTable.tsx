@@ -1,4 +1,4 @@
-import { ApplicantTable } from "../components/ApplicantTable";
+import { ApplicantTable } from "../table/ApplicantTable";
 import { useReportsDashboard } from "../context//ReportsDashboardContext";
 
 export default function DashboardTable() {

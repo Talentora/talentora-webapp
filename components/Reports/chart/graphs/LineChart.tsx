@@ -8,7 +8,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { processData } from "../utils/chartDataProcessor";
+import { processData } from "@/components/Reports/utils/chartDataProcessor";
 import { useMemo } from "react";
 
 export const LineChart: React.FC<BaseGraphProps> = ({ config, data, ...rest }) => {

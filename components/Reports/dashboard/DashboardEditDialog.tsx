@@ -1,4 +1,4 @@
-import { EditChartDialog } from "../components/EditChartDialog";
+import { EditChartDialog } from "../chart/EditChartDialog";
 import { useReportsDashboard } from "../context/ReportsDashboardContext";
 
 export default function DashboardEditDialog() {

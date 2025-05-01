@@ -6,7 +6,7 @@ import {
   Tooltip,
   Cell,
 } from "recharts";
-import { processData } from "../utils/chartDataProcessor";
+import { processData } from "@/components/Reports/utils/chartDataProcessor";
 import { useMemo } from "react";
 
 // Color palette for pie chart segments

@@ -1,10 +1,10 @@
 "use client";
 
-import { ReportsDashboardProvider } from "../context/ReportsDashboardContext";
-import DashboardNavbar from "../dashboard/DashboardNavbar";
-import DashboardCharts from "../dashboard/DashboardCharts";
-import DashboardTable from "../dashboard/DashboardTable";
-import DashboardEditDialog from "../dashboard/DashboardEditDialog";
+import { ReportsDashboardProvider } from "./context/ReportsDashboardContext";
+import DashboardNavbar from "./dashboard/DashboardNavbar";
+import DashboardCharts from "./dashboard/DashboardCharts";
+import DashboardTable from "./dashboard/DashboardTable";
+import DashboardEditDialog from "./dashboard/DashboardEditDialog";
 import { type ApplicantData } from "@/components/Reports/data/mock-data";
 
 export default function ReportsDashboard({ applicantData }: { applicantData: ApplicantData[] }) {

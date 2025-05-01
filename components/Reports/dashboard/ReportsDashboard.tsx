@@ -15,7 +15,6 @@ export default function ReportsDashboard({ applicantData }: { applicantData: App
             <div className="flex flex-row gap-5">
           <DashboardTable />
           <DashboardCharts />
-
           </div>
         </div>
         <DashboardEditDialog />

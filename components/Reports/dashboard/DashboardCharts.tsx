@@ -5,7 +5,7 @@ import { PlusCircle, XCircle } from "lucide-react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy, useSortable, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GraphComponent } from "../components/Graph";
+import { GraphComponent } from "../chart/Graph";
 
 function SortableChartCard({ chart, openEditDialog, removeChart, duplicateChart, filteredData, onElementClick }: any) {
   const {

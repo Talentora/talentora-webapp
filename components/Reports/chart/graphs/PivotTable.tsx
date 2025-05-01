@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { processData } from "../utils/chartDataProcessor";
+import { processData } from "@/components/Reports/utils/chartDataProcessor";
 import { useMemo } from "react";
 
 export const PivotTable: React.FC<BaseGraphProps> = (props) => {
