@@ -50,11 +50,9 @@ interface emotion_eval {
 }
 
 export type ApplicantStatus =
-  | 'unable_to_invite'
-  | 'able_to_invite'
   | 'not_invited'
-  | 'invited_incomplete'
-  | 'invited_complete';
+  | 'pending_interview'
+  | 'interview_completed';
 
 export default function ApplicantPage({ params }: { params: { id: string } }) {
   const [error, setError] = useState<string | null>(null);

@@ -107,7 +107,7 @@ export function ApplicantSummaries({ portalProps }: AnalysisDisplayProps) {
               ))}
             </Tabs.List>
 
-            <Dialog.Root>
+            {/* <Dialog.Root>
               <Dialog.Trigger asChild>
                 <button className="bg-purple-500 text-white px-4 py-2 rounded-full text-sm">
                   View Resume
@@ -120,29 +120,6 @@ export function ApplicantSummaries({ portalProps }: AnalysisDisplayProps) {
                   <div className="flex-1">
                     <ResumeViewer portalProps={portalProps} />
                   </div>
-
-                  {/* PDF viewer */}
-                  {/* <div className="flex-1 border rounded-lg overflow-hidden">
-                    <iframe
-                      src="/path/to/resume.pdf"
-                      className="w-full h-full"
-                      title="Resume"
-                    />
-                  </div> */}
-
-                  {/* Resume assessment */}
-                  {/* <div className="w-72 ml-6 flex-shrink-0 overflow-y-auto">
-                    <h3 className="text-lg font-semibold mb-4">
-                      Resume Assessment
-                    </h3>
-                    <div className="space-y-4">
-                      <ProgressBar label="Overall Resume Score" value={2} />
-                      <ProgressBar label="Technical Skills" value={3} />
-                      <ProgressBar label="Culture Fit" value={2} />
-                      <ProgressBar label="Communication" value={1} />
-                    </div>
-                  </div> */}
-
                   <Dialog.Close asChild>
                     <button className="absolute top-4 right-4">
                       <Cross2Icon className="w-5 h-5 text-gray-500 hover:text-gray-700" />
@@ -150,7 +127,7 @@ export function ApplicantSummaries({ portalProps }: AnalysisDisplayProps) {
                   </Dialog.Close>
                 </Dialog.Content>
               </Dialog.Portal>
-            </Dialog.Root>
+            </Dialog.Root> */}
           </div>
 
           <div className={tab === 'textEval' ? 'hidden' : 'mt-3 mb-6'}>

@@ -475,7 +475,7 @@ const InviteApplicantsTable = ({
         className="flex-1 border rounded-lg overflow-hidden"
         style={{ maxHeight: 'calc(100vh - 300px)' }}
       >
-        <div className="overflow-auto h-full w-[calc(100vw-80px)] max-w-[1100px]">
+        <div className="overflow-auto h-full w-full">
           <Table className="w-full">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (

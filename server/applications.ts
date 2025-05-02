@@ -30,8 +30,6 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
     if (!accountToken) {
         throw new Error('Account token not found');
     }
-
-    console.log('fuck goin on type shit');
     
     const params = new URLSearchParams({
         account_token: accountToken,
@@ -51,8 +49,6 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
     if (!response.ok) {
       throw new Error(`Applications fetch failed: ${response.status}`);
     }
-
-    console.log('we good');
     
     return response.json();
   }
@@ -99,6 +95,8 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
       add_AI_summary: "true"
     });
 
+    console.log('launching fetchApplicationsByJobId');
+
     const response = await fetch(`${API_URL}/merge/applications/job/${jobId}?${params.toString()}`, {
       credentials: 'include',
       headers: {
@@ -107,6 +105,8 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
       cache: 'force-cache',
       next: { revalidate: 3600 }
     });
+
+    console.log('fetchApplicationsByJobId: ', response);
 
     if (!response.ok) {
       throw new Error(`Applications fetch failed: ${response.status}`);

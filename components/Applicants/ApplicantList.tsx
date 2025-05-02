@@ -26,9 +26,6 @@ export default function ApplicantList() {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [activeTab, setActiveTab] = useState<string>('not-invited');
   const [selectedJobFilter, setSelectedJobFilter] = useState<string>('');
-  const [activeJobApplicantsData, setActiveJobApplicantsData] = useState<any[]>(
-    []
-  );
 
   // Fetch jobs data on component mount
   useEffect(() => {
@@ -61,19 +58,8 @@ export default function ApplicantList() {
         // merge API call
         const applicationsData =
           await fetchApplicationsByJobId(selectedJobFilter);
-        console.log('Fetched mergeAPI applications data:', applicationsData);
+        console.log('fetchApplicationsByJobId:', applicationsData);
         setApplicantCandidates(applicationsData);
-
-        // supabase query call
-        const activeApplicantsData =
-          await getApplicationsByJobId(selectedJobFilter);
-        console.log(
-          'Fetched supbase applicantions data:',
-          activeApplicantsData
-        );
-        if (activeApplicantsData) {
-          setActiveJobApplicantsData(activeApplicantsData);
-        }
 
         setIsLoading(false);
       } catch (error) {
@@ -90,7 +76,10 @@ export default function ApplicantList() {
   const notInvitedApplicants = useMemo(
     () =>
       applicantCandidates.filter(
-        (app) => !app.application?.supabase_application_id && !app.ai_summary
+        (app) =>
+          app.application?.supabase_application_id &&
+          (app.application?.status === 'not_invited' ||
+            !app.application?.status)
       ),
     [applicantCandidates]
   );
@@ -100,8 +89,7 @@ export default function ApplicantList() {
       applicantCandidates.filter(
         (app) =>
           app.application?.supabase_application_id &&
-          (!app.ai_summary ||
-            (Array.isArray(app.ai_summary) && app.ai_summary.length === 0))
+          app.application?.status === 'pending_interview'
       ),
     [applicantCandidates]
   );
@@ -110,47 +98,11 @@ export default function ApplicantList() {
     () =>
       applicantCandidates.filter(
         (app) =>
-          app.ai_summary &&
-          !(Array.isArray(app.ai_summary) && app.ai_summary.length !== 0)
+          app.application?.supabase_application_id &&
+          app.application?.status === 'interview_completed'
       ),
     [applicantCandidates]
   );
-
-  // v2
-  // Filter applicants based on status
-  // const notInvitedApplicants = useMemo(() => {
-  //   console.log('activeJobApplicantData', activeJobApplicantsData);
-  //   return applicantCandidates.filter((app) => {
-  //     const mergeId = app.application?.id;
-  //     if (!mergeId) return false;
-  //     const record = activeJobApplicantsData.find(
-  //       (r) => r.merge_application_id === mergeId
-  //     );
-  //     return record?.status === 'not_invited';
-  //   });
-  // }, [applicantCandidates]);
-
-  // const inProgressApplicants = useMemo(() => {
-  //   return applicantCandidates.filter((app) => {
-  //     const mergeId = app.application?.id;
-  //     if (!mergeId) return false;
-  //     const record = activeJobApplicantsData.find(
-  //       (r) => r.merge_application_id === mergeId
-  //     );
-  //     return record?.status === 'pending_interview';
-  //   });
-  // }, [applicantCandidates]);
-
-  // const completedApplicants = useMemo(() => {
-  //   return applicantCandidates.filter((app) => {
-  //     const mergeId = app.application?.id;
-  //     if (!mergeId) return false;
-  //     const record = activeJobApplicantsData.find(
-  //       (r) => r.merge_application_id === mergeId
-  //     );
-  //     return record?.status === 'interview_completed';
-  //   });
-  // }, [applicantCandidates]);
 
   // Filter based on search term and apply sorting
   const filterAndSortApplicants = (applicants: any[]) => {
@@ -249,7 +201,12 @@ export default function ApplicantList() {
                       variant="outline"
                       className="bg-blue-50 border-blue-200 text-blue-800 font-medium py-1.5"
                     >
-                      {applicantCandidates.length} applicants
+                      {
+                        applicantCandidates.filter(
+                          (app) => app.application?.supabase_application_id
+                        ).length
+                      }{' '}
+                      applicants
                     </Badge>
                   </div>
                 </div>

@@ -94,7 +94,8 @@ const ResumeViewer = ({ portalProps }: ResumeViewerProps) => {
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 pd-4">
+        <h2 className="text-2xl font-semibold">Loading resume...</h2>
         <Skeleton className="h-[600px] w-full" />
       </div>
     );
@@ -155,7 +156,7 @@ const ResumeViewer = ({ portalProps }: ResumeViewerProps) => {
 
   return (
     <div>
-      {/* <div
+      <div
         className="flex items-center justify-between cursor-pointer"
         onClick={() => setIsExpanded(!isExpanded)}
       >
@@ -245,7 +246,7 @@ const ResumeViewer = ({ portalProps }: ResumeViewerProps) => {
               ) : (
                 <Alert
                   intent="info"
-                  title="Candidate Resume Evaluation Not Available"
+                  title="Candidate resume evaluation not available"
                 >
                   <AlertDescription>
                     The resume evaluation for this candidate is not available
@@ -256,9 +257,9 @@ const ResumeViewer = ({ portalProps }: ResumeViewerProps) => {
             </div>
           </div>
         </div>
-      )} */}
+      )}
 
-      <div className="rounded-lg pb-4">
+      {/* <div className="rounded-lg pb-4">
         <div className="flex gap-6">
           <div className="w-3/5 h-[600px]">
             {isLoading ? (
@@ -339,7 +340,7 @@ const ResumeViewer = ({ portalProps }: ResumeViewerProps) => {
             )}
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

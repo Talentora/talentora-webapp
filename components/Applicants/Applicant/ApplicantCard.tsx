@@ -24,7 +24,15 @@ export function ApplicantCard({
   ActionProps
 }: ApplicantCardProps) {
   if (!ApplicantCandidate) {
-    return null;
+    return (
+      <div className="min-w-max h-full bg-white rounded-2xl shadow-lg p-6 flex space-x-6">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-lg font-semibold text-gray-500">
+            Failed to load candidate information. Please try again later.
+          </h3>
+        </div>
+      </div>
+    );
   }
 
   const candidateName = `${ApplicantCandidate.candidate.first_name} ${ApplicantCandidate.candidate.last_name}`;

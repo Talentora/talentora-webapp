@@ -85,7 +85,17 @@ function ScoreMeter({ label, score, outOf = 100 }: ScoreMeterProps) {
 export function ApplicantScores({ portalProps }: AssessmentScoreProps) {
   const { AI_summary } = portalProps;
 
-  if (!AI_summary) return null;
+  if (!AI_summary) {
+    return (
+      <div className="min-w-max h-full bg-white rounded-2xl p-6 shadow-lg">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-lg font-semibold text-gray-500">
+            Candidate assessment scores will appear here.
+          </h3>
+        </div>
+      </div>
+    );
+  }
 
   // Extract scores
   let overallScore = 0;
