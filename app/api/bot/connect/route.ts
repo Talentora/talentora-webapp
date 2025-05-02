@@ -2,9 +2,12 @@
 
 import { AccessToken } from 'livekit-server-sdk';
 import { NextRequest, NextResponse } from 'next/server';
-
+import { createClient } from '@/utils/supabase/server';
 export async function POST(request: NextRequest) {
   const { roomName, participantName, contextData } = await request.json();
+  
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (!roomName) {
     return NextResponse.json(
@@ -32,6 +35,8 @@ export async function POST(request: NextRequest) {
 
   try {
     // Create the AccessToken with the participant identity
+    contextData.applicant_name = user?.user_metadata?.full_name;
+
     const at = new AccessToken(apiKey, apiSecret, { identity: participantName });
     // Add the basic room grant with recording enabled
     at.addGrant({ 
