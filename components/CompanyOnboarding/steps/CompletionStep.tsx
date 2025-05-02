@@ -56,7 +56,6 @@ export const CompletionStep: React.FC = () => {
       try {
         const applications = await fetchAllApplications();
         const existingApplications = await getSupabaseApplications();
-        console.log(applications);
         const applicationsToCreate = applications.filter((application: any) => 
           !existingApplications?.some((existingApplication: any) => existingApplication.merge_id === application.id)
         );

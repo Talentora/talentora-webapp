@@ -1230,11 +1230,8 @@ export const getSupabaseApplications = async (): Promise<Tables<'applications'>[
 
 
 export const createApplication = async (jobId: string, mergeApplicationId: string): Promise<Tables<'applications'> | null> => {  
-  
+
   const supabase = await createClient();
-
-  console.log(jobId, mergeApplicationId, "asdf");
-
   const { data, error } = await supabase
     .from('applications')
     .insert({job_id: jobId, merge_application_id: mergeApplicationId})
