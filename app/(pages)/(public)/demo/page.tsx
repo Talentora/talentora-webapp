@@ -133,7 +133,7 @@ const DEMO_INTERVIEWS = [
       department: 'Data Science'
     },
     interviewer: {
-      name: 'Sarah',
+      name: 'Ben',
       role: 'Lead Data Scientist',
       style: 'Analytical and methodical',
       emotion: {
