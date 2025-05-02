@@ -155,7 +155,7 @@ const ResumeViewer = ({ portalProps }: ResumeViewerProps) => {
 
   return (
     <div>
-      <div
+      {/* <div
         className="flex items-center justify-between cursor-pointer"
         onClick={() => setIsExpanded(!isExpanded)}
       >
@@ -256,7 +256,90 @@ const ResumeViewer = ({ portalProps }: ResumeViewerProps) => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
+
+      <div className="rounded-lg pb-4">
+        <div className="flex gap-6">
+          <div className="w-3/5 h-[600px]">
+            {isLoading ? (
+              <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+              </div>
+            ) : displayUrl ? (
+              <object
+                data={displayUrl}
+                type="application/pdf"
+                className="w-full h-full border rounded-lg"
+                aria-label="PDF Document"
+              >
+                <div className="flex flex-col items-center justify-center h-full">
+                  <p className="text-muted-foreground mb-2">
+                    Unable to display PDF inline.
+                  </p>
+                  <Button onClick={handleDownload} variant="outline" size="sm">
+                    <Download className="h-4 w-4 mr-2" />
+                    Download PDF
+                  </Button>
+                </div>
+              </object>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                  <p className="text-muted-foreground mb-2">
+                    Failed to load PDF preview
+                  </p>
+                  {resumeData?.file_url && (
+                    <Button
+                      onClick={handleDownload}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download PDF
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="w-2/5 h-[600px]">
+            {hasResumeScores ? (
+              <div className="flex-1">
+                <h3 className="text-sm font-medium mb-2">Resume Assessment</h3>
+                <div className="space-y-3">
+                  <ScoreItem
+                    label="Overall Resume Score"
+                    score={(resumeAnalysis as any)?.resumeScore || 0}
+                  />
+                  <ScoreItem
+                    label="Technical Skills"
+                    score={(resumeAnalysis as any)?.technicalScore || 0}
+                  />
+                  <ScoreItem
+                    label="Culture Fit"
+                    score={(resumeAnalysis as any)?.cultureFitScore || 0}
+                  />
+                  <ScoreItem
+                    label="Communication"
+                    score={(resumeAnalysis as any)?.communicationScore || 0}
+                  />
+                </div>
+              </div>
+            ) : (
+              <Alert
+                intent="info"
+                title="Candidate Resume Evaluation Not Available"
+              >
+                <AlertDescription>
+                  The resume evaluation for this candidate is not available yet.
+                  Please check back later.
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

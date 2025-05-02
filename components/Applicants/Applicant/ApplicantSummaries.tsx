@@ -1,19 +1,22 @@
-import { portalProps } from '@/app/(pages)/(restricted)/applicants/[id]/page';
-import VideoTranscript, {
-  VideoTranscriptSkeleton
-} from 'components/AnalysisDisplay/VideoTranscript/index';
-import EmotionalAnalysis from 'components/AnalysisDisplay/EmotionalAnalysis/index';
-import { InterviewFeedbackComponent } from 'app/(pages)/(restricted)/reports/components/InterviewFeedback';
-import { interviewFeedback } from 'app/(pages)/(restricted)/reports/data/interview-feedback';
-
 import React, { useEffect, useState } from 'react';
 import * as Tabs from '@radix-ui/react-tabs';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
+import { portalProps } from '@/app/(pages)/(restricted)/applicants/[id]/page';
+import VideoTranscript, {
+  VideoTranscriptSkeleton
+} from 'components/AnalysisDisplay/VideoTranscript/index';
+import { InterviewFeedbackComponent } from 'app/(pages)/(restricted)/reports/components/InterviewFeedback';
+import { interviewFeedback } from 'app/(pages)/(restricted)/reports/data/interview-feedback';
+import ResumeViewer from '@/components/AnalysisDisplay/ResumeViewer';
 
 interface ProgressBarProps {
   label: string;
   value: number; // out of 10
+}
+
+interface AnalysisDisplayProps {
+  portalProps: portalProps;
 }
 
 function ProgressBar({ label, value }: ProgressBarProps) {
@@ -34,17 +37,12 @@ function ProgressBar({ label, value }: ProgressBarProps) {
   );
 }
 
-interface AnalysisDisplayProps {
-  portalProps: portalProps;
-}
-
 export function ApplicantSummaries({ portalProps }: AnalysisDisplayProps) {
+  const { AI_summary } = portalProps;
+
   const [tab, setTab] = useState<'overall' | 'emotional' | 'textEval'>(
     'overall'
   );
-  const { AI_summary } = portalProps;
-
-  // console.log('AI_summary: ', AI_summary);
 
   // Extract the overall summary explanation
   let explanation = '';
@@ -83,13 +81,13 @@ export function ApplicantSummaries({ portalProps }: AnalysisDisplayProps) {
       {/* Card */}
       <div className="bg-white rounded-2xl shadow-lg p-6">
         {/* Tabs + View Resume button */}
-        <div className="flex items-center justify-between mb-6">
-          <Tabs.Root
-            defaultValue="overall"
-            onValueChange={(value) =>
-              setTab(value as 'overall' | 'emotional' | 'textEval')
-            }
-          >
+        <Tabs.Root
+          defaultValue="overall"
+          onValueChange={(value) =>
+            setTab(value as 'overall' | 'emotional' | 'textEval')
+          }
+        >
+          <div className="flex items-center justify-between mb-6">
             <Tabs.List className="flex space-x-24 pb-2">
               {['overall', 'emotional', 'textEval'].map((tab) => (
                 <Tabs.Trigger
@@ -109,99 +107,97 @@ export function ApplicantSummaries({ portalProps }: AnalysisDisplayProps) {
               ))}
             </Tabs.List>
 
-            <div className={tab === 'textEval' ? 'hidden' : 'mt-3 mb-6'}>
-              <VideoTranscript portalProps={portalProps} />
-            </div>
+            <Dialog.Root>
+              <Dialog.Trigger asChild>
+                <button className="bg-purple-500 text-white px-4 py-2 rounded-full text-sm">
+                  View Resume
+                </button>
+              </Dialog.Trigger>
 
-            {/* Tab panes */}
-            <Tabs.Content value="overall" className="space-y-6">
-              <div className="space-y-2">
-                <h4 className="text-lg font-semibold">Candidate Summary</h4>
-                <p className="text-gray-500">{explanation}</p>
-              </div>
-            </Tabs.Content>
-
-            <Tabs.Content value="emotional" className="space-y-6">
-              {/* Replace with your emotional summary content */}
-              <div className="space-y-2">
-                <h4 className="text-lg font-semibold">Emotional Summary</h4>
-                {!emotionalAnalysis ? (
-                  <div>No emotional analysis available</div>
-                ) : (
-                  <>
-                    <div className="flex flex-row mb-6">
-                      <div className="flex-[4]">
-                        <p className="text-gray-700 mb-4">
-                          {typeof emotionalAnalysis === 'object' &&
-                          emotionalAnalysis !== null &&
-                          !Array.isArray(emotionalAnalysis) &&
-                          'explanation' in emotionalAnalysis
-                            ? typeof emotionalAnalysis.explanation === 'string'
-                              ? emotionalAnalysis.explanation
-                              : "We leverage AI to analyze the applicant's emotional state through facial expressions, voice, and language patterns throughout the interview."
-                            : "We leverage AI to analyze the applicant's emotional state through facial expressions, voice, and language patterns throughout the interview."}
-                        </p>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </Tabs.Content>
-
-            <Tabs.Content value="textEval">
-              {/* Replace with your text evaluation content */}
-              <InterviewFeedbackComponent feedback={interviewFeedback} />
-            </Tabs.Content>
-          </Tabs.Root>
-
-          <Dialog.Root>
-            <Dialog.Trigger asChild>
-              <button className="bg-purple-500 text-white px-4 py-2 rounded-full text-sm">
-                View Resume
-              </button>
-            </Dialog.Trigger>
-
-            <Dialog.Portal>
-              <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
-              <Dialog.Content
-                className="
-                fixed inset-0 m-auto 
-                max-w-4xl w-[90vw] h-[80vh] 
-                bg-white rounded-2xl p-6 
-                flex overflow-hidden
-              "
-              >
-                {/* PDF viewer */}
-                <div className="flex-1 border rounded-lg overflow-hidden">
-                  <iframe
-                    src="/path/to/resume.pdf"
-                    className="w-full h-full"
-                    title="Resume"
-                  />
-                </div>
-
-                {/* Resume assessment */}
-                <div className="w-72 ml-6 flex-shrink-0 overflow-y-auto">
-                  <h3 className="text-lg font-semibold mb-4">
-                    Resume Assessment
-                  </h3>
-                  <div className="space-y-4">
-                    <ProgressBar label="Overall Resume Score" value={2} />
-                    <ProgressBar label="Technical Skills" value={3} />
-                    <ProgressBar label="Culture Fit" value={2} />
-                    <ProgressBar label="Communication" value={1} />
+              <Dialog.Portal>
+                <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50 z-40" />
+                <Dialog.Content className="fixed inset-0 m-auto max-w-4xl w-[90vw] h-[80vh] bg-white rounded-2xl p-6 flex overflow-hidden z-50">
+                  <div className="flex-1">
+                    <ResumeViewer portalProps={portalProps} />
                   </div>
-                </div>
 
-                <Dialog.Close asChild>
-                  <button className="absolute top-4 right-4">
-                    <Cross2Icon className="w-5 h-5 text-gray-500 hover:text-gray-700" />
-                  </button>
-                </Dialog.Close>
-              </Dialog.Content>
-            </Dialog.Portal>
-          </Dialog.Root>
-        </div>
+                  {/* PDF viewer */}
+                  {/* <div className="flex-1 border rounded-lg overflow-hidden">
+                    <iframe
+                      src="/path/to/resume.pdf"
+                      className="w-full h-full"
+                      title="Resume"
+                    />
+                  </div> */}
+
+                  {/* Resume assessment */}
+                  {/* <div className="w-72 ml-6 flex-shrink-0 overflow-y-auto">
+                    <h3 className="text-lg font-semibold mb-4">
+                      Resume Assessment
+                    </h3>
+                    <div className="space-y-4">
+                      <ProgressBar label="Overall Resume Score" value={2} />
+                      <ProgressBar label="Technical Skills" value={3} />
+                      <ProgressBar label="Culture Fit" value={2} />
+                      <ProgressBar label="Communication" value={1} />
+                    </div>
+                  </div> */}
+
+                  <Dialog.Close asChild>
+                    <button className="absolute top-4 right-4">
+                      <Cross2Icon className="w-5 h-5 text-gray-500 hover:text-gray-700" />
+                    </button>
+                  </Dialog.Close>
+                </Dialog.Content>
+              </Dialog.Portal>
+            </Dialog.Root>
+          </div>
+
+          <div className={tab === 'textEval' ? 'hidden' : 'mt-3 mb-6'}>
+            <VideoTranscript portalProps={portalProps} />
+          </div>
+
+          {/* Tab panes */}
+          <Tabs.Content value="overall" className="space-y-6">
+            <div className="space-y-2">
+              <h4 className="text-lg font-semibold">Candidate Summary</h4>
+              <p className="text-gray-500">{explanation}</p>
+            </div>
+          </Tabs.Content>
+
+          <Tabs.Content value="emotional" className="space-y-6">
+            {/* Replace with your emotional summary content */}
+            <div className="space-y-2">
+              <h4 className="text-lg font-semibold">Emotional Summary</h4>
+              {!emotionalAnalysis ? (
+                <div>No emotional analysis available</div>
+              ) : (
+                <>
+                  <div className="flex flex-row mb-6">
+                    <div className="flex-[4]">
+                      <p className="text-gray-700 mb-4">
+                        {typeof emotionalAnalysis === 'object' &&
+                        emotionalAnalysis !== null &&
+                        !Array.isArray(emotionalAnalysis) &&
+                        'explanation' in emotionalAnalysis
+                          ? typeof emotionalAnalysis.explanation === 'string'
+                            ? emotionalAnalysis.explanation
+                            : "We leverage AI to analyze the applicant's emotional state through facial expressions, voice, and language patterns throughout the interview."
+                          : "We leverage AI to analyze the applicant's emotional state through facial expressions, voice, and language patterns throughout the interview."}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </Tabs.Content>
+
+          <Tabs.Content value="textEval">
+            {/* Replace with your text evaluation content */}
+            <InterviewFeedbackComponent feedback={interviewFeedback} />
+          </Tabs.Content>
+        </Tabs.Root>
+        <div className="flex items-center justify-between mb-6"></div>
       </div>
     </div>
   );
