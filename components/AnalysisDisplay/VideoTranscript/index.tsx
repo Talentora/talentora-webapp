@@ -6,6 +6,8 @@ import { AISummaryApplicant } from "@/types/analysis";
 import { portalProps } from "@/app/(pages)/(restricted)/applicants/[id]/page";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from 'react';
+import { getRecordingUrl } from '@/utils/aws_s3buckets';
+
 interface VideoTranscriptProps {
     portalProps: portalProps;
 }
@@ -23,25 +25,63 @@ export interface Recording {
   isVttEnabled: boolean
 }
 
-export const VideoTranscriptSkeleton = () => (
-    <div className="container mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-8">Rewatch the Interview</h1>
-        <div className="flex flex-col gap-4">
-            <div className="flex-1">
-                <Skeleton className="w-full aspect-video rounded-lg" />
-            </div>
-            <div className="flex flex-row flex-1 gap-4">
+export const VideoTranscriptSkeleton = () => {
+    const [videoUrl, setVideoUrl] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    
+    useEffect(() => {
+        const loadVideoUrl = async () => {
+            try {
+                const url = await getRecordingUrl("af4be366-5f9a-46a1-a48c-0788363168c0/6590b339-db89-415a-bc62-b3599af6bc48/interview_recording.mp4");
+                setVideoUrl(url);
+            } catch (error) {
+                console.error("Error loading video URL:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        
+        loadVideoUrl();
+    }, []);
+    
+    return (
+        <div className="container mx-auto py-8">
+            <h1 className="text-3xl font-bold mb-8">Rewatch the Interview</h1>
+            <div className="flex flex-col gap-4">
                 <div className="flex-1">
-                    <Skeleton className="h-[300px] w-full" />
+                    {isLoading ? (
+                        <Skeleton className="w-full aspect-video rounded-lg" />
+                    ) : videoUrl ? (
+                        <div className="w-full aspect-video rounded-lg overflow-hidden">
+                            <video
+                                controls
+                                className="w-full h-full"
+                                preload="auto"
+                                playsInline
+                            >
+                                <source src={videoUrl} type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    ) : (
+                        <div className="w-full aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+                            Failed to load video
+                        </div>
+                    )}
                 </div>
-                <div className="flex-1">
-                    <h2 className="text-2xl font-semibold mb-4">Interview Transcript</h2>
-                    <Skeleton className="h-[300px] w-full" />
+                <div className="flex flex-row flex-1 gap-4">
+                    <div className="flex-1">
+                        <Skeleton className="h-[300px] w-full" />
+                    </div>
+                    <div className="flex-1">
+                        <h2 className="text-2xl font-semibold mb-4">Interview Transcript</h2>
+                        <Skeleton className="h-[300px] w-full" />
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 const VideoTranscript = ({ portalProps }: VideoTranscriptProps) => {
     const { AI_summary: aiSummary } = portalProps;
