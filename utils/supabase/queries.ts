@@ -405,17 +405,16 @@ export const getRecruiter = async (
 };
 
 /**
- * Fetches the Greenhouse API key for the current user's company.
+ * Fetches the Merge API key for the current user's company.
  *
- * @returns The Greenhouse API key or null if not found.
+ * @returns The Merge API key or null if not found.
  * @throws Error if there's an issue fetching the data.
  */
 export const getMergeApiKey = async (): Promise<string | null> => {
   try {
-    const user = await getUser();
+    const user = await getUser(); 
 
-    if (!user || user?.user_metadata.role === 'applicant') {
-      // throw new Error('User not found');
+    if (!user || user.user_metadata?.role === 'applicant') {
       console.log("User not found")
       return null;
     }
@@ -434,7 +433,7 @@ export const getMergeApiKey = async (): Promise<string | null> => {
       return company.merge_account_token;
     }
   } catch (error) {
-    console.error('Error fetching Greenhouse API key:', error);
+    console.error('Error fetching Merge API key:', error);
     throw error;
   }
 };
@@ -1231,6 +1230,7 @@ export const getSupabaseApplications = async (): Promise<Tables<'applications'>[
 
 
 export const createApplication = async (jobId: string, mergeApplicationId: string): Promise<Tables<'applications'> | null> => {  
+
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('applications')
