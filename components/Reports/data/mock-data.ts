@@ -35,6 +35,11 @@ export interface ApplicantData {
 
 export type ChartType = "bar" | "line" | "scatter" | "pie" | "area" | "pivot";
 
+export interface ValueFieldConfig {
+  field: string;
+  aggregation: "count" | "sum" | "avg" | "min" | "max";
+}
+
 export interface ChartConfig {
   id: string;
   type: ChartType;
@@ -43,7 +48,7 @@ export interface ChartConfig {
   // Fields for data configuration
   rowFields: string[];    // X-axis fields for charts, row fields for pivot
   colFields: string[];    // Series fields for charts, column fields for pivot
-  valueFields: string[];  // Y-axis fields for charts, value fields for pivot
+  valueFields: ValueFieldConfig[];  // Y-axis fields for charts, value fields for pivot
   aggregation?: string;   // Aggregation method (count, sum, avg, etc.)
 }
 

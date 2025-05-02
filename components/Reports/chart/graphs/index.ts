@@ -1,7 +1,6 @@
 export { BaseGraph } from './BaseGraph';
-export { BarChart } from './BarChart';
-export { LineChart } from './LineChart';
-export { PieChart } from './PieChart';
-export { PivotTable } from './PivotTable';
+export { BarChartComponent } from './BarChart';
+export { LineChartComponent } from './LineChart';
+export { PieChartComponent } from './PieChart';
 
 export type { BaseGraphProps } from './BaseGraph'; 

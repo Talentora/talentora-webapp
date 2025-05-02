@@ -1,57 +1,40 @@
-import { BaseGraph, BaseGraphProps } from "./BaseGraph";
-import {
-  Pie,
-  PieChart as RechartsPieChart,
-  ResponsiveContainer,
-  Tooltip,
-  Cell,
-} from "recharts";
-import { processData } from "@/components/Reports/utils/chartDataProcessor";
-import { useMemo } from "react";
+import * as React from 'react';
+import { PieChart } from '@mui/x-charts';
+import { ChartConfig, ApplicantData, ValueFieldConfig } from '@/components/Reports/data/mock-data';
+import { groupAndAggregate } from './BaseGraph';
 
-// Color palette for pie chart segments
-const COLORS = [
-  '#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#0088fe',
-  '#00c49f', '#ffbb28', '#ff8042', '#a4de6c', '#d0ed57'
-];
+interface PieChartComponentProps {
+  config: ChartConfig;
+  data: ApplicantData[];
+}
 
-export const PieChart: React.FC<BaseGraphProps> = (props) => {
-  const { config, data } = props;
-  
-  const processedData = useMemo(() => {
-    const result = processData(data, {
-      rowFields: config.rowFields,
-      colFields: config.colFields,
-      valueFields: config.valueFields,
-      aggregation: config.aggregation
-    });
-    return result;
-  }, [data, config]);
+export function PieChartComponent({ config, data }: PieChartComponentProps) {
+  const labelField = config.rowFields[0];
+  const valueConfig: ValueFieldConfig | undefined = config.valueFields[0];
+  const valueField = valueConfig?.field;
+  const aggregation = valueConfig?.aggregation || "count";
+
+  // Use groupAndAggregate to group and aggregate data for the pie chart
+  let pieData: { label: string; value: number }[] = [];
+
+  if (labelField && valueField) {
+    pieData = groupAndAggregate(data, labelField, valueField, aggregation);
+  } else if (labelField) {
+    // If only labelField, just count occurrences
+    pieData = groupAndAggregate(data, labelField, "", "count");
+  }
+
+  // PieChart expects { id, value, label }
+  const chartData = pieData.map(d => ({
+    id: d.label,
+    value: d.value,
+    label: d.label,
+  }));
 
   return (
-    <BaseGraph {...props}>
-      <ResponsiveContainer width="100%" height="100%">
-        <RechartsPieChart>
-          <Pie
-            data={processedData}
-            dataKey={config.valueFields[0] || "value"}
-            nameKey={config.rowFields[0]}
-            cx="50%"
-            cy="50%"
-            outerRadius="80%"
-            label={(entry) => entry.name}
-            labelLine
-          >
-            {processedData.map((_, index) => (
-              <Cell 
-                key={`cell-${index}`} 
-                fill={COLORS[index % COLORS.length]} 
-              />
-            ))}
-          </Pie>
-          <Tooltip />
-        </RechartsPieChart>
-      </ResponsiveContainer>
-    </BaseGraph>
+    <PieChart
+      series={[{ data: chartData }]}
+      height={300}
+    />
   );
-}; 
+} 

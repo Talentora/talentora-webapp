@@ -1,4 +1,4 @@
- "use client"
+"use client";
 import {
   Dialog,
   DialogContent,
@@ -17,8 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { ChartConfig, ApplicantData } from "@/components/Reports/data/mock-data";
-import { useState, useEffect } from "react";
-import { GraphComponent } from "./Graph";
+import { useState } from "react";
 import { 
   DndContext, 
   closestCenter, 
@@ -28,10 +27,15 @@ import {
   PointerSensor,
   useDroppable
 } from "@dnd-kit/core";
-import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { BarChart2, LineChart as LineChartIcon, PieChart, Table, Hash, Type } from "lucide-react";
+import { BarChart2,Grip, LineChart as LineChartIcon, PieChart, Hash, Type } from "lucide-react";
 
+// Import chart preview components
+import {BarChartComponent} from "./graphs/BarChart";
+import {PieChartComponent} from "./graphs/PieChart";
+import {LineChartComponent} from "./graphs/LineChart";
+import { ScatterChartComponent } from "./graphs/ScatterChart";
 const availableFields = [
   { value: "candidate.first_name", label: "First Name", type: "text" },
   { value: "candidate.last_name", label: "Last Name", type: "text" },
@@ -45,6 +49,16 @@ const availableFields = [
   { value: "application.count", label: "Application Count", type: "number" },
   { value: "candidate.age", label: "Age", type: "number" },
   { value: "job.salary", label: "Salary", type: "number" },
+  // AI_Summary scores
+  { value: "AI_Summary.text_eval.technical.overall_score", label: "Tech Score", type: "number" },
+  { value: "AI_Summary.text_eval.behavioral.overall_score", label: "Behavioral Score", type: "number" },
+  { value: "AI_Summary.text_eval.experience.overall_score", label: "Experience Score", type: "number" },
+  { value: "AI_Summary.text_eval.communication.overall_score", label: "Communication Score", type: "number" },
+  { value: "AI_Summary.emotion_eval.overall_score", label: "Emotion Score", type: "number" },
+  { value: "AI_Summary.resume_analysis.resumeScore", label: "Resume Score", type: "number" },
+  { value: "AI_Summary.resume_analysis.technicalScore", label: "Resume Tech", type: "number" },
+  { value: "AI_Summary.resume_analysis.cultureFitScore", label: "Culture Fit", type: "number" },
+  { value: "AI_Summary.resume_analysis.communicationScore", label: "Resume Comm", type: "number" },
 ];
 
 interface EditChartDialogProps {
@@ -205,8 +219,23 @@ export function EditChartDialog({
         job: "j1",
         stage_order: 1
       },
+      AI_Summary: {
+        text_eval: {
+          technical: { overall_score: 80 },
+          behavioral: { overall_score: 70 },
+          experience: { overall_score: 75 },
+          communication: { overall_score: 85 },
+        },
+        emotion_eval: { overall_score: 90 },
+        resume_analysis: {
+          resumeScore: 88,
+          technicalScore: 80,
+          cultureFitScore: 85,
+          communicationScore: 82,
+        },
+      },
       hasSupabaseData: true,
-      hasMergeData: true
+      hasMergeData: true,
     }
   ]);
 
@@ -228,7 +257,7 @@ export function EditChartDialog({
       const allFields = [
         ...editingChart.rowFields,
         ...editingChart.colFields,
-        ...editingChart.valueFields
+        ...editingChart.valueFields.map(vf => vf.field)
       ];
       
       if (allFields.includes(fieldValue)) {
@@ -248,7 +277,7 @@ export function EditChartDialog({
       } else if (dropZoneId === "values") {
         setEditingChart({
           ...editingChart,
-          valueFields: [...editingChart.valueFields, fieldValue]
+          valueFields: [...editingChart.valueFields, { field: fieldValue, aggregation: "count" }]
         });
       }
     }
@@ -263,7 +292,7 @@ export function EditChartDialog({
     } else if (zone === 'columns') {
       updatedChart.colFields = updatedChart.colFields.filter(f => f !== field);
     } else if (zone === 'values') {
-      updatedChart.valueFields = updatedChart.valueFields.filter(f => f !== field);
+      updatedChart.valueFields = updatedChart.valueFields.filter(vf => vf.field !== field);
     }
     setEditingChart(updatedChart);
   };
@@ -272,7 +301,7 @@ export function EditChartDialog({
   const usedFields = editingChart ? [
     ...editingChart.rowFields,
     ...editingChart.colFields,
-    ...editingChart.valueFields
+    ...editingChart.valueFields.map(vf => vf.field)
   ] : [];
   
   const availableFieldsList = availableFields.filter(
@@ -281,9 +310,31 @@ export function EditChartDialog({
 
   if (!editingChart) return null;
 
+  // Chart preview switcher
+  function ChartPreview({ config, data }: { config: ChartConfig, data: ApplicantData[] }) {
+    if (config.type === "bar") {
+      return <BarChartComponent config={config} data={data} />;
+    }
+    if (config.type === "pie") {
+      return <PieChartComponent config={config} data={data} />;
+    }
+    if (config.type === "line") {
+      return <LineChartComponent config={config} data={data} />;
+    }
+    if (config.type === "scatter") {
+        return <ScatterChartComponent config={config} data={data} />;
+      }
+    // fallback
+    return (
+      <div className="flex items-center justify-center h-full text-gray-400">
+        Select a supported chart type to preview.
+      </div>
+    );
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-4xl z-[100]">
         <DialogHeader>
           <DialogTitle>{isNewChart ? "Create New Chart" : "Edit Chart"}</DialogTitle>
         </DialogHeader>
@@ -318,7 +369,7 @@ export function EditChartDialog({
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="z-[110]">
                     <SelectItem value="bar">
                       <div className="flex items-center gap-2">
                         <BarChart2 className="h-4 w-4" />
@@ -337,10 +388,10 @@ export function EditChartDialog({
                         <span>Pie Chart</span>
                       </div>
                     </SelectItem>
-                    <SelectItem value="pivot">
+                    <SelectItem value="scatter">
                       <div className="flex items-center gap-2">
-                        <Table className="h-4 w-4" />
-                        <span>Pivot Table</span>
+                        <Grip className="h-4 w-4" />
+                        <span>Scatter Chart</span>
                       </div>
                     </SelectItem>
                   </SelectContent>
@@ -385,21 +436,54 @@ export function EditChartDialog({
                 />
                 <DropZone 
                   id="values"
-                  title="Values" 
-                  fields={editingChart.valueFields}
-                  onDrop={(items) => setEditingChart({ ...editingChart, valueFields: items })}
-                  onRemove={(field) => handleRemoveField(field, 'values')}
+                  title="Values"
+                  fields={editingChart.valueFields.map(vf => vf.field)}
+                  onDrop={(items) => setEditingChart({
+                    ...editingChart,
+                    valueFields: items.map(field =>
+                      editingChart.valueFields.find(vf => vf.field === field) || { field, aggregation: "count" }
+                    )
+                  })}
+                  onRemove={(field) => setEditingChart({
+                    ...editingChart,
+                    valueFields: editingChart.valueFields.filter(vf => vf.field !== field)
+                  })}
                 />
               </div>
+
+              {editingChart.valueFields.map((vf, idx) => (
+                <div key={vf.field} className="flex items-center gap-2 mt-1">
+                  <span>{availableFields.find(f => f.value === vf.field)?.label}</span>
+                  <Select
+                    value={vf.aggregation}
+                    onValueChange={agg =>
+                      setEditingChart({
+                        ...editingChart,
+                        valueFields: editingChart.valueFields.map((v, i) =>
+                          i === idx ? { ...v, aggregation: agg as any } : v
+                        )
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="count">Count</SelectItem>
+                      <SelectItem value="sum">Sum</SelectItem>
+                      <SelectItem value="avg">Average</SelectItem>
+                      <SelectItem value="min">Min</SelectItem>
+                      <SelectItem value="max">Max</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              ))}
 
               {/* Chart Preview */}
               <div className="border rounded-lg p-3 bg-white">
                 <h4 className="text-sm font-medium mb-2">Preview</h4>
                 <div className="h-[250px]">
-                  <GraphComponent
-                    config={editingChart}
-                    data={previewData}
-                  />
+                  <ChartPreview config={editingChart} data={previewData} />
                 </div>
               </div>
             </div>

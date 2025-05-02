@@ -1,49 +1,37 @@
-import { BaseGraph, BaseGraphProps } from "./BaseGraph";
-import {
-  Bar,
-  BarChart as RechartsBarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import { processData } from "@/components/Reports/utils/chartDataProcessor";
-import { useMemo } from "react";
+import * as React from 'react';
+import { BarChart } from '@mui/x-charts';
+import { ChartConfig, ApplicantData, ValueFieldConfig } from '@/components/Reports/data/mock-data';
+import { getNestedValue } from '@/components/Reports/utils/getNestedValue';
+import { groupAndAggregate } from './BaseGraph';
 
-export const BarChart: React.FC<BaseGraphProps> = (props) => {
-  const { config, data } = props;
-  
-  const processedData = useMemo(() => {
-    const result = processData(data, {
-      rowFields: config.rowFields,
-      colFields: config.colFields,
-      valueFields: config.valueFields,
-      aggregation: config.aggregation
-    });
-    return result;
-  }, [data, config]);
+interface BarChartComponentProps {
+  config: ChartConfig;
+  data: ApplicantData[];
+}
+
+export function BarChartComponent({ config, data }: BarChartComponentProps) {
+  const xField = config.rowFields[0];
+  const valueConfig: ValueFieldConfig | undefined = config.valueFields[0];
+  const yField = valueConfig?.field;
+  const aggregation = valueConfig?.aggregation || "count";
+
+  let chartData: { label: string; value: number }[] = [];
+
+  if (xField && yField) {
+    chartData = groupAndAggregate(data, xField, yField, aggregation);
+  } else if (xField) {
+    // If only xField, just count occurrences
+    chartData = groupAndAggregate(data, xField, "", "count");
+  }
+
+  const xAxis = chartData.length > 0 ? [{ data: chartData.map((d) => d.label), label: xField }] : [];
+  const series = chartData.length > 0 ? [{ data: chartData.map((d) => d.value), label: yField || "Count" }] : [];
 
   return (
-    <BaseGraph {...props}>
-      <ResponsiveContainer width="100%" height="100%">
-        <RechartsBarChart data={processedData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis 
-            dataKey={config.rowFields[0]} 
-            angle={-45}
-            textAnchor="end"
-            height={80}
-          />
-          <YAxis />
-          <Tooltip />
-          <Bar
-            dataKey={config.valueFields[0] || "value"}
-            fill="#8884d8"
-            name={config.valueFields[0] || "Count"}
-          />
-        </RechartsBarChart>
-      </ResponsiveContainer>
-    </BaseGraph>
+    <BarChart
+      series={series}
+      xAxis={xAxis}
+      height={300}
+    />
   );
-}; 
+}
