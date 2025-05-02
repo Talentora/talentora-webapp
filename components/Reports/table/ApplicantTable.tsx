@@ -1,8 +1,8 @@
 "use client";
-import { ApplicantData } from "@/components/Reports/data/mock-data";
+import { ApplicantData } from "@/components/Reports/data/fake-data";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatDistanceToNow } from "date-fns";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useReportsDashboard } from "@/components/Reports/context/ReportsDashboardContext";
@@ -33,13 +33,17 @@ const getNestedValue = (obj: any, path: string): any => {
   }, obj);
 };
 
-// New status logic: 
-// - If hasSupabaseData === true => "invited"
-// - If hasSupabaseData === false/undefined => "not_invited"
-// - "invite_completed" is not used in this logic, but kept for UI compatibility
+// Status logic
 function getApplicantStatus(applicant: ApplicantData): "not_invited" | "invited" | "invite_completed" {
-  if (applicant.hasSupabaseData) return "invited";
-  return "not_invited";
+  if (applicant.AI_Summary && applicant.application) {
+    return "invite_completed"
+  }
+  else if (applicant.application) {
+    return "invited"
+  }
+  else {
+    return "not_invited"
+  }
 }
 
 const STATUS_BAR_COLORS: Record<"not_invited" | "invited" | "invite_completed", string> = {
@@ -55,43 +59,67 @@ const STATUS_BAR_LABELS: Record<"not_invited" | "invited" | "invite_completed", 
 };
 
 export const ApplicantTable = ({ data, chartFilter }: ApplicantTableProps) => {
-  // Get searchQuery from ReportsDashboardContext
   const { searchQuery } = useReportsDashboard();
   const [sortField, setSortField] = useState<string>("application.created_at");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [tab, setTab] = useState<"not_invited" | "invited" | "invite_completed">("not_invited");
-    console.log(data)
+  const [columnFilters, setColumnFilters] = useState<Record<string, string>>( {} );
+  const [filteringColumn, setFilteringColumn] = useState<string | null>(null);
+
+  // Helper to get unique values for a column
+  const getUniqueColumnValues = (key: string) => {
+    return Array.from(new Set(data.map(applicant => getNestedValue(applicant, key)).filter(Boolean)));
+  };
+
   // Filter by tab status
   const tabFilteredData = data.filter(applicant => getApplicantStatus(applicant) === tab);
 
-  // Filter data based on chart selection and search query
+  // Filter data based on chart selection, search query, and column filters
   const filteredData = tabFilteredData.filter(applicant => {
-    // Apply chart filter if present
+    // Chart filter
     if (chartFilter && chartFilter.field && chartFilter.value) {
       const fieldValue = getNestedValue(applicant, chartFilter.field);
       if (String(fieldValue || '') !== String(chartFilter.value)) {
         return false;
       }
     }
-    // Apply search query
+    // Search query
     if (searchQuery) {
       const lowerQuery = searchQuery.toLowerCase();
       const firstName = applicant.candidate?.first_name?.toLowerCase() || '';
       const lastName = applicant.candidate?.last_name?.toLowerCase() || '';
       const jobName = applicant.job?.name?.toLowerCase() || '';
       const stage = applicant.interviewStages?.name?.toLowerCase() || '';
-      return firstName.includes(lowerQuery) ||
-        lastName.includes(lowerQuery) ||
-        jobName.includes(lowerQuery) ||
-        stage.includes(lowerQuery);
+      if (
+        !(
+          firstName.includes(lowerQuery) ||
+          lastName.includes(lowerQuery) ||
+          jobName.includes(lowerQuery) ||
+          stage.includes(lowerQuery)
+        )
+      ) {
+        return false;
+      }
+    }
+    // Column filters
+    for (const [key, value] of Object.entries(columnFilters)) {
+      if (value && String(getNestedValue(applicant, key)) !== value) {
+        return false;
+      }
     }
     return true;
   });
 
   // Sort the filtered data
   const sortedData = [...filteredData].sort((a, b) => {
-    const aValue = getNestedValue(a, sortField) || '';
-    const bValue = getNestedValue(b, sortField) || '';
+    const aValue = getNestedValue(a, sortField);
+    const bValue = getNestedValue(b, sortField);
+    // Numeric sort for AI_Summary scores
+    if (sortField.startsWith("AI_Summary")) {
+      const aNum = typeof aValue === 'number' ? aValue : parseFloat(aValue) || 0;
+      const bNum = typeof bValue === 'number' ? bValue : parseFloat(bValue) || 0;
+      return sortDirection === 'asc' ? aNum - bNum : bNum - aNum;
+    }
     // Handle date sorting
     if (sortField === 'application.created_at') {
       const aDate = aValue ? new Date(aValue).getTime() : 0;
@@ -100,9 +128,9 @@ export const ApplicantTable = ({ data, chartFilter }: ApplicantTableProps) => {
     }
     // Default string comparison
     if (sortDirection === 'asc') {
-      return String(aValue).localeCompare(String(bValue));
+      return String(aValue || '').localeCompare(String(bValue || ''));
     } else {
-      return String(bValue).localeCompare(String(aValue));
+      return String(bValue || '').localeCompare(String(aValue || ''));
     }
   });
 
@@ -118,15 +146,14 @@ export const ApplicantTable = ({ data, chartFilter }: ApplicantTableProps) => {
   // Tab counts using new status logic
   const notInvitedCount = data.filter(a => getApplicantStatus(a) === "not_invited").length;
   const invitedCount = data.filter(a => getApplicantStatus(a) === "invited").length;
-  // For compatibility, show 0 for invite_completed
-  const inviteCompletedCount = 0;
+  const inviteCompletedCount = data.filter(a => getApplicantStatus(a) === "invite_completed").length;
 
   // Determine color for the current tab
   const statusBarColor = STATUS_BAR_COLORS[tab];
   const statusBarLabel = STATUS_BAR_LABELS[tab];
 
   return (
-    <div>
+    <div className="w-[600px]">
       {/* Colored bar at the top of the table based on status mode */}
       <div
         className={`h-2 w-full rounded-t-lg ${statusBarColor} transition-colors`}
@@ -134,7 +161,7 @@ export const ApplicantTable = ({ data, chartFilter }: ApplicantTableProps) => {
         title={statusBarLabel}
       />
       <Tabs value={tab} onValueChange={v => setTab(v as any)} className="w-full">
-        <TabsList>
+        <TabsList className="flex justify-between">
           <TabsTrigger value="not_invited" className="gap-1">
             <Send className="h-4 w-4" />
             <p>Not Invited </p>
@@ -147,7 +174,7 @@ export const ApplicantTable = ({ data, chartFilter }: ApplicantTableProps) => {
           </TabsTrigger>
           <TabsTrigger value="invite_completed" className="gap-1">
             <CircleCheckBig className="h-4 w-4" />
-            <p>Invite Completed</p>
+            <p>Completed</p>
             <Badge className="ml-2">{inviteCompletedCount}</Badge>
           </TabsTrigger>
         </TabsList>
@@ -171,7 +198,7 @@ export const ApplicantTable = ({ data, chartFilter }: ApplicantTableProps) => {
         </TabsContent>
         <TabsContent value="invite_completed">
           <ApplicantStatusTable
-            data={[]}
+            data={sortedData}
             sortField={sortField}
             sortDirection={sortDirection}
             handleSort={handleSort}
@@ -197,54 +224,162 @@ function ApplicantStatusTable({
   handleSort: (field: string) => void;
   status?: "not_invited" | "invited" | "invite_completed";
 }) {
+  // Define columns for each tab
+  let columns: {
+    key: string;
+    label: string;
+    sortable?: boolean;
+    render?: (applicant: ApplicantData) => React.ReactNode;
+  }[] = [
+    {
+      key: "candidate.first_name",
+      label: "Name",
+      sortable: true,
+      render: (applicant) => (
+        <>
+          {applicant.candidate?.first_name} {applicant.candidate?.last_name}
+        </>
+      ),
+    },
+    {
+      key: "job.name",
+      label: "Job",
+      sortable: true,
+      render: (applicant) => applicant.job?.name || "Unknown",
+    },
+    {
+      key: "interviewStages.name",
+      label: "Stage",
+      sortable: true,
+      render: (applicant) => applicant.interviewStages?.name || "Unknown",
+    },
+    {
+      key: "job.status",
+      label: "Status",
+      sortable: true,
+      render: (applicant) => (
+        <div className="flex items-center">
+          <div className={`w-2 h-2 rounded-full mr-2 ${applicant.job?.status === 'OPEN' ? 'bg-green-500' : 'bg-gray-500'}`} />
+          {applicant.job?.status || 'Unknown'}
+        </div>
+      ),
+    },
+  ];
+
+  if (status === "invited" || status === "invite_completed") {
+    columns.push({
+      key: "application.created_at",
+      label: "Invited",
+      sortable: true,
+      render: (applicant) =>
+        applicant.application?.created_at
+          ? formatDistanceToNow(new Date(applicant.application.created_at), { addSuffix: true })
+          : "Unknown",
+    });
+  }
+
+  if (status === "invite_completed") {
+    columns = [
+      ...columns,
+      {
+        key: "AI_Summary.text_eval.technical.overall_score",
+        label: "Tech Score",
+        sortable: true,
+        render: (applicant) =>
+          applicant.AI_Summary?.text_eval?.technical?.overall_score ?? "N/A",
+      },
+      {
+        key: "AI_Summary.text_eval.behavioral.overall_score",
+        label: "Behavioral Score",
+        sortable: true,
+        render: (applicant) =>
+          applicant.AI_Summary?.text_eval?.behavioral?.overall_score ?? "N/A",
+      },
+      {
+        key: "AI_Summary.text_eval.experience.overall_score",
+        label: "Experience Score",
+        sortable: true,
+        render: (applicant) =>
+          applicant.AI_Summary?.text_eval?.experience?.overall_score ?? "N/A",
+      },
+      {
+        key: "AI_Summary.text_eval.communication.overall_score",
+        label: "Communication Score",
+        sortable: true,
+        render: (applicant) =>
+          applicant.AI_Summary?.text_eval?.communication?.overall_score ?? "N/A",
+      },
+      {
+        key: "AI_Summary.emotion_eval.overall_score",
+        label: "Emotion Score",
+        sortable: true,
+        render: (applicant) =>
+          applicant.AI_Summary?.emotion_eval?.overall_score ?? "N/A",
+      },
+      {
+        key: "AI_Summary.resume_analysis.resumeScore",
+        label: "Resume Score",
+        sortable: true,
+        render: (applicant) =>
+          applicant.AI_Summary?.resume_analysis?.resumeScore ?? "N/A",
+      },
+      {
+        key: "AI_Summary.resume_analysis.technicalScore",
+        label: "Resume Tech",
+        sortable: true,
+        render: (applicant) =>
+          applicant.AI_Summary?.resume_analysis?.technicalScore ?? "N/A",
+      },
+      {
+        key: "AI_Summary.resume_analysis.cultureFitScore",
+        label: "Culture Fit",
+        sortable: true,
+        render: (applicant) =>
+          applicant.AI_Summary?.resume_analysis?.cultureFitScore ?? "N/A",
+      },
+      {
+        key: "AI_Summary.resume_analysis.communicationScore",
+        label: "Resume Comm",
+        sortable: true,
+        render: (applicant) =>
+          applicant.AI_Summary?.resume_analysis?.communicationScore ?? "N/A",
+      },
+    ];
+  }
+
   return (
-    <div className="border rounded-lg">
-      <Table>
+    <div className="border rounded-lg overflow-x-auto w-full">
+      <Table className="min-w-[900px]">
         <TableHeader>
           <TableRow>
-            <TableHead onClick={() => handleSort('candidate.first_name')} className="cursor-pointer">
-              Name {sortField === 'candidate.first_name' && (sortDirection === 'asc' ? '↑' : '↓')}
-            </TableHead>
-            <TableHead onClick={() => handleSort('job.name')} className="cursor-pointer">
-              Job {sortField === 'job.name' && (sortDirection === 'asc' ? '↑' : '↓')}
-            </TableHead>
-            <TableHead onClick={() => handleSort('interviewStages.name')} className="cursor-pointer">
-              Stage {sortField === 'interviewStages.name' && (sortDirection === 'asc' ? '↑' : '↓')}
-            </TableHead>
-            <TableHead onClick={() => handleSort('job.status')} className="cursor-pointer">
-              Status {sortField === 'job.status' && (sortDirection === 'asc' ? '↑' : '↓')}
-            </TableHead>
-            <TableHead onClick={() => handleSort('application.created_at')} className="cursor-pointer">
-              Applied {sortField === 'application.created_at' && (sortDirection === 'asc' ? '↑' : '↓')}
-            </TableHead>
+            {columns.map((col) => (
+              <TableHead
+                key={col.key}
+                onClick={col.sortable ? () => handleSort(col.key) : undefined}
+                className={col.sortable ? "cursor-pointer" : ""}
+              >
+                {col.label}
+                {col.sortable && sortField === col.key && (sortDirection === 'asc' ? ' ↑' : ' ↓')}
+              </TableHead>
+            ))}
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.length > 0 ? (
             data.map((applicant, index) => (
               <TableRow key={applicant.application?.id || index}>
-                <TableCell className="font-medium">
-                  {applicant.candidate?.first_name} {applicant.candidate?.last_name}
-                </TableCell>
-                <TableCell>{applicant.job?.name || 'Unknown'}</TableCell>
-                <TableCell>{applicant.interviewStages?.name || 'Unknown'}</TableCell>
-                <TableCell>
-                  <div className="flex items-center">
-                    <div className={`w-2 h-2 rounded-full mr-2 ${applicant.job?.status === 'OPEN' ? 'bg-green-500' : 'bg-gray-500'}`} />
-                    {applicant.job?.status || 'Unknown'}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {applicant.application?.created_at
-                    ? formatDistanceToNow(new Date(applicant.application.created_at), { addSuffix: true })
-                    : 'Unknown'
-                  }
-                </TableCell>
+                {columns.map((col) => (
+                  <TableCell key={col.key}>
+                    {col.render
+                      ? col.render(applicant)
+                      : getNestedValue(applicant, col.key) ?? "N/A"}
+                  </TableCell>
+                ))}
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
+              <TableCell colSpan={columns.length} className="text-center py-4 text-muted-foreground">
                 No applicants found
               </TableCell>
             </TableRow>

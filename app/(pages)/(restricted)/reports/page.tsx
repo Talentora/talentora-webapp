@@ -1,11 +1,11 @@
 import { fetchAllApplications } from "@/server/applications";
 import { ApplicantData } from "@/components/Reports/data/mock-data";
 import ReportsDashboard from "@/components/Reports/dashboard/ReportsDashboard";
-
+import { generateFakeData } from "@/components/Reports/data/fake-data";
 export default async function ReportsPage() {
   // Server-side fetch
-  const applicantData: ApplicantData[] = await fetchAllApplications();
-
+  // const applicantData: ApplicantData[] = await fetchAllApplications();
+  const applicantData = generateFakeData(100);
   if (!applicantData || applicantData.length === 0) {
     // You could render an error component, throw, or log
     // For now, let's throw an error to prevent rendering the dashboard with no data

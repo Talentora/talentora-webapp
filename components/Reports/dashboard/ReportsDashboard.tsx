@@ -4,7 +4,8 @@ import DashboardNavbar from "./DashboardNavbar";
 import DashboardCharts from "./DashboardCharts";
 import DashboardTable from "../dashboard/DashboardTable";
 import DashboardEditDialog from "./DashboardEditDialog";
-import { type ApplicantData } from "../data/mock-data";
+// import { type ApplicantData } from "../data/mock-data";
+import { type ApplicantData } from "../data/fake-data";
 
 export default function ReportsDashboard({ applicantData }: { applicantData: ApplicantData[] }) {
   return (

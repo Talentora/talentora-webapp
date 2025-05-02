@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useMemo, useCallback } from "react";
-import { initialCharts, type ChartConfig, type ApplicantData } from "@/components/Reports/data/mock-data";
+import { initialCharts, type ChartConfig} from "@/components/Reports/data/mock-data";
+import { type ApplicantData } from "../data/fake-data";
 
 interface Filters {
   jobNames: string[];
