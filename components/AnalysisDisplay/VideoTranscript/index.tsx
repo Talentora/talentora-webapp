@@ -25,6 +25,49 @@ export interface Recording {
   isVttEnabled: boolean;
 }
 
+// Component that displays a video with the hardcoded path
+export const HardcodedVideo = () => {
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    const loadVideoUrl = async () => {
+      try {
+        const url = await getRecordingUrl("af4be366-5f9a-46a1-a48c-0788363168c0/6590b339-db89-415a-bc62-b3599af6bc48/interview_recording.mp4");
+        setVideoUrl(url);
+      } catch (error) {
+        console.error("Error loading video URL:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadVideoUrl();
+  }, []);
+  
+  return (
+    <div className="w-full aspect-video rounded-lg overflow-hidden">
+      {isLoading ? (
+        <Skeleton className="w-full h-full" />
+      ) : videoUrl ? (
+        <video
+          controls
+          className="w-full h-full"
+          preload="auto"
+          playsInline
+        >
+          <source src={videoUrl} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      ) : (
+        <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+          Failed to load video
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const VideoTranscriptSkeleton = () => {
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -184,10 +227,14 @@ const VideoTranscript = ({ portalProps }: VideoTranscriptProps) => {
   if (!recording || !transcript) {
     return (
       <div className="container mx-auto">
-        {/* <p>{JSON.stringify(aiSummary[0])}</p> */}
-        <h1 className="text-lg font-semibold">Rewatch the Interview</h1>
-        <div className="text-center text-gray-500">
-          No interview recording or transcript found.
+        <h1 className="text-lg font-semibold mb-4">Rewatch the Interview</h1>
+        <div className="flex flex-col gap-4">
+          <div className="flex-1">
+            <HardcodedVideo />
+          </div>
+          <div className="text-center text-gray-500 mt-4">
+            No transcript data available.
+          </div>
         </div>
       </div>
     );
