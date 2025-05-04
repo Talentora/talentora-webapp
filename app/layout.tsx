@@ -5,34 +5,18 @@ import { PropsWithChildren, Suspense } from 'react';
 import '@/styles/main.css';
 import Loading from '@/components/Layout/Loading';
 import NextTopLoader from 'nextjs-toploader';
-import { createClient } from '@/utils/supabase/server';
 import ReactQueryProvider from '@/components/Providers/ReactQueryProvider';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import DynamicSidebar from '@/components/Layout/Sidebar/DynamicSidebar';
 import AuthListener from '@/components/AuthListener';
+import { getUserSessionDetails } from '@/utils/auth-helpers/server';
 
 const title = 'Talentora';
 const description = 'Talentora is a platform for creating and managing AI-powered interviews.';
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  let role = null;
-  let isSidebarVisible = false;
-
-  try {
-    // Create the Supabase client
-    const supabase = await createClient();
-    
-    // Get the session
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      role = user.user_metadata.role;
-      isSidebarVisible = role === 'recruiter';
-    }
-
-   
-  } catch (error) {
-    console.error("Error in layout:", error);
-  }
+  // Get user session details using the server action
+  const { role, isSidebarVisible } = await getUserSessionDetails();
 
   return (
     <html lang="en" suppressHydrationWarning>
