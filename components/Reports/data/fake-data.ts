@@ -3,15 +3,22 @@
 import { faker } from '@faker-js/faker';
 
 export interface Candidate {
+  id?: string;
   first_name: string;
   last_name: string;
+  email_addresses?: { email?: string }[];
+  title?: string;
   locations: { name: string }[];
+  applications?: string[];
+  created_at?: string;
+  modified_at?: string;
 }
 
 export interface Application {
   id: string;
+  job_id?: string;
   created_at: string; // ISO date string
-//   AI_Summary: string;
+  current_stage?: string;
 }
 
 export interface EmotionEval {
@@ -134,11 +141,23 @@ export interface AI_Summary {
 
 export interface ApplicantData {
   candidate: Candidate;
-  job: { name: string; status: string };
-  interviewStages: { name: string };
-  application: Application | null;
-  AI_Summary: AI_Summary | null;
-  hasSupabaseData?: boolean; // Add this for status logic
+  job?: { 
+    id?: string;
+    name: string; 
+    status: string;
+    description?: string;
+    code?: string;
+  };
+  interviewStages?: { 
+    id?: string;
+    name: string;
+    job?: string;
+    stage_order?: number;
+  };
+  application?: Application | null;
+  AI_Summary?: AI_Summary | null;
+  hasSupabaseData?: boolean;
+  hasMergeData?: boolean;
 }
 
 // Helper to generate random quotes

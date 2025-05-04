@@ -1,6 +1,6 @@
 export interface ApplicantData {
   candidate?: {
-    id: string;
+    id?: string;
     first_name: string;
     last_name: string;
     email_addresses?: { email?: string }[];
@@ -11,24 +11,25 @@ export interface ApplicantData {
     modified_at?: string;
   };
   job?: {
-    id: string;
+    id?: string;
     name: string;
     status: string;
     description?: string;
     code?: string;
   };
   application?: {
-    id: string;
-    job_id: string;
-    created_at: string;
-    current_stage: string;
+    id?: string;
+    job_id?: string;
+    created_at?: string;
+    current_stage?: string;
   };
   interviewStages?: {
-    id: string;
+    id?: string;
     name: string;
-    job: string;
-    stage_order: number;
+    job?: string;
+    stage_order?: number;
   };
+  AI_Summary?: any;
   hasMergeData?: boolean;
   hasSupabaseData?: boolean;
 }
