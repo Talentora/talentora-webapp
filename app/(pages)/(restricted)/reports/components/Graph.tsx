@@ -1,9 +1,9 @@
-import { ChartConfig, ApplicantData } from "@/components/Reports/data/mock-data";
+import { ChartConfig, ApplicantData } from "../data/mock-data";
 import { useMemo } from "react";
-import { BarChartComponent } from "./graphs/BarChart";
-import { LineChartComponent } from "./graphs/LineChart";
-import { PieChartComponent } from "./graphs";
-import { ScatterChartComponent } from "./graphs/ScatterChart";
+import { BarChart } from "./graphs/BarChart";
+import { LineChart } from "./graphs/LineChart";
+import { PieChart } from "./graphs/PieChart";
+import { PivotTable } from "./graphs/PivotTable";
 
 interface GraphComponentProps {
   config: ChartConfig;
@@ -34,13 +34,13 @@ export const GraphComponent: React.FC<GraphComponentProps> = ({
 
     switch (config.type) {
       case "bar":
-        return <BarChartComponent {...props} />;
+        return <BarChart {...props} />;
       case "line":
-        return <LineChartComponent {...props} />;
+        return <LineChart {...props} />;
       case "pie":
-        return <PieChartComponent {...props} />;
-      case "scatter":
-        return <ScatterChartComponent {...props} />;
+        return <PieChart {...props} />;
+      case "pivot":
+        return <PivotTable {...props} />;
       default:
         return <div>Unsupported chart type: {config.type}</div>;
     }

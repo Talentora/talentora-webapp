@@ -11,7 +11,7 @@ import {
 import { Info } from 'lucide-react';
 import { EnrichedApplication } from '@/hooks/useApplicant';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { cn } from '@/utils/cn';
 
 interface AssessmentCardProps {
   application: EnrichedApplication;
