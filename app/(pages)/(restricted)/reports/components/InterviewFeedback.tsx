@@ -10,7 +10,7 @@ import {
   type CommunicationFeedback,
   type ExperienceFeedback,
   type BehavioralFeedback,
-} from 'app/(pages)/(restricted)/reports/data/interview-feedback';
+} from '../data/interview-feedback';
 import { ChartContainer } from '@/components/ui/chart';
 
 interface ScoreCardProps {

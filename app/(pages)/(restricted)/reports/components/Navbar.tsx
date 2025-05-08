@@ -1,42 +1,64 @@
-"use client"
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MultiSelect } from "@/components/ui/multi-select";
+import { ApplicantData } from "../data/mock-data";
+import { useEffect, useMemo, useState } from "react";
+import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Search, Filter, ChevronDown } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { useState, useMemo, useEffect } from "react";
-import { useReportsDashboard } from "../context/ReportsDashboardContext";
+import { Card } from "@/components/ui/card";
 
-export default function DashboardNavbar() {
-  const {
-    filters,
-    setFilters,
-    applyFilters,
-    filteredData,
-    applicantData,
-    searchQuery,
-    setSearchQuery,
-  } = useReportsDashboard();
+interface NavbarProps {
+  uniqueLocations: string[];
+  uniqueJobNames: string[];
+  uniqueStages: string[];
+  uniqueJobStatuses: string[];
+  filters: {
+    locations: string[];
+    jobNames: string[];
+    stages: string[];
+    jobStatuses: string[];
+    dateRange: {
+      start: Date | null;
+      end: Date | null;
+    };
+    jobSearch: string;
+  };
+  setFilters: React.Dispatch<React.SetStateAction<{
+    locations: string[];
+    jobNames: string[];
+    stages: string[];
+    jobStatuses: string[];
+    dateRange: {
+      start: Date | null;
+      end: Date | null;
+    };
+    jobSearch: string;
+  }>>;
+  applyFilters: () => void;
+  filteredData: any[];
+  mockData: any[];
+}
 
+export const Navbar = ({
+  uniqueLocations,
+  uniqueJobNames,
+  uniqueStages,
+  uniqueJobStatuses,
+  filters,
+  setFilters,
+  applyFilters,
+  filteredData,
+  mockData
+}: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  // Compute unique values for Navbar
-  const uniqueLocations = useMemo(() => Array.from(new Set(applicantData
-    .filter(d => d.candidate && d.candidate.locations && d.candidate.locations.length > 0)
-    .map(d => d.candidate?.locations?.[0]?.name || 'Unknown')
-    .filter(Boolean) as string[])), [applicantData]);
-  const uniqueJobNames = useMemo(() => Array.from(new Set(applicantData
-    .filter(d => d.job && d.job.name)
-    .map(d => d.job?.name || 'Unknown'))), [applicantData]);
-  const uniqueStages = useMemo(() => Array.from(new Set(applicantData
-    .filter(d => d.interviewStages && d.interviewStages.name)
-    .map(d => d.interviewStages?.name || 'Unknown'))), [applicantData]);
-  const uniqueJobStatuses = useMemo(() => Array.from(new Set(applicantData
-    .filter(d => d.job && d.job.status)
-    .map(d => d.job?.status || 'Unknown'))), [applicantData]);
-
+  
   // Filter jobs based on search term
   const filteredJobs = useMemo(() => {
     if (!filters.jobSearch) return uniqueJobNames;
@@ -51,25 +73,16 @@ export default function DashboardNavbar() {
   }, [filters, applyFilters]);
 
   return (
-    <div className="w-full sticky top-0">
+    <div className="w-full border-b bg-background sticky top-0 z-10 shadow-sm">
       <div className="container mx-auto py-4">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Applicant Reports</h1>
+          
           <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold">Applicant Reports</h1>
-            {/* <div className="text-sm text-muted-foreground">
-              {filteredData.length} of {applicantData.length} applicants
-            </div> */}
-          </div>
-          <div className="flex flex-col md:flex-row md:items-center gap-4 w-full md:w-auto">
-            <div className="relative w-full md:w-64">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search applicants..."
-                className="pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+            <div className="text-sm text-muted-foreground">
+              {filteredData.length} of {mockData.length} applicants
             </div>
+            
             <Popover open={isOpen} onOpenChange={setIsOpen}>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="gap-2">
@@ -115,6 +128,7 @@ export default function DashboardNavbar() {
                       />
                     </div>
                   </div>
+                  
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <h4 className="text-sm font-medium">Location</h4>
@@ -133,6 +147,7 @@ export default function DashboardNavbar() {
                         placeholder="Select locations"
                       />
                     </div>
+                    
                     <div className="space-y-2">
                       <h4 className="text-sm font-medium">Job Status</h4>
                       <MultiSelect
@@ -151,6 +166,7 @@ export default function DashboardNavbar() {
                       />
                     </div>
                   </div>
+                  
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium">Application Stage</h4>
                     <MultiSelect
@@ -168,6 +184,7 @@ export default function DashboardNavbar() {
                       placeholder="Select application stages"
                     />
                   </div>
+                  
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium">Application Date Range</h4>
                     <div className="flex flex-col space-y-2">
@@ -217,4 +234,4 @@ export default function DashboardNavbar() {
       </div>
     </div>
   );
-} 
+}; 
