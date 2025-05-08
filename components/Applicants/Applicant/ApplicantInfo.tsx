@@ -27,7 +27,9 @@ export default function ApplicantInfo({
   const phoneNumber =
     ApplicantCandidate.candidate.phone_numbers?.[0]?.value || 'No phone number';
   const jobName = ApplicantCandidate.job.name || 'No job specified';
-  const appliedAt = ApplicantCandidate.application.created_at ? new Date(ApplicantCandidate.application.created_at).toLocaleDateString() : 'Unknown date';
+  const appliedAt = ApplicantCandidate.application.created_at
+    ? new Date(ApplicantCandidate.application.created_at).toLocaleDateString()
+    : 'Unknown date';
   return (
     <Card className="border-none">
       <CardHeader className="flex flex-row items-center gap-4">
@@ -43,7 +45,10 @@ export default function ApplicantInfo({
         <div>
           <CardTitle>{candidateName}</CardTitle>
           <CardDescription>
-            <Link href={`/jobs/${ApplicantCandidate.job.id}`} className="hover:underline">
+            <Link
+              href={`/jobs/${ApplicantCandidate.job.id}`}
+              className="hover:underline"
+            >
               {jobName}
             </Link>
           </CardDescription>
@@ -61,10 +66,7 @@ export default function ApplicantInfo({
           </div>
           <div className="flex items-center gap-2">
             <CalendarDays className="w-4 h-4" />
-            <span className="text-sm">
-              Applied on{' '}
-              {appliedAt}
-            </span>
+            <span className="text-sm">Applied on {appliedAt}</span>
           </div>
           {/* <div className="flex items-center">
             <span className="text-sm font-medium">Current Stage: </span>

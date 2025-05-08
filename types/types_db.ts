@@ -87,6 +87,7 @@ export type Database = {
           id: string
           job_id: string
           merge_application_id: string | null
+          status: Database["public"]["Enums"]["application_status"] | null
         }
         Insert: {
           applicant_id?: string | null
@@ -94,6 +95,7 @@ export type Database = {
           id?: string
           job_id: string
           merge_application_id?: string | null
+          status?: Database["public"]["Enums"]["application_status"] | null
         }
         Update: {
           applicant_id?: string | null
@@ -101,6 +103,7 @@ export type Database = {
           id?: string
           job_id?: string
           merge_application_id?: string | null
+          status?: Database["public"]["Enums"]["application_status"] | null
         }
         Relationships: [
           {
@@ -169,6 +172,7 @@ export type Database = {
           industry: string | null
           location: string | null
           merge_account_token: string | null
+          merge_linked_account_id: string | null
           name: string
           payment_method: string | null
           provider_id: string | null
@@ -183,6 +187,7 @@ export type Database = {
           industry?: string | null
           location?: string | null
           merge_account_token?: string | null
+          merge_linked_account_id?: string | null
           name: string
           payment_method?: string | null
           provider_id?: string | null
@@ -197,6 +202,7 @@ export type Database = {
           industry?: string | null
           location?: string | null
           merge_account_token?: string | null
+          merge_linked_account_id?: string | null
           name?: string
           payment_method?: string | null
           provider_id?: string | null
@@ -386,16 +392,22 @@ export type Database = {
         Row: {
           company_id: string | null
           id: string
+          job_name: string | null
+          job_resume_config: Json | null
           merge_id: string
         }
         Insert: {
           company_id?: string | null
           id?: string
+          job_name?: string | null
+          job_resume_config?: Json | null
           merge_id: string
         }
         Update: {
           company_id?: string | null
           id?: string
+          job_name?: string | null
+          job_resume_config?: Json | null
           merge_id?: string
         }
         Relationships: [
@@ -488,14 +500,20 @@ export type Database = {
       recruiters: {
         Row: {
           company_id: string | null
+          email: string | null
+          full_name: string | null
           id: string
         }
         Insert: {
           company_id?: string | null
+          email?: string | null
+          full_name?: string | null
           id: string
         }
         Update: {
           company_id?: string | null
+          email?: string | null
+          full_name?: string | null
           id?: string
         }
         Relationships: [
@@ -578,6 +596,10 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      application_status:
+        | "not_invited"
+        | "pending_interview"
+        | "interview_completed"
       pricing_plan_interval: "day" | "week" | "month" | "year"
       pricing_type: "one_time" | "recurring"
       subscription_status:
@@ -704,6 +726,11 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      application_status: [
+        "not_invited",
+        "pending_interview",
+        "interview_completed",
+      ],
       pricing_plan_interval: ["day", "week", "month", "year"],
       pricing_type: ["one_time", "recurring"],
       subscription_status: [

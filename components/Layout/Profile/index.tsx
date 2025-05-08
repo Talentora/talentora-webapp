@@ -7,6 +7,7 @@ import { User, LogOut } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { type Database } from '@/types/types_db';
+import { createClient } from '@/utils/supabase/client';
 type Company = Database['public']['Tables']['companies']['Row'];
 const Profile = ({
   user,
@@ -23,21 +24,16 @@ const Profile = ({
   const router = useRouter();
   const companyData = company;
   const pathname = usePathname();
+  const supabase = createClient();
 
   const handleSignOut = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     queryClient.clear();
     console.log('Signing out...');
     try {
-      const response = await fetch('/api/auth/signout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      console.log('Sign out response:', response);
-
-      if (response.ok) {
-        const redirectUrl = response.headers.get('location') || '/';
-        router.push(redirectUrl);
+      const response = await supabase.auth.signOut();
+      if (response) {
+        router.push('/');
         router.refresh();
       } else {
         console.error('Sign out failed');

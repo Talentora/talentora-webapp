@@ -588,3 +588,24 @@ export async function updateName(formData: FormData) {
     );
   }
 }
+
+/**
+ * Get user session details from the server.
+ * This is a dedicated server action for safely getting user information without cookie issues.
+ * 
+ * @returns {Promise<{user: any | null, role: string | null, isSidebarVisible: boolean}>}
+ */
+export async function getUserSessionDetails() {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    const role = user?.user_metadata?.role || null;
+    const isSidebarVisible = role === 'recruiter';
+    
+    return { user, role, isSidebarVisible };
+  } catch (error) {
+    console.error("Error getting user session details:", error);
+    return { user: null, role: null, isSidebarVisible: false };
+  }
+}

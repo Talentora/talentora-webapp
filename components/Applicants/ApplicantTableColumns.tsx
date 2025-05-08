@@ -1,56 +1,66 @@
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowUpDown, Check } from 'lucide-react';
-import { 
-  hasBeenInvited, 
-  hasCompletedInterview, 
-  getAISummaryScore, 
-  ScoreBadge, 
-  InterviewStatus 
+import {
+  hasBeenInvited,
+  hasCompletedInterview,
+  getAISummaryScore,
+  ScoreBadge,
+  InterviewStatus
 } from './ApplicantStatusBadges';
 import { Badge } from '@/components/ui/badge';
 
 // Helper function to get resume analysis scores
-const getResumeAnalysisScore = (applicant: any, scoreType: string): number | null => {
+const getResumeAnalysisScore = (
+  applicant: any,
+  scoreType: string
+): number | null => {
   if (!applicant.ai_summary) return null;
-  
+
   if (Array.isArray(applicant.ai_summary) && applicant.ai_summary.length > 0) {
-    const sortedSummaries = [...applicant.ai_summary].sort((a, b) => 
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    const sortedSummaries = [...applicant.ai_summary].sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
-    
+
     const latestSummary = sortedSummaries[0];
-    return latestSummary?.resume_analysis?.[scoreType] || 
-           latestSummary?.overall_summary?.[scoreType] || 
-           null;
+    return (
+      latestSummary?.resume_analysis?.[scoreType] ||
+      latestSummary?.overall_summary?.[scoreType] ||
+      null
+    );
   }
-  
-  return applicant.ai_summary.resume_analysis?.[scoreType] || 
-         applicant.ai_summary.overall_summary?.[scoreType] || 
-         applicant.ai_summary[scoreType] || 
-         null;
+
+  return (
+    applicant.ai_summary.resume_analysis?.[scoreType] ||
+    applicant.ai_summary.overall_summary?.[scoreType] ||
+    applicant.ai_summary[scoreType] ||
+    null
+  );
 };
 
 // Score badge component for resume scores
 export const ResumeScoreBadge = ({ score }: { score: number | null }) => {
   if (score === null) return <span className="text-gray-500">N/A</span>;
-  
+
   let badgeVariant, textColor, bgColor;
-  
+
   if (score >= 80) {
-    textColor = "text-white font-semibold";
-    bgColor = "bg-green-600";
+    textColor = 'text-white font-semibold';
+    bgColor = 'bg-green-600';
   } else if (score >= 60) {
-    textColor = "text-yellow-900 font-semibold";
-    bgColor = "bg-yellow-400";
+    textColor = 'text-yellow-900 font-semibold';
+    bgColor = 'bg-yellow-400';
   } else {
-    textColor = "text-white font-semibold";
-    bgColor = "bg-red-600";
+    textColor = 'text-white font-semibold';
+    bgColor = 'bg-red-600';
   }
-  
+
   return (
-    <div className={`px-2 py-1 rounded-full text-xs font-medium ${textColor} ${bgColor}`}>
+    <div
+      className={`px-2 py-1 rounded-full max-w-min text-xs font-medium ${textColor} ${bgColor}`}
+    >
       {score}
     </div>
   );
@@ -98,13 +108,13 @@ interface GetColumnsProps {
   setSelectedApplicants: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
-export const getApplicantColumns = ({ 
-  selectedJobId, 
+export const getApplicantColumns = ({
+  selectedJobId,
   handleViewApplicant,
   setSelectedApplicants
 }: GetColumnsProps): ColumnDef<any>[] => [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }: any) => (
       <Checkbox
         checked={table.getIsAllPageRowsSelected()}
@@ -120,14 +130,14 @@ export const getApplicantColumns = ({
       />
     ),
     enableSorting: false,
-    enableHiding: false,
+    enableHiding: false
   },
   {
-    accessorKey: "name",
+    accessorKey: 'name',
     header: ({ column }) => (
       <Button
         variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
       >
         Name
@@ -136,9 +146,9 @@ export const getApplicantColumns = ({
     ),
     cell: ({ row }) => {
       const { candidate } = row.original;
-      return candidate ? 
-        `${candidate.first_name} ${candidate.last_name}` : 
-        "Unknown Candidate";
+      return candidate
+        ? `${candidate.first_name} ${candidate.last_name}`
+        : 'Unknown Candidate';
     },
     enableSorting: true,
     sortingFn: (rowA, rowB) => {
@@ -146,30 +156,31 @@ export const getApplicantColumns = ({
       const b = rowB.original.candidate?.first_name || '';
       return a.localeCompare(b);
     },
-    size: 150,
+    size: 150
   },
   {
-    accessorKey: "email",
+    accessorKey: 'email',
     header: ({ column }) => (
       <Button
         variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
       >
         Email
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => row.original.candidate?.email_addresses?.[0]?.value || "No email address",
+    cell: ({ row }) =>
+      row.original.candidate?.email_addresses?.[0]?.value || 'No email address',
     enableSorting: true,
-    size: 200,
+    size: 200
   },
   {
-    accessorKey: "interviewConducted",
+    accessorKey: 'interviewConducted',
     header: ({ column }) => (
       <Button
         variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
       >
         Status
@@ -188,16 +199,15 @@ export const getApplicantColumns = ({
         return 0;
       };
       return getStatusPriority(rowA) - getStatusPriority(rowB);
-    },
+    }
   },
   {
-    id: "actions",
-    header: "Action",
+    id: 'actions',
+    header: 'Action',
     cell: ({ row }) => {
-
       return row.original.ai_summary ? (
-        <Button 
-          variant="link" 
+        <Button
+          variant="link"
           onClick={() => handleViewApplicant(row.original)}
           className="p-0 h-auto font-normal underline"
         >
@@ -208,14 +218,14 @@ export const getApplicantColumns = ({
       );
     },
     enableSorting: false,
-    size: 100,
+    size: 100
   },
   {
-    accessorKey: "score",
+    accessorKey: 'score',
     header: ({ column }) => (
       <Button
         variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
       >
         Score
@@ -226,9 +236,14 @@ export const getApplicantColumns = ({
       const applicant = row.original;
       let score = null;
       if (applicant.ai_summary) {
-        if (Array.isArray(applicant.ai_summary) && applicant.ai_summary.length > 0) {
-          const sortedSummaries = [...applicant.ai_summary].sort((a, b) => 
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        if (
+          Array.isArray(applicant.ai_summary) &&
+          applicant.ai_summary.length > 0
+        ) {
+          const sortedSummaries = [...applicant.ai_summary].sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
           );
           score = sortedSummaries[0]?.overall_summary?.score;
         } else {
@@ -239,7 +254,7 @@ export const getApplicantColumns = ({
               const parsed = JSON.parse(applicant.ai_summary.overall_summary);
               score = parsed.score;
             } catch (e) {
-              console.error("Error parsing overall_summary:", e);
+              console.error('Error parsing overall_summary:', e);
             }
           } else if (applicant.ai_summary.overall_summary) {
             // Access score directly from the overall_summary object
@@ -247,29 +262,33 @@ export const getApplicantColumns = ({
           }
         }
       }
-      
-      return (score !== null && !isNaN(parseFloat(score))) ? <ResumeScoreBadge score={parseFloat(score)} /> : <span className="text-gray-400">N/A</span>;
+
+      return score !== null && !isNaN(parseFloat(score)) ? (
+        <ResumeScoreBadge score={parseFloat(score)} />
+      ) : (
+        <span className="text-gray-400">N/A</span>
+      );
     },
     enableSorting: true,
     size: 80,
     sortingFn: (rowA, rowB) => {
       const scoreA = getAISummaryScore(rowA.original);
       const scoreB = getAISummaryScore(rowB.original);
-      
+
       if (scoreA === null && scoreB === null) return 0;
       if (scoreA === null) return 1;
       if (scoreB === null) return -1;
-      
+
       return parseFloat(scoreA) - parseFloat(scoreB);
-    },
+    }
   },
-  
+
   {
-    accessorKey: "resumeScore",
+    accessorKey: 'resumeScore',
     header: ({ column }) => (
       <Button
         variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
       >
         Resume Score
@@ -283,7 +302,15 @@ export const getApplicantColumns = ({
           {score === null ? (
             <span className="text-gray-500">N/A</span>
           ) : (
-            <Badge variant={score >= 80 ? "success" : score >= 60 ? "warning" : "destructive"}>
+            <Badge
+              variant={
+                score >= 80
+                  ? 'success'
+                  : score >= 60
+                    ? 'warning'
+                    : 'destructive'
+              }
+            >
               {score}
             </Badge>
           )}
@@ -295,20 +322,20 @@ export const getApplicantColumns = ({
     sortingFn: (rowA, rowB) => {
       const scoreA = getResumeAnalysisScore(rowA.original, 'resumeScore');
       const scoreB = getResumeAnalysisScore(rowB.original, 'resumeScore');
-      
+
       if (scoreA === null && scoreB === null) return 0;
       if (scoreA === null) return 1;
       if (scoreB === null) return -1;
-      
+
       return scoreA - scoreB;
-    },
+    }
   },
   {
-    accessorKey: "communicationScore",
+    accessorKey: 'communicationScore',
     header: ({ column }) => (
       <Button
         variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
       >
         Communication
@@ -330,22 +357,28 @@ export const getApplicantColumns = ({
     enableSorting: true,
     size: 120,
     sortingFn: (rowA, rowB) => {
-      const scoreA = getResumeAnalysisScore(rowA.original, 'communicationScore');
-      const scoreB = getResumeAnalysisScore(rowB.original, 'communicationScore');
-      
+      const scoreA = getResumeAnalysisScore(
+        rowA.original,
+        'communicationScore'
+      );
+      const scoreB = getResumeAnalysisScore(
+        rowB.original,
+        'communicationScore'
+      );
+
       if (scoreA === null && scoreB === null) return 0;
       if (scoreA === null) return 1;
       if (scoreB === null) return -1;
-      
+
       return scoreA - scoreB;
-    },
+    }
   },
   {
-    accessorKey: "technicalScore",
+    accessorKey: 'technicalScore',
     header: ({ column }) => (
       <Button
         variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
       >
         Technical
@@ -359,7 +392,15 @@ export const getApplicantColumns = ({
           {score === null ? (
             <span className="text-gray-500">N/A</span>
           ) : (
-            <Badge variant={score >= 80 ? "success" : score >= 60 ? "warning" : "destructive"}>
+            <Badge
+              variant={
+                score >= 80
+                  ? 'success'
+                  : score >= 60
+                    ? 'warning'
+                    : 'destructive'
+              }
+            >
               {score}
             </Badge>
           )}
@@ -371,20 +412,20 @@ export const getApplicantColumns = ({
     sortingFn: (rowA, rowB) => {
       const scoreA = getResumeAnalysisScore(rowA.original, 'technicalScore');
       const scoreB = getResumeAnalysisScore(rowB.original, 'technicalScore');
-      
+
       if (scoreA === null && scoreB === null) return 0;
       if (scoreA === null) return 1;
       if (scoreB === null) return -1;
-      
+
       return scoreA - scoreB;
-    },
+    }
   },
   {
-    accessorKey: "cultureFitScore",
+    accessorKey: 'cultureFitScore',
     header: ({ column }) => (
       <Button
         variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         className={`p-0 hover:bg-transparent ${column.getIsSorted() ? 'font-bold' : ''}`}
       >
         Culture Fit
@@ -398,7 +439,15 @@ export const getApplicantColumns = ({
           {score === null ? (
             <span className="text-gray-500">N/A</span>
           ) : (
-            <Badge variant={score >= 80 ? "success" : score >= 60 ? "warning" : "destructive"}>
+            <Badge
+              variant={
+                score >= 80
+                  ? 'success'
+                  : score >= 60
+                    ? 'warning'
+                    : 'destructive'
+              }
+            >
               {score}
             </Badge>
           )}
@@ -410,12 +459,12 @@ export const getApplicantColumns = ({
     sortingFn: (rowA, rowB) => {
       const scoreA = getResumeAnalysisScore(rowA.original, 'cultureFitScore');
       const scoreB = getResumeAnalysisScore(rowB.original, 'cultureFitScore');
-      
+
       if (scoreA === null && scoreB === null) return 0;
       if (scoreA === null) return 1;
       if (scoreB === null) return -1;
-      
+
       return scoreA - scoreB;
-    },
-  },
+    }
+  }
 ];

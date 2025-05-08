@@ -405,17 +405,16 @@ export const getRecruiter = async (
 };
 
 /**
- * Fetches the Greenhouse API key for the current user's company.
+ * Fetches the Merge API key for the current user's company.
  *
- * @returns The Greenhouse API key or null if not found.
+ * @returns The Merge API key or null if not found.
  * @throws Error if there's an issue fetching the data.
  */
 export const getMergeApiKey = async (): Promise<string | null> => {
   try {
-    const user = await getUser();
+    const user = await getUser(); 
 
-    if (!user || user?.user_metadata.role === 'applicant') {
-      // throw new Error('User not found');
+    if (!user || user.user_metadata?.role === 'applicant') {
       console.log("User not found")
       return null;
     }
@@ -434,7 +433,7 @@ export const getMergeApiKey = async (): Promise<string | null> => {
       return company.merge_account_token;
     }
   } catch (error) {
-    console.error('Error fetching Greenhouse API key:', error);
+    console.error('Error fetching Merge API key:', error);
     throw error;
   }
 };
@@ -1216,6 +1215,101 @@ export const getApplication = async (applicationId: string): Promise<Tables<'app
     return application;
   } catch (err) {
     console.error('Unexpected error fetching application:', err);
+    return null;
+  }
+};
+
+
+export const getSupabaseApplications = async (): Promise<Tables<'applications'>[] | null> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('applications')
+    .select('*');
+  return data || null;
+};
+
+
+export const createApplication = async (jobId: string, mergeApplicationId: string): Promise<Tables<'applications'> | null> => {  
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('applications')
+    .insert({job_id: jobId, merge_application_id: mergeApplicationId})
+    .select('*')
+    .single();
+
+  if (error) {
+    console.error('Error creating application:', error);
+    return null;
+  }
+
+  return data;
+};
+
+
+export const getApplicationCount = async (): Promise<number> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('applications')
+    .select('*');
+  return data?.length || 0;
+};
+
+
+/**
+ * Fetches an application by its ID.
+ *
+ * @param mergeId - The merge application ID of the application to fetch.
+ * @returns The application data or null if not found.
+ */
+export const getApplicationByMergeId = async (mergeId: string): Promise<Tables<'applications'> | null> => {
+  try {
+    const supabase = await createClient();
+    const { data: application, error } = await supabase
+      .from('applications')
+      .select('*')
+      .eq('merge_application_id', mergeId)
+      .single(); 
+    
+    if (error) {
+      console.error('Error fetching application:', error);
+      return null;
+    }
+    return application;
+  } catch (err) {
+    console.error('Unexpected error fetching application:', err);
+    return null;
+  }
+};
+
+/**
+ * Fetches an applications by job ID.
+ *
+ * @param mergeId - The job ID of the applications to fetch.
+ * @returns The application data or null if not found.
+ */
+export const getApplicationsByJobId = async (jobId: string): Promise<Tables<'applications'>[] | null> => {
+  console.log("jobId", jobId)
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase.from('applications').select();
+    console.log(data);
+    // why is the table emptyy???
+
+    const { data: applications, error } = await supabase
+      .from('applications')
+      .select('*')
+      .eq('job_id', jobId);
+
+    if (error) {
+      console.error('Error fetching applications:', error);
+      return null;
+    }
+
+    console.log("data", applications)
+    return applications;
+  } catch (err) {
+    console.error('Unexpected error fetching applications:', err);
     return null;
   }
 };

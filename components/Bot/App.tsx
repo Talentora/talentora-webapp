@@ -8,6 +8,7 @@ import '@livekit/components-styles';
 import { useBotContext } from './BotContext';
 import Configure from './Setup';
 import VideoInterviewSession from './VideoInterviewSession';
+import { createClient } from '@/utils/supabase/client';
 
 // Remove ScoutProps interface definition
 // interface ScoutProps { ... }
@@ -29,16 +30,22 @@ export default function App() {
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const supabase = createClient();
+
   // Generate room name and participant name
   const roomName = `interview-${Date.now()}`;
   const participantName = application?.id ? `applicant-${application.id}` : `user-${Date.now()}`;
 
   // Fetch token for room access
   const fetchToken = useCallback(async () => {
+
+    const { data: { user } } = await supabase.auth.getUser();
     try {
       // Create context data to send to backend
       const contextData = {
         applicant_id: application?.applicant_id,
+        applicant_name: user?.user_metadata?.full_name,
+        application_id: application?.id,
         job_id: application?.job_id,
         scout_name: scout.name,
         scout_role: scout.role,
@@ -47,6 +54,7 @@ export default function App() {
         company_name: company.name,
         company_description: companyContext.description,
         company_culture: companyContext.culture,
+        voice: scout.voice,
         interview_questions: jobInterviewConfig?.interview_questions,
         is_demo: demo,
         interview_context: {
