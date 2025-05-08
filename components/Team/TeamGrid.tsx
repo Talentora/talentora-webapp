@@ -6,9 +6,9 @@ import { Linkedin, Twitter } from 'lucide-react'
 
 const teamMembers = [
   {
-    name: 'Sarah Johnson',
+    name: 'Ben Johnson',
     role: 'CEO & Co-founder',
-    image: '/team/sarah.jpg',
+    image: '/team/Ben.jpg',
     bio: 'Former tech executive with 15+ years in recruitment technology.',
     linkedin: '#',
     twitter: '#'

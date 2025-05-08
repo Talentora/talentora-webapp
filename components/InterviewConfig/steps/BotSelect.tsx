@@ -197,7 +197,7 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
           </div>
           <p className="text-sm text-gray-600">{selectedBot.description}</p>
           <div className="absolute top-2 right-2">
-            <Link href={`/bots/${selectedBot.id}`}>
+            <Link href={`/scouts/${selectedBot.id}`}>
               <ArrowUpRight
                 className="text-primary hover:text-primary-dark"
                 data-tooltip="Click here to modify your bot"

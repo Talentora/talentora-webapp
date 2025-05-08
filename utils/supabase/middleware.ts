@@ -1,6 +1,5 @@
 'use server'
 
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getUserRole, getCompany } from '@/utils/supabase/queries';
 import { createClient } from './server';
