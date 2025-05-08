@@ -6,7 +6,7 @@ import { portalProps } from '@/app/(pages)/(restricted)/applicants/[id]/page';
 import VideoTranscript, {
   VideoTranscriptSkeleton
 } from 'components/AnalysisDisplay/VideoTranscript/index';
-import { InterviewFeedbackComponent } from 'app/(pages)/(restricted)/reports/components/interview/interviewFeedback';
+import { InterviewFeedbackComponent } from '@/app/(pages)/(restricted)/reports/components/InterviewFeedback';
 import { interviewFeedback } from 'app/(pages)/(restricted)/reports/data/interview-feedback';
 import ResumeViewer from '@/components/AnalysisDisplay/ResumeViewer';
 
