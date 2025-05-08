@@ -95,8 +95,6 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
       add_AI_summary: "true"
     });
 
-    console.log('launching fetchApplicationsByJobId');
-
     const response = await fetch(`${API_URL}/merge/applications/job/${jobId}?${params.toString()}`, {
       credentials: 'include',
       headers: {

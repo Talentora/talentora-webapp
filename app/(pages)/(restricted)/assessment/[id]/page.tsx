@@ -18,7 +18,6 @@ import {
   getCompanyContext,
   getApplication
 } from '@/utils/supabase/queries';
-import { useApplicant } from '@/hooks/useApplicant';
 import { fetchJobById } from '@/server/jobs';
 
 type ScoutProps = {

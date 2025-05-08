@@ -13,7 +13,6 @@ export default async function Page() {
   if (user) {
     role = await getUserRole(supabase, user.id);
   }
-  console.log('roleasdf', role);
 
   return <DashboardPage />;
 }
