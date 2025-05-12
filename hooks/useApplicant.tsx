@@ -87,6 +87,7 @@ export type EnrichedApplication = MergeJob & {
 
 // Main hook that combines all the data
 export const useApplicant = () => {
+  
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [accountTokens, setAccountTokens] = useState<{[key: string]: string | null}>({});

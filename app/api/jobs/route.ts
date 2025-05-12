@@ -22,7 +22,7 @@ export async function GET() {
     }
 
     const user = authResponse.data.user;
-    console.log('User found:', user.id);
+    // console.log('User found:', user.id);
 
     // Verify the session is valid
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
@@ -35,7 +35,7 @@ export async function GET() {
     }
 
     const role = await getUserRole(supabase, user.id);
-    console.log('User role:', role);
+    // console.log('User role:', role);
 
     let accountToken = null;
     const baseURL = `https://api.merge.dev/api/ats/v1`;
@@ -102,14 +102,14 @@ export async function GET() {
     const allDepartments = departmentsResponse.ok ? (await departmentsResponse.json()).results : [];
     const allOffices = officesResponse.ok ? (await officesResponse.json()).results : [];
 
-    console.log('\n=== Department Data ===');
+    // console.log('\n=== Department Data ===');
     // console.log('All departments:', JSON.stringify(allDepartments.map((d: any) => ({ id: d.id, name: d.name })), null, 2));
 
     // Enrich jobs with their specific departments and offices
     const enrichedJobs = jobs.map((job: any) => {
 
-      console.log(`\n=== Processing Job: ${job.name} ===`);
-      console.log('Job departments array:', JSON.stringify(job.departments, null, 2));
+      // console.log(`\n=== Processing Job: ${job.name} ===`);
+      // console.log('Job departments array:', JSON.stringify(job.departments, null, 2));
       
       // The job already has the correct departments, no need to filter
       const jobDepartments = Array.isArray(job.departments) ? job.departments : [];

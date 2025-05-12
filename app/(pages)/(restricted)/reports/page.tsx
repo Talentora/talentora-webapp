@@ -366,12 +366,13 @@ export default function GraphPlayground() {
             </div>
           </div>
         )}
-        
+
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
+
           <SortableContext
             items={charts.map((c) => c.id)}
             strategy={rectSortingStrategy}
@@ -388,6 +389,7 @@ export default function GraphPlayground() {
                   onElementClick={handleChartElementClick}
                 />
               ))}
+
               <Card 
                 className="p-4 flex items-center justify-center min-h-[300px] border-dashed cursor-pointer hover:bg-accent/50 transition-colors" 
                 onClick={openNewChartDialog}
