@@ -38,6 +38,42 @@ interface NodeData {
   selectedPath?: string;
 }
 
+interface FlowNode {
+  id: string;
+  data: {
+    label: string;
+    content: string;
+    criteria?: string;
+    connectedNodes?: Array<{ id: string; label: string }>;
+    selectedPath?: string;
+  };
+  type: string;
+  position: {
+    x: number;
+    y: number;
+  };
+}
+
+interface FlowEdge {
+  id: string;
+  type: string;
+  style: {
+    stroke: string;
+  };
+  source: string;
+  target: string;
+  animated: boolean;
+  markerEnd: {
+    type: string;
+  };
+}
+
+type FlowData = {
+  [key: string]: any;
+  nodes: FlowNode[];
+  edges: FlowEdge[];
+};
+
 // Custom node types with Tailwind styles
 const nodeTypes = {
   question: ({ data }: { data: any }) => (
@@ -370,60 +406,42 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
       console.log('Current edges:', edges);
 
       // Clean and structure the flow data
-      const flowData = {
-        nodes: nodes.map(node => {
-          console.log('Processing node:', node);
-          return {
-            id: node.id,
-            type: node.type,
-            position: node.position,
-            data: {
-              label: node.data.label,
-              content: node.data.content,
-              ...(node.data.criteria && { criteria: node.data.criteria }),
-              ...(node.data.connectedNodes && { connectedNodes: node.data.connectedNodes }),
-              ...(node.data.selectedPath && { selectedPath: node.data.selectedPath })
-            }
-          };
-        }),
-        edges: edges.map(edge => {
-          console.log('Processing edge:', edge);
-          return {
-            id: edge.id,
-            source: edge.source,
-            target: edge.target,
-            type: edge.type,
-            animated: edge.animated,
-            style: edge.style,
-            markerEnd: edge.markerEnd
-          };
-        })
+      const flowData: FlowData = {
+        nodes: nodes.map(node => ({
+          id: node.id,
+          data: {
+            label: node.data.label,
+            content: node.data.content,
+            ...(node.data.criteria && { criteria: node.data.criteria }),
+            ...(node.data.connectedNodes && { connectedNodes: node.data.connectedNodes }),
+            ...(node.data.selectedPath && { selectedPath: node.data.selectedPath })
+          },
+          type: node.type || '',
+          position: {
+            x: node.position.x,
+            y: node.position.y
+          }
+        })),
+        edges: edges.map(edge => ({
+          id: edge.id,
+          type: edge.type || 'smoothstep',
+          style: {
+            stroke: '#555'
+          },
+          source: edge.source,
+          target: edge.target,
+          animated: true,
+          markerEnd: {
+            type: 'arrowclosed'
+          }
+        }))
       };
 
-      // Log the constructed flowData
-      console.log('Constructed flowData:', flowData);
-
-      // Validate the structure
-      if (!flowData.nodes || !flowData.edges) {
-        console.error('Invalid flow structure:', flowData);
-        throw new Error('Invalid flow structure');
-      }
-
-      // Validate that nodes and edges are arrays
-      if (!Array.isArray(flowData.nodes) || !Array.isArray(flowData.edges)) {
-        console.error('Nodes or edges are not arrays:', flowData);
-        throw new Error('Invalid flow structure: nodes and edges must be arrays');
-      }
-
-      // Log the final JSON string
-      const jsonString = JSON.stringify(flowData);
-      console.log('JSON string to be saved:', job.merge_id);
-
-      // Save to database
+      // Save to database as JSON object
       const { error } = await supabase
         .from('job_interview_config')
         .update({ 
-          prompt_graph: jsonString
+          prompt_graph: flowData
         })
         .eq('job_id', job.merge_id);
 
@@ -683,8 +701,13 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
   useEffect(() => {
     if (initialConfig?.prompt_graph) {
       try {
-        const savedFlow = JSON.parse(initialConfig.prompt_graph);
+        // If prompt_graph is already an object, use it directly
+        const savedFlow = typeof initialConfig.prompt_graph === 'string' 
+          ? JSON.parse(initialConfig.prompt_graph)
+          : initialConfig.prompt_graph;
+
         if (savedFlow.nodes && savedFlow.edges) {
+          console.log('Loading saved flow:', savedFlow);
           setNodes(savedFlow.nodes);
           setEdges(savedFlow.edges);
           return;

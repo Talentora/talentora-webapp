@@ -38,7 +38,7 @@ export default function App() {
 
   // Fetch token for room access
   const fetchToken = useCallback(async () => {
-
+    console.log('job', jobInterviewConfig);
     const { data: { user } } = await supabase.auth.getUser();
     try {
       // Create context data to send to backend
@@ -57,6 +57,7 @@ export default function App() {
         voice: scout.voice,
         interview_questions: jobInterviewConfig?.interview_questions,
         is_demo: demo,
+        flow: jobInterviewConfig?.prompt_graph,
         interview_context: {
           company_info: {
             name: company.name,

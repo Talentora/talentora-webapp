@@ -72,7 +72,7 @@ export default function JobConfig({
     }
 
     const hasBotId = !!config.bot_id;
-    const hasQuestions = !!config.interview_questions;
+    const hasQuestions = !!config.prompt_graph;
     const hasInterviewName = !!config.interview_name;
     const hasDuration = !!config.duration;
 

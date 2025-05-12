@@ -13,6 +13,12 @@ interface InterviewQuestionsProps {
 }
 
 const InterviewQuestions = ({ loading, interviewConfig, jobId }: InterviewQuestionsProps) => {
+  const hasFlow = interviewConfig?.prompt_graph && (
+    typeof interviewConfig.prompt_graph === 'string' 
+      ? JSON.parse(interviewConfig.prompt_graph)
+      : interviewConfig.prompt_graph
+  )?.nodes?.length > 0;
+
   return (
     <div className="hover:bg-accent/50 transition-colors p-5 shadow-3xl h-full rounded-lg">
       <div className="mb-6">
@@ -30,7 +36,7 @@ const InterviewQuestions = ({ loading, interviewConfig, jobId }: InterviewQuesti
           <div className="flex justify-center items-center py-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
-        ) : interviewConfig ? (
+        ) : hasFlow ? (
           <div className="space-y-4">
             <div>
               <p className="text-sm text-muted-foreground">
