@@ -22,7 +22,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import { Job } from '@/types/merge';
 import { Tables } from '@/types/types_db';
-import NodeFormModal from './NodeFormModal';
+import NodeFormModal, { NodeFormData } from './NodeFormModal';
 import ControlPanel from './ControlPanel';
 import toast, { Toaster } from 'react-hot-toast';
 import ConfirmationModal from './ConfirmationModal';
@@ -211,12 +211,14 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [nodeFormOpen, setNodeFormOpen] = useState(false);
-  const [nodeFormData, setNodeFormData] = useState({
+  const [nodeFormData, setNodeFormData] = useState<NodeFormData>({
     type: 'question',
     label: '',
     content: '',
     criteria: '',
-    position: { x: 0, y: 0 }
+    position: { x: 0, y: 0 },
+    connectedNodes: [],
+    selectedPath: ''
   });
   const [editingNode, setEditingNode] = useState<any | null>(null);
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
@@ -300,7 +302,9 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
       label: node.data.label,
       content: node.data.content,
       criteria: node.data.criteria || '',
-      position: node.position
+      position: node.position,
+      connectedNodes: node.data.connectedNodes || [],
+      selectedPath: node.data.selectedPath || ''
     });
     setNodeFormOpen(true);
   }, []);
@@ -407,21 +411,43 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
 
       // Clean and structure the flow data
       const flowData: FlowData = {
-        nodes: nodes.map(node => ({
-          id: node.id,
-          data: {
-            label: node.data.label,
-            content: node.data.content,
-            ...(node.data.criteria && { criteria: node.data.criteria }),
-            ...(node.data.connectedNodes && { connectedNodes: node.data.connectedNodes }),
-            ...(node.data.selectedPath && { selectedPath: node.data.selectedPath })
-          },
-          type: node.type || '',
-          position: {
-            x: node.position.x,
-            y: node.position.y
+        nodes: nodes.map(node => {
+          // Special handling for branching nodes
+          if (node.type === 'branching') {
+            return {
+              id: node.id,
+              data: {
+                label: node.data.label,
+                content: node.data.content,
+                criteria: node.data.criteria || '',
+                connectedNodes: node.data.connectedNodes || [],
+                selectedPath: node.data.selectedPath || ''
+              },
+              type: node.type,
+              position: {
+                x: node.position.x,
+                y: node.position.y
+              }
+            };
           }
-        })),
+          
+          // For all other nodes
+          return {
+            id: node.id,
+            data: {
+              label: node.data.label,
+              content: node.data.content,
+              ...(node.data.criteria && { criteria: node.data.criteria }),
+              ...(node.data.connectedNodes && { connectedNodes: node.data.connectedNodes }),
+              ...(node.data.selectedPath && { selectedPath: node.data.selectedPath })
+            },
+            type: node.type || '',
+            position: {
+              x: node.position.x,
+              y: node.position.y
+            }
+          };
+        }),
         edges: edges.map(edge => ({
           id: edge.id,
           type: edge.type || 'smoothstep',
@@ -569,17 +595,37 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
         return;
       }
 
-      setNodes(nodes.map(node => 
-        node.id === editingNode.id 
-          ? { 
-              ...node, 
-              data: { 
-                ...nodeFormData,
-                criteria: node.type === 'branching' ? node.data.criteria : nodeFormData.criteria 
-              } 
+      // Prevent changing to conclusion type if another conclusion node exists
+      if (nodeFormData.type === 'conclusion' && 
+          nodes.some(node => node.type === 'conclusion' && node.id !== editingNode.id)) {
+        toast.error('Only one conclusion node is allowed');
+        return;
+      }
+
+      console.log('Updating node with form data:', nodeFormData); // Debug log
+
+      setNodes(nodes.map(node => {
+        if (node.id === editingNode.id) {
+          const updatedNode = {
+            ...node,
+            type: nodeFormData.type,
+            data: {
+              label: nodeFormData.label,
+              content: nodeFormData.content,
+              ...(nodeFormData.type === 'branching' && {
+                criteria: nodeFormData.criteria,
+                connectedNodes: node.data.connectedNodes || [],
+                selectedPath: node.data.selectedPath || ''
+              }),
+              ...(node.data.connectedNodes && { connectedNodes: node.data.connectedNodes }),
+              ...(node.data.selectedPath && { selectedPath: node.data.selectedPath })
             }
-          : node
-      ));
+          };
+          console.log('Updated node:', updatedNode); // Debug log
+          return updatedNode;
+        }
+        return node;
+      }));
     } else {
       // Check if trying to create a start or conclusion node when one already exists
       if (nodeFormData.type === 'start' && nodes.some(node => node.type === 'start')) {
@@ -591,15 +637,23 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
         return;
       }
 
+      console.log('Creating new node with form data:', nodeFormData); // Debug log
+
       const newNode = {
         id: crypto.randomUUID(),
         type: nodeFormData.type,
         position: nodeFormData.position,
-        data: { 
-          ...nodeFormData,
-          criteria: nodeFormData.type === 'branching' ? 'Add split conditions here...' : undefined
+        data: {
+          label: nodeFormData.label,
+          content: nodeFormData.content,
+          ...(nodeFormData.type === 'branching' && {
+            criteria: nodeFormData.criteria || 'Add split conditions here...',
+            connectedNodes: [],
+            selectedPath: ''
+          })
         }
       };
+      console.log('New node:', newNode); // Debug log
       setNodes(nodes.concat(newNode));
     }
     setNodeFormOpen(false);
