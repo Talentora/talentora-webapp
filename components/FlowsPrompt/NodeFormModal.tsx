@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
-interface NodeFormData {
+export interface NodeFormData {
   type: string;
   label: string;
   content: string;
@@ -38,19 +38,24 @@ export default function NodeFormModal({
 }: NodeFormModalProps) {
   const defaultCriteria = `if (condition) {
   // Go to first path
-} if (condition) {
+} else {
   // Go to second path
 }`;
 
   // Set default criteria when type changes to branching
   useEffect(() => {
     if (nodeFormData.type === 'branching' && !nodeFormData.criteria) {
-      setNodeFormData({ ...nodeFormData, criteria: defaultCriteria });
+      setNodeFormData(prev => ({ ...prev, criteria: defaultCriteria }));
     }
   }, [nodeFormData.type]);
 
   const insertTemplate = () => {
-    setNodeFormData({ ...nodeFormData, criteria: defaultCriteria });
+    setNodeFormData(prev => ({ ...prev, criteria: defaultCriteria }));
+  };
+
+  const handleCriteriaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    console.log('Criteria changed:', e.target.value); // Debug log
+    setNodeFormData(prev => ({ ...prev, criteria: e.target.value }));
   };
 
   return (
@@ -60,12 +65,29 @@ export default function NodeFormModal({
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
+              Type
+            </label>
+            <select
+              value={nodeFormData.type}
+              onChange={(e) => setNodeFormData(prev => ({ ...prev, type: e.target.value }))}
+              className="w-full p-2 border-2 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={isEditing && (nodeFormData.type === 'start' || nodeFormData.type === 'conclusion')}
+            >
+              {nodeTypes.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Label
             </label>
             <input
               type="text"
               value={nodeFormData.label}
-              onChange={(e) => setNodeFormData({ ...nodeFormData, label: e.target.value })}
+              onChange={(e) => setNodeFormData(prev => ({ ...prev, label: e.target.value }))}
               className="w-full p-2 border-2 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter node label"
             />
@@ -76,7 +98,7 @@ export default function NodeFormModal({
             </label>
             <textarea
               value={nodeFormData.content}
-              onChange={(e) => setNodeFormData({ ...nodeFormData, content: e.target.value })}
+              onChange={(e) => setNodeFormData(prev => ({ ...prev, content: e.target.value }))}
               className="w-full p-2 border-2 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
               placeholder="Enter node content"
             />
@@ -98,8 +120,8 @@ export default function NodeFormModal({
                   </Button>
                 </div>
                 <textarea
-                  value={nodeFormData.criteria || defaultCriteria}
-                  onChange={(e) => setNodeFormData({ ...nodeFormData, criteria: e.target.value })}
+                  value={nodeFormData.criteria || ''}
+                  onChange={handleCriteriaChange}
                   className="w-full p-2 border-2 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 font-mono text-sm"
                   placeholder="Example: if (candidate.experience > 5) { go to Senior path } else { go to Junior path }"
                 />
@@ -114,7 +136,7 @@ export default function NodeFormModal({
                   </label>
                   <select
                     value={nodeFormData.selectedPath || ''}
-                    onChange={(e) => setNodeFormData({ ...nodeFormData, selectedPath: e.target.value })}
+                    onChange={(e) => setNodeFormData(prev => ({ ...prev, selectedPath: e.target.value }))}
                     className="w-full p-2 border-2 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select a path...</option>
