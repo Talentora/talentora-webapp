@@ -201,6 +201,7 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
     content: '',
     criteria: '',
     follow_up_toggle: false,
+
     position: { x: 0, y: 0 },
     connectedNodes: [],
     selectedPath: ''
@@ -288,6 +289,7 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
       content: node.data.content,
       criteria: node.data.criteria || '',
       follow_up_toggle: node.data.follow_up_toggle || false,
+
       position: node.position,
       connectedNodes: node.data.connectedNodes || [],
       selectedPath: node.data.selectedPath || ''
@@ -428,6 +430,7 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
               ...(node.data.connectedNodes && { connectedNodes: node.data.connectedNodes }),
               ...(node.data.selectedPath && { selectedPath: node.data.selectedPath }),
               ...(node.data.follow_up_toggle && { follow_up_toggle: node.data.follow_up_toggle })
+
             },
             type: node.type || '',
             position: {
@@ -610,12 +613,12 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
               }),
               ...(nodeFormData.type === 'question' && {
                 follow_up_toggle: nodeFormData.follow_up_toggle || false
+
               }),
               ...(node.data.connectedNodes && { connectedNodes: node.data.connectedNodes }),
               ...(node.data.selectedPath && { selectedPath: node.data.selectedPath })
             }
           };
-          console.log('Updated node:', updatedNode);
           return updatedNode;
         }
         return node;
@@ -649,6 +652,7 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
         }
       };
       console.log('New node:', newNode);
+
       setNodes(nodes.concat(newNode));
     }
     setNodeFormOpen(false);

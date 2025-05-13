@@ -66,6 +66,7 @@ export default function NodeFormModal({
       case 'branching': return 'Branching';
       default: return type.charAt(0).toUpperCase() + type.slice(1);
     }
+
   };
 
   return (
@@ -75,11 +76,12 @@ export default function NodeFormModal({
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Node Type
+\              Node Type
             </label>
             <div className="p-2 border-2 border-gray-300 rounded bg-gray-50">
               {getNodeTypeLabel(nodeFormData.type)}
             </div>
+
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -124,6 +126,7 @@ export default function NodeFormModal({
                     : "Define how this question should be evaluated."}
                 </p>
               </div>
+
             </>
           )}
           {nodeFormData.type === 'question' && (
