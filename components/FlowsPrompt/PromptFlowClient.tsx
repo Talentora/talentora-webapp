@@ -34,6 +34,7 @@ interface NodeData {
   label: string;
   content: string;
   criteria?: string;
+  follow_up_toggle?: boolean;
   connectedNodes?: Array<{ id: string; label: string }>;
   selectedPath?: string;
 }
@@ -44,6 +45,7 @@ interface FlowNode {
     label: string;
     content: string;
     criteria?: string;
+    follow_up_toggle?: boolean;
     connectedNodes?: Array<{ id: string; label: string }>;
     selectedPath?: string;
   };
@@ -91,24 +93,6 @@ const nodeTypes = {
         type="source"
         position={Position.Right}
         className="w-2.5 h-2.5 rounded-full bg-blue-500 border-2 border-white hover:bg-blue-600 hover:scale-120 transition-all duration-200 -right-1"
-      />
-    </div>
-  ),
-  section: ({ data }: { data: any }) => (
-    <div className="px-3 py-4 shadow-md rounded-md bg-yellow-50 border-2 border-yellow-200 w-48">
-      <Handle
-        type="target"
-        position={Position.Left}
-        className="w-2.5 h-2.5 rounded-full bg-yellow-500 border-2 border-white hover:bg-yellow-600 hover:scale-120 transition-all duration-200 -left-1"
-      />
-      <div className="flex flex-col gap-1">
-        <div className="font-bold text-yellow-700">{data.label}</div>
-        <div className="text-sm text-yellow-500">{data.content}</div>
-      </div>
-      <Handle
-        type="source"
-        position={Position.Right}
-        className="w-2.5 h-2.5 rounded-full bg-yellow-500 border-2 border-white hover:bg-yellow-600 hover:scale-120 transition-all duration-200 -right-1"
       />
     </div>
   ),
@@ -216,6 +200,8 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
     label: '',
     content: '',
     criteria: '',
+    follow_up_toggle: false,
+
     position: { x: 0, y: 0 },
     connectedNodes: [],
     selectedPath: ''
@@ -302,6 +288,8 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
       label: node.data.label,
       content: node.data.content,
       criteria: node.data.criteria || '',
+      follow_up_toggle: node.data.follow_up_toggle || false,
+
       position: node.position,
       connectedNodes: node.data.connectedNodes || [],
       selectedPath: node.data.selectedPath || ''
@@ -421,7 +409,8 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
                 content: node.data.content,
                 criteria: node.data.criteria || '',
                 connectedNodes: node.data.connectedNodes || [],
-                selectedPath: node.data.selectedPath || ''
+                selectedPath: node.data.selectedPath || '',
+                follow_up_toggle: node.data.follow_up_toggle || false
               },
               type: node.type,
               position: {
@@ -439,7 +428,9 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
               content: node.data.content,
               ...(node.data.criteria && { criteria: node.data.criteria }),
               ...(node.data.connectedNodes && { connectedNodes: node.data.connectedNodes }),
-              ...(node.data.selectedPath && { selectedPath: node.data.selectedPath })
+              ...(node.data.selectedPath && { selectedPath: node.data.selectedPath }),
+              ...(node.data.follow_up_toggle && { follow_up_toggle: node.data.follow_up_toggle })
+
             },
             type: node.type || '',
             position: {
@@ -579,6 +570,11 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
     toast.success('Flow state logged to console');
   }, [nodes, edges]);
 
+  const getNodeLabel = (type: string, content: string) => {
+    const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
+    return `${typeLabel}: ${content.substring(0, 20)}${content.length > 20 ? '...' : ''}`;
+  };
+
   const handleNodeFormSubmit = useCallback(() => {
     if (editingNode) {
       // If editing a start or conclusion node, don't allow changing its type
@@ -610,18 +606,19 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
             ...node,
             type: nodeFormData.type,
             data: {
-              label: nodeFormData.label,
-              content: nodeFormData.content,
-              ...(nodeFormData.type === 'branching' && {
-                criteria: nodeFormData.criteria,
-                connectedNodes: node.data.connectedNodes || [],
-                selectedPath: node.data.selectedPath || ''
+              label: getNodeLabel(nodeFormData.type, nodeFormData.content),
+              content: nodeFormData.type === 'start' || nodeFormData.type === 'conclusion' ? '' : nodeFormData.content,
+              ...((nodeFormData.type === 'branching' || nodeFormData.type === 'question') && {
+                criteria: nodeFormData.criteria
+              }),
+              ...(nodeFormData.type === 'question' && {
+                follow_up_toggle: nodeFormData.follow_up_toggle || false
+
               }),
               ...(node.data.connectedNodes && { connectedNodes: node.data.connectedNodes }),
               ...(node.data.selectedPath && { selectedPath: node.data.selectedPath })
             }
           };
-          console.log('Updated node:', updatedNode); // Debug log
           return updatedNode;
         }
         return node;
@@ -644,16 +641,18 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
         type: nodeFormData.type,
         position: nodeFormData.position,
         data: {
-          label: nodeFormData.label,
-          content: nodeFormData.content,
-          ...(nodeFormData.type === 'branching' && {
-            criteria: nodeFormData.criteria || 'Add split conditions here...',
-            connectedNodes: [],
-            selectedPath: ''
+          label: getNodeLabel(nodeFormData.type, nodeFormData.content),
+          content: nodeFormData.type === 'start' || nodeFormData.type === 'conclusion' ? '' : nodeFormData.content,
+          ...((nodeFormData.type === 'branching' || nodeFormData.type === 'question') && {
+            criteria: nodeFormData.criteria || 'Add evaluation criteria here...'
+          }),
+          ...(nodeFormData.type === 'question' && {
+            follow_up_toggle: nodeFormData.follow_up_toggle || false
           })
         }
       };
-      console.log('New node:', newNode); // Debug log
+      console.log('New node:', newNode);
+
       setNodes(nodes.concat(newNode));
     }
     setNodeFormOpen(false);
@@ -690,39 +689,42 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
         id: 'start',
         type: 'start',
         position: { x: 0, y: 0 },
-        data: { label: 'Start', content: 'Begin Interview' }
-      },
-      {
-        id: 'intro',
-        type: 'section',
-        position: { x: 0, y: 100 },
-        data: { label: 'Introduction', content: 'Introduce yourself and the role' }
+        data: { label: 'Start', content: '' }
       },
       {
         id: 'experience',
         type: 'question',
         position: { x: 0, y: 200 },
-        data: { label: 'Experience', content: 'Tell me about your relevant experience' }
+        data: { 
+          label: 'Experience', 
+          content: 'Tell me about your relevant experience',
+          criteria: 'Evaluate based on years of experience and relevance to the role',
+          follow_up_toggle: true
+        }
       },
       {
         id: 'skills',
         type: 'question',
         position: { x: 0, y: 300 },
-        data: { label: 'Skills', content: 'What are your key technical skills?' }
+        data: { 
+          label: 'Skills', 
+          content: 'What are your key technical skills?',
+          criteria: 'Evaluate based on technical depth and breadth of skills',
+          follow_up_toggle: true
+        }
       },
       {
         id: 'conclusion',
         type: 'conclusion',
         position: { x: 0, y: 400 },
-        data: { label: 'Conclusion', content: 'End Interview' }
+        data: { label: 'Conclusion', content: '' }
       }
     ];
 
     const defaultEdges = [
-      { id: 'e1', source: 'start', target: 'intro' },
-      { id: 'e2', source: 'intro', target: 'experience' },
-      { id: 'e3', source: 'experience', target: 'skills' },
-      { id: 'e4', source: 'skills', target: 'conclusion' }
+      { id: 'e1', source: 'start', target: 'experience' },
+      { id: 'e2', source: 'experience', target: 'skills' },
+      { id: 'e3', source: 'skills', target: 'conclusion' }
     ];
 
     setNodes(defaultNodes);

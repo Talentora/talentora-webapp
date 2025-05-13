@@ -88,7 +88,7 @@ export function ApplicantCard({
             <li className="flex items-center space-x-2 text-gray-700">
               <Mail className="w-5 h-5" />
               <a
-                href="mailto:bengardiner@gmail.com"
+                href={`mailto:${email}`}
                 className="hover:underline"
               >
                 {email}

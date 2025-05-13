@@ -31,12 +31,6 @@ const nodeTypes = [
     color: 'blue'
   },
   { 
-    type: 'section', 
-    label: 'Section', 
-    description: 'Add a section header',
-    color: 'yellow'
-  },
-  { 
     type: 'branching', 
     label: 'Branching', 
     description: 'Add a conditional branch (supports multiple paths)',

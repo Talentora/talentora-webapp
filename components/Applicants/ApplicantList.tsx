@@ -5,7 +5,6 @@ import InviteApplicantsTable from '@/components/Applicants/InviteApplicantsTable
 import { Loader2, Send, Clock, CheckCircle, Briefcase } from 'lucide-react';
 import { fetchJobsData } from '@/server/jobs';
 import { fetchApplicationsByJobId } from '@/server/applications';
-import { getApplicationsByJobId } from '@/utils/supabase/queries';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -16,6 +15,11 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import { getNotInvitedColumns } from './NotInvitedColumns';
+import { getInProgressColumns } from './InProgressColumns';
+import { getCompletedColumns } from './CompletedColumns';
 
 export default function ApplicantList() {
   const [applicantCandidates, setApplicantCandidates] = useState<any[]>([]);
@@ -150,6 +154,289 @@ export default function ApplicantList() {
     return uniqueJobs.sort((a, b) => a.name.localeCompare(b.name));
   }, [jobs]);
 
+  // Helper function to get columns based on active tab
+  const getActiveColumns = () => {
+    switch (activeTab) {
+      case 'not-invited':
+        return getNotInvitedColumns({
+          handleViewApplicant: () => {},
+          setSelectedApplicants: () => {}
+        });
+      case 'in-progress':
+        return getInProgressColumns({
+          handleViewApplicant: () => {},
+          setSelectedApplicants: () => {}
+        });
+      case 'completed':
+        return getCompletedColumns({
+          handleViewApplicant: () => {},
+          setSelectedApplicants: () => {}
+        });
+      default:
+        return getNotInvitedColumns({
+          handleViewApplicant: () => {},
+          setSelectedApplicants: () => {}
+        });
+    }
+  };
+
+  // Export to Excel handler
+  const handleExport = () => {
+    const activeColumns = getActiveColumns();
+    
+    // Get the appropriate applicants array based on active tab
+    let applicantsToExport;
+    switch (activeTab) {
+      case 'not-invited':
+        applicantsToExport = notInvitedApplicants;
+        break;
+      case 'in-progress':
+        applicantsToExport = inProgressApplicants;
+        break;
+      case 'completed':
+        applicantsToExport = completedApplicants;
+        break;
+      default:
+        applicantsToExport = notInvitedApplicants;
+    }
+    
+    // Filter applicants with search if applicable
+    const filteredApplicants = filterAndSortApplicants(applicantsToExport);
+    
+    // Extract column headers from column definitions (excluding action columns)
+    const exportColumns = activeColumns
+      .filter(col => {
+        // Skip selection and action columns
+        if ('id' in col) {
+          return !['select', 'actions'].includes(col.id as string);
+        }
+        return true;
+      })
+      .map(col => {
+        if ('header' in col && typeof col.header === 'string') {
+          return col.header;
+        }
+        if ('accessorKey' in col) {
+          return String(col.accessorKey).charAt(0).toUpperCase() + String(col.accessorKey).slice(1);
+        }
+        return '';
+      })
+      .filter(header => header !== '');
+    
+    // Map data for export based on visible columns
+    const exportData = filteredApplicants.map(app => {
+      const row: Record<string, any> = {};
+      
+      activeColumns.forEach(col => {
+        if ('accessorKey' in col && col.accessorKey) {
+          const key = col.accessorKey as string;
+          const header = typeof col.header === 'string' ? col.header : key.charAt(0).toUpperCase() + key.slice(1);
+          
+          // Skip selection and action columns
+          if (key === 'select' || key === 'actions' || key === 'accept') return;
+          
+          // Extract data based on accessorKey paths
+          if (key.includes('.')) {
+            const parts = key.split('.');
+            let value = app;
+            for (const part of parts) {
+              value = value?.[part];
+              if (value === undefined) break;
+            }
+            row[header] = value || '';
+          } else if (key === 'fullName' && app.candidate) {
+            row[header] = `${app.candidate.first_name || ''} ${app.candidate.last_name || ''}`;
+          } else if (key === 'email' && app.candidate?.email_addresses?.[0]) {
+            row[header] = app.candidate.email_addresses[0].value || '';
+          } else if (key === 'name' && app.candidate) {
+            row[header] = `${app.candidate.first_name || ''} ${app.candidate.last_name || ''}`;
+          } else if (key === 'score') {
+            // Normalize AI summary access to support both field name styles (ai_summary/AI_summary)
+            const summary = app.ai_summary || app.AI_summary;
+            
+            if (!summary) {
+              row[header] = '';
+            } else if (Array.isArray(summary) && summary.length > 0) {
+              // Sort by updated_at date (falling back to created_at) in descending order to get the most recent
+              const sortedSummaries = [...summary].sort(
+                (a, b) => 
+                  new Date(b.updated_at || b.created_at).getTime() - 
+                  new Date(a.updated_at || a.created_at).getTime()
+              );
+              
+              const latestSummary = sortedSummaries[0];
+              if (typeof latestSummary.overall_summary === 'string') {
+                try {
+                  const parsed = JSON.parse(latestSummary.overall_summary);
+                  row[header] = parsed.score || '';
+                } catch (e) {
+                  row[header] = '';
+                }
+              } else {
+                row[header] = latestSummary?.overall_summary?.score || '';
+              }
+            } else if (typeof summary.overall_summary === 'string') {
+              try {
+                const parsed = JSON.parse(summary.overall_summary);
+                row[header] = parsed.score || '';
+              } catch (e) {
+                row[header] = '';
+              }
+            } else {
+              row[header] = summary?.overall_summary?.score || '';
+            }
+          } else if (key === 'interviewDate') {
+            // Normalize AI summary access to support both field name styles
+            const summary = app.ai_summary || app.AI_summary;
+            let completedDate = null;
+            
+            if (summary) {
+              if (Array.isArray(summary) && summary.length > 0) {
+                // Get the most recent summary by updated_at
+                const sortedSummaries = [...summary].sort(
+                  (a, b) =>
+                    new Date(b.updated_at || b.updated_at).getTime() -
+                    new Date(a.updated_at || a.updated_at).getTime()
+                );
+                completedDate = sortedSummaries[0].updated_at || sortedSummaries[0].created_at;
+              } else {
+                completedDate = summary.updated_at || summary.created_at;
+              }
+            }
+            
+            row[header] = completedDate ? new Date(completedDate).toLocaleDateString() : 'Unknown date';
+          } else if (key.startsWith('resumeScore') || key.includes('Score')) {
+            // Handle any score-related fields
+            const summary = app.ai_summary || app.AI_summary;
+            const scoreType = key;
+            
+            if (!summary) {
+              row[header] = '';
+            } else if (Array.isArray(summary) && summary.length > 0) {
+              const sortedSummaries = [...summary].sort(
+                (a, b) =>
+                  new Date(b.updated_at || b.created_at).getTime() -
+                  new Date(a.updated_at || a.created_at).getTime()
+              );
+              
+              const latestSummary = sortedSummaries[0];
+              row[header] = 
+                latestSummary?.resume_analysis?.[scoreType] ||
+                latestSummary?.overall_summary?.[scoreType] ||
+                '';
+            } else {
+              row[header] = 
+                summary?.resume_analysis?.[scoreType] ||
+                summary?.overall_summary?.[scoreType] ||
+                summary?.[scoreType] ||
+                '';
+            }
+          } else if (key === 'status') {
+            row[header] = app.application?.status || '';
+          } else if (key === 'job') {
+            row[header] = app.job?.name || '';
+          } else {
+            row[header] = app[key] || '';
+          }
+        } else if ('accessorFn' in col && typeof col.header === 'string') {
+          // For columns with accessorFn, use header as key
+          const header = col.header;
+          // We can't use the accessorFn directly, so handle common fields
+          if (header === 'Name') {
+            row[header] = `${app.candidate?.first_name || ''} ${app.candidate?.last_name || ''}`;
+          } else if (header === 'Email') {
+            row[header] = app.candidate?.email_addresses?.[0]?.value || '';
+          } else if (header === 'Job') {
+            row[header] = app.job?.name || '';
+          } else if (header === 'Status') {
+            row[header] = app.application?.status || '';
+          } else if (header === 'Overall Score' || header.includes('Score')) {
+            // Handle any score-related headers
+            const summary = app.ai_summary || app.AI_summary;
+            if (!summary) {
+              row[header] = '';
+            } else if (Array.isArray(summary) && summary.length > 0) {
+              const sortedSummaries = [...summary].sort(
+                (a, b) =>
+                  new Date(b.updated_at || b.created_at).getTime() -
+                  new Date(a.updated_at || a.created_at).getTime()
+              );
+              
+              if (header === 'Overall Score') {
+                const latestSummary = sortedSummaries[0];
+                if (typeof latestSummary.overall_summary === 'string') {
+                  try {
+                    const parsed = JSON.parse(latestSummary.overall_summary);
+                    row[header] = parsed.score || '';
+                  } catch (e) {
+                    row[header] = '';
+                  }
+                } else {
+                  row[header] = latestSummary?.overall_summary?.score || '';
+                }
+              } else {
+                // Other score types (Resume Score, Technical Score, etc)
+                const scoreType = header.replace(' Score', '').toLowerCase() + 'Score';
+                row[header] = 
+                  sortedSummaries[0]?.resume_analysis?.[scoreType] ||
+                  sortedSummaries[0]?.overall_summary?.[scoreType] ||
+                  '';
+              }
+            } else {
+              // Single AI summary object
+              if (header === 'Overall Score') {
+                if (typeof summary.overall_summary === 'string') {
+                  try {
+                    const parsed = JSON.parse(summary.overall_summary);
+                    row[header] = parsed.score || '';
+                  } catch (e) {
+                    row[header] = '';
+                  }
+                } else {
+                  row[header] = summary?.overall_summary?.score || '';
+                }
+              } else {
+                // Other score types
+                const scoreType = header.replace(' Score', '').toLowerCase() + 'Score';
+                row[header] = 
+                  summary?.resume_analysis?.[scoreType] ||
+                  summary?.overall_summary?.[scoreType] ||
+                  summary?.[scoreType] ||
+                  '';
+              }
+            }
+          } else if (header === 'Completed On') {
+            const summary = app.ai_summary || app.AI_summary;
+            let completedDate = null;
+            
+            if (summary) {
+              if (Array.isArray(summary) && summary.length > 0) {
+                const sortedSummaries = [...summary].sort(
+                  (a, b) =>
+                    new Date(b.updated_at || b.created_at).getTime() -
+                    new Date(a.updated_at || a.created_at).getTime()
+                );
+                completedDate = sortedSummaries[0].updated_at || sortedSummaries[0].created_at;
+              } else {
+                completedDate = summary.updated_at || summary.created_at;
+              }
+            }
+            
+            row[header] = completedDate ? new Date(completedDate).toLocaleDateString() : 'Unknown date';
+          }
+        }
+      });
+      
+      return row;
+    });
+    
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Applicants');
+    const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'applicants.xlsx');
+  };
+
   return (
     <div className="flex flex-col h-screen overflow-hidden">
       <header className="h-14 flex items-center px-6 border-b shrink-0">
@@ -163,6 +450,13 @@ export default function ApplicantList() {
             </div>
           ) : (
             <div className="w-full max-w-[1200px] h-full flex flex-col">
+              {/* Export Button */}
+              <button
+                onClick={handleExport}
+                className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors self-end"
+              >
+                Export to Excel
+              </button>
               {/* Enhanced Job Filter Dropdown */}
               <Card className="mb-4 p-5 bg-white border border-blue-100 shadow-sm">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3">

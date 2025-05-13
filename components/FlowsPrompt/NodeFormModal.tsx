@@ -6,6 +6,7 @@ export interface NodeFormData {
   label: string;
   content: string;
   criteria: string;
+  follow_up_toggle: boolean;
   position: { x: number; y: number };
   connectedNodes?: Array<{ id: string; label: string }>;
   selectedPath?: string;
@@ -24,7 +25,6 @@ const nodeTypes = [
   { value: 'start', label: 'Start' },
   { value: 'conclusion', label: 'Conclusion' },
   { value: 'question', label: 'Question' },
-  { value: 'section', label: 'Section' },
   { value: 'branching', label: 'Branching' }
 ];
 
@@ -58,6 +58,17 @@ export default function NodeFormModal({
     setNodeFormData(prev => ({ ...prev, criteria: e.target.value }));
   };
 
+  const getNodeTypeLabel = (type: string) => {
+    switch (type) {
+      case 'start': return 'Start';
+      case 'conclusion': return 'Conclusion';
+      case 'question': return 'Question';
+      case 'branching': return 'Branching';
+      default: return type.charAt(0).toUpperCase() + type.slice(1);
+    }
+
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-96">
@@ -65,32 +76,12 @@ export default function NodeFormModal({
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Type
+\              Node Type
             </label>
-            <select
-              value={nodeFormData.type}
-              onChange={(e) => setNodeFormData(prev => ({ ...prev, type: e.target.value }))}
-              className="w-full p-2 border-2 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={isEditing && (nodeFormData.type === 'start' || nodeFormData.type === 'conclusion')}
-            >
-              {nodeTypes.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Label
-            </label>
-            <input
-              type="text"
-              value={nodeFormData.label}
-              onChange={(e) => setNodeFormData(prev => ({ ...prev, label: e.target.value }))}
-              className="w-full p-2 border-2 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter node label"
-            />
+            <div className="p-2 border-2 border-gray-300 rounded bg-gray-50">
+              {getNodeTypeLabel(nodeFormData.type)}
+            </div>
+
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -103,52 +94,73 @@ export default function NodeFormModal({
               placeholder="Enter node content"
             />
           </div>
-          {nodeFormData.type === 'branching' && (
+          {(nodeFormData.type === 'branching' || nodeFormData.type === 'question') && (
             <>
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label className="block text-sm font-medium text-gray-700">
-                    Split Criteria
+                    {nodeFormData.type === 'branching' ? 'Split Criteria' : 'Evaluation Criteria'}
                   </label>
-                  <Button
-                    onClick={insertTemplate}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs"
-                  >
-                    Reset Template
-                  </Button>
+                  {nodeFormData.type === 'branching' && (
+                    <Button
+                      onClick={insertTemplate}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                    >
+                      Reset Template
+                    </Button>
+                  )}
                 </div>
                 <textarea
                   value={nodeFormData.criteria || ''}
                   onChange={handleCriteriaChange}
                   className="w-full p-2 border-2 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 h-32 font-mono text-sm"
-                  placeholder="Example: if (candidate.experience > 5) { go to Senior path } else { go to Junior path }"
+                  placeholder={nodeFormData.type === 'branching' 
+                    ? "Example: if (candidate.experience > 5) { go to Senior path } else { go to Junior path }"
+                    : "Enter evaluation criteria for this question"}
                 />
                 <p className="mt-1 text-xs text-gray-500">
-                  Use if-else statements to define which path to take based on conditions.
+                  {nodeFormData.type === 'branching' 
+                    ? "Use if-else statements to define which path to take based on conditions."
+                    : "Define how this question should be evaluated."}
                 </p>
               </div>
-              {isEditing && nodeFormData.connectedNodes && nodeFormData.connectedNodes.length > 0 && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Selected Path
-                  </label>
-                  <select
-                    value={nodeFormData.selectedPath || ''}
-                    onChange={(e) => setNodeFormData(prev => ({ ...prev, selectedPath: e.target.value }))}
-                    className="w-full p-2 border-2 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select a path...</option>
-                    {nodeFormData.connectedNodes.map((node) => (
-                      <option key={node.id} value={node.id}>
-                        {node.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
+
             </>
+          )}
+          {nodeFormData.type === 'question' && (
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="follow_up_toggle"
+                checked={nodeFormData.follow_up_toggle}
+                onChange={(e) => setNodeFormData(prev => ({ ...prev, follow_up_toggle: e.target.checked }))}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label htmlFor="follow_up_toggle" className="text-sm font-medium text-gray-700">
+                Ask follow-up questions
+              </label>
+            </div>
+          )}
+          {isEditing && nodeFormData.connectedNodes && nodeFormData.connectedNodes.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Selected Path
+              </label>
+              <select
+                value={nodeFormData.selectedPath || ''}
+                onChange={(e) => setNodeFormData(prev => ({ ...prev, selectedPath: e.target.value }))}
+                className="w-full p-2 border-2 border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select a path...</option>
+                {nodeFormData.connectedNodes.map((node) => (
+                  <option key={node.id} value={node.id}>
+                    {node.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           )}
           <div className="flex justify-end space-x-2">
             {isEditing && (
