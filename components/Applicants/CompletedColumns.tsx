@@ -7,12 +7,6 @@ import { Badge } from '@/components/ui/badge';
 
 // Helper function to get score from AI summary
 const getAISummaryScore = (applicant: any): string | null => {
-  if (
-    applicant.candidate?.email_addresses?.[0]?.value ===
-    'bengardiner18@gmail.com'
-  )
-    return '60';
-
   if (!applicant.ai_summary) return null;
 
   if (Array.isArray(applicant.ai_summary) && applicant.ai_summary.length > 0) {
@@ -53,12 +47,6 @@ const getResumeAnalysisScore = (
   applicant: any,
   scoreType: string
 ): number | null => {
-  if (
-    applicant.candidate?.email_addresses?.[0]?.value ===
-    'bengardiner18@gmail.com'
-  )
-    return 2;
-
   if (!applicant.ai_summary) return null;
 
   if (Array.isArray(applicant.ai_summary) && applicant.ai_summary.length > 0) {
@@ -270,20 +258,14 @@ export const getCompletedColumns = ({
           // Get the most recent summary
           const sortedSummaries = [...applicant.ai_summary].sort(
             (a, b) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime()
+              new Date(b.updated_at).getTime() -
+              new Date(a.updated_at).getTime()
           );
-          completedDate = sortedSummaries[0].created_at;
+          completedDate = sortedSummaries[0].updated_at;
         } else if (applicant.ai_summary.created_at) {
-          completedDate = applicant.ai_summary.created_at;
+          completedDate = applicant.ai_summary.updated_at;
         }
       }
-
-      if (
-        row.original.candidate?.email_addresses?.[0]?.value ===
-        'bengardiner18@gmail.com'
-      )
-        return '2024-11-11';
 
       if (!completedDate) return 'Unknown date';
 

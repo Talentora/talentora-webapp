@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import * as Tabs from '@radix-ui/react-tabs';
-import * as Dialog from '@radix-ui/react-dialog';
-import { Cross2Icon } from '@radix-ui/react-icons';
 import { portalProps } from '@/app/(pages)/(restricted)/applicants/[id]/page';
 import VideoTranscript, {
   VideoTranscriptSkeleton
 } from 'components/AnalysisDisplay/VideoTranscript/index';
 import { InterviewFeedbackComponent } from 'app/(pages)/(restricted)/reports/components/InterviewFeedback';
-import { interviewFeedback } from 'app/(pages)/(restricted)/reports/data/interview-feedback';
-import ResumeViewer from '@/components/AnalysisDisplay/ResumeViewer';
+import { InterviewFeedback } from 'app/(pages)/(restricted)/reports/data/interview-feedback';
+// import ResumeViewer from '@/components/AnalysisDisplay/ResumeViewer';
 
 interface ProgressBarProps {
   label: string;
@@ -171,7 +169,14 @@ export function ApplicantSummaries({ portalProps }: AnalysisDisplayProps) {
 
           <Tabs.Content value="textEval">
             {/* Replace with your text evaluation content */}
-            <InterviewFeedbackComponent feedback={interviewFeedback} />
+            {AI_summary?.text_eval && (
+              <InterviewFeedbackComponent 
+                feedback={AI_summary.text_eval as unknown as InterviewFeedback} 
+              />
+            )}
+            {!AI_summary?.text_eval && (
+              <div className="p-4">No text evaluation data available</div>
+            )}
           </Tabs.Content>
         </Tabs.Root>
         <div className="flex items-center justify-between mb-6"></div>

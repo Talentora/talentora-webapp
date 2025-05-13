@@ -165,7 +165,6 @@ export function ApplicantScores({ portalProps }: AssessmentScoreProps) {
       <div className="flex justify-around">
         <ScoreMeter label="Overall" score={overallScore} />
         <ScoreMeter label="Emotional" score={emotionScore} />
-        <ScoreMeter label="Lexical" score={textScore} />
       </div>
     </div>
   );
