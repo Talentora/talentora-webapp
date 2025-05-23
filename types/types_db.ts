@@ -503,18 +503,21 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          status: Database["public"]["Enums"]["recruiter_status"] | null
         }
         Insert: {
           company_id?: string | null
           email?: string | null
           full_name?: string | null
           id: string
+          status?: Database["public"]["Enums"]["recruiter_status"] | null
         }
         Update: {
           company_id?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
+          status?: Database["public"]["Enums"]["recruiter_status"] | null
         }
         Relationships: [
           {
@@ -611,6 +614,7 @@ export type Database = {
         | "past_due"
         | "unpaid"
         | "paused"
+      recruiter_status: "active" | "inactive"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -743,6 +747,7 @@ export const Constants = {
         "unpaid",
         "paused",
       ],
+      recruiter_status: ["active", "inactive"],
     },
   },
 } as const

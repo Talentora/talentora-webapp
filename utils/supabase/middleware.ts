@@ -12,7 +12,7 @@ export const unprotectedRoutes = [
   /^\/password_signin(\/.*)?$/,
   /^\/demo(\/.*)?$/,
   /^\/signup(\/.*)?$/,
-  // /^\/signup\/[A-Za-z0-9_-]+$/, // Matches '/signup/{id}' for candidate sign-up
+  /^\/signup\/[A-Za-z0-9_-]+$/, // Matches '/signup/{id}' for candidate sign-up
   /^\/about$/, // Matches '/about'
   /^\/contact$/, // Matches '/contact'
   /^\/product(\/.*)?$|^$/, // Matches '/product', '/product/', and any subpath like '/product/feature'
@@ -134,12 +134,6 @@ export async function updateSession(request: NextRequest) {
 
   // Cache user data to avoid multiple calls
   const { data: { user } } = await supabase.auth.getUser();
-
-  console.log('[Middleware] Got user:', user ? 'Present' : 'None');
-  console.log(
-    '[Middleware] Final response cookies:',
-    supabaseResponse.cookies.getAll()
-  );
 
   // Add SAML redirect handling
   const samlRedirect = await handleSamlRedirect(request);

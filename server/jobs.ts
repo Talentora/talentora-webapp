@@ -10,8 +10,8 @@ export async function fetchJobsData() {
     headers: {
       'Content-Type': 'application/json'
     },
-    // cache: 'force-cache',
-    // next: { revalidate: 3600 }
+    cache: 'force-cache',
+    next: { revalidate: 3600 }
   });
   
   if (!response.ok) {
@@ -37,8 +37,8 @@ export async function fetchJobById(jobId: string) {
     const response = await fetch(getURL(`api/jobs/${jobId}`), {
       credentials: 'include',
       headers,
-      // cache: 'force-cache',
-      // next: { revalidate: 3600 }
+      cache: 'force-cache',
+      next: { revalidate: 3600 }
     });
 
     if (!response.ok) {

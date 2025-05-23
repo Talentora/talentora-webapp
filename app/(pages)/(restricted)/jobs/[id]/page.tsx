@@ -16,7 +16,6 @@ export default function Page({ params }: JobPageProps) {
     applicantsLoading, 
     error
   } = useJob(jobId);
-  
 
 
 

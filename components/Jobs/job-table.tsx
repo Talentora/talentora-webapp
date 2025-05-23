@@ -31,6 +31,7 @@ export function JobTable({
   loading,
   visibleColumns
 }: JobTableProps) {
+  console.log("jobs",jobs);
   return (
     <div className="w-full overflow-x-auto">
       <Table>

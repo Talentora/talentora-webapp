@@ -5,8 +5,6 @@ import type { Job } from '@/types/merge';
 import {
   JobListState,
   JobListActions,
-  JobFiltersType,
-  SortField,
   EnrichedJob,
 } from '../types';
 

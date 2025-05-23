@@ -13,7 +13,7 @@ type AI_Summary = Tables<'AI_summary'>;
 import { inviteRecruiterAdmin, listUsersAdmin } from '@/utils/supabase/admin';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { fetchApplicationMergeId } from '@/server/applications';
-import { sendAuthEmail } from '../email_helpers';
+import { sendAuthCandidateEmail, sendAuthRecruiterEmail } from '../email_helpers';
 
 
 // CRUD operations for the company table
@@ -214,36 +214,37 @@ export const getProducts = async () => {
 
 export async function inviteRecruiter(
   name: string,
-  email: string
+  email: string,
+  role: string
 ): Promise<{ data?: any; error?: string | null }> {
   try {
+    console.log('inviting recruiter', name, email);
     // Check if user already exists in auth.users
     const supabase = await createClient();
-    const { data: existingUser, error: userCheckError } =
-      await listUsersAdmin();
-    const userExists = existingUser?.users?.some(
-      (user) => user.email === email
-    );
+    // const { data: existingUser, error: userCheckError } =
+    //   await listUsersAdmin();
+    // const userExists = existingUser?.users?.some(
+    //   (user) => user.email === email
+    // );
 
-    if (userCheckError) {
-      console.error('Error checking existing user:', userCheckError);
-      return {
-        data: null,
-        error: 'Failed to check if user exists'
-      };
-    }
+    // if (userCheckError) {
+    //   console.error('Error checking existing user:', userCheckError);
+    //   return {
+    //     data: null,
+    //     error: 'Failed to check if user exists'
+    //   };
+    // }
 
-    if (userExists) {
-      return {
-        data: null,
-        error: 'User with this email already exists'
-      };
-    }
+    // if (userExists) {
+    //   return {
+    //     data: null,
+    //     error: 'User with this email already exists'
+    //   };
+    // }
 
     const user = await getUser();
     const recruiter = await getRecruiter(user?.id ?? '');
     const company = await getCompany(recruiter?.company_id ?? '');
-
 
     if (!company) {
       return {
@@ -252,33 +253,38 @@ export async function inviteRecruiter(
       };
     }
 
-    const { data, error } = await inviteRecruiterAdmin(
-      name,
-      email,
-      company?.id ?? ''
-    );
-    // Return early if invitation failed
-    if (!data) {
+    // Create a pending recruiter record
+    const { error: recruiterError } = await supabase
+      .from('recruiters')
+      .insert({
+        email: email,
+        full_name: name,
+        company_id: company.id,
+        status: 'pending_invite',
+        role: role
+      });
+    
+    console.log('recruiterError', recruiterError);
+    if (recruiterError) {
+      console.error('Error creating pending recruiter:', recruiterError);
       return {
         data: null,
-        error:
-          error instanceof Error
-            ? error.message
-            : error || 'Failed to invite recruiter'
+        error: 'Failed to create pending recruiter record'
       };
     }
 
-    const recruiterId = data?.user?.id;
+    // Send authentication email
+    const emailSend = await sendAuthRecruiterEmail(email, company.id, company.name);
 
-    if (!recruiterId) {
+    if (!emailSend) {
       return {
         data: null,
-        error: 'Failed to get recruiter ID'
+        error: 'Failed to send invitation email'
       };
     }
 
     return {
-      data: recruiter,
+      data: { success: true },
       error: null
     };
   } catch (error) {
@@ -330,7 +336,7 @@ export async function inviteCandidate(
     const application_id = await fetchApplicationMergeId(job_id, merge_candidate_id);
     
     // Send authentication email with both signup and signin links
-    const emailSend = await sendAuthEmail(email, merge_candidate_id, companyName, application_id);
+    const emailSend = await sendAuthCandidateEmail(email, merge_candidate_id, companyName, application_id);
 
     if (!emailSend || !companyName) {
       return { data: null, error: "Failed to send email" };
@@ -683,7 +689,7 @@ export const createInterviewQuestion = async (
   // If config exists, update it. Otherwise create new config.
   const { error: upsertError, data: updatedConfig } = await supabase
     .from('job_interview_config')
-    .update({
+    .upsert({
       // job_id: jobId,
       interview_questions: updatedQuestions
       // created_at: new Date().toISOString()
@@ -793,7 +799,7 @@ export const createCompanyContext = async (
   const { data: createdCompanyContext, error: companyContextError } =
     await supabase
       .from('company_context')
-      .insert(companyContextData)
+      .upsert(companyContextData)
       .select()
       .single();
 
@@ -1252,6 +1258,12 @@ export const getApplicationCount = async (): Promise<number> => {
   const { data, error } = await supabase
     .from('applications')
     .select('*');
+
+  if (error) {
+    console.error('Error fetching application count:', error);
+    return 0;
+  }
+
   return data?.length || 0;
 };
 

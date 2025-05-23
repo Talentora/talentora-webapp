@@ -38,17 +38,17 @@ export const createClient = () => {
             console.error(`Error setting cookie ${name}:`, error);
           }
         },
-        remove(name: string, options: CookieOptions) {
-          try {
-            cookieStore.delete({
-              name,
-              ...cookieDefaults,
-              ...options,
-            });
-          } catch (error) {
-            console.error(`Error removing cookie ${name}:`, error);
-          }
-        }
+        // remove(name: string, options: CookieOptions) {
+        //   try {
+        //     cookieStore.delete({
+        //       name,
+        //       ...cookieDefaults,
+        //       ...options,
+        //     });
+        //   } catch (error) {
+        //     console.error(`Error removing cookie ${name}:`, error);
+        //   }
+        // }
       }
     }
   );

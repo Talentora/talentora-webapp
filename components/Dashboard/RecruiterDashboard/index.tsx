@@ -34,19 +34,19 @@ export default function RecruiterDashboard() {
     queryFn: fetchAllApplications,
   });
 
-  // Modified to match the actual return type from fetchRecentApplications
-  const { data: recentApplications = [], isLoading: recentApplicationsLoading } = useQuery<
-    { 
-      applicant_id: string | null; 
-      created_at: string; 
-      id: string; 
-      job_id: string; 
-      merge_application_id: string | null; 
-    }[]
-  >({
-    queryKey: ['recentApplications'],
-    queryFn: fetchRecentApplications,
-  });
+  // // Modified to match the actual return type from fetchRecentApplications
+  // const { data: recentApplications = [], isLoading: recentApplicationsLoading } = useQuery<
+  //   { 
+  //     applicant_id: string | null; 
+  //     created_at: string; 
+  //     id: string; 
+  //     job_id: string; 
+  //     merge_application_id: string | null; 
+  //   }[]
+  // >({
+  //   queryKey: ['recentApplications'],
+  //   queryFn: fetchRecentApplications,
+  // });
   
 
 
@@ -61,7 +61,7 @@ export default function RecruiterDashboard() {
 
   return (
     <div className="w-full mx-auto overflow-x-hidden">
-      <main className="w-full flex p-8">
+      <main className="w-full flex pl-8 pr-12 py-8">
         <div className="flex flex-col gap-6 w-full">
           {/* Header */}
           <div className="flex items-center justify-between gap-4 w-full p-4 rounded-lg">
@@ -128,7 +128,7 @@ export default function RecruiterDashboard() {
           </div>
 
           {/* Main Layout - Two columns */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
             {/* Left Column: Graph + Recent Applicants */}
             <div className="flex flex-col gap-6 w-full col-span-2">
               {/* Graph */}
@@ -143,17 +143,17 @@ export default function RecruiterDashboard() {
               </Card>
 
               {/* Recent Applicants */}
-              <RecentApplicantsCard
+              {/* <RecentApplicantsCard
                 applicants={applicants}
                 jobs={mergeJobs}
                 isLoading={applicantsLoading}
-              />
+              /> */}
             </div>
 
             {/* Right Column: Active Jobs + ChatBot + Settings */}
             <div className="flex flex-col gap-6 w-full">
               <ActiveJobsCard jobs={mergeJobs} isLoading={jobsLoading} />
-              <BotCard />
+              {/* <BotCard /> */}
               <SettingsCard />
             </div>
           </div>

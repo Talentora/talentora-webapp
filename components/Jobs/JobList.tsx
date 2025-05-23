@@ -4,15 +4,6 @@ import { useJobList } from './hooks/useJobList';
 import { JobListHeader } from './components/JobListHeader';
 import { JobListContent } from './components/JobListContent';
 import { Column } from './types';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 
 const COLUMNS: Column[] = [
   { key: 'id', label: 'Job Id' },

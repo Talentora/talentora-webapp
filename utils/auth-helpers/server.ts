@@ -232,13 +232,14 @@ export async function signUp(formData: FormData) {
         return redirectPath;
       }
     }
+    const firstName = fullName.split(' ')[0];
 
     const { error, data } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: callbackURL,
-        data: { role: role, full_name: fullName }
+        data: { name: firstName, role: role, full_name: fullName }
       }
     });
 
@@ -515,47 +516,6 @@ export async function updatePassword(formData: FormData) {
   }
 
   return redirectPath;
-}
-
-export async function updateEmail(formData: FormData) {
-  // Get form data
-  const newEmail = String(formData.get('newEmail')).trim();
-
-  // Check that the email is valid
-  if (!isValidEmail(newEmail)) {
-    return getErrorRedirect(
-      '/account',
-      'Your email could not be updated.',
-      'Invalid email address.'
-    );
-  }
-
-  const supabase = createClient();
-
-  const callbackUrl = getURL(
-    getStatusRedirect('/account', 'Success!', `Your email has been updated.`)
-  );
-
-  const { error } = await supabase.auth.updateUser(
-    { email: newEmail },
-    {
-      emailRedirectTo: callbackUrl
-    }
-  );
-
-  if (error) {
-    return getErrorRedirect(
-      '/account',
-      'Your email could not be updated.',
-      error.message
-    );
-  } else {
-    return getStatusRedirect(
-      '/account',
-      'Confirmation emails sent.',
-      `You will need to confirm the update by clicking the links sent to both the old and new email addresses.`
-    );
-  }
 }
 
 export async function updateName(formData: FormData) {

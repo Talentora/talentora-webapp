@@ -40,14 +40,6 @@ export default function SignUpPage() {
     }
   };
 
-  const handleBack = () => {
-    setShowForm(false);
-    // Remove role param from URL
-    const url = new URL(window.location.href);
-    url.searchParams.delete('role');
-    window.history.pushState({}, '', url);
-  };
-
   if (showForm && selectedType) {
     return (
       <div className="flex flex-col min-h-screen justify-center mx-auto">
@@ -60,11 +52,6 @@ export default function SignUpPage() {
                   redirectMethod={redirectMethod}
                   role={selectedType}
                 />
-                <div className="flex justify-center mt-4">
-                  <Button variant="outline" onClick={handleBack}>
-                    Back to Role Selection
-                  </Button>
-                </div>
               </CardContent>
             </Card>
           </div>

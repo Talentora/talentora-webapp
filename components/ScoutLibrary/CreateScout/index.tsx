@@ -36,18 +36,18 @@ const CreateScout = ({
   onBotCreated,
   onBotUpdated 
 }: CreateBotProps) => {
-  const [isOpen, setIsOpen] = useState(isEdit || false);
+  const [isOpen, setIsOpen] = useState(!!isEdit);
   const [activeTab, setActiveTab] = useState('bot-details');
   const [speakText, setSpeakText] = useState('Hello, how can I assist you today?');
   const [voiceOptions, setVoiceOptions] = useState<Voice[]>([]);
   const [newBot, setNewBot] = useState({
-    name: existingBot?.name || '',
-    description: existingBot?.description || '',
-    role: existingBot?.role || '',
-    icon: existingBot?.icon || 'Bot',
-    prompt: existingBot?.prompt || '',
-    voice: existingBot?.voice || null,
-    emotion: existingBot?.emotion || {
+    name: '',
+    description: '',
+    role: '',
+    icon: 'Bot',
+    prompt: '',
+    voice: null as Voice | null,
+    emotion: {
       speed: 1,
       anger: 1,
       curiosity: 1,
@@ -88,10 +88,60 @@ const CreateScout = ({
   }, []);
 
   useEffect(() => {
-    if (isEdit) {
-      setIsOpen(true);
-    }
+    setIsOpen(!!isEdit);
   }, [isEdit]);
+
+  useEffect(() => {
+    if (isEdit && existingBot) {
+      setNewBot({
+        name: existingBot.name || '',
+        description: existingBot.description || '',
+        role: existingBot.role || '',
+        icon: existingBot.icon || 'Bot',
+        prompt: existingBot.prompt || '',
+        voice: existingBot.voice as Voice | null,
+        emotion: existingBot.emotion as {
+          speed: number;
+          anger: number;
+          curiosity: number;
+          positivity: number;
+          sadness: number;
+          surprise: number;
+        } || {
+          speed: 1,
+          anger: 1,
+          curiosity: 1,
+          positivity: 1,
+          sadness: 1,
+          surprise: 1
+        }
+      });
+      setSpeakText('Hello, how can I assist you today?');
+    }
+  }, [isEdit, existingBot]);
+
+  useEffect(() => {
+    if (!isEdit && isOpen) {
+      setNewBot({
+        name: '',
+        description: '',
+        role: '',
+        icon: 'Bot',
+        prompt: '',
+        voice: null as Voice | null,
+        emotion: {
+          speed: 1,
+          anger: 1,
+          curiosity: 1,
+          positivity: 1,
+          sadness: 1,
+          surprise: 1
+        }
+      });
+      setActiveTab('bot-details');
+      setSpeakText('Hello, how can I assist you today?');
+    }
+  }, [isOpen, isEdit]);
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
@@ -155,7 +205,6 @@ const CreateScout = ({
   };
   // emotion is a Json object
   // const emotion = newBot.emotion as { [key: string]: number };
-  const voice = newBot.voice as { [key: string]: string };
 
   const handleListen = async () => {
     try {
@@ -171,7 +220,7 @@ const CreateScout = ({
         model_id: "sonic-english",
         voice: {
           mode: "id",
-          id: voice?.id // Changed from voiceId to voice?.id
+          id: newBot.voice?.id
         },
         transcript: speakText,
         // emotions: emotions,
@@ -187,142 +236,130 @@ const CreateScout = ({
     }
   };
 
-  if (isEdit) {
-    return (
-      <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-        <DialogContent className="space-y-4">
-          <DialogHeader>
-            <DialogTitle>Edit <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">Ora</span> Scout</DialogTitle>
-          </DialogHeader>
-          <Tabs defaultValue="bot-details" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList>
-              <TabsTrigger value="bot-details"><span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">Ora</span> Scout Details</TabsTrigger>
-              <TabsTrigger value="voice-emotion">Voice and Emotion</TabsTrigger>
-              <TabsTrigger value="prompting">Prompting</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="bot-details">
-              <BotDetails
-                newBot={newBot}
-                setNewBot={setNewBot}
-                onNext={() => setActiveTab('voice-emotion')}
-              />
-            </TabsContent>
+  const validateStep = (step: string) => {
+    switch (step) {
+      case 'bot-details':
+        return newBot.name && newBot.description && newBot.role;
+      case 'voice-emotion':
+        return typeof newBot.voice === 'object' && newBot.voice !== null && 'id' in newBot.voice;
+      case 'prompting':
+        return !!newBot.prompt;
+      default:
+        return false;
+    }
+  };
 
-            <TabsContent value="voice-emotion">
-              <VoiceEmotions
-                newBot={newBot}
-                setNewBot={setNewBot}
-                voiceOptions={voiceOptions}
-                speakText={speakText}
-                setSpeakText={setSpeakText}
-                onListen={handleListen}
-                onBack={() => setActiveTab('bot-details')}
-                onNext={() => setActiveTab('prompting')}
-              />
-            </TabsContent>
+  const handleNext = () => {
+    if (!validateStep(activeTab)) {
+      toast({
+        title: 'Required Fields',
+        description: 'Please fill in all required fields before proceeding.',
+        variant: 'destructive'
+      });
+      return;
+    }
 
-            <TabsContent value="prompting">
-              <form onSubmit={handleSaveBot} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="prompt">Enter Prompt</Label>
-                  <Textarea
-                    id="prompt"
-                    placeholder="e.g. You are an experienced DevOps recruiter..."
-                    className="min-h-[150px]"
-                    value={newBot.prompt}
-                    onChange={(e) => setNewBot({ ...newBot, prompt: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="flex justify-between">
-                  <Button
-                    type="button"
-                    onClick={() => setActiveTab('voice-emotion')}
-                    className="bg-primary-dark text-white"
-                  >
-                    Back
-                  </Button>
-                  <Button type="submit">
-                    Save Changes
-                  </Button>
-                </div>
-              </form>
-            </TabsContent>
-          </Tabs>
-        </DialogContent>
-      </Dialog>
-    );
-  }
+    switch (activeTab) {
+      case 'bot-details':
+        setActiveTab('voice-emotion');
+        break;
+      case 'voice-emotion':
+        setActiveTab('prompting');
+        break;
+    }
+  };
+
+  const handleBack = () => {
+    switch (activeTab) {
+      case 'voice-emotion':
+        setActiveTab('bot-details');
+        break;
+      case 'prompting':
+        setActiveTab('voice-emotion');
+        break;
+    }
+  };
+
+  const renderDialogContent = () => (
+    <DialogContent className="space-y-4">
+      <DialogHeader>
+        <DialogTitle>
+          {isEdit ? 'Edit' : 'Create New'} <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text ">Ora</span> Scout
+        </DialogTitle>
+      </DialogHeader>
+      <Tabs defaultValue="bot-details" value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="bot-details" disabled>
+            <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">Ora</span> Scout Details
+          </TabsTrigger>
+          <TabsTrigger value="voice-emotion" disabled>Voice and Emotion</TabsTrigger>
+          <TabsTrigger value="prompting" disabled>Prompting</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="bot-details">
+          <BotDetails
+            newBot={newBot}
+            setNewBot={setNewBot}
+            onNext={handleNext}
+          />
+        </TabsContent>
+        <TabsContent value="voice-emotion">
+          <VoiceEmotions
+            newBot={newBot}
+            setNewBot={setNewBot}
+            voiceOptions={voiceOptions}
+            onNext={handleNext}
+            onBack={handleBack}
+            onListen={handleListen}
+            speakText={speakText}
+            setSpeakText={setSpeakText}
+          />
+        </TabsContent>
+        <TabsContent value="prompting">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="prompt">Prompt</Label>
+              <Textarea
+                id="prompt"
+                placeholder="Enter the prompt for your Ora Scout..."
+                value={newBot.prompt}
+                onChange={(e) => setNewBot({ ...newBot, prompt: e.target.value })}
+                className="min-h-[200px]"
+                required
+              />
+            </div>
+            <div className="flex justify-between pt-4 border-t">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleBack}
+              >
+                Back
+              </Button>
+              <Button
+                type="button"
+                onClick={handleSaveBot}
+              >
+                {isEdit ? 'Save Changes' : 'Create Scout'}
+              </Button>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </DialogContent>
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button className="w-full" onClick={() => setIsOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" /> Create New Ora Scout
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="space-y-4">
-        <DialogHeader>
-          <DialogTitle>Create New <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">Ora</span> Scout</DialogTitle>
-        </DialogHeader>
-        <Tabs defaultValue="bot-details" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="bot-details">Ora Scout Details</TabsTrigger>
-            <TabsTrigger value="voice-emotion">Voice and Emotion</TabsTrigger>
-            <TabsTrigger value="prompting">Prompting</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="bot-details">
-            <BotDetails
-              newBot={newBot}
-              setNewBot={setNewBot}
-              onNext={() => setActiveTab('voice-emotion')}
-            />
-          </TabsContent>
-
-          <TabsContent value="voice-emotion">
-            <VoiceEmotions
-              newBot={newBot}
-              setNewBot={setNewBot}
-              voiceOptions={voiceOptions}
-              speakText={speakText}
-              setSpeakText={setSpeakText}
-              onListen={handleListen}
-              onBack={() => setActiveTab('bot-details')}
-              onNext={() => setActiveTab('prompting')}
-            />
-          </TabsContent>
-
-          <TabsContent value="prompting">
-            <form onSubmit={handleSaveBot} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="prompt">Enter Prompt</Label>
-                <Textarea
-                  id="prompt"
-                  placeholder="e.g. You are an experienced DevOps recruiter..."
-                  className="min-h-[150px]"
-                  value={newBot.prompt}
-                  onChange={(e) => setNewBot({ ...newBot, prompt: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="flex justify-between">
-                <Button
-                  type="button"
-                  onClick={() => setActiveTab('voice-emotion')}
-                  className="bg-primary-dark text-white"
-                >
-                  Back
-                </Button>
-                <Button type="submit">
-                  Create <span className="font-bold bg-gradient-to-r from-primary-dark to-pink-500 bg-clip-text text-transparent">Ora</span> Scout
-                </Button>
-              </div>
-            </form>
-          </TabsContent>
-        </Tabs>
-      </DialogContent>
+      {!isEdit && (
+        <DialogTrigger asChild>
+          <Button className="from-primary-dark to-pink-500 text-white hover:from-primary-dark/90 hover:to-pink-500/90">
+            <Plus className="mr-2 h-4 w-4" />
+            Create New Scout
+          </Button>
+        </DialogTrigger>
+      )}
+      {renderDialogContent()}
     </Dialog>
   );
 };

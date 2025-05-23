@@ -124,6 +124,7 @@
     "react-sparklines": "^1.7.0",
     "reactflow": "^11.11.4",
     "recharts": "^2.12.7",
+    "sonner": "^2.0.3",
     "stripe": "^14.25.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",

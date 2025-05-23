@@ -286,9 +286,9 @@ const Sidebar = () => {
               icon={BriefcaseIcon}
               isActive={pathname === '/jobs'}
               isSidebarOpen={isSidebarOpen}
-              hasDropdown={true}
-              isDropdownOpen={isJobsOpen}
-              onDropdownClick={() => setIsJobsOpen(!isJobsOpen)}
+              // hasDropdown={true}
+              // isDropdownOpen={isJobsOpen}
+              // onDropdownClick={() => setIsJobsOpen(!isJobsOpen)}
             >
               Jobs
             </SidebarLink>
@@ -316,9 +316,9 @@ const Sidebar = () => {
               icon={Sparkles}
               isActive={pathname === '/scouts'}
               isSidebarOpen={isSidebarOpen}
-              hasDropdown={true}
-              isDropdownOpen={isScoutsOpen}
-              onDropdownClick={() => setIsScoutsOpen(!isScoutsOpen)}
+              hasDropdown={false}
+                isDropdownOpen={isScoutsOpen}
+                onDropdownClick={() => setIsScoutsOpen(!isScoutsOpen)}
             >
               Ora Scouts
             </SidebarLink>
@@ -346,9 +346,9 @@ const Sidebar = () => {
               icon={SettingsIcon}
               isActive={pathname.startsWith('/settings')}
               isSidebarOpen={isSidebarOpen}
-              hasDropdown={true}
-              isDropdownOpen={isSettingsOpen}
-              onDropdownClick={() => setIsSettingsOpen(!isSettingsOpen)}
+              hasDropdown={false}
+              // isDropdownOpen={isSettingsOpen}
+              // onDropdownClick={() => setIsSettingsOpen(!isSettingsOpen)}
             >
               Settings
             </SidebarLink>

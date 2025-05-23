@@ -3,43 +3,44 @@
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Linkedin, Twitter } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Database } from "@/types/types_db"
 
-const teamMembers = [
-  {
-    name: 'Ben Johnson',
-    role: 'CEO & Co-founder',
-    image: '/team/Ben.jpg',
-    bio: 'Former tech executive with 15+ years in recruitment technology.',
-    linkedin: '#',
-    twitter: '#'
-  },
-  {
-    name: 'Michael Chen',
-    role: 'CTO',
-    image: '/team/michael.jpg',
-    bio: 'AI researcher and engineer with expertise in machine learning.',
-    linkedin: '#',
-    twitter: '#'
-  },
-  {
-    name: 'Emily Rodriguez',
-    role: 'Head of Product',
-    image: '/team/emily.jpg',
-    bio: 'Product leader focused on creating intuitive user experiences.',
-    linkedin: '#',
-    twitter: '#'
-  },
-  {
-    name: 'David Kim',
-    role: 'Lead Engineer',
-    image: '/team/david.jpg',
-    bio: 'Full-stack developer with a passion for scalable solutions.',
-    linkedin: '#',
-    twitter: '#'
+type Recruiter = Database["public"]["Tables"]["recruiters"]["Row"]
+
+interface TeamGridProps {
+  recruiters: Recruiter[]
+}
+
+export function TeamGrid({ recruiters }: TeamGridProps) {
+  const getStatusColor = (status: string | null) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-500'
+      case 'pending_invite':
+        return 'bg-yellow-500'
+      case 'invite_expired':
+        return 'bg-red-500'
+      default:
+        return 'bg-gray-500'
+    }
   }
-]
 
-const TeamGrid = () => {
+  const getStatusText = (status: string | null) => {
+    switch (status) {
+      case 'active':
+        return 'Active'
+      case 'pending_invite':
+        return 'Pending Invite'
+      case 'invite_expired':
+        return 'Invite Expired'
+      default:
+        return 'Unknown'
+    }
+  }
+
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">
@@ -57,53 +58,32 @@ const TeamGrid = () => {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {teamMembers.map((member, index) => (
-            <motion.div
-              key={member.name}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-background border border-input rounded-xl shadow-sm overflow-hidden"
-            >
-              <div className="relative h-64 w-full">
-                <Image
-                  src={member.image}
-                  alt={member.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-1">
-                  {member.name}
-                </h3>
-                <p className="text-blue-600 font-medium mb-3">
-                  {member.role}
-                </p>
-                <p className="text-gray-600 mb-4">
-                  {member.bio}
-                </p>
-                <div className="flex space-x-4">
-                  <a
-                    href={member.linkedin}
-                    className="text-gray-400 hover:text-blue-600 transition-colors"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Linkedin className="w-5 h-5" />
-                  </a>
-                  <a
-                    href={member.twitter}
-                    className="text-gray-400 hover:text-blue-400 transition-colors"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Twitter className="w-5 h-5" />
-                  </a>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {recruiters.map((recruiter) => (
+            <Card key={recruiter.id}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {recruiter.full_name || 'Unnamed Recruiter'}
+                </CardTitle>
+                <Badge className={getStatusColor(recruiter.status)}>
+                  {getStatusText(recruiter.status)}
+                </Badge>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center space-x-4">
+                  <Avatar>
+                    <AvatarImage src={`https://avatar.vercel.sh/${recruiter.email}`} />
+                    <AvatarFallback>{recruiter.full_name?.charAt(0) || 'U'}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-medium">{recruiter.email}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {recruiter.status === 'active' ? 'Team Member' : 'Pending Team Member'}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>

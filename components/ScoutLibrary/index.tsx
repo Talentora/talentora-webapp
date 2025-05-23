@@ -4,17 +4,12 @@ import { Input } from '@/components/ui/input';
 import ScoutSettings from '@/components/ScoutLibrary/ScoutSettings';
 import CreateScout from './CreateScout';
 import { Search } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScoutWithJobs } from '@/types/custom';
 
 export default function ScoutLibrary({ scouts: initialscouts }: { scouts: ScoutWithJobs[] }) {
   const [scouts, setscouts] = useState<ScoutWithJobs[]>(initialscouts || []);
   const [filteredscouts, setFilteredscouts] = useState<ScoutWithJobs[]>(scouts);
-
-  console.log("scouts",scouts);
-  console.log("filteredscouts",filteredscouts);
-
-
+  const [editingScout, setEditingScout] = useState<ScoutWithJobs | null>(null);
 
   const handlescoutCreated = (newscout: ScoutWithJobs) => {
     if (!newscout || !newscout.id) {
@@ -32,12 +27,24 @@ export default function ScoutLibrary({ scouts: initialscouts }: { scouts: ScoutW
     setFilteredscouts(updatedscouts);
   };
 
-  const handlescoutUpdated = (updatedscout: ScoutWithJobs) => {
+  const handlescoutUpdated = (updatedscout: ScoutWithJobs | null) => {
+    if (!updatedscout) {
+      return;
+    }
     const updatedscouts = scouts.map(scout => 
       scout.id === updatedscout.id ? updatedscout : scout
     );
     setscouts(updatedscouts);
     setFilteredscouts(updatedscouts);
+    setEditingScout(null);
+  };
+
+  const handleEditScout = (scout: ScoutWithJobs) => {
+    setEditingScout(scout);
+  };
+
+  const handleCloseEdit = () => {
+    setEditingScout(null);
   };
 
   const handleSearch = (searchTerm: string) => {
@@ -48,14 +55,6 @@ export default function ScoutLibrary({ scouts: initialscouts }: { scouts: ScoutW
     );
     setFilteredscouts(filtered);
   };
-
-  // Filter scouts based on whether they have jobs configured
-  const activescouts = filteredscouts.filter(
-    scout => scout.job_interview_config && scout.job_interview_config.length > 0
-  );
-  const inactivescouts = filteredscouts.filter(
-    scout => !scout.job_interview_config || scout.job_interview_config.length === 0
-  );
 
   return (
     <div className="container mx-auto p-4">
@@ -68,7 +67,7 @@ export default function ScoutLibrary({ scouts: initialscouts }: { scouts: ScoutW
 
       <div className="mb-6">
         <div className="flex flex-row justify-between gap-10 mb-4">
-          <div className="relative w-full">
+          {/* <div className="relative w-full">
             <Input
               type="search"
               placeholder="Search scouts..."
@@ -78,60 +77,35 @@ export default function ScoutLibrary({ scouts: initialscouts }: { scouts: ScoutW
             <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
               <Search className="h-5 w-5 text-gray-400" />
             </div>
-          </div>
+          </div> */}
           <div className="flex flex-row justify-end">
-            <CreateScout onBotCreated={handlescoutCreated} />
+            <CreateScout 
+              onBotCreated={handlescoutCreated} 
+              isEdit={!!editingScout}
+              existingBot={editingScout || undefined}
+              onClose={handleCloseEdit}
+              onBotUpdated={handlescoutUpdated}
+            />
           </div>
         </div>
 
-        <Tabs defaultValue="active" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="active">
-              Active Scouts ({activescouts.length})
-            </TabsTrigger>
-            <TabsTrigger value="inactive">
-              Inactive Scouts ({inactivescouts.length})
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="active">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activescouts.map((scout: ScoutWithJobs) => (
-                <ScoutSettings 
-                  key={scout.id} 
-                  scout={scout} 
-                  onscoutDeleted={handlescoutDeleted}
-                  onscoutUpdated={handlescoutUpdated}
-                />
-              ))}
-              {activescouts.length === 0 && (
-                <div className="col-span-full flex flex-col items-center justify-center p-6">
-                  <p className="text-lg font-semibold mb-2">No active Scouts</p>
-                  <p className="text-gray-500">Configure jobs for your Scouts to make them active</p>
-                </div>
-              )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredscouts.map((scout: ScoutWithJobs) => (
+            <ScoutSettings 
+              key={scout.id} 
+              scout={scout} 
+              onscoutDeleted={handlescoutDeleted}
+              onscoutUpdated={handlescoutUpdated}
+              onEditScout={handleEditScout}
+            />
+          ))}
+          {filteredscouts.length === 0 && (
+            <div className="col-span-full flex flex-col items-center justify-center p-6">
+              <p className="text-lg font-semibold mb-2">No Scouts Found</p>
+              <p className="text-gray-500">Create a new Scout to get started</p>
             </div>
-          </TabsContent>
-
-          <TabsContent value="inactive">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {inactivescouts.map((scout: ScoutWithJobs) => (
-                <ScoutSettings 
-                  key={scout.id} 
-                  scout={scout} 
-                  onscoutDeleted={handlescoutDeleted}
-                  onscoutUpdated={handlescoutUpdated}
-                />
-              ))}
-              {inactivescouts.length === 0 && (
-                <div className="col-span-full flex flex-col items-center justify-center p-6">
-                  <p className="text-lg font-semibold mb-2">No inactive Scouts</p>
-                  <p className="text-gray-500">All your scouts are currently active</p>
-                </div>
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
+          )}
+        </div>
       </div>
     </div>
   );

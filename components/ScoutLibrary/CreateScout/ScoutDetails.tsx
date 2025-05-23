@@ -82,11 +82,10 @@ export function BotDetails({ newBot, setNewBot, onNext }: BotDetailsProps) {
           </Select>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end pt-4 border-t">
           <Button
             type="button"
             onClick={onNext}
-            className="bg-primary-dark text-white"
           >
             Next
           </Button>

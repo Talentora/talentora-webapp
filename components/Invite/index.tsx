@@ -21,7 +21,7 @@ import {
 // import { inviteRecruiter } from '@/utils/supabase/queries';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Job } from '@/types/merge';
-import { inviteCandidate, inviteRecruiter } from '@/utils/supabase/queries';
+import { inviteCandidate } from '@/utils/supabase/queries';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface InvitePageProps {

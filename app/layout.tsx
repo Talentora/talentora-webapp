@@ -38,7 +38,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
               >
                 <div className="sticky top-0 z-40 w-full bg-background/95">
                   <Navbar visible={isSidebarVisible} />
-                  {isSidebarVisible && <BreadcrumbsContainer />}
+                  {/* {isSidebarVisible && <BreadcrumbsContainer />} */}
                 </div>
                 <div className="mt-2">
                   <Suspense fallback={<Loading />}>

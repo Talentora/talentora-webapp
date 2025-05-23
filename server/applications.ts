@@ -170,7 +170,8 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
         headers: {
             'Content-Type': 'application/json'
         },
-        cache: 'no-store'
+        cache: 'force-cache',
+        next: { revalidate: 3600 }
     });
     
     if (!response.ok) {
