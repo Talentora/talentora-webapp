@@ -62,35 +62,7 @@ export function SearchFilter({ jobs, searchTerm, onSearch }: SearchFilterProps) 
           onKeyDown={handleKeyDown}
           className="max-w-sm"
         />
-       
       </div>
-
-      {showPreview && filteredJobs.length > 0 && (
-        <div className="absolute z-10 w-full max-w-sm mt-1 border rounded-md shadow-lg divide-y divide-gray-100">
-          {filteredJobs.slice(0, 5).map((job, index) => (
-            <div 
-              key={index}
-              className="p-3 cursor-pointer bg-background"
-              onClick={() => handleSelectJob(job)}
-              onMouseEnter={() => setSelectedIndex(index)}
-            >
-              <div className="flex flex-col gap-1">
-                <div className="font-medium">
-                  {job.name}
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="p-1 bg-primary rounded font-medium">
-                    {job.status || 'No status'}
-                  </span>
-                  <span className="text-gray-400">
-                    {new Date(job.created_at).toLocaleDateString()}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

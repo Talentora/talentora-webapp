@@ -86,7 +86,7 @@ export function JobFilters({ onFilterChange, initialFilters, departments }: JobF
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="bg-accent text-foreground rounded-full">
+        <Button variant="default" className="bg-primary text-white font-bold shadow rounded-full border-2 border-primary hover:bg-primary/90">
           <Filter className="h-4 w-4 mr-2" />
           Filters
         </Button>

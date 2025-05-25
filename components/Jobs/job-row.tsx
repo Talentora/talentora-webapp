@@ -27,7 +27,7 @@ export function JobRow({ job, visibleColumns }: { job: EnrichedJob; visibleColum
 
   return (
     <TooltipProvider>
-      <TableRow onClick={() => router.push(`/jobs/${job.id}`)}>
+      <TableRow onClick={() => router.push(`/jobs/${job.id}`)} className="cursor-pointer hover:bg-accent/40">
         {visibleColumns.includes('id') && (
           <TableCell className="whitespace-nowrap">
             <Tooltip>
