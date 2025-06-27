@@ -126,39 +126,48 @@ jobs:
           git push origin ${{ github.head_ref || github.ref_name }}  # Push to the correct branch
 
   deploy:
+    needs: install-and-test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # 1. Check out code
+      - name: Checkout
+        uses: actions/checkout@v4
 
+      # 2. Log in to Docker Hub
       - name: Log in to DockerHub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build & Push Docker image
+      # 3. Build Docker image
+      - name: Build and Push Docker image
         run: |
           IMAGE_TAG=${{ github.sha }}
-          docker build . \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-staging:$IMAGE_TAG \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-staging:latest
+          docker build . -t ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-staging:$IMAGE_TAG
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-staging:$IMAGE_TAG
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-staging:latest
 
-      - name: Deploy to EC2 via Docker Compose
+      # 4. SSH into EC2 and deploy the new container
+      - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
           script: |
-            # Export environment variables
-            export DOCKERHUB_USERNAME = '${{ secrets.DOCKERHUB_USERNAME }}'
-            export NEXT_PUBLIC_SUPABASE_URL='${{ http://supabase_kong_nextjs-subscription-payments:8000 }}'
-            export SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI = '${{ http://supabase_kong_nextjs-subscription-payments:8000/auth/v1/callback }}'
+            docker container prune --force
+            docker image prune --all --force
+            docker system prune --volumes --force
 
-            supabase start --non-interactive
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-            docker-compose pull webapp
-            docker-compose down
-            docker-compose up -d
+            IMAGE_TAG=${{ github.sha }}
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-staging:$IMAGE_TAG
+
+            docker stop talentora-webapp-staging || true
+            docker rm talentora-webapp-staging || true
+
+            docker run -d \
+              --name talentora-webapp-staging \
+              --restart unless-stopped \
+              -p 80:80 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-staging:$IMAGE_TAG
