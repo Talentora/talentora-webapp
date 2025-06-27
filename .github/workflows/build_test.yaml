@@ -1,13 +1,16 @@
-name: 'build-test_Next.js'
+name: 'build-test-deploy-Next.js'
 
 on:
   push:
     branches:
       - main
       - dev
+      - staging
   pull_request:
     branches:
       - main
+      - staging
+  workflow_dispatch:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -34,7 +37,7 @@ env:
   NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
   NEXT_PUBLIC_MANUAL_ROOM_ENTRY: ${{ secrets.NEXT_PUBLIC_MANUAL_ROOM_ENTRY }}
   NEXT_PUBLIC_GROQ_API_KEY: ${{ secrets.NEXT_PUBLIC_GROQ_API_KEY }}
-  INTERVIEW_BOT_URL: "https://talentora-interviewbot-production.up.railway.app"
+  INTERVIEW_BOT_URL: 'https://talentora-interviewbot-production.up.railway.app'
 
   # MERGE
   NEXT_PUBLIC_MERGE_API_KEY: ${{ secrets.NEXT_PUBLIC_MERGE_API_KEY }}
@@ -45,8 +48,10 @@ env:
   # DAILY
   NEXT_PUBLIC_DAILY_BOT_API_KEY: ${{ secrets.NEXT_PUBLIC_DAILY_BOT_API_KEY }}
 
-
-
+  # LIVEKIT
+  LIVEKIT_API_KEY: ${{ secrets.LIVEKIT_API_KEY }}
+  LIVEKIT_API_SECRET: ${{ secrets.LIVEKIT_API_SECRET }}
+  NEXT_PUBLIC_LIVEKIT_URL: ${{ secrets.NEXT_PUBLIC_LIVEKIT_URL }}
 
 jobs:
   install-and-test: # Validation, lint test.
@@ -85,7 +90,6 @@ jobs:
       - name: Build Next.js project
         run: pnpm build
 
-
   generate_types:
     runs-on: ubuntu-latest
     steps:
@@ -103,7 +107,7 @@ jobs:
         run: |
           mkdir -p types
           npx supabase gen types typescript --local --schema public > types/types_db.ts
-          if ! git diff --ignore-space-at-eol --exit-code --quiet types/types_db.ts; then
+          if ! git diff --ignore-space-at-eol --exit-code --quiet types/types_  db.ts; then
             echo "Detected uncommitted changes after build. See status below:"
             git diff
           else
@@ -120,4 +124,50 @@ jobs:
           git commit -m "Update generated types based on Postgres schema" || echo "Nothing to commit"
           git pull origin ${{ github.head_ref || github.ref_name }}  # Pull the latest changes
           git push origin ${{ github.head_ref || github.ref_name }}  # Push to the correct branch
-          
+
+  deploy:
+    needs: install-and-test
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Check out code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Log in to Docker Hub
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 3. Build Docker image
+      - name: Build and Push Docker image
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          docker build . -t ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-staging:$IMAGE_TAG
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-staging:$IMAGE_TAG
+
+      # 4. SSH into EC2 and deploy the new container
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            docker container prune --force
+            docker image prune --all --force
+            docker system prune --volumes --force
+
+            IMAGE_TAG=${{ github.sha }}
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-staging:$IMAGE_TAG
+
+            docker stop talentora-webapp-staging || true
+            docker rm talentora-webapp-staging || true
+
+            docker run -d \
+              --name talentora-webapp-staging \
+              --restart unless-stopped \
+              -p 80:80 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-staging:$IMAGE_TAG
