@@ -14,6 +14,7 @@ export type Database = {
           application_id: string | null
           batch_processor_transcript_id: string | null
           created_at: string
+          culture_fit: Json | null
           emotion_eval: Json | null
           id: string
           overall_summary: Json | null
@@ -22,11 +23,13 @@ export type Database = {
           room_name: string | null
           text_eval: Json | null
           transcript_summary: string | null
+          updated_at: string | null
         }
         Insert: {
           application_id?: string | null
           batch_processor_transcript_id?: string | null
           created_at?: string
+          culture_fit?: Json | null
           emotion_eval?: Json | null
           id?: string
           overall_summary?: Json | null
@@ -35,11 +38,13 @@ export type Database = {
           room_name?: string | null
           text_eval?: Json | null
           transcript_summary?: string | null
+          updated_at?: string | null
         }
         Update: {
           application_id?: string | null
           batch_processor_transcript_id?: string | null
           created_at?: string
+          culture_fit?: Json | null
           emotion_eval?: Json | null
           id?: string
           overall_summary?: Json | null
@@ -48,12 +53,13 @@ export type Database = {
           room_name?: string | null
           text_eval?: Json | null
           transcript_summary?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "AI_summary_application_id_fkey"
             columns: ["application_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "applications"
             referencedColumns: ["id"]
           },
@@ -324,8 +330,6 @@ export type Database = {
           interview_name: string | null
           interview_questions: Json | null
           job_id: string
-          min_qual: Json[] | null
-          preferred_qual: Json[] | null
           prompt_graph: Json | null
           type: string | null
         }
@@ -338,8 +342,6 @@ export type Database = {
           interview_name?: string | null
           interview_questions?: Json | null
           job_id?: string
-          min_qual?: Json[] | null
-          preferred_qual?: Json[] | null
           prompt_graph?: Json | null
           type?: string | null
         }
@@ -352,8 +354,6 @@ export type Database = {
           interview_name?: string | null
           interview_questions?: Json | null
           job_id?: string
-          min_qual?: Json[] | null
-          preferred_qual?: Json[] | null
           prompt_graph?: Json | null
           type?: string | null
         }
@@ -391,24 +391,30 @@ export type Database = {
       jobs: {
         Row: {
           company_id: string | null
+          created_at: string | null
+          description: string | null
           id: string
-          job_name: string | null
           job_resume_config: Json | null
           merge_id: string
+          name: string | null
         }
         Insert: {
           company_id?: string | null
+          created_at?: string | null
+          description?: string | null
           id?: string
-          job_name?: string | null
           job_resume_config?: Json | null
           merge_id: string
+          name?: string | null
         }
         Update: {
           company_id?: string | null
+          created_at?: string | null
+          description?: string | null
           id?: string
-          job_name?: string | null
           job_resume_config?: Json | null
           merge_id?: string
+          name?: string | null
         }
         Relationships: [
           {
@@ -503,6 +509,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          role: Database["public"]["Enums"]["recruiter_role"] | null
           status: Database["public"]["Enums"]["recruiter_status"] | null
         }
         Insert: {
@@ -510,6 +517,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          role?: Database["public"]["Enums"]["recruiter_role"] | null
           status?: Database["public"]["Enums"]["recruiter_status"] | null
         }
         Update: {
@@ -517,6 +525,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          role?: Database["public"]["Enums"]["recruiter_role"] | null
           status?: Database["public"]["Enums"]["recruiter_status"] | null
         }
         Relationships: [
@@ -605,6 +614,8 @@ export type Database = {
         | "interview_completed"
       pricing_plan_interval: "day" | "week" | "month" | "year"
       pricing_type: "one_time" | "recurring"
+      recruiter_role: "admin" | "recruiter" | "viewer"
+      recruiter_status: "active" | "pending_invite" | "invite_expired"
       subscription_status:
         | "trialing"
         | "active"
@@ -614,7 +625,6 @@ export type Database = {
         | "past_due"
         | "unpaid"
         | "paused"
-      recruiter_status: "active" | "inactive"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -737,6 +747,8 @@ export const Constants = {
       ],
       pricing_plan_interval: ["day", "week", "month", "year"],
       pricing_type: ["one_time", "recurring"],
+      recruiter_role: ["admin", "recruiter", "viewer"],
+      recruiter_status: ["active", "pending_invite", "invite_expired"],
       subscription_status: [
         "trialing",
         "active",
@@ -747,7 +759,6 @@ export const Constants = {
         "unpaid",
         "paused",
       ],
-      recruiter_status: ["active", "inactive"],
     },
   },
 } as const
