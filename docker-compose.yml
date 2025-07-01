@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  webapp:
+    image: "${DOCKERHUB_USERNAME}/talentora-webapp-staging:latest"
+    ports:
+      - "443:3000"
+    environment:
+      NEXT_PUBLIC_SUPABASE_URL: "${NEXT_PUBLIC_SUPABASE_URL}"
+      SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI: "${SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI}"
+    restart: unless-stopped
+    networks:
+      - supabase_default
+
+networks:
+  supabase_default:
+    external: true
