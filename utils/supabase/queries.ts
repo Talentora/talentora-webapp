@@ -411,6 +411,36 @@ export const getRecruiter = async (
 };
 
 /**
+ * Fetches a recruiter by their ID.
+ *
+ * @param supabase - The Supabase client instance.
+ * @returns The recruiter data or null if not found.
+ */
+export const getRecruiters = async (): Promise<Recruiter[]> => {
+  try {
+    const supabase = await createClient();
+    const { data: recruiters, error } = await supabase
+      .from('recruiters')
+      .select('*');
+
+    if (error) {
+      console.error('Error fetching recruiters:', error.message);
+      return [];
+    }
+
+    if (!recruiters) {
+      console.warn('No recruiters found');
+      return [];
+    }
+
+    return recruiters;
+  } catch (err) {
+    console.error('Unexpected error fetching recruiters:', err);
+    return [];
+  }
+};
+
+/**
  * Fetches the Merge API key for the current user's company.
  *
  * @returns The Merge API key or null if not found.
