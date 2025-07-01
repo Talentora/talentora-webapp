@@ -13,7 +13,7 @@ RUN npm ci -q \
 
 # 3) Copy source & build
 COPY . .
-RUN npm run build
+RUN pnpm build
 
 # ─── Stage 2: Runtime Stage ───────────────────────────────────────────────────
 FROM node:18-alpine AS runner

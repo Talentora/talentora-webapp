@@ -127,6 +127,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    needs: install-and-test
     steps:
       - uses: actions/checkout@v4
 
