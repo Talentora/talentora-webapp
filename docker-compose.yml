@@ -1,14 +1,14 @@
 version: "3.8"
 
 services:
-  web:
+  webapp:
     image: "${DOCKERHUB_USERNAME}/talentora-webapp-staging:latest"
     ports:
-      - "443:3000"             # map container’s 3000 → host’s 443
+      - "443:3000"
     environment:
-      - NODE_ENV=production     # override or add any runtime vars here
-      - PORT=3000
-    restart: unless-stopped     # keep it up unless you explicitly stop it
+      NEXT_PUBLIC_SUPABASE_URL: "${NEXT_PUBLIC_SUPABASE_URL}"
+      SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI: "${SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI}"
+    restart: unless-stopped
     networks:
       - supabase_default
 
