@@ -91,6 +91,7 @@ jobs:
         run: pnpm build
 
   generate_types:
+    needs: install-and-test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
