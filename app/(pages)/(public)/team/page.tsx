@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 
 export default async function TeamPage() {
   const recruiters = await getRecruiters();
+  console.log('recruiters', recruiters);
 
   return (
     <main className="min-h-screen">
