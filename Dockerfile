@@ -1,36 +1,21 @@
-# ─── Stage 1: Build Stage ─────────────────────────────────────────────────────
-FROM node:18-alpine AS builder
-
+# Use a glibc-based image so runner-built node_modules stay compatible.
+FROM node:18-slim AS base
 WORKDIR /app
 
-# 1) Copy package manifests + lockfiles
-COPY package.json package-lock.json pnpm-lock.yaml ./
+# 1) Copy only manifest so you could install prod deps here if desired:
+COPY package.json pnpm-lock.yaml ./
 
-# 2) Install npm deps, then pnpm deps
-RUN npm ci -q \
-    && npm install -g pnpm@latest \
-    && pnpm install --frozen-lockfile --reporter=silent
+# 2) Option A: install prod-only deps in the image (still no build):
+RUN npm install -g pnpm \
+    && pnpm install --prod
 
-# 3) Copy source & build
-COPY . .
-RUN pnpm build
+# 3) Copy the built Next.js output from the runner:
+COPY .next .next
+COPY public public
+COPY next.config.js ./
 
-# ─── Stage 2: Runtime Stage ───────────────────────────────────────────────────
-FROM node:18-alpine AS runner
+# 4) (Optional) If you pruned on the runner instead, you could instead:
+COPY node_modules node_modules
 
-WORKDIR /app
-
-# 1) Bring in only what’s needed to run your built app:
-COPY --from=builder /app/package.json       ./package.json
-COPY --from=builder /app/node_modules       ./node_modules
-COPY --from=builder /app/.next              ./.next
-COPY --from=builder /app/public             ./public
-COPY --from=builder /app/next.config.js     ./next.config.js
-
-# 2) Runtime settings
-ENV PORT=3000
 EXPOSE 3000
-
-# 3) Start the production server
-CMD ["npm", "start"]
-
+CMD ["pnpm", "start"]
