@@ -179,12 +179,12 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             # Export environment variables
-            export DOCKERHUB_USERNAME = '${{ secrets.DOCKERHUB_USERNAME }}'
+            export DOCKERHUB_USERNAME='${{ secrets.DOCKERHUB_USERNAME }}'
             export NEXT_PUBLIC_SUPABASE_URL='${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}'
-            export SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI = '${{ secrets.STAGING_SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}'
+            export SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI='${{ secrets.STAGING_SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}'
 
             supabase start --non-interactive
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker-compose pull webapp
             docker-compose down
             docker-compose up -d
