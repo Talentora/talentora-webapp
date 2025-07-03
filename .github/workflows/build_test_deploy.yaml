@@ -135,6 +135,7 @@ jobs:
     env:
       NEXT_PUBLIC_SUPABASE_URL: '${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}'
       SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI: '${{ secrets.STAGING_SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -155,6 +156,28 @@ jobs:
         run: |
           pnpm build
           pnpm prune --prod
+
+      - name: Push supabase files to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: |
+            ${{ secrets.EC2_SSH_KEY }}
+          source: |
+            supabase/
+          target: /home/ubuntu/talentora-webapp/supabase/
+
+      - name: Push docker-compose file to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: |
+            ${{ secrets.EC2_SSH_KEY }}
+          source: |
+            docker-compose.yml
+          target: /home/ubuntu/talentora-webapp/supabase/
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -178,13 +201,21 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            cd /home/ubuntu/talentora-webapp/
+
             # Export environment variables
             export DOCKERHUB_USERNAME='${{ secrets.DOCKERHUB_USERNAME }}'
             export NEXT_PUBLIC_SUPABASE_URL='${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}'
             export SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI='${{ secrets.STAGING_SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}'
+            export SUPABASE_ACCESS_TOKEN="${{ secrets.SUPABASE_ACCESS_TOKEN }}"
+
+            supabase login --token "$SUPABASE_ACCESS_TOKEN"
+            supabase link --project-ref "${{ secrets.SUPABASE_STAGING_PROJECT_REF }}"
+            supabase db pull
+            supabase db seed
 
             supabase start --non-interactive
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker-compose pull webapp
-            docker-compose down
-            docker-compose up -d
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin <<< "${{ secrets.DOCKERHUB_TOKEN }}"
+            docker compose pull webapp
+            docker compose down
+            docker compose up -d
