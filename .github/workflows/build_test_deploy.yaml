@@ -177,7 +177,7 @@ jobs:
             ${{ secrets.EC2_SSH_KEY }}
           source: |
             docker-compose.yml
-          target: /home/ubuntu/talentora-webapp/docker-compose.yml
+          target: /home/ubuntu/talentora-webapp/
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -208,14 +208,15 @@ jobs:
             export NEXT_PUBLIC_SUPABASE_URL='${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}'
             export SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI='${{ secrets.STAGING_SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}'
             export SUPABASE_ACCESS_TOKEN="${{ secrets.SUPABASE_ACCESS_TOKEN }}"
+            export SUPABASE_DB_URL="${{ secrets.SUPABASE_CONNECTION_STRING }}"
 
             supabase login --token "$SUPABASE_ACCESS_TOKEN"
             supabase link --project-ref "${{ secrets.SUPABASE_PROJECT_REF }}"
-            supabase db pull
+            supabase db pull --db-url "$SUPABASE_DB_URL"
             supabase db seed
 
             supabase start
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin <<< "${{ secrets.DOCKERHUB_TOKEN }}"
-            docker-compose pull webapp
-            docker-compose down
-            docker-compose up -d
+            docker compose pull webapp
+            docker compose down
+            docker compose up -d
