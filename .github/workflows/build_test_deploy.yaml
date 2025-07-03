@@ -216,6 +216,6 @@ jobs:
 
             supabase start --non-interactive
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin <<< "${{ secrets.DOCKERHUB_TOKEN }}"
-            docker compose pull webapp
-            docker compose down
-            docker compose up -d
+            docker-compose pull webapp
+            docker-compose down
+            docker-compose up -d
