@@ -13,5 +13,5 @@ services:
       - supabase_default
 
 networks:
-  supabase_default:
+  supabase_network_talentora-webapp:
     external: true
