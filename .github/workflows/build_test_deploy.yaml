@@ -201,9 +201,12 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            docker system prune --all --volumes --force
+            docker image prune --all --force
+            docker system prune --volumes --force
+
             cd /home/ubuntu/talentora-webapp/
 
-            # Export environment variables
             export DOCKERHUB_USERNAME='${{ secrets.DOCKERHUB_USERNAME }}'
             export NEXT_PUBLIC_SUPABASE_URL='${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}'
             export SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI='${{ secrets.STAGING_SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}'
