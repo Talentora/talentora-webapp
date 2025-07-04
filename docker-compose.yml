@@ -10,7 +10,7 @@ services:
       SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI: "${SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI}"
     restart: unless-stopped
     networks:
-      - supabase_default
+      - supabase_network_talentora-webapp
 
 networks:
   supabase_network_talentora-webapp:
