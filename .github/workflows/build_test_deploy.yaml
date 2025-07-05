@@ -201,12 +201,10 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            cd /home/ubuntu/talentora-webapp/
+
             supabase stop
             docker system prune --all --volumes --force
-            docker image prune --all --force
-            docker system prune --volumes --force
-
-            cd /home/ubuntu/talentora-webapp/
 
             export DOCKERHUB_USERNAME='${{ secrets.DOCKERHUB_USERNAME }}'
             export NEXT_PUBLIC_SUPABASE_URL='${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}'
