@@ -170,6 +170,17 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-staging:${{ github.sha }}
             ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-staging:latest
 
+      - name: Push docker-compose file to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: |
+            ${{ secrets.EC2_SSH_KEY }}
+          source: |
+            docker-compose.yml
+          target: /home/ubuntu/talentora-webapp/
+
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -183,15 +194,9 @@ jobs:
             export DOCKERHUB_USERNAME='${{ secrets.DOCKERHUB_USERNAME }}'
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin <<< "${{ secrets.DOCKERHUB_TOKEN }}"
 
-            docker pull "$DOCKERHUB_USERNAME"/talentora-webapp-staging:latest
+            export NEXT_PUBLIC_SUPABASE_URL='${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}'
+            export SUPABASE_ANON_KEY='${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}' 
+            export SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI='${{ secrets.SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}'
 
-            docker stop webapp 2>/dev/null || true
-            docker rm  webapp 2>/dev/null || true
-
-            docker run -d \
-              --name webapp \
-              --restart unless-stopped \
-              -p 80:3000 \
-              -e NEXT_PUBLIC_SUPABASE_URL="${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" \
-              -e SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI="${{ secrets.SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}" \
-              "$DOCKERHUB_USERNAME"/talentora-webapp-staging:latest
+            docker-compose pull webapp
+            docker-compose up -d --no-deps webapp
