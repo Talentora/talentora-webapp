@@ -183,6 +183,11 @@ jobs:
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.7
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI: ${{ secrets.SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
@@ -193,10 +198,6 @@ jobs:
 
             export DOCKERHUB_USERNAME='${{ secrets.DOCKERHUB_USERNAME }}'
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin <<< "${{ secrets.DOCKERHUB_TOKEN }}"
-
-            export NEXT_PUBLIC_SUPABASE_URL='${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}'
-            export NEXT_PUBLIC_SUPABASE_ANON_KEY='${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}' 
-            export SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI='${{ secrets.SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}'
 
             docker compose pull webapp
             docker compose down
