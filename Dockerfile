@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM --platform=$BUILDPLATFORM node:18-slim AS base
+FROM --platform=$TARGETPLATFORM node:18-slim AS base
 WORKDIR /app
 
 # 1) Copy only manifest so you could install prod deps here if desired:
