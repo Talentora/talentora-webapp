@@ -199,4 +199,5 @@ jobs:
             export SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI='${{ secrets.SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}'
 
             docker compose pull webapp
+            docker compose down
             docker compose up -d --no-deps webapp
