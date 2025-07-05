@@ -1,5 +1,5 @@
-# Use a glibc-based image so runner-built node_modules stay compatible.
-FROM node:18-slim AS base
+# syntax=docker/dockerfile:1
+FROM --platform=$BUILDPLATFORM node:18-slim AS base
 WORKDIR /app
 
 # 1) Copy only manifest so you could install prod deps here if desired:
