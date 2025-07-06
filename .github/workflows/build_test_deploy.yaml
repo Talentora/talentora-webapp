@@ -197,6 +197,7 @@ jobs:
 
             cat > .env <<EOF
             DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            DOCKERHUB_TOKEN=${{ secrets.DOCKERHUB_TOKEN }}
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_ANON_KEY }}
             SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI=${{ secrets.STAGING_SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}
@@ -205,7 +206,7 @@ jobs:
 
             chmod 600 .env
 
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin <<< "${{ secrets.DOCKERHUB_TOKEN }}"
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin <<< "$DOCKERHUB_TOKEN"
 
             docker compose down
             docker system prune --all --volumes --force
