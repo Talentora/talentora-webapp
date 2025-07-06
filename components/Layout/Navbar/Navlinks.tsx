@@ -14,7 +14,8 @@ export default function Navlinks({ visible }: { visible: boolean }) {
   const pathname = usePathname();
 
   // Check if current page is a signup/[id] page
-  const isSignupIdPage = pathname?.startsWith('/signup/') && pathname !== '/signup';
+  const isSignupIdPage =
+    pathname?.startsWith('/signup/') && pathname !== '/signup';
 
   const isRecruiter =
     userData?.user_metadata?.role === 'applicant' ? false : true;
@@ -30,8 +31,8 @@ export default function Navlinks({ visible }: { visible: boolean }) {
             <div className="flex items-center">
               {!visible && <BrandLogo />}
               <div className="flex items-center space-x-4">
-                <Skeleton className="h-8 w-24" />
-                <Skeleton className="h-8 w-24" />
+                <Skeleton className="h-8 w-24 bg-gray-300" />
+                <Skeleton className="h-8 w-24 bg-gray-300" />
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -49,10 +50,14 @@ export default function Navlinks({ visible }: { visible: boolean }) {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             {!visible && <BrandLogo />}
-            {!isSignupIdPage && <NavigationItems isUser={!!userData} isRecruiter={isRecruiter} />}
+            {!isSignupIdPage && (
+              <NavigationItems isUser={!!userData} isRecruiter={isRecruiter} />
+            )}
           </div>
           <div className="flex items-center space-x-4">
-            {!isSignupIdPage && <UserActions user={userData} role={role} company={companyData} />}
+            {!isSignupIdPage && (
+              <UserActions user={userData} role={role} company={companyData} />
+            )}
           </div>
         </div>
       </div>

@@ -30,7 +30,7 @@ export default function Navbar({ visible }: { visible: boolean }) {
       <a href="#skip" className="sr-only focus:not-sr-only">
         Skip to content
       </a>
-      <div className="max-w-6xl px-6 mx-auto w-full relative">
+      <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] px-4 mx-auto w-full relative">
         <Navlinks visible={visible} />
       </div>
     </nav>
