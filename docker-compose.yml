@@ -1,13 +1,12 @@
 services:
   webapp:
-    env_file:
-      - fileName: .env.local
+    env_file: .env.local
     build:
       context: .
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}g
     image: “${DOCKERHUB_USERNAME}/talentora-webapp-staging:latest”
     ports:
       - "80:3000"
