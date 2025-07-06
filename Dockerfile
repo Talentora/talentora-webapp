@@ -2,13 +2,10 @@
 FROM --platform=linux/amd64 node:18-slim AS builder
 WORKDIR /app
 
-# 1) Copy manifest and install all dependencies (including dev) and prune dev dependencies and cache
+# 1) Copy manifest and install ALL dependencies (including dev dependencies for building)
 COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm \
-    && pnpm install --frozen-lockfile \
-    && pnpm prune --prod \
-    && rm -rf /root/.pnpm-store /root/.cache/pnpm \
-    && rm -rf /tmp/*
+    && pnpm install --frozen-lockfile
 
 # 2) Inject build‑time secrets
 ARG NEXT_PUBLIC_SUPABASE_URL
@@ -16,7 +13,7 @@ ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
 ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
 
-# 3) Copy source and build Next.js
+# 3) Copy source and build Next.js (with all dependencies available)
 COPY . .
 RUN pnpm build
 
