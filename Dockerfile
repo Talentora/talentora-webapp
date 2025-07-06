@@ -1,20 +1,40 @@
+#### Stage 1: Builder
+FROM --platform=linux/amd64 node:18-slim AS builder
+WORKDIR /app
+
+# 1) Copy manifest and install all dependencies (including dev) and prune dev dependencies and cache
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm \
+    && pnpm install --frozen-lockfile \
+    && pnpm prune --prod \
+    && rm -rf /root/.pnpm-store /root/.cache/pnpm \
+    && rm -rf /tmp/*
+
+# 2) Inject build‑time secrets
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+
+# 3) Copy source and build Next.js
+COPY . .
+RUN pnpm build
+
+#### Stage 2: Production Runner
 FROM --platform=linux/amd64 node:18-slim AS base
 WORKDIR /app
 
-# 1) Copy only manifest so you could install prod deps here if desired:
+# 4) Copy only production dependencies
 COPY package.json pnpm-lock.yaml ./
-
-# 2) Option A: install prod-only deps in the image (still no build):
 RUN npm install -g pnpm \
-    && pnpm install --prod
+    && pnpm install --prod --frozen-lockfile
 
-# 3) Copy the built Next.js output from the runner:
-COPY .next .next
-COPY public public
-COPY next.config.js ./
+# 5) Copy built output from the builder stage
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.js ./
 
-# 4) (Optional) If you pruned on the runner instead, you could instead:
-COPY node_modules node_modules
-
+# 6) Runtime settings
+ENV NODE_ENV=production
 EXPOSE 3000
-CMD ["npm","run","start","--","-p","3000","-H","0.0.0.0"]
+CMD ["npm", "run", "start", "--", "-p", "3000", "-H", "0.0.0.0"]
