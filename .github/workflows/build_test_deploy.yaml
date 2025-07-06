@@ -150,11 +150,6 @@ jobs:
       - name: Install dependencies
         run: pnpm i --frozen-lockfile
 
-      - name: Build Next.js project
-        run: |
-          pnpm build
-          pnpm prune --prod
-
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:

@@ -1,7 +1,16 @@
 services:
   webapp:
-    image: "${DOCKERHUB_USERNAME}/talentora-webapp-staging:latest"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    image: “${DOCKERHUB_USERNAME}/talentora-webapp-staging:latest”
     ports:
-      - "80:3000"
-    env_file: .env.local
+      - “80:3000”
+    environment:
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - JWT_SECRET=${JWT_SECRET}
     restart: unless-stopped
