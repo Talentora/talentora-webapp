@@ -195,7 +195,7 @@ jobs:
           script: |
             cd /home/ubuntu/talentora-webapp/
 
-            cat > .env.local <<EOF
+            cat > .env <<EOF
             DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             DOCKERHUB_TOKEN=${{ secrets.DOCKERHUB_TOKEN }}
             SUPABASE_URL=${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}
