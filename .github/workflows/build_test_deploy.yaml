@@ -195,7 +195,7 @@ jobs:
           script: |
             cd /home/ubuntu/talentora-webapp/
 
-            cat > .env <<EOF
+            cat > .env.local <<EOF
             DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             DOCKERHUB_TOKEN=${{ secrets.DOCKERHUB_TOKEN }}
             SUPABASE_URL=${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}
@@ -204,7 +204,7 @@ jobs:
             JWT_SECRET=${{ secrets.JWT_SECRET }}
             EOF
 
-            chmod 600 .env
+            chmod 600 .env.local
 
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin <<< "$DOCKERHUB_TOKEN"
 
