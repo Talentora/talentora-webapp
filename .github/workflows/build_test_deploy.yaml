@@ -190,20 +190,20 @@ jobs:
           script: |
             cd /home/ubuntu/talentora-webapp/
 
-            export DOCKERHUB_USERNAME='${{ secrets.DOCKERHUB_USERNAME }}'
+            cat > .env <<EOF
+            DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_ANON_KEY }}
+            SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI=${{ secrets.STAGING_SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            EOF
+
+            chmod 600 .env
+
             echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin <<< "${{ secrets.DOCKERHUB_TOKEN }}"
 
             docker compose down
             docker system prune --all --volumes --force
 
-            NEXT_PUBLIC_SUPABASE_URL='${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}' \
-            NEXT_PUBLIC_SUPABASE_ANON_KEY='${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_ANON_KEY }}' \
-            SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI='${{ secrets.STAGING_SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}' \
-            JWT_SECRET='${{ secrets.JWT_SECRET }}' \
             docker compose pull webapp
-
-            NEXT_PUBLIC_SUPABASE_URL='${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}' \
-            NEXT_PUBLIC_SUPABASE_ANON_KEY='${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_ANON_KEY }}' \
-            SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI='${{ secrets.STAGING_SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}' \
-            JWT_SECRET='${{ secrets.JWT_SECRET }}' \
             docker compose up -d --no-deps webapp
