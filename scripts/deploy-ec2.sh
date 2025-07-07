@@ -128,7 +128,7 @@ find $BACKUP_DIR -name "*.env" -mtime +7 -delete
 echo "Backup completed: $DATE"
 EOF
 
-chmod +x /home/ubuntu/backup-talentora.sh
+sudo chmod +x /home/ubuntu/backup-talentora.sh
 
 # Set up cron job for daily backups
 echo "⏰ Setting up daily backups..."
