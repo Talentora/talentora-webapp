@@ -46,18 +46,30 @@ env:
 
   # DAILY
   NEXT_PUBLIC_DAILY_BOT_API_KEY: ${{ secrets.NEXT_PUBLIC_DAILY_BOT_API_KEY }}
+  NEXT_PUBLIC_DAILY_API_KEY: ${{ secrets.NEXT_PUBLIC_DAILY_API_KEY }}
 
   # LIVEKIT
   LIVEKIT_API_KEY: ${{ secrets.LIVEKIT_API_KEY }}
   LIVEKIT_API_SECRET: ${{ secrets.LIVEKIT_API_SECRET }}
   NEXT_PUBLIC_LIVEKIT_URL: ${{ secrets.NEXT_PUBLIC_LIVEKIT_URL }}
 
+  # AWS
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  # JWT
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+  # RESEND
+  RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+
 jobs:
   generate_types:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -70,7 +82,7 @@ jobs:
         run: |
           mkdir -p types
           npx supabase gen types typescript --local --schema public > types/types_db.ts
-          if ! git diff --ignore-space-at-eol --exit-code --quiet types/types_  db.ts; then
+          if ! git diff --ignore-space-at-eol --exit-code --quiet types/types_db.ts; then
             echo "Detected uncommitted changes after build. See status below:"
             git diff
           else
@@ -97,13 +109,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install pnpm
         run: npm install -g pnpm
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
@@ -136,13 +148,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install pnpm
         run: npm install -g pnpm
 
       - name: Set up Node.js & pnpm
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
@@ -151,13 +163,13 @@ jobs:
         run: pnpm i --frozen-lockfile
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
@@ -168,19 +180,21 @@ jobs:
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_ANON_KEY }}
 
-      - name: Push docker-compose file to EC2
-        uses: appleboy/scp-action@v0.1.4
+      - name: Push deployment files to EC2
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
-          key: |
-            ${{ secrets.EC2_SSH_KEY }}
+          key: ${{ secrets.EC2_SSH_KEY }}
           source: |
             docker-compose.yml
+            docker-compose.prod.yml
+            supabase/migrations/
+            supabase/config.toml
           target: /home/ubuntu/talentora-webapp/
 
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.7
+        uses: appleboy/ssh-action@v0.1.11
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
@@ -188,21 +202,220 @@ jobs:
           script: |
             cd /home/ubuntu/talentora-webapp/
 
+            # Create comprehensive environment file
             cat > .env.local <<EOF
+            # Docker Hub
             DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             DOCKERHUB_TOKEN=${{ secrets.DOCKERHUB_TOKEN }}
+            
+            # Supabase
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_ANON_KEY }}
+            SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+            NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }}
+            SUPABASE_CONNECTION_STRING=${{ secrets.SUPABASE_CONNECTION_STRING }}
+            SUPABASE_ACCESS_TOKEN=${{ secrets.SUPABASE_ACCESS_TOKEN }}
+            NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY }}
+            SUPABASE_PASSWORD=${{ secrets.SUPABASE_PASSWORD }}
             SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI=${{ secrets.STAGING_SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}
+            SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID=${{ secrets.SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID }}
+            SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET=${{ secrets.SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET }}
+            
+            # JWT
             JWT_SECRET=${{ secrets.JWT_SECRET }}
+            
+            # Stripe
+            STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
+            NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+            STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}
+            
+            # API Keys
+            NEXT_PUBLIC_GROQ_API_KEY=${{ secrets.NEXT_PUBLIC_GROQ_API_KEY }}
+            NEXT_PUBLIC_MERGE_API_KEY=${{ secrets.NEXT_PUBLIC_MERGE_API_KEY }}
+            NEXT_PUBLIC_CARTESIA_API_KEY=${{ secrets.NEXT_PUBLIC_CARTESIA_API_KEY }}
+            NEXT_PUBLIC_DAILY_BOT_API_KEY=${{ secrets.NEXT_PUBLIC_DAILY_BOT_API_KEY }}
+            NEXT_PUBLIC_DAILY_API_KEY=${{ secrets.NEXT_PUBLIC_DAILY_API_KEY }}
+            RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+            
+            # LiveKit
+            LIVEKIT_API_KEY=${{ secrets.LIVEKIT_API_KEY }}
+            LIVEKIT_API_SECRET=${{ secrets.LIVEKIT_API_SECRET }}
+            NEXT_PUBLIC_LIVEKIT_URL=${{ secrets.NEXT_PUBLIC_LIVEKIT_URL }}
+            
+            # AWS
+            AWS_REGION=${{ secrets.AWS_REGION }}
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            
+            # Other
+            NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+            NEXT_PUBLIC_MANUAL_ROOM_ENTRY=${{ secrets.NEXT_PUBLIC_MANUAL_ROOM_ENTRY }}
+            INTERVIEW_BOT_URL=https://talentora-interviewbot-production.up.railway.app
             EOF
 
             chmod 600 .env.local
 
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin <<< "$DOCKERHUB_TOKEN"
+            # Login to Docker Hub
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
+            # Stop existing containers
             docker compose down
-            docker system prune --all --volumes --force
 
-            docker compose pull webapp
-            docker compose up -d --no-deps webapp
+            # Clean up old containers and images
+            docker system prune -f
+
+            # Pull latest images
+            docker compose pull
+
+            # Start services
+            docker compose up -d
+
+            # Wait for services to be ready
+            sleep 30
+
+            # Check if services are running
+            docker compose ps
+            
+            # Test if webapp is responding
+            curl -f http://localhost:80 || echo "Warning: Webapp not responding yet"
+
+  deploy-production:
+    needs: install-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Set up Node.js & pnpm
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-production:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-production:latest
+          build-args: |
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_PRODUCTION_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_PRODUCTION_SUPABASE_ANON_KEY }}
+
+      - name: Push deployment files to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_PRODUCTION_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: |
+            docker-compose.yml
+            docker-compose.prod.yml
+            supabase/migrations/
+            supabase/config.toml
+          target: /home/ubuntu/talentora-webapp/
+
+      - name: Deploy to Production EC2
+        uses: appleboy/ssh-action@v0.1.11
+        with:
+          host: ${{ secrets.EC2_PRODUCTION_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/talentora-webapp/
+
+            # Create comprehensive environment file for production
+            cat > .env.local <<EOF
+            # Docker Hub
+            DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            DOCKERHUB_TOKEN=${{ secrets.DOCKERHUB_TOKEN }}
+            
+            # Supabase
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_PRODUCTION_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_PRODUCTION_SUPABASE_ANON_KEY }}
+            SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+            NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }}
+            SUPABASE_CONNECTION_STRING=${{ secrets.SUPABASE_CONNECTION_STRING }}
+            SUPABASE_ACCESS_TOKEN=${{ secrets.SUPABASE_ACCESS_TOKEN }}
+            NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY }}
+            SUPABASE_PASSWORD=${{ secrets.SUPABASE_PASSWORD }}
+            SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI=${{ secrets.PRODUCTION_SUPABASE_AUTH_EXTERNAL_GITHUB_REDIRECT_URI }}
+            SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID=${{ secrets.SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID }}
+            SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET=${{ secrets.SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET }}
+            
+            # JWT
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            
+            # Stripe
+            STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
+            NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+            STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}
+            
+            # API Keys
+            NEXT_PUBLIC_GROQ_API_KEY=${{ secrets.NEXT_PUBLIC_GROQ_API_KEY }}
+            NEXT_PUBLIC_MERGE_API_KEY=${{ secrets.NEXT_PUBLIC_MERGE_API_KEY }}
+            NEXT_PUBLIC_CARTESIA_API_KEY=${{ secrets.NEXT_PUBLIC_CARTESIA_API_KEY }}
+            NEXT_PUBLIC_DAILY_BOT_API_KEY=${{ secrets.NEXT_PUBLIC_DAILY_BOT_API_KEY }}
+            NEXT_PUBLIC_DAILY_API_KEY=${{ secrets.NEXT_PUBLIC_DAILY_API_KEY }}
+            RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+            
+            # LiveKit
+            LIVEKIT_API_KEY=${{ secrets.LIVEKIT_API_KEY }}
+            LIVEKIT_API_SECRET=${{ secrets.LIVEKIT_API_SECRET }}
+            NEXT_PUBLIC_LIVEKIT_URL=${{ secrets.NEXT_PUBLIC_LIVEKIT_URL }}
+            
+            # AWS
+            AWS_REGION=${{ secrets.AWS_REGION }}
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            
+            # Other
+            NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+            NEXT_PUBLIC_MANUAL_ROOM_ENTRY=${{ secrets.NEXT_PUBLIC_MANUAL_ROOM_ENTRY }}
+            INTERVIEW_BOT_URL=https://talentora-interviewbot-production.up.railway.app
+            EOF
+
+            chmod 600 .env.local
+
+            # Login to Docker Hub
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+            # Stop existing containers
+            docker compose down
+
+            # Clean up old containers and images
+            docker system prune -f
+
+            # Pull latest images
+            docker compose pull
+
+            # Start services
+            docker compose up -d
+
+            # Wait for services to be ready
+            sleep 30
+
+            # Check if services are running
+            docker compose ps
+            
+            # Test if webapp is responding
+            curl -f http://localhost:80 || echo "Warning: Webapp not responding yet"
