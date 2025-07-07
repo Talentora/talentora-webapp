@@ -47,7 +47,7 @@ services:
       start_period: 40s
 
   supabase-db:
-    image: supabase/postgres:15.1.1.78
+    image: supabase/postgres:15.8.1.048
     healthcheck:
       test: pg_isready -U postgres -h localhost
       interval: 5s
@@ -80,7 +80,7 @@ services:
       - app-network
 
   supabase-auth:
-    image: supabase/gotrue:v2.99.0
+    image: supabase/gotrue:v2.170.0
     depends_on:
       supabase-db:
         condition: service_healthy
@@ -126,7 +126,7 @@ services:
       - app-network
 
   supabase-rest:
-    image: postgrest/postgrest:v11.2.0
+    image: postgrest/postgrest:v12.2.8
     depends_on:
       supabase-db:
         condition: service_healthy
@@ -145,7 +145,7 @@ services:
       - app-network
 
   supabase-realtime:
-    image: supabase/realtime:v2.25.35
+    image: supabase/realtime:v2.34.40
     depends_on:
       supabase-db:
         condition: service_healthy
@@ -177,7 +177,7 @@ services:
       - app-network
 
   supabase-storage:
-    image: supabase/storage-api:v0.40.4
+    image: supabase/storage-api:v1.19.3
     depends_on:
       supabase-db:
         condition: service_healthy
@@ -230,7 +230,7 @@ services:
       - app-network
 
   supabase-meta:
-    image: supabase/postgres-meta:v0.68.0
+    image: supabase/postgres-meta:v0.86.1
     depends_on:
       supabase-db:
         condition: service_healthy
@@ -248,7 +248,7 @@ services:
       - app-network
 
   supabase-studio:
-    image: supabase/studio:20231103-b1c2b58
+    image: supabase/studio:20250310-6a23794
     depends_on:
       supabase-meta:
         condition: service_started
