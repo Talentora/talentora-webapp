@@ -29,9 +29,16 @@ sudo chmod +x /usr/local/bin/docker-compose
 echo "👤 Adding user to docker group..."
 sudo usermod -aG docker $USER
 
+# Remove nginx if present (conflicts with webapp on port 80)
+echo "🚫 Removing nginx to free up port 80..."
+sudo systemctl stop nginx 2>/dev/null || true
+sudo systemctl disable nginx 2>/dev/null || true
+sudo apt-get remove -y nginx nginx-core nginx-common 2>/dev/null || true
+sudo apt-get autoremove -y
+
 # Install additional utilities
 echo "🛠️ Installing additional utilities..."
-sudo apt-get install -y curl wget git htop nginx-core ufw fail2ban
+sudo apt-get install -y curl wget git htop ufw fail2ban
 
 # Set up firewall
 echo "🔥 Setting up firewall..."
@@ -71,7 +78,7 @@ sudo tee /etc/logrotate.d/talentora > /dev/null << 'EOF'
     notifempty
     create 644 ubuntu ubuntu
     postrotate
-        /usr/bin/docker-compose -f /home/ubuntu/talentora-webapp/docker-compose.yml restart > /dev/null 2>&1 || true
+        /usr/bin/docker-compose -f /home/ubuntu/talentora-webapp/docker-compose.lightweight.yml restart > /dev/null 2>&1 || true
     endscript
 }
 EOF
@@ -80,7 +87,7 @@ EOF
 echo "🔧 Creating systemd service..."
 sudo tee /etc/systemd/system/talentora-webapp.service > /dev/null << 'EOF'
 [Unit]
-Description=Talentora Webapp Docker Compose
+Description=Talentora Webapp Docker Compose (Lightweight)
 Requires=docker.service
 After=docker.service
 
@@ -88,8 +95,8 @@ After=docker.service
 Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=/home/ubuntu/talentora-webapp
-ExecStart=/usr/local/bin/docker-compose up -d
-ExecStop=/usr/local/bin/docker-compose down
+ExecStart=/usr/local/bin/docker-compose -f docker-compose.lightweight.yml up -d
+ExecStop=/usr/local/bin/docker-compose -f docker-compose.lightweight.yml down
 TimeoutStartSec=0
 User=ubuntu
 Group=ubuntu
@@ -102,30 +109,29 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl enable talentora-webapp.service
 
-# Create backup script
+# Create backup script (lightweight version)
 echo "💾 Creating backup script..."
 sudo tee /home/ubuntu/backup-talentora.sh > /dev/null << 'EOF'
 #!/bin/bash
 
-# Backup script for Talentora Webapp
+# Backup script for Talentora Webapp (Lightweight)
 DATE=$(date +%Y%m%d_%H%M%S)
 BACKUP_DIR="/home/ubuntu/backups"
 mkdir -p $BACKUP_DIR
 
-# Backup Docker volumes
-echo "Backing up Docker volumes..."
-docker run --rm -v talentora-webapp_supabase-db-data:/data -v $BACKUP_DIR:/backup alpine tar czf /backup/db_backup_$DATE.tar.gz /data
-docker run --rm -v talentora-webapp_supabase-storage-data:/data -v $BACKUP_DIR:/backup alpine tar czf /backup/storage_backup_$DATE.tar.gz /data
-
 # Backup environment files
 echo "Backing up environment files..."
-cp /home/ubuntu/talentora-webapp/.env.local $BACKUP_DIR/env_backup_$DATE.env
+cp /home/ubuntu/talentora-webapp/.env.local $BACKUP_DIR/env_backup_$DATE.env 2>/dev/null || echo "No .env.local file found"
+
+# Backup application logs
+echo "Backing up application logs..."
+cp -r /var/log/talentora $BACKUP_DIR/logs_backup_$DATE 2>/dev/null || echo "No logs found"
 
 # Clean up old backups (keep last 7 days)
-find $BACKUP_DIR -name "*.tar.gz" -mtime +7 -delete
-find $BACKUP_DIR -name "*.env" -mtime +7 -delete
+find $BACKUP_DIR -name "*backup*" -mtime +7 -delete
 
 echo "Backup completed: $DATE"
+echo "Note: Database backups are handled by cloud Supabase"
 EOF
 
 sudo chmod +x /home/ubuntu/backup-talentora.sh
@@ -134,16 +140,22 @@ sudo chmod +x /home/ubuntu/backup-talentora.sh
 echo "⏰ Setting up daily backups..."
 (crontab -l 2>/dev/null; echo "0 2 * * * /home/ubuntu/backup-talentora.sh >> /var/log/talentora/backup.log 2>&1") | crontab -
 
-echo "✅ EC2 server setup complete!"
+echo "✅ EC2 server setup complete (Lightweight Version)!"
+echo ""
+echo "✨ This setup uses:"
+echo "- Lightweight webapp container only"
+echo "- Cloud Supabase (no self-hosted database)"
+echo "- Nginx removed to free port 80"
+echo "- Minimal resource usage"
 echo ""
 echo "Next steps:"
 echo "1. Logout and login again to apply docker group changes"
-echo "2. Clone your repository to /home/ubuntu/talentora-webapp"
-echo "3. Create your .env.local file with all required environment variables"
-echo "4. Run 'docker-compose up -d' to start the application"
+echo "2. Your GitHub Actions will automatically deploy on push"
+echo "3. Ensure cloud Supabase is configured in your GitHub secrets"
+echo "4. Push to staging branch to trigger deployment"
 echo ""
 echo "Useful commands:"
 echo "- Check service status: systemctl status talentora-webapp"
-echo "- View logs: docker-compose logs -f"
+echo "- View logs: docker-compose -f docker-compose.lightweight.yml logs -f"
 echo "- Run backup manually: /home/ubuntu/backup-talentora.sh"
-echo "- Monitor resources: htop" 
+echo "- Monitor resources: htop (should be very light!)" 
