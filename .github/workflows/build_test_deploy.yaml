@@ -186,7 +186,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "docker-compose.yml,docker-compose.prod.yml,supabase/migrations/,supabase/config.toml"
+          source: "docker-compose.yml,docker-compose.staging.yml,docker-compose.prod.yml,supabase/migrations/,supabase/config.toml,supabase/config/"
           target: /home/ubuntu/talentora-webapp/
 
       - name: Deploy to EC2
@@ -260,22 +260,22 @@ jobs:
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
             # Stop existing containers
-            docker compose -f docker-compose.prod.yml down
+            docker compose -f docker-compose.staging.yml down
 
             # Clean up old containers and images
             docker system prune -f
 
             # Pull latest images
-            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.staging.yml pull
 
             # Start services
-            docker compose -f docker-compose.prod.yml up -d
+            docker compose -f docker-compose.staging.yml up -d
 
             # Wait for services to be ready
             sleep 30
 
             # Check if services are running
-            docker compose -f docker-compose.prod.yml ps
+            docker compose -f docker-compose.staging.yml ps
             
             # Test if webapp is responding
             curl -f http://localhost:80 || echo "Warning: Webapp not responding yet"
@@ -328,7 +328,7 @@ jobs:
           host: ${{ secrets.EC2_PRODUCTION_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "docker-compose.yml,docker-compose.prod.yml,supabase/migrations/,supabase/config.toml"
+          source: "docker-compose.yml,docker-compose.staging.yml,docker-compose.prod.yml,supabase/migrations/,supabase/config.toml,supabase/config/"
           target: /home/ubuntu/talentora-webapp/
 
       - name: Deploy to Production EC2
