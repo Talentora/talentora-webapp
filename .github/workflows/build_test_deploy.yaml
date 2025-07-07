@@ -251,6 +251,11 @@ jobs:
 
             chmod 600 .env.local
 
+            # Export environment variables for Docker Compose
+            set -a
+            source .env.local
+            set +a
+
             # Login to Docker Hub
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
@@ -387,6 +392,11 @@ jobs:
             EOF
 
             chmod 600 .env.local
+
+            # Export environment variables for Docker Compose
+            set -a
+            source .env.local
+            set +a
 
             # Login to Docker Hub
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
