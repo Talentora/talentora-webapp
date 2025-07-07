@@ -194,7 +194,7 @@ jobs:
           target: /home/ubuntu/talentora-webapp/
 
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.11
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
@@ -335,7 +335,7 @@ jobs:
           target: /home/ubuntu/talentora-webapp/
 
       - name: Deploy to Production EC2
-        uses: appleboy/ssh-action@v0.1.11
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.EC2_PRODUCTION_HOST }}
           username: ${{ secrets.EC2_USER }}
