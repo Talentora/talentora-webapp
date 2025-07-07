@@ -3,9 +3,6 @@ version: '3.8'
 services:
   webapp:
     env_file: .env.local
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: "${DOCKERHUB_USERNAME}/talentora-webapp-production:latest"
     ports:
       - "80:3000"
