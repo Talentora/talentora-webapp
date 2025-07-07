@@ -1,9 +1,6 @@
 services:
   webapp:
     env_file: .env.local
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: "${DOCKERHUB_USERNAME}/talentora-webapp-staging:latest"
     ports:
       - "80:3000"
