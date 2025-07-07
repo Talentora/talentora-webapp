@@ -186,11 +186,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: |
-            docker-compose.yml
-            docker-compose.prod.yml
-            supabase/migrations/
-            supabase/config.toml
+          source: "docker-compose.yml,docker-compose.prod.yml,supabase/migrations/,supabase/config.toml"
           target: /home/ubuntu/talentora-webapp/
 
       - name: Deploy to EC2
@@ -327,11 +323,7 @@ jobs:
           host: ${{ secrets.EC2_PRODUCTION_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: |
-            docker-compose.yml
-            docker-compose.prod.yml
-            supabase/migrations/
-            supabase/config.toml
+          source: "docker-compose.yml,docker-compose.prod.yml,supabase/migrations/,supabase/config.toml"
           target: /home/ubuntu/talentora-webapp/
 
       - name: Deploy to Production EC2
