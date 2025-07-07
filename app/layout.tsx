@@ -10,9 +10,30 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import DynamicSidebar from '@/components/Layout/Sidebar/DynamicSidebar';
 import AuthListener from '@/components/AuthListener';
 import { getUserSessionDetails } from '@/utils/auth-helpers/server';
+import { Metadata } from 'next';
 
 const title = 'Talentora';
 const description = 'Talentora is a platform for creating and managing AI-powered interviews.';
+
+export const metadata: Metadata = {
+  metadataBase: new URL('https://talentora.net'),
+  title: {
+    default: title,
+    template: `%s | ${title}`
+  },
+  description,
+  openGraph: {
+    title,
+    description,
+    type: 'website',
+    siteName: title,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title,
+    description,
+  }
+};
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   // Get user session details using the server action
