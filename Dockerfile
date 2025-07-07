@@ -5,8 +5,8 @@ WORKDIR /app
 # 1) Copy manifest and install ALL dependencies (including dev dependencies for building)
 COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm \
-    && pnpm install --frozen-lockfile \
-    && echo "sharp\nprotobufjs" | pnpm approve-builds
+    && pnpm install --frozen-lockfile --ignore-scripts \
+    && pnpm rebuild sharp || true
 
 # 2) Inject build‑time secrets
 ARG NEXT_PUBLIC_SUPABASE_URL
@@ -25,8 +25,8 @@ WORKDIR /app
 # 4) Copy only production dependencies
 COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm \
-    && pnpm install --prod --frozen-lockfile \
-    && echo "sharp\nprotobufjs" | pnpm approve-builds
+    && pnpm install --prod --frozen-lockfile --ignore-scripts \
+    && pnpm rebuild sharp || true
 
 # 5) Copy built output from the builder stage
 COPY --from=builder /app/.next ./.next
