@@ -183,18 +183,18 @@ jobs:
       - name: Push deployment files to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "docker-compose.lightweight.yml"
+          host: ${{ secrets.STAGING_EC2_HOST }}
+          username: ${{ secrets.STAGING_EC2_USER }}
+          key: ${{ secrets.STAGING_EC2_SSH_KEY }}
+          source: 'docker-compose.staging-lightweight.yml'
           target: /home/ubuntu/talentora-webapp/
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.STAGING_EC2_HOST }}
+          username: ${{ secrets.STAGING_EC2_USER }}
+          key: ${{ secrets.STAGING_EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/talentora-webapp/
 
@@ -203,27 +203,27 @@ jobs:
             # Docker Hub
             DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             DOCKERHUB_TOKEN=${{ secrets.DOCKERHUB_TOKEN }}
-            
+
             # Cloud Supabase (Staging)
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_URL }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_STAGING_SUPABASE_ANON_KEY }}
             SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-            
+
             # Application URLs
             # NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }}
             # NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
             # Application URLs (Staging - EC2)
             NEXT_PUBLIC_SITE_URL=http://18.207.220.110
             NEXT_PUBLIC_BASE_URL=http://18.207.220.110
-            
+
             # JWT
             JWT_SECRET=${{ secrets.JWT_SECRET }}
-            
+
             # Stripe
             STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
             NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
             STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}
-            
+
             # API Keys
             NEXT_PUBLIC_GROQ_API_KEY=${{ secrets.NEXT_PUBLIC_GROQ_API_KEY }}
             NEXT_PUBLIC_MERGE_API_KEY=${{ secrets.NEXT_PUBLIC_MERGE_API_KEY }}
@@ -231,17 +231,17 @@ jobs:
             NEXT_PUBLIC_DAILY_BOT_API_KEY=${{ secrets.NEXT_PUBLIC_DAILY_BOT_API_KEY }}
             NEXT_PUBLIC_DAILY_API_KEY=${{ secrets.NEXT_PUBLIC_DAILY_API_KEY }}
             RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
-            
+
             # LiveKit
             LIVEKIT_API_KEY=${{ secrets.LIVEKIT_API_KEY }}
             LIVEKIT_API_SECRET=${{ secrets.LIVEKIT_API_SECRET }}
             NEXT_PUBLIC_LIVEKIT_URL=${{ secrets.NEXT_PUBLIC_LIVEKIT_URL }}
-            
+
             # AWS
             AWS_REGION=${{ secrets.AWS_REGION }}
             AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            
+
             # Other
             NEXT_PUBLIC_MANUAL_ROOM_ENTRY=${{ secrets.NEXT_PUBLIC_MANUAL_ROOM_ENTRY }}
             INTERVIEW_BOT_URL=https://talentora-interviewbot-production.up.railway.app
@@ -258,24 +258,25 @@ jobs:
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
             # Stop existing containers (try both old and new compose files)
-            docker compose -f docker-compose.staging.yml down 2>/dev/null || true
             docker compose -f docker-compose.lightweight.yml down 2>/dev/null || true
+            docker compose -f docker-compose.staging.yml down 2>/dev/null || true
+            docker compose -f docker-compose.staging-lightweight.yml down 2>/dev/null || true
 
             # Clean up old containers and images
             docker system prune -f
 
             # Pull latest images
-            docker compose -f docker-compose.lightweight.yml pull
+            docker compose -f docker-compose.staging-lightweight.yml pull
 
             # Start lightweight webapp service
-            docker compose -f docker-compose.lightweight.yml up -d
+            docker compose -f docker-compose.staging-lightweight.yml up -d
 
             # Wait for webapp to be ready
             sleep 15
 
             # Check if webapp is running
-            docker compose -f docker-compose.lightweight.yml ps
-            
+            docker compose -f docker-compose.staging-lightweight.yml ps
+
             # Test if webapp is responding
             curl -f http://localhost:80 || echo "Warning: Webapp not responding yet"
 
@@ -315,8 +316,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-production:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-production:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-prod:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/talentora-webapp-prod:latest
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
@@ -324,18 +325,18 @@ jobs:
       - name: Push deployment files to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.EC2_PRODUCTION_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "docker-compose.prod-lightweight.yml"
+          host: ${{ secrets.PROD_EC2_HOST }}
+          username: ${{ secrets.PROD_EC2_USER }}
+          key: ${{ secrets.PROD_EC2_SSH_KEY }}
+          source: 'docker-compose.prod-lightweight.yml'
           target: /home/ubuntu/talentora-webapp/
 
       - name: Deploy to Production EC2
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.EC2_PRODUCTION_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.PROD_EC2_HOST }}
+          username: ${{ secrets.PROD_EC2_USER }}
+          key: ${{ secrets.PROD_EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/talentora-webapp/
 
@@ -344,24 +345,27 @@ jobs:
             # Docker Hub
             DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
             DOCKERHUB_TOKEN=${{ secrets.DOCKERHUB_TOKEN }}
-            
+
             # Cloud Supabase (Production)
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
             SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-            
+
+            # Application URLs
+            # NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }}
+            # NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
             # Application URLs (Production - EC2)
-            NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_PRODUCTION_SITE_URL }}
-            NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_PRODUCTION_BASE_URL }}
-            
+            NEXT_PUBLIC_SITE_URL=http://13.221.92.99
+            NEXT_PUBLIC_BASE_URL=http://13.221.92.99
+
             # JWT
             JWT_SECRET=${{ secrets.JWT_SECRET }}
-            
+
             # Stripe
             STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}
             NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
             STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}
-            
+
             # API Keys
             NEXT_PUBLIC_GROQ_API_KEY=${{ secrets.NEXT_PUBLIC_GROQ_API_KEY }}
             NEXT_PUBLIC_MERGE_API_KEY=${{ secrets.NEXT_PUBLIC_MERGE_API_KEY }}
@@ -369,17 +373,17 @@ jobs:
             NEXT_PUBLIC_DAILY_BOT_API_KEY=${{ secrets.NEXT_PUBLIC_DAILY_BOT_API_KEY }}
             NEXT_PUBLIC_DAILY_API_KEY=${{ secrets.NEXT_PUBLIC_DAILY_API_KEY }}
             RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
-            
+
             # LiveKit
             LIVEKIT_API_KEY=${{ secrets.LIVEKIT_API_KEY }}
             LIVEKIT_API_SECRET=${{ secrets.LIVEKIT_API_SECRET }}
             NEXT_PUBLIC_LIVEKIT_URL=${{ secrets.NEXT_PUBLIC_LIVEKIT_URL }}
-            
+
             # AWS
             AWS_REGION=${{ secrets.AWS_REGION }}
             AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
             AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            
+
             # Other
             NEXT_PUBLIC_MANUAL_ROOM_ENTRY=${{ secrets.NEXT_PUBLIC_MANUAL_ROOM_ENTRY }}
             INTERVIEW_BOT_URL=https://talentora-interviewbot-production.up.railway.app
@@ -396,6 +400,7 @@ jobs:
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
             # Stop existing containers (try both old and new compose files)
+            docker compose -f docker-compose.lightweight.yml down 2>/dev/null || true
             docker compose -f docker-compose.prod.yml down 2>/dev/null || true
             docker compose -f docker-compose.prod-lightweight.yml down 2>/dev/null || true
 
@@ -413,6 +418,6 @@ jobs:
 
             # Check if webapp is running
             docker compose -f docker-compose.prod-lightweight.yml ps
-            
+
             # Test if webapp is responding
             curl -f http://localhost:80 || echo "Warning: Webapp not responding yet"
