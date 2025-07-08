@@ -2,7 +2,19 @@
 import Navlinks from './Navlinks';
 import { useEffect, useState } from 'react';
 
-export default function Navbar({ visible }: { visible: boolean }) {
+import { User } from '@supabase/supabase-js';
+import { type Database } from '@/types/types_db';
+
+type Company = Database['public']['Tables']['companies']['Row'];
+
+interface NavbarProps {
+  visible: boolean;
+  user?: User | null;
+  role?: string | null;
+  company?: Company | null;
+}
+
+export default function Navbar({ visible, user, role, company }: NavbarProps) {
   const [opacity, setOpacity] = useState(1);
 
   useEffect(() => {
@@ -31,7 +43,12 @@ export default function Navbar({ visible }: { visible: boolean }) {
         Skip to content
       </a>
       <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] px-4 mx-auto w-full relative">
-        <Navlinks visible={visible} />
+        <Navlinks
+          visible={visible}
+          user={user}
+          role={role}
+          company={company}
+        />
       </div>
     </nav>
   );
