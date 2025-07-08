@@ -140,7 +140,6 @@ jobs:
     needs: install-and-test
     if: >-
       (github.event_name == 'push' && github.ref == 'refs/heads/staging')
-      || (github.event_name == 'pull_request' && github.base_ref == 'staging')
     runs-on: ubuntu-latest
     strategy:
       matrix:
