@@ -13,7 +13,8 @@ import { getUserSessionDetails } from '@/utils/auth-helpers/server';
 import { Metadata } from 'next';
 
 const title = 'Talentora';
-const description = 'Talentora is a platform for creating and managing AI-powered interviews.';
+const description =
+  'Talentora is a platform for creating and managing AI-powered interviews.';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://talentora.net'),
@@ -36,8 +37,9 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: PropsWithChildren) {
-  // Get user session details using the server action
-  const { role, isSidebarVisible } = await getUserSessionDetails();
+  // Get user session details using the server action to avoid fetching on client side
+  const { user, role, isSidebarVisible, company } =
+    await getUserSessionDetails();
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -52,19 +54,19 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <NextTopLoader />
           <ReactQueryProvider>
             <div className="flex min-h-screen">
-              {isSidebarVisible && <DynamicSidebar/>}
-              <main
-                id="skip"
-                className={`flex-1 min-h-screen`}
-              >
+              {isSidebarVisible && <DynamicSidebar />}
+              <main id="skip" className={`flex-1 min-h-screen`}>
                 <div className="sticky top-0 z-40 w-full bg-background/95">
-                  <Navbar visible={isSidebarVisible} />
+                  <Navbar
+                    visible={isSidebarVisible}
+                    user={user}
+                    role={role}
+                    company={company}
+                  />
                   {/* {isSidebarVisible && <BreadcrumbsContainer />} */}
                 </div>
                 <div className="mt-2">
-                  <Suspense fallback={<Loading />}>
-                    {children}
-                  </Suspense>
+                  <Suspense fallback={<Loading />}>{children}</Suspense>
                 </div>
               </main>
             </div>
