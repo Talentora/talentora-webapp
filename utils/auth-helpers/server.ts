@@ -563,9 +563,28 @@ export async function getUserSessionDetails() {
     const role = user?.user_metadata?.role || null;
     const isSidebarVisible = role === 'recruiter';
     
-    return { user, role, isSidebarVisible };
+    // Fetch company data for recruiters
+    let company = null;
+    if (user && role === 'recruiter') {
+      const { data: recruiterData } = await supabase
+        .from('recruiters')
+        .select('company_id')
+        .eq('id', user.id)
+        .single();
+      
+      if (recruiterData?.company_id) {
+        const { data: companyData } = await supabase
+          .from('companies')
+          .select('*')
+          .eq('id', recruiterData.company_id)
+          .single();
+        company = companyData;
+      }
+    }
+    
+    return { user, role, isSidebarVisible, company };
   } catch (error) {
     console.error("Error getting user session details:", error);
-    return { user: null, role: null, isSidebarVisible: false };
+    return { user: null, role: null, isSidebarVisible: false, company: null };
   }
 }

@@ -8,14 +8,23 @@ SET session_replication_role = replica;
 -- Dumped by pg_dump version 15.6
 
 SET statement_timeout = 0;
+
 SET lock_timeout = 0;
+
 SET idle_in_transaction_session_timeout = 0;
+
 SET client_encoding = 'UTF8';
+
 SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
+
+SELECT pg_catalog.set_config ('search_path', '', false);
+
 SET check_function_bodies = false;
+
 SET xmloption = content;
+
 SET client_min_messages = warning;
+
 SET row_security = off;
 
 --
@@ -6716,7 +6725,6 @@ INSERT INTO "auth"."audit_log_entries" ("instance_id", "id", "payload", "created
 	('00000000-0000-0000-0000-000000000000', '0b02fded-2b8d-4a11-99ba-b50f899bb911', '{"action":"login","actor_id":"d8c3eff1-f107-49d3-8365-3ce29f39ae3e","actor_name":"Lucas Yoon","actor_username":"lyoon02@bu.edu","actor_via_sso":true,"log_type":"account","traits":{"provider":"sso:dbefc1d2-f873-4a0e-8b32-d6b0584f9196"}}', '2025-03-21 21:57:23.14304+00', ''),
 	('00000000-0000-0000-0000-000000000000', 'c2075fad-a8d2-4988-8fdb-724f6b2f6283', '{"action":"login","actor_id":"d8c3eff1-f107-49d3-8365-3ce29f39ae3e","actor_name":"Lucas Yoon","actor_username":"lyoon02@bu.edu","actor_via_sso":true,"log_type":"account","traits":{"provider_type":"sso/saml"}}', '2025-03-21 21:57:25.424948+00', '');
 
-
 --
 -- Data for Name: flow_state; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
 --
@@ -7000,7 +7008,6 @@ INSERT INTO "auth"."flow_state" ("id", "user_id", "auth_code", "code_challenge_m
 	('0320275e-6c2a-4588-a102-4207369388a9', NULL, '9ba27447-f4ba-45de-ab9a-3a0e1e4a2a52', 's256', 'wWOe136LPo5msVtPPphP61VYo8H1ciDv-rUbmktHLog', 'sso/saml', '', '', '2025-03-17 14:32:32.390127+00', '2025-03-17 14:32:32.390127+00', 'sso/saml', NULL),
 	('3a719212-7b8e-4d22-82dc-a1de90296115', NULL, '9c53d8a3-7c60-471a-bd4a-31a9c33cbe9d', 's256', 'O3wj0f4h6vHV2vlOMiRFxsl5UTtxfmHD46kd1y7uJUs', 'sso/saml', '', '', '2025-03-18 23:12:10.140469+00', '2025-03-18 23:12:10.140469+00', 'sso/saml', NULL);
 
-
 --
 -- Data for Name: users; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
 --
@@ -7029,7 +7036,6 @@ INSERT INTO "auth"."users" ("instance_id", "id", "aud", "role", "email", "encryp
 	('00000000-0000-0000-0000-000000000000', '0a492ab9-67bc-43e6-b460-e85e25844cb0', 'authenticated', 'authenticated', 'am5815@bu.edu', '$2a$10$90I1OMlgakFG9MOb.W0xe.9CLk7uoT2sVlBNZ4s/DncBWKIYLx.g2', NULL, NULL, 'pkce_69861ecc3fa04b93bfd2150df112c23083be65b4a91aef202506e619', '2024-12-13 20:54:44.687712+00', '', NULL, '', '', NULL, NULL, '{"provider": "email", "providers": ["email"]}', '{"sub": "0a492ab9-67bc-43e6-b460-e85e25844cb0", "role": "recruiter", "email": "am5815@bu.edu", "full_name": "Asad Malik", "email_verified": false, "phone_verified": false}', NULL, '2024-12-13 20:54:44.54871+00', '2024-12-13 20:54:44.961307+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
 	('00000000-0000-0000-0000-000000000000', 'af4be366-5f9a-46a1-a48c-0788363168c0', 'authenticated', 'authenticated', 'junsuny789@gmail.com', '$2a$10$0.YUOWXxsN44YS9TKeTsouJEQ3CzhEIqZ5ONpVav6tBKndnZvW/tq', '2025-03-02 20:06:08.974438+00', '2025-03-01 23:15:21.491604+00', '', NULL, '', '2025-03-05 21:38:08.566256+00', '', '', NULL, '2025-03-21 21:56:59.47261+00', '{"provider": "email", "providers": ["email"]}', '{"role": "applicant", "full_name": "Lucas Yoon", "email_verified": true}', NULL, '2025-03-01 23:15:21.458138+00', '2025-03-21 21:56:59.478919+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false),
 	('00000000-0000-0000-0000-000000000000', 'c3b46785-b1f5-4b53-a6bc-0601b178dc89', 'authenticated', 'authenticated', 'bengard2@bu.edu', '$2a$10$ZNBf7M8XQ2ghSt8OG5RnEuPO4L1m2krskBBlFiwiS8F2JQyJofs0e', NULL, NULL, 'pkce_1965c2b397ab15709a11c1daaaf3f9aa18cbc6a0b49a7695b8da44af', '2025-02-21 21:14:07.042299+00', '', NULL, '', '', NULL, NULL, '{"provider": "email", "providers": ["email"]}', '{"sub": "c3b46785-b1f5-4b53-a6bc-0601b178dc89", "role": "applicant?status=Sign up failed.", "email": "bengard2@bu.edu", "full_name": "asdf", "email_verified": false, "phone_verified": false}', NULL, '2025-02-21 21:14:06.986879+00', '2025-02-21 21:14:07.31165+00', NULL, NULL, '', '', NULL, '', 0, NULL, '', NULL, false, NULL, false);
-
 
 --
 -- Data for Name: identities; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
@@ -7061,12 +7067,9 @@ INSERT INTO "auth"."identities" ("provider_id", "user_id", "identity_data", "pro
 	('5f211f67-3ddc-4a05-8229-d9f05774fc72', '5f211f67-3ddc-4a05-8229-d9f05774fc72', '{"sub": "5f211f67-3ddc-4a05-8229-d9f05774fc72", "role": "applicant", "email": "avdeepkaurpadda@gmail.com", "full_name": "Avdeep Kaur", "email_verified": true, "phone_verified": false}', 'email', '2025-03-07 02:13:23.768309+00', '2025-03-07 02:13:23.768363+00', '2025-03-07 02:13:23.768363+00', 'f5196910-fb12-4922-90d3-089d90a7af56'),
 	('1b2c6f05-545a-4ccf-8ad0-1aae2bd72f1d', '1b2c6f05-545a-4ccf-8ad0-1aae2bd72f1d', '{"sub": "1b2c6f05-545a-4ccf-8ad0-1aae2bd72f1d", "email": "bengard18@gmail.com", "email_verified": false, "phone_verified": false}', 'email', '2025-03-18 19:38:20.939411+00', '2025-03-18 19:38:20.939473+00', '2025-03-18 19:38:20.939473+00', '9b505d44-9991-40f6-8c0e-2c6ad3c5a36e');
 
-
 --
 -- Data for Name: instances; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
 --
-
-
 
 --
 -- Data for Name: sessions; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
@@ -7094,7 +7097,6 @@ INSERT INTO "auth"."sessions" ("id", "user_id", "created_at", "updated_at", "fac
 	('f9575675-4e3b-455f-9066-ea58a2bb4f0b', 'f1848bdf-45ff-4be8-b791-eedde49f0eda', '2025-03-15 06:18:45.949813+00', '2025-03-15 06:18:45.949813+00', NULL, 'aal1', NULL, NULL, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:136.0) Gecko/20100101 Firefox/136.0', '71.121.193.180', NULL),
 	('727eed24-721e-4f2b-8b4a-30b067b702e1', '9b6365ed-10d1-41e3-83c0-3ae1f6b9aeca', '2025-01-22 03:35:22.181701+00', '2025-01-26 18:11:02.86766+00', NULL, 'aal1', NULL, '2025-01-26 18:11:02.867591', 'node', '34.82.63.53', NULL);
 
-
 --
 -- Data for Name: mfa_amr_claims; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
 --
@@ -7121,18 +7123,13 @@ INSERT INTO "auth"."mfa_amr_claims" ("session_id", "created_at", "updated_at", "
 	('b4d69bc5-4fcf-44bb-8c49-820d3e888ffa', '2025-03-21 21:57:25.430272+00', '2025-03-21 21:57:25.430272+00', 'sso/saml', 'de0b1514-3e15-4dd0-91ec-38b8864ed21e'),
 	('ed04d777-b43f-496c-88b5-976e050332cd', '2025-01-29 22:23:45.912382+00', '2025-01-29 22:23:45.912382+00', 'password', '77155132-68fd-47f1-81f2-7d1163af3706');
 
-
 --
 -- Data for Name: mfa_factors; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
 --
 
-
-
 --
 -- Data for Name: mfa_challenges; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
 --
-
-
 
 --
 -- Data for Name: one_time_tokens; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
@@ -7147,7 +7144,6 @@ INSERT INTO "auth"."one_time_tokens" ("id", "user_id", "token_type", "token_hash
 	('e4703e2a-1803-4fab-8bdd-b8c370a35a52', '0a492ab9-67bc-43e6-b460-e85e25844cb0', 'confirmation_token', 'pkce_69861ecc3fa04b93bfd2150df112c23083be65b4a91aef202506e619', 'am5815@bu.edu', '2024-12-13 20:54:44.977417', '2024-12-13 20:54:44.977417'),
 	('ae05d022-6151-4836-87e0-7be901093d4a', '67a84d18-0c88-4cb2-87e8-dcae7cea9492', 'confirmation_token', 'pkce_ab81727d3273fae7bdce74390ab57b32a008e6070e8d96cdc3d72acb', 'testin@gmail.com', '2025-02-18 06:12:36.241974', '2025-02-18 06:12:36.241974'),
 	('d1c07b7b-6038-4679-9fab-5fe1545a71fe', 'c3b46785-b1f5-4b53-a6bc-0601b178dc89', 'confirmation_token', 'pkce_1965c2b397ab15709a11c1daaaf3f9aa18cbc6a0b49a7695b8da44af', 'bengard2@bu.edu', '2025-02-21 21:14:07.321713', '2025-02-21 21:14:07.321713');
-
 
 --
 -- Data for Name: refresh_tokens; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
@@ -7203,14 +7199,12 @@ INSERT INTO "auth"."refresh_tokens" ("instance_id", "id", "token", "user_id", "r
 	('00000000-0000-0000-0000-000000000000', 1741, 'IkcAW6jzj6nz1kyBQw_eeg', '504b2a77-6d74-403a-8347-8ff853ec968f', true, '2025-03-20 21:01:37.331622+00', '2025-03-21 03:07:43.986661+00', 'G5aDYsuRBTJJ7-7B2PwKSw', '1d545d72-ce20-4610-abaf-77a6db1a28d0'),
 	('00000000-0000-0000-0000-000000000000', 1749, 'lldq6gHTETHYFNPh6PSDeA', '504b2a77-6d74-403a-8347-8ff853ec968f', false, '2025-03-21 16:52:41.506841+00', '2025-03-21 16:52:41.506841+00', '9VuLVW679xN3J-x51ZmrSQ', '1d545d72-ce20-4610-abaf-77a6db1a28d0');
 
-
 --
 -- Data for Name: sso_providers; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
 --
 
 INSERT INTO "auth"."sso_providers" ("id", "resource_id", "created_at", "updated_at") VALUES
 	('dbefc1d2-f873-4a0e-8b32-d6b0584f9196', NULL, '2025-01-30 20:08:11.939497+00', '2025-01-30 20:08:11.939497+00');
-
 
 --
 -- Data for Name: saml_providers; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
@@ -7234,7 +7228,6 @@ gFuQKDCaj+o9crs4xx4eWuGGZuhg+4ZXzAlOSbuKAy2f5r6/PVI3GIC1CvbzkI6uA6mtXer06WKp
 q0GjZs5yukoWzeHpoiTweo0jfMJTcLF9709g01QUtbsPyqaieqge0hE8YMgNBR46epFL23REgDwe
 t3E5zWzmyOgSyjmxQ3OyYZKVkNn8B9t4yQ1yvPxLnAMXTh00rbU+geHmJYH625LHRKA0SdcHn14Q
 9AXnprIK2WXuGvtf0elRheqZneM+73BZ6cQCnbvI</ds:X509Certificate></ds:X509Data></ds:KeyInfo></md:KeyDescriptor><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat><md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</md:NameIDFormat><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://trial-2137161.okta.com/app/trial-2137161_talentoralogin_1/exkoazvyfdUZz1jJA697/sso/saml"/><md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://trial-2137161.okta.com/app/trial-2137161_talentoralogin_1/exkoazvyfdUZz1jJA697/sso/saml"/></md:IDPSSODescriptor></md:EntityDescriptor>', 'https://trial-2137161.okta.com/app/exkoazvyfdUZz1jJA697/sso/saml/metadata', '{}', '2025-01-30 20:08:11.950652+00', '2025-03-21 14:09:41.940438+00', NULL);
-
 
 --
 -- Data for Name: saml_relay_states; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
@@ -7283,7 +7276,6 @@ INSERT INTO "auth"."saml_relay_states" ("id", "sso_provider_id", "request_id", "
 	('45065f48-9f3d-4a33-b8f4-e678e29423f0', 'dbefc1d2-f873-4a0e-8b32-d6b0584f9196', 'id-4b20c08d6aad1edaef5c76d5ef4cbd2ed545dc19', NULL, 'http://localhost:3001/auth/callback', '2025-02-04 17:05:03.65764+00', '2025-02-04 17:05:03.65764+00', 'dcdb5ee7-37ab-4e41-bdc1-27e0a3653382'),
 	('267e571b-00e9-45c4-a3f2-282d48e5a7f7', 'dbefc1d2-f873-4a0e-8b32-d6b0584f9196', 'id-41339f33e04a5d40593625e02d427277f1c3b7f6', NULL, 'http://localhost:3001/auth/callback', '2025-02-04 17:05:07.104113+00', '2025-02-04 17:05:07.104113+00', '668218fa-5983-4e51-a98a-50e33b0144bd');
 
-
 --
 -- Data for Name: sso_domains; Type: TABLE DATA; Schema: auth; Owner: supabase_auth_admin
 --
@@ -7291,12 +7283,9 @@ INSERT INTO "auth"."saml_relay_states" ("id", "sso_provider_id", "request_id", "
 INSERT INTO "auth"."sso_domains" ("id", "sso_provider_id", "domain", "created_at", "updated_at") VALUES
 	('72794691-b55f-45b8-987f-89827a3540d5', 'dbefc1d2-f873-4a0e-8b32-d6b0584f9196', 'bu.edu', '2025-01-30 20:08:11.967916+00', '2025-01-30 20:08:11.967916+00');
 
-
 --
 -- Data for Name: key; Type: TABLE DATA; Schema: pgsodium; Owner: supabase_admin
 --
-
-
 
 --
 -- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -7308,7 +7297,6 @@ INSERT INTO "public"."products" ("id", "active", "name", "description", "image",
 	('prod_QdI5aNZgSRgI3k', true, 'Testing', NULL, NULL, '{}'),
 	('prod_RdsA4FjMhBshIP', true, 'AI Assessments', 'We bill companies $1 per conducted AI interview assessment. ', NULL, '{}');
 
-
 --
 -- Data for Name: prices; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -7319,12 +7307,9 @@ INSERT INTO "public"."prices" ("id", "product_id", "active", "description", "uni
 	('price_1Pm1UvAiO04xLtVA2yreHwj5', 'prod_QdI5aNZgSRgI3k', true, NULL, 10000, 'usd', 'recurring', 'month', 1, 0, NULL),
 	('price_1QkaQHAiO04xLtVAB6GtJV94', 'prod_RdsA4FjMhBshIP', true, NULL, 100, 'usd', 'recurring', 'month', 1, 0, NULL);
 
-
 --
 -- Data for Name: subscriptions; Type: TABLE DATA; Schema: public; Owner: postgres
 --
-
-
 
 --
 -- Data for Name: companies; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -7336,7 +7321,6 @@ INSERT INTO "public"."companies" ("name", "location", "industry", "description",
 	('Talentora', NULL, NULL, NULL, '45b85594-26b9-4d3e-8576-b6ab7f1bd41e', NULL, NULL, NULL, NULL, 'f7422242-7580-4b7f-85c7-bde123c5187c', NULL, false),
 	('Talentora (BU)', 'Boston, MA', 'HR Tech', NULL, 'd0e79cd5-7571-45fb-a143-fa20e8c2e4d1', NULL, NULL, 'g6idwsqSM-sMweHpXBGsYdloT7A0DrRvcabJ0f6Aw-yp2MrofKRaMA', NULL, NULL, 'dbefc1d2-f873-4a0e-8b32-d6b0584f9196', true);
 
-
 --
 -- Data for Name: jobs; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -7345,7 +7329,6 @@ INSERT INTO "public"."jobs" ("company_id", "merge_id", "id") VALUES
 	('f7422242-7580-4b7f-85c7-bde123c5187c', '6590b339-db89-415a-bc62-b3599af6bc48', '2bcb93bd-ede2-4d90-a67e-32b798c9191d'),
 	('f7422242-7580-4b7f-85c7-bde123c5187c', 'ca838578-f677-4f32-80a4-5fcfb3eb5f08', '4af996d7-3a09-4531-b025-36c3e66d0737'),
 	('f7422242-7580-4b7f-85c7-bde123c5187c', 'a325fa01-9047-4ff0-a84f-a52803be6b28', 'a705b3e2-fe60-4393-9b9a-922a37cb997e');
-
 
 --
 -- Data for Name: applications; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -7359,14 +7342,12 @@ INSERT INTO "public"."applications" ("created_at", "applicant_id", "job_id", "id
 	('2025-03-01 23:22:05.899991+00', 'af4be366-5f9a-46a1-a48c-0788363168c0', '6590b339-db89-415a-bc62-b3599af6bc48', '18103c30-8d83-4a72-a5aa-7bec51a9dc51', 'c047d27c-e2c0-4054-a223-46612fd166d3'),
 	('2025-03-05 03:38:38.311826+00', '1b2c6f05-545a-4ccf-8ad0-1aae2bd72f1d', '6590b339-db89-415a-bc62-b3599af6bc48', 'eb421b1a-e70a-4c79-b630-2e1502cc6e34', '40355436-4dc2-4fa2-9a3f-698f35669efd');
 
-
 --
 -- Data for Name: AI_summary; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 INSERT INTO "public"."AI_summary" ("id", "created_at", "emotion_eval", "text_eval", "application_id", "recording_id", "room_name", "overall_summary", "transcript_summary", "batch_processor_transcript_id", "resume_analysis") VALUES
 	('53d2879b-1623-4850-b966-b3d4d857639b', '2025-03-02 03:38:01.04107+00', '{"explanation": "The candidate did not provide any relevant answers related to the job responsibilities or requirements; instead, their responses were focused on technical issues regarding the interview setup. Consequently, they demonstrated no understanding or competency related to software development or collaboration, resulting in a very low score.", "overall_score": 10}', '{"explanation": "The candidate has not provided any specific responses related to the job description—there are no details about their technical skills, experience with programming languages, frameworks, or any relevant qualifications. Therefore, they do not meet the job requirements effectively.", "overall_score": 30}', 'eb421b1a-e70a-4c79-b630-2e1502cc6e34', 'f25dbd8e-56ea-4c75-8a75-85800d2fe6c8', 'rbSRFxDrzbvXi3ui0bZ5', '"{\"score\":60,\"explanation\":\"Ben is currently a junior computer science student, aligning with the educational requirement, but he lacks substantial practical experience in software development. His enthusiasm for AI is a positive indicator of his willingness to learn, yet he did not provide specific details on relevant projects or the programming languages and frameworks he has used. This lack of concrete experience in software application development, API integration, and best coding practices affects his suitability for the role. Overall, while he shows potential, he does not yet fully meet the job requirements.\"}"', 'The text is a simulated interview between Bob, an interviewer for a software developer position at Acme Inc., and Vincent, a candidate. Bob begins by ensuring the video connection is working and thanks Vincent for attending the interview. He asks Vincent to introduce himself and explain his interest in the position. Vincent, a junior studying computer science at Boston University, expresses his interest in Acme Inc.''s work with AI technologies. Bob then asks Vincent to describe any significant projects or coursework related to AI or software development that he has been involved in.', '7e6124b1-47aa-4d78-b932-9d1071777108', '{"resumeScore": 2, "technicalScore": 3, "cultureFitScore": 2, "communicationScore": 1}');
-
 
 --
 -- Data for Name: applicants; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -7378,7 +7359,6 @@ INSERT INTO "public"."applicants" ("id", "email", "full_name", "merge_candidate_
 	('af4be366-5f9a-46a1-a48c-0788363168c0', 'junsuny789@gmail.com', 'Lucas Yoon', '{45c2e204-dbd1-46c7-92fa-4d4042679c21,05223ccd-4747-4add-bb7d-dcc76d9eca08,f48099df-b99f-41b2-a888-605c2a407701}'),
 	('f1848bdf-45ff-4be8-b791-eedde49f0eda', 'rc071404@bu.edu', 'Ruby Chen', '{5ce30057-fa53-49e9-9b19-ee39628864a0}');
 
-
 --
 -- Data for Name: bots; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -7389,7 +7369,6 @@ INSERT INTO "public"."bots" ("id", "created_at", "name", "voice", "description",
 	(1, '2025-02-21 18:26:30.600722+00', 'Meow', '{"id": "e00d0e4c-a5c8-443f-a8a3-473eb9a62355", "name": "Friendly Sidekick", "gender": "masculine", "language": "en", "embedding": [0.09410483, 0.079974554, 0.017645799, 0.08417164, -0.10961525, 0.12855752, 0.013430084, -0.024581663, -0.06879434, 0.05381381, 0.0012353595, 0.006085976, 0.11572997, -0.08568523, -0.029579738, -0.016710911, -0.0077498793, -0.0060466095, -0.081591874, -0.061875466, 0.08634007, -0.05264619, -0.030400697, 0.11478822, 0.0032257885, 0.058713783, -0.032484237, -0.06665902, 0.08931387, 0.014517364, -0.007451265, -0.10102731, 0.040464353, -0.087438084, -0.066848084, 0.13268761, -0.051638633, 0.070519134, 0.14037907, 0.04629169, -0.041434992, 0.0146058705, 0.101506524, -0.042280655, 0.14933878, -0.15545006, -0.18533674, -0.1110814, 0.06458473, 0.021453138, 0.124971025, 0.009236553, 0.014778951, 0.021626875, -0.05187841, 0.07250377, -0.013432403, -0.018996226, -0.0037040845, -0.1066524, 0.05902565, -0.042337548, 0.00036641955, 0.097329296, 0.027311655, -0.000675976, 0.04342329, -0.0056270114, -0.01008038, -0.0070532397, 0.06818358, -0.1366029, 0.13772509, 0.10922787, 0.00959963, 0.009556445, -0.06415278, -0.06870479, -0.07492951, -0.025629368, 0.07534357, -0.12146816, -0.005361332, -0.004572155, -0.037973963, -0.023060132, -0.0038664239, -0.050002955, -0.050662458, 0.064065896, 0.06830593, -0.010503624, 0.084139496, -0.02510241, 0.10361288, 0.21173185, -0.05299685, 0.05865421, 0.0191851, -0.03529296, 0.07514327, 0.0073672025, -0.12818779, -0.14449452, -0.10292752, -0.13601914, 0.053031713, -0.10029877, 0.049517713, 0.004904805, -0.0031694756, 0.13744617, -0.009426843, -0.094415076, 0.02631338, 0.031187622, -0.113471426, 0.0462735, 0.16793488, -0.04361045, -0.088441975, -0.09287519, 0.06536801, 0.065927416, -0.11591995, -0.07661975, -0.008013515, 0.013970656, 0.023860326, -0.07416654, -0.05390443, -0.03227111, 0.14392842, -0.0015517174, 0.04260603, -0.10756845, -0.111385114, -0.08160864, 0.05239747, -0.089399315, -0.09101242, 0.04932216, 0.003117642, -0.13629505, 0.041228, -0.049632464, 0.0366001, -0.0046930057, -0.018072644, -0.06100545, 0.0818714, 0.007694119, -0.0008900023, -0.0374466, 0.028906198, -0.07169407, 0.078779995, 0.032826856, 0.10436137, -0.06768776, 0.017248776, 0.063937016, 0.014764318, 0.034505066, 0.08854115, 0.07734331, 0.04022845, 0.048509147, 0.09736956, -0.052125588, -0.017641636, -0.02687417, -0.09649839, 0.05494908, -0.04422508, 0.0077187256, 0.03566544, 0.12929288, 0.034641482, -0.006942245, 0.044290192, 0.04098064, 0.04387537, -0.008305046, 0.013910318, -0.029980347, 0.084455855, 0.02610862, 0.013888957, 0.09597405, -0.0135880625, 0.04001869], "is_public": true, "api_status": "unlocked", "description": "This voice is friendly and supportive, designed for voicing characters in games and videos"}', 'Loves meowing, is a friendly cat', 'meow meow <3', 'f7422242-7580-4b7f-85c7-bde123c5187c', 'Laptop', 'ORANGE CAT', '{"anger": 10, "speed": 1, "sadness": 1, "surprise": 1, "curiosity": 1, "positivity": 1}'),
 	(12, '2025-03-15 06:34:16.364611+00', '', '{"id": "8f490c09-3b8f-4108-ac0c-51288154fa05", "mode": "similarity", "name": "Yippy", "gender": "masculine", "language": "en", "embedding": [-0.12128542, -0.053765833, 0.00041520214, -0.02006805, 0.0017706385, 0.07365734, 0.06119387, -0.02405735, -0.15767881, 0.06512132, 0.049844168, 0.05041676, 0.020668346, -0.04764527, -0.03587482, 0.030702684, -0.040869586, 0.024407167, -0.09259226, 0.012227706, 0.05739076, 0.046935968, -0.020122925, 0.10145843, 0.07086069, 0.16125533, 0.04308712, -0.03842421, -0.07410963, -0.020354753, 0.0375333, -0.04760117, -0.10245313, 0.015878515, 0.12820107, -0.0066197165, -0.033945028, 0.037572186, 0.08322082, 0.03895486, 0.011641195, 0.10142419, 0.0033454949, 0.07892925, -0.033241615, -0.10176429, 0.05679752, 0.011947752, -0.05992025, -0.12439781, -0.022316385, -0.025295263, 0.12583722, -0.07178952, 0.007415946, -0.057891548, -0.15631887, 0.06780795, 0.051733952, 0.0168195, -0.17027938, -0.036943045, -0.059624407, 0.091975264, 0.02667377, 0.09269584, 0.020030312, 0.06290291, -0.18502212, 0.09121084, 0.00571204, -0.07752046, -0.06780477, 0.07562085, -0.06156358, -0.07150199, -0.022714598, 0.12390947, 0.05057613, -0.02656986, -0.03109759, -0.08850186, -0.03659584, 0.08985724, -0.0055921366, -0.019222775, -0.08719081, -0.0848868, -0.059411928, 0.12992585, 0.04712807, 0.10228607, -0.13944606, 0.1137041, 0.042670947, 0.04356431, 0.0315724, -0.050497077, 0.055382833, -0.018072575, -0.07982222, -0.061249167, 0.025878116, 0.012625086, -0.0027513406, -0.08698561, 0.021826873, 0.15038693, 0.024911132, -0.007371074, -0.11781493, 0.118225396, 0.05531909, -0.071353436, -0.04187531, 0.042227447, 0.020083116, 0.108032994, 0.015165865, -0.04294562, 0.029254653, -0.08099313, -0.16133854, -0.10377386, -0.048919957, -0.11042504, 0.051073886, -0.03978922, 0.048414733, 0.024265738, -0.08212442, -0.14799553, 0.008329798, -0.0071343356, -0.09699258, -0.05104706, -0.070312664, -0.04674502, 0.025200607, 0.14129446, 0.04050253, 0.022247665, 0.073811136, 0.016544577, -0.085151955, -0.06550604, -0.09978848, -0.09067604, 0.12358913, -0.023317458, 0.008333021, -0.0009024882, 0.07282502, 0.05867803, 0.114196114, -0.0022868982, 0.050854504, 0.007402262, -0.04004378, -0.0070531466, -0.046584222, 0.04659423, -0.10044847, -0.030887565, -0.027972266, -0.039203115, -0.16079995, 0.0802772, 0.0042516165, 0.027766746, 0.005643124, -0.0130750695, -0.004235494, 0.008661835, 0.06639255, -0.16990034, 0.025236817, 0.10756908, 0.07982402, 0.043435488, 0.028424121, 0.043705333, -0.056149293, -0.01917289, -0.04409124, -0.0883931, 0.058022592, -0.111095645, -0.117412545, 0.039415795, -0.0365167, -0.005200379], "is_public": true, "created_at": "1970-04-29T03:00:00Z", "popularity": 0, "description": "A high-energy, wispy male voice full of excitement and enthusiasm, perfect for animated characters, lively announcements, and fun, fast-paced content."}', '', 'jbhb', 'd0e79cd5-7571-45fb-a143-fa20e8c2e4d1', 'Bot', '', '{"anger": 2, "speed": 3, "sadness": 1, "surprise": 1, "curiosity": 1, "positivity": 1}');
 
-
 --
 -- Data for Name: company_context; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -7398,7 +7377,6 @@ INSERT INTO "public"."company_context" ("id", "created_at", "description", "cult
 	('d0e79cd5-7571-45fb-a143-fa20e8c2e4d1', '2025-02-04 19:37:47.167372+00', 'Talentora is a pioneering AI recruitment platform that is revolutionizing the hiring process through advanced artificial intelligence. Our platform specializes in conducting first-round interviews, making the recruitment process more efficient and effective for both companies and candidates.', 'Talentora is a pioneering AI recruitment platform that is revolutionizing the hiring process through advanced artificial intelligence. Our platform specializes in conducting first-round interviews, making the recruitment process more efficient and effective for both companies and candidates.', 'Talentora is a pioneering AI recruitment platform that is revolutionizing the hiring process through advanced artificial intelligence. Our platform specializes in conducting first-round interviews, making the recruitment process more efficient and effective for both companies and candidates.', 'Talentora is a pioneering AI recruitment platform that is revolutionizing the hiring process through advanced artificial intelligence. Our platform specializes in conducting first-round interviews, making the recruitment process more efficient and effective for both companies and candidates.', 'Talentora is a pioneering AI recruitment platform that is revolutionizing the hiring process through advanced artificial intelligence. Our platform specializes in conducting first-round interviews, making the recruitment process more efficient and effective for both companies and candidates.', 'Talentora is a pioneering AI recruitment platform that is revolutionizing the hiring process through advanced artificial intelligence. Our platform specializes in conducting first-round interviews, making the recruitment process more efficient and effective for both companies and candidates.'),
 	('f7422242-7580-4b7f-85c7-bde123c5187c', '2024-11-04 19:37:04.346289+00', 'Talentora is a pioneering AI recruitment platform that is revolutionizing the hiring process through advanced artificial intelligence. Our platform specializes in conducting first-round interviews, making the recruitment process more efficient and effective for both companies and candidates.', 'Talentora is a pioneering AI recruitment platform that is revolutionizing the hiring process through advanced artificial intelligence. Our platform specializes in conducting first-round interviews, making the recruitment process more efficient and effective for both companies and candidates.', 'Talentora is a pioneering AI recruitment platform that is revolutionizing the hiring process through advanced artificial intelligence. Our platform specializes in conducting first-round interviews, making the recruitment process more efficient and effective for both companies and candidates.', 'Talentora is a pioneering AI recruitment platform that is revolutionizing the hiring process through advanced artificial intelligence. Our platform specializes in conducting first-round interviews, making the recruitment process more efficient and effective for both companies and candidates.', 'Talentora is a pioneering AI recruitment platform that is revolutionizing the hiring process through advanced artificial intelligence. Our platform specializes in conducting first-round interviews, making the recruitment process more efficient and effective for both companies and candidates.', 'Talentora is a pioneering AI recruitment platform that is revolutionizing the hiring process through advanced artificial intelligence. Our platform specializes in conducting first-round interviews, making the recruitment process more efficient and effective for both companies and candidates.');
 
-
 --
 -- Data for Name: customers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -7406,12 +7384,9 @@ INSERT INTO "public"."company_context" ("id", "created_at", "description", "cult
 INSERT INTO "public"."customers" ("id", "stripe_customer_id") VALUES
 	('0d3eda96-4065-4387-8315-6b552862f1f6', 'cus_R9qJxqTrMntlUy');
 
-
 --
 -- Data for Name: form_messages; Type: TABLE DATA; Schema: public; Owner: postgres
 --
-
-
 
 --
 -- Data for Name: job_interview_config; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -7421,7 +7396,6 @@ INSERT INTO "public"."job_interview_config" ("job_id", "created_at", "interview_
 	('a325fa01-9047-4ff0-a84f-a52803be6b28', '2025-02-02 20:30:04.108592+00', '[{"id": "5ffff4ce-29b2-4263-8f4d-7027e5f18ba3", "order": 1, "question": "hi", "sample_response": "meow"}]', 'f7422242-7580-4b7f-85c7-bde123c5187c', 11, 15, 'standard', 'Sample Interview Config', NULL, NULL),
 	('ca838578-f677-4f32-80a4-5fcfb3eb5f08', '2025-01-23 04:19:06.993297+00', '[{"id": "0288ee75-ec11-4ac7-8f0d-7347a0a09dbe", "order": 1, "question": "Tell me about your day", "sample_response": "day was good"}, {"id": "f9180f03-1fab-4588-8489-326bb7e8551e", "order": 2, "question": "1", "sample_response": "2"}, {"id": "0ddb05bd-defe-40a5-9c93-a805b255f610", "order": 3, "question": "3", "sample_response": "4"}]', 'f7422242-7580-4b7f-85c7-bde123c5187c', 1, 10, 'behavioral', 'Small talk', 'hi', NULL),
 	('6590b339-db89-415a-bc62-b3599af6bc48', '2024-12-03 04:53:43.405292+00', '[{"id": "d11d26d7-8cde-4837-a57b-fff221cb6d6a", "order": 1, "question": "Tell me about yourself", "sample_response": "a great answer should sound genuine and tell a story"}]', 'f7422242-7580-4b7f-85c7-bde123c5187c', 8, 10, 'Behavioral', 'Interview 1', NULL, '{"edges": [{"id": "e-start-intro", "type": "smoothstep", "source": "start", "target": "intro", "sourceHandle": "right", "targetHandle": "left"}, {"id": "e-intro-question1", "type": "smoothstep", "source": "intro", "target": "question1", "sourceHandle": "bottom", "targetHandle": "top"}, {"id": "e-question1-question2", "type": "smoothstep", "source": "question1", "target": "question2", "sourceHandle": "bottom", "targetHandle": "top"}, {"id": "e-question2-technical", "type": "smoothstep", "source": "question2", "target": "technical", "sourceHandle": "right", "targetHandle": "left"}, {"id": "e-technical-question3", "type": "smoothstep", "source": "technical", "target": "question3", "sourceHandle": "bottom", "targetHandle": "top"}, {"id": "e-question3-question4", "type": "smoothstep", "source": "question3", "target": "question4", "sourceHandle": "bottom", "targetHandle": "top"}, {"id": "e-question4-question5", "type": "smoothstep", "source": "question4", "target": "question5", "sourceHandle": "right", "targetHandle": "left"}, {"id": "e-question5-cultural", "type": "smoothstep", "source": "question5", "target": "cultural", "sourceHandle": "left", "targetHandle": "right"}, {"id": "e-cultural-question6", "type": "smoothstep", "source": "cultural", "target": "question6", "sourceHandle": "bottom", "targetHandle": "top"}, {"id": "e-question6-question7", "type": "smoothstep", "source": "question6", "target": "question7", "sourceHandle": "bottom", "targetHandle": "top"}, {"id": "e-question7-conclusion", "type": "smoothstep", "source": "question7", "target": "conclusion", "sourceHandle": "right", "targetHandle": "left"}], "nodes": [{"id": "start", "data": {"label": "Interview Start", "content": "Welcome the candidate and introduce yourself. Explain the interview process and set expectations."}, "type": "input", "width": 150, "height": 164, "position": {"x": 100, "y": 150}}, {"id": "intro", "data": {"label": "Background Section", "content": "This section covers the candidate''s background and experience."}, "type": "section", "width": 256, "height": 128, "position": {"x": 350, "y": 150}}, {"id": "question1", "data": {"label": "Experience Question", "content": "Tell me about your most recent role and your key responsibilities.", "criteria": "Look for relevant experience and clear communication."}, "type": "question", "width": 256, "height": 180, "position": {"x": 350, "y": 300}}, {"id": "question2", "data": {"label": "Challenge Question", "content": "Describe a challenging situation you faced in your previous role and how you resolved it.", "criteria": "Assess problem-solving skills and resilience."}, "type": "question", "width": 256, "height": 184, "dragging": false, "position": {"x": 350, "y": 500}, "selected": false, "positionAbsolute": {"x": 795, "y": 345}}, {"id": "technical", "data": {"label": "Technical Skills", "content": "This section evaluates the candidate''s technical knowledge and skills."}, "type": "section", "width": 256, "height": 128, "position": {"x": 750, "y": 150}}, {"id": "question3", "data": {"label": "Technical Question 1", "content": "Explain how you would design a scalable system for handling high traffic loads.", "criteria": "Evaluate system design knowledge and scalability concepts."}, "type": "question", "width": 256, "height": 200, "position": {"x": 750, "y": 300}}, {"id": "question4", "data": {"label": "Technical Question 2", "content": "Describe your experience with CI/CD pipelines and how you''ve implemented them.", "criteria": "Check for DevOps knowledge and automation experience."}, "type": "question", "width": 256, "height": 200, "dragging": false, "position": {"x": 750, "y": 500}, "selected": false, "positionAbsolute": {"x": 780, "y": 570}}, {"id": "question5", "data": {"label": "Technical Question 3", "content": "How do you ensure code quality in your projects?", "criteria": "Look for testing strategies, code reviews, and quality assurance practices."}, "type": "question", "width": 256, "height": 180, "dragging": false, "position": {"x": 1680, "y": 375}, "selected": true, "positionAbsolute": {"x": 1680, "y": 375}}, {"id": "cultural", "data": {"label": "Cultural Fit", "content": "This section assesses how well the candidate aligns with company values and culture."}, "type": "section", "width": 256, "height": 128, "dragging": false, "position": {"x": 1150, "y": 150}, "selected": false, "positionAbsolute": {"x": 1095, "y": 45}}, {"id": "question6", "data": {"label": "Teamwork Question", "content": "How do you approach collaborating with team members who have different working styles?", "criteria": "Assess adaptability, empathy, and collaboration skills."}, "type": "question", "width": 256, "height": 204, "dragging": false, "position": {"x": 1150, "y": 300}, "selected": false, "positionAbsolute": {"x": 1350, "y": 405}}, {"id": "question7", "data": {"label": "Growth Question", "content": "Where do you see yourself professionally in 3-5 years?", "criteria": "Evaluate ambition, career planning, and alignment with company growth."}, "type": "question", "width": 256, "height": 180, "dragging": false, "position": {"x": 1150, "y": 500}, "selected": false, "positionAbsolute": {"x": 1395, "y": 600}}, {"id": "conclusion", "data": {"label": "Interview Conclusion", "content": "Thank the candidate for their time. Ask if they have any questions about the role or company. Explain next steps in the hiring process."}, "type": "conclusion", "width": 256, "height": 168, "dragging": false, "position": {"x": 1850, "y": 150}, "selected": false, "positionAbsolute": {"x": 1890, "y": 240}}]}');
-
 
 --
 -- Data for Name: recruiters; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -7441,7 +7415,6 @@ INSERT INTO "public"."recruiters" ("id", "company_id") VALUES
 	('504b2a77-6d74-403a-8347-8ff853ec968f', 'd0e79cd5-7571-45fb-a143-fa20e8c2e4d1'),
 	('f97a9380-eba7-45d5-8534-8b91d8b6e298', 'd0e79cd5-7571-45fb-a143-fa20e8c2e4d1');
 
-
 --
 -- Data for Name: buckets; Type: TABLE DATA; Schema: storage; Owner: supabase_storage_admin
 --
@@ -7452,7 +7425,6 @@ INSERT INTO "storage"."buckets" ("id", "name", "owner", "created_at", "updated_a
 	('Filtered Hume Output', 'Filtered Hume Output', NULL, '2025-02-23 13:10:16.967347+00', '2025-02-23 13:10:16.967347+00', false, false, NULL, NULL, NULL),
 	('Resumes', 'Resumes', NULL, '2025-02-24 20:26:13.309502+00', '2025-02-24 20:26:13.309502+00', false, false, NULL, NULL, NULL),
 	('edited-interviews', 'edited-interviews', NULL, '2025-03-20 14:29:13.314408+00', '2025-03-20 14:29:13.314408+00', false, false, NULL, NULL, NULL);
-
 
 --
 -- Data for Name: objects; Type: TABLE DATA; Schema: storage; Owner: supabase_storage_admin
@@ -7811,31 +7783,25 @@ INSERT INTO "storage"."objects" ("id", "bucket_id", "name", "owner", "created_at
 	('b802939d-ea51-42f3-9a8a-b83e00b8911d', 'Interviews', 'MIT_Transcripts/merged_id_scores_medium.csv', NULL, '2025-02-26 20:53:12.282335+00', '2025-02-26 20:54:27.383256+00', '2025-02-26 20:53:12.282335+00', '{"eTag": "\"918ab29fb5f991e95c21857ad72443f1\"", "size": 347222, "mimetype": "text/csv", "cacheControl": "max-age=3600", "lastModified": "2025-02-26T20:54:28.000Z", "contentLength": 347222, "httpStatusCode": 200}', '21925a44-bf54-4d0a-a3dc-309014af57f7', NULL, NULL),
 	('e1bd59a8-6ab4-49aa-9ad2-b177977930ab', 'Interviews', 'MIT_Transcripts/merged_id_scores.csv', NULL, '2025-02-26 20:53:12.282928+00', '2025-02-26 20:54:18.858159+00', '2025-02-26 20:53:12.282928+00', '{"eTag": "\"8cccd1dab012cc2f0cb70720f1346759\"", "size": 352750, "mimetype": "text/csv", "cacheControl": "max-age=3600", "lastModified": "2025-02-26T20:54:19.000Z", "contentLength": 352750, "httpStatusCode": 200}', 'd34d94ab-e814-4ceb-9e10-d701367ca192', NULL, NULL);
 
-
 --
 -- Data for Name: s3_multipart_uploads; Type: TABLE DATA; Schema: storage; Owner: supabase_storage_admin
 --
-
-
 
 --
 -- Data for Name: s3_multipart_uploads_parts; Type: TABLE DATA; Schema: storage; Owner: supabase_storage_admin
 --
 
-
-
 --
 -- Data for Name: secrets; Type: TABLE DATA; Schema: vault; Owner: supabase_admin
 --
-
-
 
 --
 -- Name: refresh_tokens_id_seq; Type: SEQUENCE SET; Schema: auth; Owner: supabase_auth_admin
 --
 
-SELECT pg_catalog.setval('"auth"."refresh_tokens_id_seq"', 1768, true);
-
+SELECT pg_catalog.setval (
+        '"auth"."refresh_tokens_id_seq"', 1768, true
+    );
 
 --
 -- Name: key_key_id_seq; Type: SEQUENCE SET; Schema: pgsodium; Owner: supabase_admin
@@ -7843,20 +7809,19 @@ SELECT pg_catalog.setval('"auth"."refresh_tokens_id_seq"', 1768, true);
 
 -- SELECT pg_catalog.setval('"pgsodium"."key_key_id_seq"', 1, false);
 
-
 --
 -- Name: bots_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."bots_id_seq"', 12, true);
-
+SELECT pg_catalog.setval ( '"public"."bots_id_seq"', 12, true );
 
 --
 -- Name: form_messages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('"public"."form_messages_id_seq"', 6, true);
-
+SELECT pg_catalog.setval (
+        '"public"."form_messages_id_seq"', 6, true
+    );
 
 --
 -- PostgreSQL database dump complete

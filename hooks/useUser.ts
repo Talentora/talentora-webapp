@@ -28,7 +28,12 @@ interface UseUserReturn {
   isRecruiter: boolean;
 }
 
-export function useUser(): UseUserReturn {
+interface UseInitialData {
+  initialUser?: User | null;
+  initialCompany?: Company | null;
+}
+
+export function useUser(data?: UseInitialData): UseUserReturn {
   const supabase = createClient();
 
   // Fetch authenticated user data using React Query with proper error handling
@@ -63,7 +68,8 @@ export function useUser(): UseUserReturn {
     },
     retry: false, // Don't retry on auth errors
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    initialData: data?.initialUser || null // Use server data if available
   });
 
   const userId = userData?.id ?? '';
@@ -136,7 +142,8 @@ export function useUser(): UseUserReturn {
     },
     retry: false, // Don't retry on auth errors
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    initialData: data?.initialCompany || null
   });
 
   return {

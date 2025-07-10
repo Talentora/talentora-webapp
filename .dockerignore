@@ -1,0 +1,27 @@
+# Local env files
+.env
+.env.local
+!.env.example
+
+# Version control
+.git
+.gitignore
+
+# IDE specific files
+.idea
+.vscode
+.cursorrules
+
+# OS generated files
+.DS_Store
+*.pem
+
+# Docker
+.dockerignore
+
+# Misc
+README.md
+LICENSE
+*.md
+.husky
+.github

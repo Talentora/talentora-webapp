@@ -1,0 +1,21 @@
+services:
+  webapp:
+    env_file: .env.local
+    image: "${DOCKERHUB_USERNAME}/talentora-webapp-production:latest"
+    ports:
+      - "80:3000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    environment:
+      - NODE_ENV=production
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge 

@@ -14,6 +14,7 @@ import { inviteRecruiterAdmin, listUsersAdmin } from '@/utils/supabase/admin';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { fetchApplicationMergeId } from '@/server/applications';
 import { sendAuthCandidateEmail, sendAuthRecruiterEmail } from '../email_helpers';
+import { uuid } from '@supabase/auth-js/dist/module/lib/helpers';
 
 
 // CRUD operations for the company table
@@ -245,6 +246,7 @@ export async function inviteRecruiter(
     const user = await getUser();
     const recruiter = await getRecruiter(user?.id ?? '');
     const company = await getCompany(recruiter?.company_id ?? '');
+    const recruiterRole = role as Database['public']['Enums']['recruiter_role'];
 
     if (!company) {
       return {
@@ -253,15 +255,23 @@ export async function inviteRecruiter(
       };
     }
 
+    if (recruiterRole && recruiterRole !== 'admin' && recruiterRole !== 'recruiter' && recruiterRole !== 'viewer') {
+      return {
+        data: null,
+        error: 'Invalid role specified. Must be either "admin", "recruiter", "viewer", or null.'
+      };
+    }
+
     // Create a pending recruiter record
     const { error: recruiterError } = await supabase
       .from('recruiters')
       .insert({
+        id: crypto.randomUUID(),
         email: email,
         full_name: name,
         company_id: company.id,
         status: 'pending_invite',
-        role: role
+        role: recruiterRole
       });
     
     console.log('recruiterError', recruiterError);
@@ -407,6 +417,36 @@ export const getRecruiter = async (
   } catch (err) {
     console.error('Unexpected error fetching recruiter:', err);
     return null;
+  }
+};
+
+/**
+ * Fetches a recruiter by their ID.
+ *
+ * @param supabase - The Supabase client instance.
+ * @returns The recruiter data or null if not found.
+ */
+export const getRecruiters = async (): Promise<Recruiter[]> => {
+  try {
+    const supabase = await createClient();
+    const { data: recruiters, error } = await supabase
+      .from('recruiters')
+      .select('*');
+
+    if (error) {
+      console.error('Error fetching recruiters:', error.message);
+      return [];
+    }
+
+    if (!recruiters) {
+      console.warn('No recruiters found');
+      return [];
+    }
+
+    return recruiters;
+  } catch (err) {
+    console.error('Unexpected error fetching recruiters:', err);
+    return [];
   }
 };
 

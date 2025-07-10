@@ -1,15 +1,20 @@
-import TeamGrid from '@/components/Team/TeamGrid'
-import { Metadata } from 'next'
+import TeamGrid from '@/components/Team/TeamGrid';
+import { getRecruiters } from '@/utils/supabase/queries';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Our Team | Talentora',
-  description: 'Meet the passionate team behind Talentora - leaders in AI-powered recruitment solutions.',
-}
+  description:
+    'Meet the passionate team behind Talentora - leaders in AI-powered recruitment solutions.'
+};
 
-export default function TeamPage() {
+export default async function TeamPage() {
+  const recruiters = await getRecruiters();
+  console.log('recruiters', recruiters);
+
   return (
     <main className="min-h-screen">
-      <TeamGrid />
+      <TeamGrid recruiters={recruiters} />
     </main>
-  )
-} 
+  );
+}
