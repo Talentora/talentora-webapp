@@ -106,6 +106,8 @@ export async function signInWithPassword(formData: FormData) {
       'You are now signed in.'
     );
 
+    console.log('Received redirect Path:', redirectPath);
+
     if (candidate_id && job_id && role === 'applicant') { // special token sign in
       const applicantId = data.user.id;
 
