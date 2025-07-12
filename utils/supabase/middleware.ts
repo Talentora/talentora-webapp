@@ -63,9 +63,12 @@ export async function handleAuthRedirects(request: NextRequest, user: any) {
   
   // Check if it's a signup/[id] URL - these are allowed for authenticated users
   const isSignupWithId = /^\/signup\/[A-Za-z0-9_-]+$/.test(pathname);
-  
+
+  console.log('check if user is exists:', user);
+
   // Only redirect for signin and signup pages that aren't signup/[id]
   if (/^\/(signin|signup)(\/.*)?$/.test(pathname) && !isSignupWithId) {
+    console.log('Redirecting to dashboard with initial pathname:', pathname);
     if (user) {
       console.log('[Middleware] Redirecting user to dashboard:', user);
       return NextResponse.redirect(new URL('/dashboard', request.url));
