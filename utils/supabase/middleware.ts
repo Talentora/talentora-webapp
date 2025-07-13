@@ -12,6 +12,13 @@ const createMiddlewareClient = (request: NextRequest) => {
     },
   });
 
+  const cookieDefaults: Partial<CookieOptions> = {
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    httpOnly: true,
+    path: '/'
+  };
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, // Use anon key for middleware
@@ -25,11 +32,13 @@ const createMiddlewareClient = (request: NextRequest) => {
           request.cookies.set({
             name,
             value,
+            ...cookieDefaults,
             ...options,
           });
           response.cookies.set({
             name,
             value,
+            ...cookieDefaults,
             ...options,
           });
         },
@@ -38,11 +47,13 @@ const createMiddlewareClient = (request: NextRequest) => {
           request.cookies.set({
             name,
             value: '',
+            ...cookieDefaults,
             ...options,
           });
           response.cookies.set({
             name,
             value: '',
+            ...cookieDefaults,
             ...options,
           });
         },
