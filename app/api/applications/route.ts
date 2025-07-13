@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getMergeApiKey } from '@/utils/supabase/queries';
 
+// Force dynamic rendering for API routes that use cookies
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   // Retrieve credentials
   const accountToken = await getMergeApiKey();

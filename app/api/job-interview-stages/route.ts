@@ -3,6 +3,9 @@ import { getMergeApiKey } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/server';
 import { getUserRole } from '@/utils/supabase/queries';
 
+// Force dynamic rendering for API routes that use cookies
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
