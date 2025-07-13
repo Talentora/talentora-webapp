@@ -81,31 +81,35 @@ export async function signInWithPassword(formData: FormData) {
   if (application_id) { application_id = application_id.trim(); }
 
   // Use auth client for authentication (compatible with middleware)
-  console.log('[AUTH] signInWithPassword - attempting direct client call');
+  console.log('[AUTH] signInWithPassword - attempting inline client call');
   
   let error: any = null;
   let data: any = null;
   
   try {
-    const client = createAuthClient();
-    console.log('[AUTH] signInWithPassword - client created, checking auth:', {
-      hasAuth: !!client.auth,
-      authType: typeof client.auth,
-      hasSignInMethod: !!client.auth?.signInWithPassword
-    });
-    
-    if (!client.auth) {
-      throw new Error('Auth client has no auth property');
-    }
-    
-    if (!client.auth.signInWithPassword) {
-      throw new Error('Auth client has no signInWithPassword method');
-    }
-    
-    const authResult = await client.auth.signInWithPassword({
-      email,
-      password
-    });
+    // Create client and call method in one atomic operation to avoid serialization issues
+    const authResult = await (function() {
+      const client = createAuthClient();
+      console.log('[AUTH] signInWithPassword - inline client check:', {
+        hasAuth: !!client.auth,
+        authType: typeof client.auth,
+        hasSignInMethod: !!client.auth?.signInWithPassword
+      });
+      
+      if (!client.auth) {
+        throw new Error('Auth client has no auth property');
+      }
+      
+      if (!client.auth.signInWithPassword) {
+        throw new Error('Auth client has no signInWithPassword method');
+      }
+      
+      // Call immediately without storing client
+      return client.auth.signInWithPassword({
+        email,
+        password
+      });
+    })();
     
     error = authResult.error;
     data = authResult.data;
@@ -605,24 +609,28 @@ export async function updateName(formData: FormData) {
 export async function getUserSessionDetails() {
   console.log('[AUTH] getUserSessionDetails called - function is properly exported');
   try {
-    console.log('[AUTH] getUserSessionDetails - attempting direct client call');
+    console.log('[AUTH] getUserSessionDetails - attempting inline client call');
     
-    const client = createAuthClient();
-    console.log('[AUTH] getUserSessionDetails - client created, checking auth:', {
-      hasAuth: !!client.auth,
-      authType: typeof client.auth,
-      hasGetUserMethod: !!client.auth?.getUser
-    });
-    
-    if (!client.auth) {
-      throw new Error('Auth client has no auth property');
-    }
-    
-    if (!client.auth.getUser) {
-      throw new Error('Auth client has no getUser method');
-    }
-    
-    const { data: { user } } = await client.auth.getUser();
+    // Create client and call method in one atomic operation to avoid serialization issues
+    const { data: { user } } = await (function() {
+      const client = createAuthClient();
+      console.log('[AUTH] getUserSessionDetails - inline client check:', {
+        hasAuth: !!client.auth,
+        authType: typeof client.auth,
+        hasGetUserMethod: !!client.auth?.getUser
+      });
+      
+      if (!client.auth) {
+        throw new Error('Auth client has no auth property');
+      }
+      
+      if (!client.auth.getUser) {
+        throw new Error('Auth client has no getUser method');
+      }
+      
+      // Call immediately without storing client
+      return client.auth.getUser();
+    })();
     
     const role = user?.user_metadata?.role || null;
     const isSidebarVisible = role === 'recruiter';
