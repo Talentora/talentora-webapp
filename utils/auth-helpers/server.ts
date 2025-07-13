@@ -450,9 +450,9 @@ async function addUserToApplicationsTable(
     if (existingApplication) {
       const { error: updateError } = await supabase
         .from('applications')
-        .upsert({ 
+        .update({ 
           applicant_id: applicantId,
-          status: 'in_progress',
+          status: 'pending_interview',
           job_id: jobId
          })
         .eq('merge_application_id', mergeApplicationId);
@@ -470,7 +470,7 @@ async function addUserToApplicationsTable(
           merge_application_id: mergeApplicationId,
           applicant_id: applicantId,
           job_id: jobId,
-          status: 'in_progress',
+          status: 'pending_interview',
         });
 
       if (insertError) {
