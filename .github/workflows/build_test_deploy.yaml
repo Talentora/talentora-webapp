@@ -244,6 +244,7 @@ jobs:
             # Other
             NEXT_PUBLIC_MANUAL_ROOM_ENTRY=${{ secrets.NEXT_PUBLIC_MANUAL_ROOM_ENTRY }}
             INTERVIEW_BOT_URL=https://talentora-interviewbot-production.up.railway.app
+            APP_ENV=staging
             EOF
 
             chmod 600 .env.local
@@ -386,7 +387,7 @@ jobs:
             # Other
             NEXT_PUBLIC_MANUAL_ROOM_ENTRY=${{ secrets.NEXT_PUBLIC_MANUAL_ROOM_ENTRY }}
             INTERVIEW_BOT_URL=https://talentora-interviewbot-production.up.railway.app
-            NODE_ENV=production
+            APP_ENV=production
             EOF
 
             chmod 600 .env.local
