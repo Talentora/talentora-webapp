@@ -21,15 +21,11 @@ const createMiddlewareClient = (request: NextRequest) => {
           return request.cookies.get(name)?.value;
         },
         set(name: string, value: string, options: CookieOptions) {
+          // Set cookie on both request and response
           request.cookies.set({
             name,
             value,
             ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
           });
           response.cookies.set({
             name,
@@ -38,15 +34,11 @@ const createMiddlewareClient = (request: NextRequest) => {
           });
         },
         remove(name: string, options: CookieOptions) {
+          // Remove cookie from both request and response
           request.cookies.set({
             name,
             value: '',
             ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
           });
           response.cookies.set({
             name,
@@ -190,7 +182,14 @@ export async function updateSession(request: NextRequest) {
   const { supabase, response } = createMiddlewareClient(request);
 
   // Cache user data to avoid multiple calls
-  const { data: { user } } = await supabase.auth.getUser();
+  console.log('[Middleware] Getting user session...');
+  const { data: { user }, error } = await supabase.auth.getUser();
+  
+  if (error) {
+    console.log('[Middleware] Session error:', error.message);
+  } else {
+    console.log('[Middleware] User session result:', user ? 'Found user' : 'No user', user?.email || 'no email');
+  }
 
   // Add SAML redirect handling
   const samlRedirect = await handleSamlRedirect(request);
