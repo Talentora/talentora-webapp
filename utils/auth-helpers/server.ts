@@ -30,9 +30,7 @@ export async function requestPasswordUpdate(formData: FormData) {
     );
   }
 
-  const supabase = createAuthClient();
-
-  const { data, error } = await supabase.auth.signInWithOtp({
+  const { data, error } = await createAuthClient().auth.signInWithOtp({
     email: email,
     options: {
       emailRedirectTo: process.env.NEXT_PUBLIC_SITE_URL
@@ -83,13 +81,8 @@ export async function signInWithPassword(formData: FormData) {
   if (application_id) { application_id = application_id.trim(); }
 
   // Use auth client for authentication (compatible with middleware)
-  const authSupabase = createAuthClient();
-  console.log('[AUTH] signInWithPassword - client created:', {
-    hasAuth: !!authSupabase.auth,
-    hasSignInWithPassword: !!authSupabase.auth?.signInWithPassword,
-    authType: typeof authSupabase.auth
-  });
-  const { error, data } = await authSupabase.auth.signInWithPassword({
+  console.log('[AUTH] signInWithPassword - attempting direct client call');
+  const { error, data } = await createAuthClient().auth.signInWithPassword({
     email,
     password
   });
@@ -216,8 +209,6 @@ export async function signUp(formData: FormData) {
 
   // Use service role client for database operations (company validation)
   const supabase = createClient();
-  // Use auth client for authentication (compatible with middleware)
-  const authSupabase = createAuthClient();
 
   console.log('Supabase client created. Attempting to sign up user...');
   
@@ -252,7 +243,8 @@ export async function signUp(formData: FormData) {
     }
     const firstName = fullName.split(' ')[0];
 
-    const { error, data } = await authSupabase.auth.signUp({
+    // Use auth client for authentication (compatible with middleware)
+    const { error, data } = await createAuthClient().auth.signUp({
       email,
       password,
       options: {
@@ -508,8 +500,7 @@ export async function updatePassword(formData: FormData) {
     );
   }
 
-  const supabase = createAuthClient();
-  const { error, data } = await supabase.auth.updateUser({
+  const { error, data } = await createAuthClient().auth.updateUser({
     password
   });
 
@@ -540,9 +531,8 @@ export async function updateName(formData: FormData) {
   // Get form data
   const fullName = String(formData.get('fullName')).trim();
 
-  const supabase = createAuthClient();
   console.log('access name');
-  const { error, data } = await supabase.auth.updateUser({
+  const { error, data } = await createAuthClient().auth.updateUser({
     data: { full_name: fullName }
   });
 
@@ -576,13 +566,8 @@ export async function updateName(formData: FormData) {
 export async function getUserSessionDetails() {
   console.log('[AUTH] getUserSessionDetails called - function is properly exported');
   try {
-    const authSupabase = createAuthClient();
-    console.log('[AUTH] getUserSessionDetails - client created:', {
-      hasAuth: !!authSupabase.auth,
-      hasGetUser: !!authSupabase.auth?.getUser,
-      authType: typeof authSupabase.auth
-    });
-    const { data: { user } } = await authSupabase.auth.getUser();
+    console.log('[AUTH] getUserSessionDetails - attempting direct client call');
+    const { data: { user } } = await createAuthClient().auth.getUser();
     
     const role = user?.user_metadata?.role || null;
     const isSidebarVisible = role === 'recruiter';
