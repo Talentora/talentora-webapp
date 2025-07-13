@@ -2,6 +2,8 @@
 
 import { createClient, createAuthClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { Database } from '@/types/types_db';
 import { redirect } from 'next/navigation';
 import { getURL, getErrorRedirect, getStatusRedirect } from '@/utils/helpers';
 import { fetchApplicationMergeId } from '@/server/applications';
@@ -87,29 +89,46 @@ export async function signInWithPassword(formData: FormData) {
   let data: any = null;
   
   try {
-    // Create client and call method in one atomic operation to avoid serialization issues
-    const authResult = await (function() {
-      const client = createAuthClient();
-      console.log('[AUTH] signInWithPassword - inline client check:', {
-        hasAuth: !!client.auth,
-        authType: typeof client.auth,
-        hasSignInMethod: !!client.auth?.signInWithPassword
-      });
-      
-      if (!client.auth) {
-        throw new Error('Auth client has no auth property');
+    // Create client directly without using createAuthClient to avoid serialization issues
+    console.log('[AUTH] signInWithPassword - creating client directly');
+    
+    const cookieStore = cookies();
+    const cookieDefaults: Partial<CookieOptions> = {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      httpOnly: true,
+      path: '/'
+    };
+    
+    const supabase = createServerClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value;
+          },
+          set(name: string, value: string, options: CookieOptions) {
+            try {
+              cookieStore.set({
+                name,
+                value,
+                ...cookieDefaults,
+                ...options,
+              });
+            } catch (error) {
+              console.error(`Error setting cookie ${name}:`, error);
+            }
+          },
+        },
       }
-      
-      if (!client.auth.signInWithPassword) {
-        throw new Error('Auth client has no signInWithPassword method');
-      }
-      
-      // Call immediately without storing client
-      return client.auth.signInWithPassword({
-        email,
-        password
-      });
-    })();
+    );
+    
+    console.log('[AUTH] signInWithPassword - calling auth directly');
+    const authResult = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
     
     error = authResult.error;
     data = authResult.data;
@@ -609,28 +628,43 @@ export async function updateName(formData: FormData) {
 export async function getUserSessionDetails() {
   console.log('[AUTH] getUserSessionDetails called - function is properly exported');
   try {
-    console.log('[AUTH] getUserSessionDetails - attempting inline client call');
+    console.log('[AUTH] getUserSessionDetails - creating client directly');
     
-    // Create client and call method in one atomic operation to avoid serialization issues
-    const { data: { user } } = await (function() {
-      const client = createAuthClient();
-      console.log('[AUTH] getUserSessionDetails - inline client check:', {
-        hasAuth: !!client.auth,
-        authType: typeof client.auth,
-        hasGetUserMethod: !!client.auth?.getUser
-      });
-      
-      if (!client.auth) {
-        throw new Error('Auth client has no auth property');
+    // Create client directly without using createAuthClient to avoid serialization issues
+    const cookieStore = cookies();
+    const cookieDefaults: Partial<CookieOptions> = {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      httpOnly: true,
+      path: '/'
+    };
+    
+    const supabase = createServerClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value;
+          },
+          set(name: string, value: string, options: CookieOptions) {
+            try {
+              cookieStore.set({
+                name,
+                value,
+                ...cookieDefaults,
+                ...options,
+              });
+            } catch (error) {
+              console.error(`Error setting cookie ${name}:`, error);
+            }
+          },
+        },
       }
-      
-      if (!client.auth.getUser) {
-        throw new Error('Auth client has no getUser method');
-      }
-      
-      // Call immediately without storing client
-      return client.auth.getUser();
-    })();
+    );
+    
+    console.log('[AUTH] getUserSessionDetails - calling auth directly');
+    const { data: { user } } = await supabase.auth.getUser();
     
     const role = user?.user_metadata?.role || null;
     const isSidebarVisible = role === 'recruiter';
