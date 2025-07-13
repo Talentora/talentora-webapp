@@ -3,7 +3,7 @@ module.exports = {
 
   // Remove the headers function if not needed
   async headers() {
-    const isProduction = process.env.NODE_ENV === 'production';
+    const isProduction = process.env.APP_ENV === 'production';
     const hasHttps = process.env.NEXT_PUBLIC_SITE_URL?.startsWith('https://');
     
     const headers = [
