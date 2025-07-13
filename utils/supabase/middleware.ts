@@ -13,7 +13,7 @@ const createMiddlewareClient = (request: NextRequest) => {
   });
 
   const cookieDefaults: Partial<CookieOptions> = {
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.APP_ENV === 'production',
     sameSite: 'lax',
     httpOnly: true,
     path: '/'
