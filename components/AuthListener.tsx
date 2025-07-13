@@ -21,7 +21,7 @@ const AuthListener = () => {
         });
         
         return () => subscription.unsubscribe();
-    }, [pathname, router]);
+    }, [pathname, router, supabase.auth]);
     
     return null;
 };
