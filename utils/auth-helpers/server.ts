@@ -94,7 +94,7 @@ export async function signInWithPassword(formData: FormData) {
     
     const cookieStore = cookies();
     const cookieDefaults: Partial<CookieOptions> = {
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.APP_ENV === 'production',
       sameSite: 'lax',
       httpOnly: true,
       path: '/'
@@ -633,7 +633,7 @@ export async function getUserSessionDetails() {
     // Create client directly without using createAuthClient to avoid serialization issues
     const cookieStore = cookies();
     const cookieDefaults: Partial<CookieOptions> = {
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.APP_ENV === 'production',
       sameSite: 'lax',
       httpOnly: true,
       path: '/'
