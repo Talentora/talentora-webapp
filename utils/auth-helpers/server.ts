@@ -95,6 +95,10 @@ export async function signInWithPassword(formData: FormData) {
       'Sign in failed.',
       error.message
     );
+
+    console.log('sign in had error, received redirect path:', redirectPath);
+    console.log('Error details:', error);
+
     redirectPath = `/signin/password_signin?role=${role}`;
   } else if (data.user) {
     cookieStore.set('preferredSignInView', 'password_signin', {
@@ -106,7 +110,7 @@ export async function signInWithPassword(formData: FormData) {
       'You are now signed in.'
     );
 
-    console.log('Received redirect Path:', redirectPath);
+    console.log('Successful sign in, received redirect path:', redirectPath);
 
     if (candidate_id && job_id && role === 'applicant') { // special token sign in
       const applicantId = data.user.id;
@@ -129,6 +133,8 @@ export async function signInWithPassword(formData: FormData) {
       'Hmm... Something went wrong.',
       'You could not be signed in.'
     );
+
+    console.log('sign in simply failed, received redirect path:', redirectPath);
   }
 
   return redirectPath;
