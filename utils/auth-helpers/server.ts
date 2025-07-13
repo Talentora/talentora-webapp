@@ -66,7 +66,7 @@ export async function requestPasswordUpdate(formData: FormData) {
 }
 
 export async function signInWithPassword(formData: FormData) {
-
+  console.log('[AUTH] signInWithPassword called - function is properly exported');
   const cookieStore = cookies();
   const email = String(formData.get('email')).trim();
   const password = String(formData.get('password')).trim();
@@ -569,6 +569,7 @@ export async function updateName(formData: FormData) {
  * @returns {Promise<{user: any | null, role: string | null, isSidebarVisible: boolean}>}
  */
 export async function getUserSessionDetails() {
+  console.log('[AUTH] getUserSessionDetails called - function is properly exported');
   try {
     const authSupabase = createAuthClient();
     const { data: { user } } = await authSupabase.auth.getUser();
