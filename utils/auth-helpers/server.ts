@@ -84,6 +84,11 @@ export async function signInWithPassword(formData: FormData) {
 
   // Use auth client for authentication (compatible with middleware)
   const authSupabase = createAuthClient();
+  console.log('[AUTH] signInWithPassword - client created:', {
+    hasAuth: !!authSupabase.auth,
+    hasSignInWithPassword: !!authSupabase.auth?.signInWithPassword,
+    authType: typeof authSupabase.auth
+  });
   const { error, data } = await authSupabase.auth.signInWithPassword({
     email,
     password
@@ -572,6 +577,11 @@ export async function getUserSessionDetails() {
   console.log('[AUTH] getUserSessionDetails called - function is properly exported');
   try {
     const authSupabase = createAuthClient();
+    console.log('[AUTH] getUserSessionDetails - client created:', {
+      hasAuth: !!authSupabase.auth,
+      hasGetUser: !!authSupabase.auth?.getUser,
+      authType: typeof authSupabase.auth
+    });
     const { data: { user } } = await authSupabase.auth.getUser();
     
     const role = user?.user_metadata?.role || null;
