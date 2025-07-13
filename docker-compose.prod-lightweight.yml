@@ -11,8 +11,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    environment:
-      - NODE_ENV=production
     networks:
       - app-network
 
