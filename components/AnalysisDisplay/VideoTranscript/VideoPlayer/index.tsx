@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { Button } from "@/components/ui/button"
 import { Loader2, RefreshCw } from "lucide-react"
 import { Recording } from "../index";
@@ -16,7 +16,7 @@ export default function VideoPlayer({ recording }: VideoPlayerProps) {
   const [error, setError] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
 
-  const fetchVideoUrl = async () => {
+  const fetchVideoUrl = useCallback(async () => {
     if (!recording?.id) return;
     
     try {
@@ -43,43 +43,41 @@ export default function VideoPlayer({ recording }: VideoPlayerProps) {
       const recordingData = await recordingResponse.json();
       
       // Accept both 'completed' and 'finished' as valid statuses
-      if (!['completed', 'finished'].includes(recordingData.status)) {
-        throw new Error(`Recording not ready. Status: ${recordingData.status}`);
+      if (recordingData.status !== 'completed' && recordingData.status !== 'finished') {
+        setError('Recording is not ready yet');
+        setIsLoading(false);
+        return;
       }
-
-      // Then get the access link
-      const response = await fetch(`/api/bot/recordings/${recording.id}/access-link`);
-      if (!response.ok) throw new Error('Failed to fetch video access link');
       
-      const data = await response.json();
-      console.log('Video access data:', data); // Debug log
-
-      // Use streaming_link or download_link for video playback
-      if (data.streaming_link || data.download_link) {
-        // Prefer streaming_link if available, otherwise use download_link
-        const videoLink = data.streaming_link || data.download_link;
-        setVideoUrl(videoLink);
-        
-        // Cache the result
-        localStorage.setItem(`video_url_${recording.id}`, JSON.stringify({
-          videoLink,
-          timestamp: Date.now()
-        }));
-      } else {
-        throw new Error('No video link in response');
-      }
+      // Then get the access link
+      const accessResponse = await fetch(`/api/bot/recordings/${recording.id}/access-link`);
+      if (!accessResponse.ok) throw new Error('Failed to fetch video access link');
+      const accessData = await accessResponse.json();
+      
+      const videoUrl = accessData.download_link || accessData.link;
+      if (!videoUrl) throw new Error('No video URL found');
+      
+      console.log('Video URL fetched successfully');
+      setVideoUrl(videoUrl);
+      
+      // Cache the result
+      localStorage.setItem(`video_url_${recording.id}`, JSON.stringify({
+        videoLink: videoUrl,
+        timestamp: Date.now()
+      }));
+      
     } catch (error) {
-      console.error('Error fetching video:', error);
+      console.error('Error fetching video URL:', error);
       setError(error instanceof Error ? error.message : 'Failed to load video');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [recording?.id, setIsLoading, setError, setVideoUrl]);
 
   useEffect(() => {
     console.log("fethcing recording url")
     fetchVideoUrl();
-  }, [recording?.id, retryCount]);
+  }, [recording?.id, retryCount, fetchVideoUrl]);
 
   const handleVideoError = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
     console.error('Video error:', e);

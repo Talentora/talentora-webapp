@@ -4,7 +4,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { Line, LineChart, XAxis, YAxis } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
@@ -22,8 +22,9 @@ const EmotionTimeline = ({ timeline, type }: EmotionTimelineProps) => {
     const [open, setOpen] = useState(false);
     const [allEmotions, setAllEmotions] = useState<string[]>([]);
 
-    const getAllEmotions = () => {
-        if (!timeline?.[type] || timeline[type].length === 0) return [];
+    const getAllEmotions = useCallback(() => {
+        if (!timeline?.[type]) return [];
+        
         const emotions = new Set<string>();
         timeline[type].forEach((frame: any) => {
             if (frame?.emotions) {
@@ -31,13 +32,13 @@ const EmotionTimeline = ({ timeline, type }: EmotionTimelineProps) => {
             }
         });
         return Array.from(emotions);
-    };
+    }, [timeline, type]);
 
     useEffect(() => {
         setAllEmotions(getAllEmotions());
-    }, [timeline, type]);
+    }, [timeline, type, getAllEmotions]);
 
-    const getTopEmotions = () => {
+    const getTopEmotions = useCallback(() => {
         if (!timeline?.[type] || timeline[type].length === 0) return [];
         
         const emotionSums: {[key: string]: number} = {};
@@ -53,14 +54,14 @@ const EmotionTimeline = ({ timeline, type }: EmotionTimelineProps) => {
             .sort(([,a], [,b]) => b - a)
             .slice(0, 5)
             .map(([emotion]) => emotion);
-    };
+    }, [timeline, type]);
 
     useEffect(() => {
         const topEmotions = getTopEmotions();
         if (topEmotions.length > 0) {
             setSelectedEmotions(topEmotions);
         }
-    }, [timeline, type]);
+    }, [timeline, type, getTopEmotions]);
 
     const formatData = () => {
         if (!timeline?.[type]) return [];

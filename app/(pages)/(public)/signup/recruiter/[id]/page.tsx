@@ -54,7 +54,7 @@ export default function RecruiterSignUp({ params }: { params: { id: string } }) 
     }
     
     verifyEmailToken()
-  }, [searchParams, companyId])
+  }, [searchParams, companyId, token, router])
 
   // Check if user is already logged in
   useEffect(() => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   ColumnFiltersState,
@@ -77,7 +77,7 @@ const InviteApplicantsTable = ({
   const [interviewStatus, setInterviewStatus] = useState<string>('all');
   const [scoreThreshold, setScoreThreshold] = useState<number[]>([0, 100]);
 
-  const handleViewApplicant = (applicant: any) => {
+  const handleViewApplicant = useCallback((applicant: any) => {
     // Check if application ID exists
     if (!applicant.application?.id) {
       toast({
@@ -89,7 +89,7 @@ const InviteApplicantsTable = ({
     }
     console.log(applicant, 'applicantData');
     router.push(`/applicants/${applicant.application.id}`);
-  };
+  }, [toast, router]);
 
   const handleInvite = async () => {
     if (selectedJobId === 'all') {
@@ -198,21 +198,26 @@ const InviteApplicantsTable = ({
 
     if (statusColumn && 'accessorKey' in statusColumn) {
       statusColumn.sortingFn = (rowA: any, rowB: any) => {
-        const statusOrder: Record<string, number> = {
-          not_invited: 0,
-          in_progress: 1,
-          review_ready: 2
-        };
+        const statusA = rowA.original.status;
+        const statusB = rowB.original.status;
 
-        const statusA = (rowA.getValue('status') || 'not_invited') as string;
-        const statusB = (rowB.getValue('status') || 'not_invited') as string;
+        const statusOrder: Record<string, number> = {
+          pending_interview: 1,
+          interview_scheduled: 2,
+          interview_completed: 3,
+          interview_reviewed: 4,
+          offer_extended: 5,
+          offer_accepted: 6,
+          offer_declined: 7,
+          rejected: 8
+        };
 
         return statusOrder[statusA] - statusOrder[statusB];
       };
     }
 
     return cols;
-  }, [selectedJobId, customColumns]);
+  }, [selectedJobId, customColumns, handleViewApplicant]);
 
   // Filter applicants based on search term and selected job
   const filteredApplicants = useMemo(() => {
