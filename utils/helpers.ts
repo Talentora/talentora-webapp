@@ -93,6 +93,8 @@ const getToastRedirect = (
     redirectPath += `&${arbitraryParams}`;
   }
 
+  console.log(`Created redirect path: ${redirectPath}`);
+
   return redirectPath;
 };
 
