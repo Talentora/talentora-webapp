@@ -210,7 +210,7 @@ export async function signUp(formData: FormData) {
   }
 
   // Use service role client for database operations (company validation)
-  const supabase = await createClient();
+  const supabase = createClient();
   // Use auth client for authentication (compatible with middleware)
   const authSupabase = createAuthClient();
 
@@ -570,7 +570,7 @@ export async function updateName(formData: FormData) {
  */
 export async function getUserSessionDetails() {
   try {
-    const authSupabase = await createAuthClient();
+    const authSupabase = createAuthClient();
     const { data: { user } } = await authSupabase.auth.getUser();
     
     const role = user?.user_metadata?.role || null;
