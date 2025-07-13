@@ -56,6 +56,13 @@ export const createClient = () => {
 
 // Create auth client that uses anon key (compatible with middleware)
 export const createAuthClient = () => {
+  console.log('[AUTH CLIENT] createAuthClient called');
+  console.log('[AUTH CLIENT] Environment check:', {
+    url: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'present' : 'MISSING',
+    anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'present' : 'MISSING',
+    nodeEnv: process.env.NODE_ENV
+  });
+
   if (typeof window !== 'undefined') {
     throw new Error('createAuthClient should only be called on the server');
   }
@@ -69,7 +76,7 @@ export const createAuthClient = () => {
     path: '/'
   };
 
-  return createServerClient<Database>(
+  const client = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, // Use anon key for auth
     {
@@ -103,4 +110,13 @@ export const createAuthClient = () => {
       }
     }
   );
+
+  console.log('[AUTH CLIENT] Client created:', {
+    hasAuth: !!client.auth,
+    hasSignInWithPassword: !!client.auth?.signInWithPassword,
+    hasGetUser: !!client.auth?.getUser,
+    authKeys: client.auth ? Object.keys(client.auth) : 'no auth'
+  });
+
+  return client;
 };
