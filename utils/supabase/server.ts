@@ -118,5 +118,12 @@ export const createAuthClient = () => {
     authKeys: client.auth ? Object.keys(client.auth) : 'no auth'
   });
 
+  // Final verification before returning
+  if (!client.auth) {
+    console.error('[AUTH CLIENT] CRITICAL ERROR: Client has no auth property before return');
+    throw new Error('Critical error: Supabase client created without auth property');
+  }
+
+  console.log('[AUTH CLIENT] Final verification passed, returning client');
   return client;
 };
