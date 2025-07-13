@@ -1,6 +1,6 @@
 'use server';
 
-import { createClient } from '@/utils/supabase/server';
+import { createClient, createAuthClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getURL, getErrorRedirect, getStatusRedirect } from '@/utils/helpers';
@@ -30,8 +30,7 @@ export async function requestPasswordUpdate(formData: FormData) {
     );
   }
 
-  const supabase = createClient();
-
+  const supabase = createAuthClient();
 
   const { data, error } = await supabase.auth.signInWithOtp({
     email: email,
@@ -83,8 +82,9 @@ export async function signInWithPassword(formData: FormData) {
   let application_id = String(formData.get('applicationId'))
   if (application_id) { application_id = application_id.trim(); }
 
-  const supabase = await createClient();
-  const { error, data } = await supabase.auth.signInWithPassword({
+  // Use auth client for authentication (compatible with middleware)
+  const authSupabase = createAuthClient();
+  const { error, data } = await authSupabase.auth.signInWithPassword({
     email,
     password
   });
@@ -116,6 +116,8 @@ export async function signInWithPassword(formData: FormData) {
       const applicantId = data.user.id;
 
       try {
+        // Use service role client for database operations
+        const supabase = createClient();
         addUserToApplicationsTable(supabase, applicantId, candidate_id, job_id, application_id);
         addUserToApplicantsTable(supabase, applicantId, email, data.user.user_metadata.full_name, candidate_id);
       } catch (err: any) {
@@ -207,7 +209,10 @@ export async function signUp(formData: FormData) {
     return redirectPath;
   }
 
+  // Use service role client for database operations (company validation)
   const supabase = await createClient();
+  // Use auth client for authentication (compatible with middleware)
+  const authSupabase = createAuthClient();
 
   console.log('Supabase client created. Attempting to sign up user...');
   
@@ -242,7 +247,7 @@ export async function signUp(formData: FormData) {
     }
     const firstName = fullName.split(' ')[0];
 
-    const { error, data } = await supabase.auth.signUp({
+    const { error, data } = await authSupabase.auth.signUp({
       email,
       password,
       options: {
@@ -498,7 +503,7 @@ export async function updatePassword(formData: FormData) {
     );
   }
 
-  const supabase = createClient();
+  const supabase = createAuthClient();
   const { error, data } = await supabase.auth.updateUser({
     password
   });
@@ -530,7 +535,7 @@ export async function updateName(formData: FormData) {
   // Get form data
   const fullName = String(formData.get('fullName')).trim();
 
-  const supabase = createClient();
+  const supabase = createAuthClient();
   console.log('access name');
   const { error, data } = await supabase.auth.updateUser({
     data: { full_name: fullName }
@@ -565,8 +570,8 @@ export async function updateName(formData: FormData) {
  */
 export async function getUserSessionDetails() {
   try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const authSupabase = await createAuthClient();
+    const { data: { user } } = await authSupabase.auth.getUser();
     
     const role = user?.user_metadata?.role || null;
     const isSidebarVisible = role === 'recruiter';
@@ -574,6 +579,8 @@ export async function getUserSessionDetails() {
     // Fetch company data for recruiters
     let company = null;
     if (user && role === 'recruiter') {
+      // Use service role client for database operations
+      const supabase = createClient();
       const { data: recruiterData } = await supabase
         .from('recruiters')
         .select('company_id')
