@@ -1,8 +1,65 @@
 'use server'
 
 import { NextResponse, type NextRequest } from 'next/server';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { getUserRole, getCompany } from '@/utils/supabase/queries';
-import { createClient } from './server';
+
+// Create middleware-specific Supabase client
+const createMiddlewareClient = (request: NextRequest) => {
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, // Use anon key for middleware
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          request.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+        },
+        remove(name: string, options: CookieOptions) {
+          request.cookies.set({
+            name,
+            value: '',
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({
+            name,
+            value: '',
+            ...options,
+          });
+        },
+      },
+    }
+  );
+
+  return { supabase, response };
+};
 
 // List of unprotected routes as regular expressions
 export const unprotectedRoutes = [
@@ -129,11 +186,8 @@ export async function handleRecruiterRedirects(
 
 export async function updateSession(request: NextRequest) {
   console.log('[Middleware] Updating session...');
-  let supabaseResponse = NextResponse.next({
-    request
-  });
-
-  const supabase = await createClient();
+  
+  const { supabase, response } = createMiddlewareClient(request);
 
   // Cache user data to avoid multiple calls
   const { data: { user } } = await supabase.auth.getUser();
@@ -159,12 +213,12 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Add debug headers
-  supabaseResponse.headers.set(
+  response.headers.set(
     'x-debug-request-path',
     request.nextUrl.pathname
   );
-  supabaseResponse.headers.set('x-debug-message', 'Middleware executed');
-  supabaseResponse.headers.set('x-user-present', user ? 'true' : 'false');
+  response.headers.set('x-debug-message', 'Middleware executed');
+  response.headers.set('x-user-present', user ? 'true' : 'false');
 
-  return supabaseResponse;
+  return response;
 }
