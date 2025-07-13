@@ -60,7 +60,9 @@ export const createAuthClient = () => {
   console.log('[AUTH CLIENT] Environment check:', {
     url: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'present' : 'MISSING',
     anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'present' : 'MISSING',
-    nodeEnv: process.env.NODE_ENV
+    nodeEnv: process.env.NODE_ENV,
+    actualUrl: process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30) + '...',
+    actualAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20) + '...'
   });
 
   if (typeof window !== 'undefined') {
