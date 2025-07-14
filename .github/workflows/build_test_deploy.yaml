@@ -212,8 +212,8 @@ jobs:
             # NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }}
             # NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
             # Application URLs (Staging - EC2)
-            NEXT_PUBLIC_SITE_URL=http://18.207.220.110
-            NEXT_PUBLIC_BASE_URL=http://18.207.220.110
+            NEXT_PUBLIC_SITE_URL=https://talentora-staging-webapp.work
+            NEXT_PUBLIC_BASE_URL=https://talentora-staging-webapp.work
 
             # JWT
             JWT_SECRET=${{ secrets.JWT_SECRET }}
@@ -244,7 +244,7 @@ jobs:
             # Other
             NEXT_PUBLIC_MANUAL_ROOM_ENTRY=${{ secrets.NEXT_PUBLIC_MANUAL_ROOM_ENTRY }}
             INTERVIEW_BOT_URL=https://talentora-interviewbot-production.up.railway.app
-            APP_ENV=staging
+            APP_ENV=production
             EOF
 
             chmod 600 .env.local
