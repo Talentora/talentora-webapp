@@ -676,15 +676,15 @@ export async function getUserSessionDetails() {
     let company = null;
     if (user && role === 'recruiter') {
       // Use service role client for database operations
-      const supabase = createClient();
-      const { data: recruiterData } = await supabase
+      const serviceRoleClient = createClient();
+      const { data: recruiterData } = await serviceRoleClient
         .from('recruiters')
         .select('company_id')
         .eq('id', user.id)
         .single();
       
       if (recruiterData?.company_id) {
-        const { data: companyData } = await supabase
+        const { data: companyData } = await serviceRoleClient
           .from('companies')
           .select('*')
           .eq('id', recruiterData.company_id)
