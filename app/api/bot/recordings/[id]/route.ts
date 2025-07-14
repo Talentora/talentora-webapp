@@ -1,8 +1,8 @@
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = params.id;
+  const { id } = await params;
   const DAILY_API_KEY = process.env.NEXT_PUBLIC_DAILY_API_KEY;
 
   if (!DAILY_API_KEY) {

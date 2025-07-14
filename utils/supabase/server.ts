@@ -1,15 +1,13 @@
-'use server';
-
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { Database } from '@/types/types_db';
 
-export const createClient = () => {
+export const createClient = async () => {
   if (typeof window !== 'undefined') {
     throw new Error('createClient should only be called on the server');
   }
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   const cookieDefaults: Partial<CookieOptions> = {
     secure: process.env.NODE_ENV === 'production',
@@ -55,7 +53,7 @@ export const createClient = () => {
 };
 
 // Create auth client that uses anon key (compatible with middleware)
-export const createAuthClient = () => {
+export const createAuthClient = async () => {
   console.log('[AUTH CLIENT] createAuthClient called');
   console.log('[AUTH CLIENT] Environment check:', {
     url: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'present' : 'MISSING',
@@ -69,7 +67,7 @@ export const createAuthClient = () => {
     throw new Error('createAuthClient should only be called on the server');
   }
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   const cookieDefaults: Partial<CookieOptions> = {
     secure: process.env.NODE_ENV === 'production',

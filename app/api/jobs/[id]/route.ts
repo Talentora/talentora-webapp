@@ -6,11 +6,11 @@ import { getUserRole } from '@/utils/supabase/queries';
 import { createClient } from '@/utils/supabase/server';
 
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    const jobId = params.id;
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -29,7 +29,7 @@ export async function GET(
     if (role === 'recruiter') {
       accountToken = await getMergeApiKey();
     } else if (role === 'applicant') {
-      const headerToken = req.headers.get('X-Account-Token');
+      const headerToken = request.headers.get('X-Account-Token');
       if (!headerToken) {
         return NextResponse.json(
           { error: 'Unauthorized - Account token required' },
@@ -51,7 +51,7 @@ export async function GET(
       );
     }
 
-    const jobResponse = await fetch(`${baseURL}/jobs/${jobId}`, {
+    const jobResponse = await fetch(`${baseURL}/jobs/${id}`, {
       headers: {
         Accept: 'application/json',
         Authorization: `Bearer ${apiKey}`,
@@ -62,7 +62,7 @@ export async function GET(
     if (!jobResponse.ok) {
       console.error('Failed to fetch job:', await jobResponse.text());
       return NextResponse.json(
-        { error: `Failed to fetch job with id ${jobId}` },
+        { error: `Failed to fetch job with id ${id}` },
         { status: jobResponse.status }
       );
     }

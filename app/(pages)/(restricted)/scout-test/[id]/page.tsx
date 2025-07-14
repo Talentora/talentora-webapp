@@ -35,8 +35,7 @@ type ScoutProps = {
   scoutTest: boolean;
 };
 
-export default function Mock({ params }: { params: { id: string } }) {
-  const jobId = params.id;
+function ScoutTestClient({ jobId }: { jobId: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [scoutProps, setScoutProps] = useState<ScoutProps | null>(null);
@@ -132,4 +131,13 @@ export default function Mock({ params }: { params: { id: string } }) {
       )}
     </div>
   );
+}
+
+export default async function ScoutTestPage({
+  params
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return <ScoutTestClient jobId={id} />;
 }

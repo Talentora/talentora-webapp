@@ -3,11 +3,11 @@ import { Application, Job, Candidate } from '@/types/merge';
 import { getMergeApiKey } from '@/utils/supabase/queries';
 
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const accountToken = await getMergeApiKey();
-  const applicationId = params.id;
   const baseURL = `https://api.merge.dev/api/ats/v1`;
   const apiKey = process.env.NEXT_PUBLIC_MERGE_API_KEY;
   if (!apiKey) {
@@ -24,7 +24,7 @@ export async function GET(
     );
   }
 
-  if (!applicationId) {
+  if (!id) {
     return NextResponse.json(
       { error: 'Application ID is missing' },
       { status: 400 }
@@ -34,7 +34,7 @@ export async function GET(
   try {
     // Fetch application details
     const applicationResponse = await fetch(
-      `${baseURL}/applications/${applicationId}`,
+      `${baseURL}/applications/${id}`,
       {
         headers: {
           Accept: 'application/json',
@@ -46,7 +46,7 @@ export async function GET(
 
     if (!applicationResponse.ok) {
       return NextResponse.json(
-        { error: `Failed to fetch application with id ${applicationId}` },
+        { error: `Failed to fetch application with id ${id}` },
         { status: applicationResponse.status }
       );
     }

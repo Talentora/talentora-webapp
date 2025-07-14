@@ -11,8 +11,15 @@ import { verifyToken, invalidateToken } from '@/utils/email_helpers'
 import { signUp } from '@/utils/auth-helpers/server'
 import { extractErrorMessageFromURL } from '@/utils/helpers'
 
-
-export default function CandidateSignUp({ params }: { params: { id: string } }) {
+function CandidateSignUpClient({ 
+  candidateId, 
+  role, 
+  disable_button 
+}: { 
+  candidateId: string;
+  role?: string;
+  disable_button?: string;
+}) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -25,7 +32,6 @@ export default function CandidateSignUp({ params }: { params: { id: string } }) 
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClientComponentClient()
-  const candidateId = params.id
   const token = searchParams.get('token')
   const applicationIdParam = searchParams.get('application')
 
@@ -380,4 +386,23 @@ export default function CandidateSignUp({ params }: { params: { id: string } }) 
         </div>
       </div>
   )
+}
+
+export default async function SignUpPage({
+  params,
+  searchParams
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ role?: string; disable_button?: string }>;
+}) {
+  const { id } = await params;
+  const { role, disable_button } = await searchParams;
+
+  return (
+    <CandidateSignUpClient 
+      candidateId={id} 
+      role={role} 
+      disable_button={disable_button} 
+    />
+  );
 }

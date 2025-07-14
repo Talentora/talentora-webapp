@@ -3,16 +3,15 @@
 import { NextResponse } from 'next/server';
 
 export async function GET(
-  req: Request,
-  { params }: { params: { token: string, userId: string } }
+  request: Request,
+  { params }: { params: Promise<{ token: string; userId: string }> }
 ) {
-  const public_token = params.token;
-  const userId = params.userId;
+  const { token, userId } = await params;
 
 
   try {
     const response = await fetch(
-      `https://api.merge.dev/api/integrations/account-token/${public_token}`,
+      `https://api.merge.dev/api/integrations/account-token/${token}`,
       {
         method: 'GET',
         headers: {

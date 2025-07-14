@@ -11,7 +11,7 @@ import { verifyToken, invalidateToken } from '@/utils/email_helpers'
 import { signUp } from '@/utils/auth-helpers/server'
 import { extractErrorMessageFromURL } from '@/utils/helpers'
 
-export default function RecruiterSignUp({ params }: { params: { id: string } }) {
+function RecruiterSignUpClient({ companyId }: { companyId: string }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -23,7 +23,6 @@ export default function RecruiterSignUp({ params }: { params: { id: string } }) 
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClientComponentClient()
-  const companyId = params.id
   const token = searchParams.get('token')
 
   // Check for error messages in URL parameters
@@ -350,4 +349,13 @@ export default function RecruiterSignUp({ params }: { params: { id: string } }) 
       </div>
     </div>
   )
+}
+
+export default async function RecruiterSignUpPage({
+  params
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return <RecruiterSignUpClient companyId={id} />;
 }

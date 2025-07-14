@@ -12,11 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
-export default function TokenProtectedSignIn({
-  params
-}: {
-  params: { id: string };
-}) {
+function ProtectedSignInClient({ candidateId }: { candidateId: string }) {
   const [isValidToken, setIsValidToken] = useState<boolean | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,7 +24,6 @@ export default function TokenProtectedSignIn({
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
-  const candidateId = params.id;
   const jobIdParam = searchParams.get('jobId');
   const applicationIdParam = searchParams.get('application');
   const { allowEmail } = getAuthTypes();
@@ -210,5 +205,16 @@ export default function TokenProtectedSignIn({
         </div>
       </div>
     </div>
+  );
+}
+
+export default async function ProtectedSignInPage({
+  params
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return (
+    <ProtectedSignInClient candidateId={id} />
   );
 }

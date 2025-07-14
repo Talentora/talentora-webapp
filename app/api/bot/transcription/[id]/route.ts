@@ -1,10 +1,10 @@
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = params.id;
+  const { id } = await params;
   const DAILY_API_KEY = process.env.NEXT_PUBLIC_DAILY_API_KEY;
-  const format = req.headers.get('x-transcript-format') || 'txt';
+  const format = request.headers.get('x-transcript-format') || 'txt';
 
   if (!DAILY_API_KEY) {
     console.error('DAILY_API_KEY is missing');

@@ -9,11 +9,10 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export default function ScoutPage({ params }: { params: { id: string } }) {
+function ScoutPageClient({ scoutId }: { scoutId: number }) {
   const [scout, setScout] = useState<Scout | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const scoutId = parseInt(params.id);
   const router = useRouter();
 
   useEffect(() => {
@@ -59,4 +58,15 @@ export default function ScoutPage({ params }: { params: { id: string } }) {
       <ScoutInfo scout={scout} />
     </div>
   );
+}
+
+export default async function ScoutPage({
+  params
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const scoutId = parseInt(id);
+
+  return <ScoutPageClient scoutId={scoutId} />;
 }

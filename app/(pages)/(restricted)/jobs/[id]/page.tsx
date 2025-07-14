@@ -3,12 +3,8 @@
 import JobPage from '@/components/Jobs/Job';
 import { useJob } from '@/hooks/useJob';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-interface JobPageProps {
-  params: { id: string };
-}
 
-export default function Page({ params }: JobPageProps) {
-  const jobId = params.id;
+function JobPageClient({ jobId }: { jobId: string }) {
   const { 
     job, 
     applicants, 
@@ -38,4 +34,13 @@ export default function Page({ params }: JobPageProps) {
       applicantsLoading={applicantsLoading}
     />
   )
+}
+
+export default async function Page({ 
+  params 
+}: { 
+  params: Promise<{ id: string }> 
+}) {
+  const { id } = await params;
+  return <JobPageClient jobId={id} />;
 }

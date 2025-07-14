@@ -8,14 +8,20 @@ interface PageProps {
   };
 }
 
-export default async function JobPromptPage({ params }: PageProps) {
-  const job = await getJob(params.id);
+export default async function PromptFlowPage({
+  params
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  
+  const job = await getJob(id);
   
   if (!job) {
     notFound();
   }
 
-  const config = await getJobInterviewConfig(params.id);
+  const config = await getJobInterviewConfig(id);
 
   return (
     <PromptFlowClient 

@@ -4,11 +4,12 @@ import { createClient } from '@/utils/supabase/server';
 import { getUserRole } from '@/utils/supabase/queries';
 
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
-    const stageId = params.id;
+    const stageId = id;
     
     const supabase = await createClient();
     

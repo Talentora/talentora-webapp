@@ -33,8 +33,7 @@ type ScoutProps = {
   scoutTest: boolean;
 };
 
-export default function Assessment({ params }: { params: { id: string } }) {
-  const applicationId = params.id;
+function AssessmentClient({ applicationId }: { applicationId: string }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -153,4 +152,13 @@ export default function Assessment({ params }: { params: { id: string } }) {
       )}
     </div>
   );
+}
+
+export default async function AssessmentPage({
+  params
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return <AssessmentClient applicationId={id} />;
 }

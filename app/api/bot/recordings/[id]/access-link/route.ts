@@ -1,5 +1,8 @@
-export async function GET(req: Request, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
   // Increase validity period to 7 days (604800 seconds) to avoid expiration issues
   const validForSecs = 43200;
   const DAILY_API_KEY = process.env.NEXT_PUBLIC_DAILY_API_KEY;

@@ -8,13 +8,14 @@ import {
   fetchApplicationMergeId
 } from '@/server/applications';
 import {
-  getApplication,
   getApplicationByMergeId
 } from '@/utils/supabase/queries';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import { Tables } from '@/types/types_db';
+import type { Tables } from '@/types/types_db';
+
 type AI_summary = Tables<'AI_summary'>;
+
 export type portalProps = {
   AI_summary: AI_summary | null;
   application: any | null;
@@ -54,7 +55,7 @@ export type ApplicantStatus =
   | 'pending_interview'
   | 'interview_completed';
 
-export default function ApplicantPage({ params }: { params: { id: string } }) {
+function ApplicantPageClient({ applicantId }: { applicantId: string }) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [portalProps, setPortalProps] = useState<portalProps>({
@@ -73,14 +74,14 @@ export default function ApplicantPage({ params }: { params: { id: string } }) {
       try {
         // Fetch enriched applicant data
 
-        console.log(params.id, 'params.id');
+        console.log(applicantId, 'params.id');
 
-        const temp = await fetchApplicationAISummary(params.id);
+        const temp = await fetchApplicationAISummary(applicantId);
         const enrichedData = temp.data;
 
         console.log(enrichedData, 'enricheddata');
 
-        const application_data = await getApplicationByMergeId(params.id);
+        const application_data = await getApplicationByMergeId(applicantId);
         console.log(application_data, 'application_data');
 
         let newStatus = portalProps.status;
@@ -114,7 +115,7 @@ export default function ApplicantPage({ params }: { params: { id: string } }) {
     };
 
     fetchData();
-  }, [params.id]);
+  }, [applicantId]);
 
   if (loading) {
     return (
@@ -162,4 +163,13 @@ export default function ApplicantPage({ params }: { params: { id: string } }) {
       <ApplicantPortal portalProps={portalProps} />
     </div>
   );
+}
+
+export default async function ApplicantPage({
+  params
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return <ApplicantPageClient applicantId={id} />;
 }

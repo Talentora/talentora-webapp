@@ -18,9 +18,11 @@ export default async function SignInPage({
   params,
   searchParams
 }: {
-  params: { id: string };
-  searchParams: { role?: string; disable_button?: string };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ role?: string; disable_button?: string }>;
 }) {
+  const { id } = await params;
+  const { role, disable_button } = await searchParams;
   const { allowOauth, allowEmail, allowPassword } = getAuthTypes();
   const viewTypes = getViewTypes();
   const redirectMethod = getRedirectMethod();
@@ -29,33 +31,38 @@ export default async function SignInPage({
     data: { user }
   } = await supabase.auth.getUser();
 
+  const cookieStore = await cookies();
+  const finalRole = role || cookieStore.get('role')?.value;
+
   let viewProp: string;
-  const role = searchParams.role;
 
   // Handle candidate ID case - redirect to specialized protected route
-  if (params.id && params.id !== 'password_signin' && 
-      params.id !== 'email_signin' && params.id !== 'forgot_password' && 
-      params.id !== 'update_password' && params.id !== 'signup') {
-    return redirect(`/signin/${params.id}/protected${searchParams ? `?${new URLSearchParams(searchParams).toString()}` : ''}`);
+  if (id && id !== 'password_signin' && 
+      id !== 'email_signin' && id !== 'forgot_password' && 
+      id !== 'update_password' && id !== 'signup') {
+    const params = new URLSearchParams();
+    if (role) params.set('role', role);
+    if (disable_button) params.set('disable_button', disable_button);
+    return redirect(`/signin/${id}/protected${params.toString() ? `?${params.toString()}` : ''}`);
   }
 
   // Filter out signup from valid view types for this route
   const signInViewTypes = viewTypes.filter(type => type !== 'signup');
 
-  if (typeof params.id === 'string' && signInViewTypes.includes(params.id)) {
-    viewProp = params.id;
+  if (typeof id === 'string' && signInViewTypes.includes(id)) {
+    viewProp = id;
   } else {
     const preferredSignInView =
-      cookies().get('preferredSignInView')?.value || null;
+      (await cookies()).get('preferredSignInView')?.value || null;
     viewProp = getDefaultSignInView(preferredSignInView);
     
     // Redirect to signup page if signup is requested
-    if (params.id === 'signup') {
-      return redirect(`/signup${role ? `?role=${role}` : ''}`);
+    if (id === 'signup') {
+      return redirect(`/signup${finalRole ? `?role=${finalRole}` : ''}`);
     }
     
     return redirect(
-      `/signin/${viewProp}${role ? `?role=${role}` : '?role=applicant'}`
+      `/signin/${viewProp}${finalRole ? `?role=${finalRole}` : '?role=applicant'}`
     );
   }
 
@@ -91,7 +98,7 @@ export default async function SignInPage({
                     <ForgotPassword
                       allowEmail={allowEmail}
                       redirectMethod={redirectMethod}
-                      disableButton={searchParams.disable_button === 'true'}
+                      disableButton={disable_button === 'true'}
                     />
                   )}
                   {viewProp === 'update_password' && (

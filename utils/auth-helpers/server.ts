@@ -32,7 +32,8 @@ export async function requestPasswordUpdate(formData: FormData) {
     );
   }
 
-  const { data, error } = await createAuthClient().auth.signInWithOtp({
+  const authClient = await createAuthClient();
+  const { data, error } = await authClient.auth.signInWithOtp({
     email: email,
     options: {
       emailRedirectTo: process.env.NEXT_PUBLIC_SITE_URL
@@ -67,7 +68,7 @@ export async function requestPasswordUpdate(formData: FormData) {
 
 export async function signInWithPassword(formData: FormData) {
   console.log('[AUTH] signInWithPassword called - function is properly exported');
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const email = String(formData.get('email')).trim();
   const password = String(formData.get('password')).trim();
   const role = String(formData.get('role')).trim();
@@ -92,7 +93,7 @@ export async function signInWithPassword(formData: FormData) {
     // Create client directly without using createAuthClient to avoid serialization issues
     console.log('[AUTH] signInWithPassword - creating client directly');
     
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const cookieDefaults: Partial<CookieOptions> = {
       secure: process.env.APP_ENV === 'production',
       sameSite: 'lax',
@@ -273,7 +274,7 @@ export async function signUp(formData: FormData) {
   }
 
   // Use service role client for database operations (company validation)
-  const supabase = createClient();
+  const supabase = await createClient();
 
   console.log('Supabase client created. Attempting to sign up user...');
   
@@ -309,7 +310,8 @@ export async function signUp(formData: FormData) {
     const firstName = fullName.split(' ')[0];
 
     // Use auth client for authentication (compatible with middleware)
-    const { error, data } = await createAuthClient().auth.signUp({
+    const authClient = await createAuthClient();
+    const { error, data } = await authClient.auth.signUp({
       email,
       password,
       options: {
@@ -634,7 +636,7 @@ export async function getUserSessionDetails() {
     console.log('[AUTH] getUserSessionDetails - creating client directly');
     
     // Create client directly without using createAuthClient to avoid serialization issues
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const cookieDefaults: Partial<CookieOptions> = {
       secure: process.env.APP_ENV === 'production',
       sameSite: 'lax',
