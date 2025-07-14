@@ -9,16 +9,17 @@ https://github.com/Talentora-Organization/Talentora-codebase
 
 # Getting Started
 
-The next.js framework covers all functionalities within frontend and backend.
-First, to run, but read all these steps carefullly
+The next.js framework covers all functionalities within the frontend and backend.
+First, to run, but read all these steps carefully
 
 ## 1.1 Tools used
 
 - next.js: frontend/backend development
-- Vercel: deployment
+- EC2: deployment
+- Cloudflare: DNS service
 - GitHub: repository use, CI/CD
-- stripe: for payment
-- daily: for video recording
+- Stripe: for payment
+- Livekit: for video recording
 - ShadCN: UI components
 - [RTVI](#https://github.com/rtvi-ai): Real time voice interface
 - **Supabase**: for auth and database
@@ -86,15 +87,15 @@ npm run dev
 
 # Contributing to the code guidelene
 
-Our goal is to make a succesfull project. To make this process go as smooth as possible, we want to keep some rules when contributing to Github
+Our goal is to make a successful project. To make this process go as smoothly as possible, we want to keep some rules when contributing to Github
 
-## Branch guidlines
+## Branch guidelines
 
 We have a set of branches for production. However, no matter what, **NEVER DIRECTLY PUSH TO MAIN OR DEV BRANCH**
 Follow these step.
 
 1. Whenever you want to fix a bug or add a new feature, **always** start by making a new branch.
-   - Follow the naming guidlines indicated in this website: https://medium.com/@abhay.pixolo/naming-conventions-for-git-branches-a-cheatsheet-8549feca2534
+   - Follow the naming guidelines indicated on this website: https://medium.com/@abhay.pixolo/naming-conventions-for-git-branches-a-cheatsheet-8549feca2534
    - In the github project root directory
 
 ```
@@ -137,11 +138,11 @@ Lucas Yoon (lyoon02@bu.edu, 617-816-9352)
 
 ## Set up Frontend
 
-You must then setup the frontend which handles the user interface and user interaction.
+You must then setup the frontend, which handles the user interface and user interaction.
 
-1. install required packages (e.g. pnpm install)
-2. populate the env file with the backend url and supabase keys
-3. run the frontend (e.g. pnpm run dev)
+1. Install required packages (e.g. pnpm install)
+2. Populate the env file with the backend url and supabase keys
+3. Run the frontend (e.g. pnpm run dev)
 
 (if it's not working make sure supabase is started and stripe is listening)
 
@@ -162,7 +163,7 @@ You must then setup the frontend which handles the user interface and user inter
 ## Tools used
 
 - Stripe
-- Daily
+- Livekit
 - OpenAI
 - Cartesia
 - Supabase
