@@ -15,7 +15,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { getNotInvitedColumns } from './NotInvitedColumns';
 import { getInProgressColumns } from './InProgressColumns';
@@ -430,11 +430,25 @@ export default function ApplicantList() {
       return row;
     });
     
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Applicants');
-    const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'applicants.xlsx');
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Applicants');
+    
+    // Add headers
+    if (exportData.length > 0) {
+      const headers = Object.keys(exportData[0]);
+      worksheet.addRow(headers);
+      
+      // Add data rows
+      exportData.forEach(row => {
+        const rowData = headers.map(header => row[header]);
+        worksheet.addRow(rowData);
+      });
+    }
+    
+    // Generate buffer and save
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      saveAs(new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'applicants.xlsx');
+    });
   };
 
   return (
