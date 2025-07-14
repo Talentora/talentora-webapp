@@ -355,8 +355,8 @@ jobs:
             # NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }}
             # NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
             # Application URLs (Production - EC2)
-            NEXT_PUBLIC_SITE_URL=http://13.221.92.99
-            NEXT_PUBLIC_BASE_URL=http://13.221.92.99
+            NEXT_PUBLIC_SITE_URL=https://talentora.net
+            NEXT_PUBLIC_BASE_URL=https://talentora.net
 
             # JWT
             JWT_SECRET=${{ secrets.JWT_SECRET }}
