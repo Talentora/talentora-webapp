@@ -62,7 +62,7 @@ const ApplicantFilters = ({
     setVisibleColumns(
       table.getAllColumns().filter(column => column.getIsVisible()).map(column => column.id)
     );
-  }, [table.getAllColumns().map(col => col.getIsVisible()).join(',')]);
+  }, [table]);
 
   // Handle column visibility changes
   const handleColumnVisibilityChange = (columnId: string) => {

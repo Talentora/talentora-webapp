@@ -63,7 +63,7 @@ export default function CandidateSignUp({ params }: { params: { id: string } }) 
     }
     
     verifyEmailToken()
-  }, [searchParams, candidateId])
+  }, [searchParams, candidateId, token, router])
 
   // Check if user is already logged in
   useEffect(() => {

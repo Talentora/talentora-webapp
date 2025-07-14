@@ -21,6 +21,7 @@ export async function handleRequest(
   const redirectUrl: string = await requestFunc(formData);
 
   if (router) {
+    console.log('Redirecting browser to:', redirectUrl);
     router.push(redirectUrl);
     router.refresh();
 

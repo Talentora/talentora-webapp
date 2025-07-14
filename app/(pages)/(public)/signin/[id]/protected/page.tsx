@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import PasswordSignIn from '@/components/AuthForms/PasswordSignIn';
@@ -35,6 +35,43 @@ export default function TokenProtectedSignIn({
   const redirectMethod = getRedirectMethod();
   const supabase = createClientComponentClient()
   
+
+  // Helper function to add user to both tables
+  const addUserToApplicantAndApplicationTables = useCallback(async (
+    userId: string,
+    email: string,
+    fullName: string,
+    candidateId: string,
+    jobId: string | null,
+    applicationId: string | null
+  ) => {
+    // Add to applicants table
+    const { error: applicantError } = await supabase
+      .from('applicants')
+      .upsert({
+        id: userId,
+        email: email,
+        full_name: fullName,
+        merge_candidate_id: [candidateId]
+      })
+      .select();
+    
+    if (applicantError) {
+      console.error('Error adding user to applicants table:', applicantError);
+    }
+    
+    // Add to applications table if we have a job ID and application ID
+    if (jobId && applicationId) {
+      const { error: applicationError } = await supabase
+        .from('applications')
+        .update({ applicant_id: userId })
+        .eq('merge_application_id', applicationId);
+      
+      if (applicationError) {
+        console.error('Error updating application with applicant ID:', applicationError);
+      }
+    }
+  }, [supabase]);
 
   // Check if user is already logged in
   useEffect(() => {
@@ -75,7 +112,7 @@ export default function TokenProtectedSignIn({
     }
     
     checkUser()
-  }, [router, supabase, isValidToken, token, verifiedEmail, candidateId, jobId, applicationId])
+  }, [router, supabase, isValidToken, token, verifiedEmail, candidateId, jobId, applicationId, addUserToApplicantAndApplicationTables])
   
   useEffect(() => {
     // Set job ID from query params if available
@@ -111,43 +148,6 @@ export default function TokenProtectedSignIn({
 
     validateToken();
   }, [token, candidateId, jobIdParam, applicationIdParam]);
-
-  // Helper function to add user to both tables
-  async function addUserToApplicantAndApplicationTables(
-    userId: string,
-    email: string,
-    fullName: string,
-    candidateId: string,
-    jobId: string | null,
-    applicationId: string | null
-  ) {
-    // Add to applicants table
-    const { error: applicantError } = await supabase
-      .from('applicants')
-      .upsert({
-        id: userId,
-        email: email,
-        full_name: fullName,
-        merge_candidate_id: [candidateId]
-      })
-      .select();
-    
-    if (applicantError) {
-      console.error('Error adding user to applicants table:', applicantError);
-    }
-    
-    // Add to applications table if we have a job ID and application ID
-    if (jobId && applicationId) {
-      const { error: applicationError } = await supabase
-        .from('applications')
-        .update({ applicant_id: userId })
-        .eq('merge_application_id', applicationId);
-      
-      if (applicationError) {
-        console.error('Error updating application with applicant ID:', applicationError);
-      }
-    }
-  }
 
   if (isLoading) {
     return (

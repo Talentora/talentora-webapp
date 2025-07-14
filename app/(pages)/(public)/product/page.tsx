@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CheckCircle2, BarChart2, Users, FileText, MessageSquare } from 'lucide-react';
+import Image from 'next/image';
 
 const ProductPage = () => {
   return (
@@ -74,9 +75,11 @@ const ProductPage = () => {
             </div>
             <div className="relative">
               <div className="absolute -inset-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-xl blur-xl opacity-50"></div>
-              <img 
+              <Image 
                 src="/ai-interviews-demo.png" 
                 alt="AI Interview Platform Interface" 
+                width={600}
+                height={400}
                 className="relative rounded-xl shadow-2xl border border-gray-200"
               />
             </div>

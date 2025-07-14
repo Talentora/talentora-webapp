@@ -36,35 +36,39 @@ export default function PasswordSignIn({
   const [password, setPassword] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    console.log('hello from PasswordSignIn');
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
       const formData = new FormData(e.currentTarget);
-      
+
       // Make sure to use state values
       formData.set('email', email);
       formData.set('password', password);
       formData.set('role', role);
-      
+
       // Add candidateId and jobId if available
       if (candidateId) {
         formData.set('candidateId', candidateId);
       }
-      
+
       if (jobId) {
         formData.set('jobId', jobId);
       }
-      
+
       // Add applicationId if available
       if (applicationId) {
         formData.set('applicationId', applicationId);
       }
 
       const response = await handleRequest(e, signInWithPassword, router);
-      
+
+      console.log('signInWithPassword response:', response);
+
       // If sign-in was successful, call the callback if provided
       if (response === true && onSuccessfulSignIn) {
+        console.log('Calling onSuccessfulSignIn callback');
         await onSuccessfulSignIn();
       }
 
@@ -85,15 +89,16 @@ export default function PasswordSignIn({
       <form
         noValidate={true}
         className="mb-4 grid gap-2"
-        onSubmit={handleSubmit}
+        onSubmit={(e) => {
+          console.log('Form submitted');
+          handleSubmit(e);
+        }}
       >
         <input type="hidden" name="role" value={role || 'applicant'} />
         {candidateId && (
           <input type="hidden" name="candidateId" value={candidateId} />
         )}
-        {jobId && (
-          <input type="hidden" name="jobId" value={jobId} />
-        )}
+        {jobId && <input type="hidden" name="jobId" value={jobId} />}
         {applicationId && (
           <input type="hidden" name="applicationId" value={applicationId} />
         )}
@@ -135,6 +140,7 @@ export default function PasswordSignIn({
           type="submit"
           className="mt-1 w-full"
           disabled={isSubmitting}
+          onClick={() => console.log('Button clicked!')}
         >
           {isSubmitting ? 'Signing in...' : 'Sign in'}
         </Button>
@@ -150,7 +156,9 @@ export default function PasswordSignIn({
       <p>
         {role === 'applicant' ? (
           <Link
-            href={signUpRedirectLink ? signUpRedirectLink: `/signup?role=${role}` }
+            href={
+              signUpRedirectLink ? signUpRedirectLink : `/signup?role=${role}`
+            }
             className="font-light text-sm text-muted-foreground"
           >
             Don&apos;t have an account? Sign up
@@ -158,18 +166,22 @@ export default function PasswordSignIn({
         ) : (
           <>
             <Link
-              href={signUpRedirectLink ? signUpRedirectLink: `/contact` }
+              href={signUpRedirectLink ? signUpRedirectLink : `/contact`}
               className="font-light text-sm text-muted-foreground"
             >
               Contact sales
             </Link>
             <p>
               <Link
-              href={signUpRedirectLink ? signUpRedirectLink: `/signup?role=${role}` }
-              className="font-light text-sm text-muted-foreground"
-            >
-              Company initial sign up
-            </Link>
+                href={
+                  signUpRedirectLink
+                    ? signUpRedirectLink
+                    : `/signup?role=${role}`
+                }
+                className="font-light text-sm text-muted-foreground"
+              >
+                Company initial sign up
+              </Link>
             </p>
           </>
         )}

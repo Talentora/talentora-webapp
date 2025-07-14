@@ -1,7 +1,9 @@
 'use server';
 
-import { createClient } from '@/utils/supabase/server';
+import { createClient, createAuthClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { Database } from '@/types/types_db';
 import { redirect } from 'next/navigation';
 import { getURL, getErrorRedirect, getStatusRedirect } from '@/utils/helpers';
 import { fetchApplicationMergeId } from '@/server/applications';
@@ -30,10 +32,7 @@ export async function requestPasswordUpdate(formData: FormData) {
     );
   }
 
-  const supabase = createClient();
-
-
-  const { data, error } = await supabase.auth.signInWithOtp({
+  const { data, error } = await createAuthClient().auth.signInWithOtp({
     email: email,
     options: {
       emailRedirectTo: process.env.NEXT_PUBLIC_SITE_URL
@@ -67,7 +66,7 @@ export async function requestPasswordUpdate(formData: FormData) {
 }
 
 export async function signInWithPassword(formData: FormData) {
-
+  console.log('[AUTH] signInWithPassword called - function is properly exported');
   const cookieStore = cookies();
   const email = String(formData.get('email')).trim();
   const password = String(formData.get('password')).trim();
@@ -83,11 +82,72 @@ export async function signInWithPassword(formData: FormData) {
   let application_id = String(formData.get('applicationId'))
   if (application_id) { application_id = application_id.trim(); }
 
-  const supabase = await createClient();
-  const { error, data } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  });
+  // Use auth client for authentication (compatible with middleware)
+  console.log('[AUTH] signInWithPassword - attempting inline client call');
+  
+  let error: any = null;
+  let data: any = null;
+  
+  try {
+    // Create client directly without using createAuthClient to avoid serialization issues
+    console.log('[AUTH] signInWithPassword - creating client directly');
+    
+    const cookieStore = cookies();
+    const cookieDefaults: Partial<CookieOptions> = {
+      secure: process.env.APP_ENV === 'production',
+      sameSite: 'lax',
+      httpOnly: true,
+      path: '/'
+    };
+    
+    const supabase = createServerClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value;
+          },
+          set(name: string, value: string, options: CookieOptions) {
+            try {
+              cookieStore.set({
+                name,
+                value,
+                ...cookieDefaults,
+                ...options,
+              });
+            } catch (error) {
+              console.error(`Error setting cookie ${name}:`, error);
+            }
+          },
+        },
+      }
+    );
+    
+    console.log('[AUTH] signInWithPassword - calling auth directly');
+    const authResult = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+    
+    error = authResult.error;
+    data = authResult.data;
+    
+    console.log('[AUTH] signInWithPassword - auth call completed:', { 
+      hasError: !!error, 
+      hasData: !!data,
+      hasUser: !!data?.user 
+    });
+    
+    if (error) {
+      console.log('[AUTH] signInWithPassword - error details:', error);
+    }
+    
+  } catch (authError) {
+    console.error('[AUTH] signInWithPassword - caught error:', authError);
+    error = authError;
+    data = null;
+  }
 
   if (error) {
     redirectPath = getErrorRedirect(
@@ -95,6 +155,10 @@ export async function signInWithPassword(formData: FormData) {
       'Sign in failed.',
       error.message
     );
+
+    console.log('sign in had error, received redirect path:', redirectPath);
+    console.log('Error details:', error);
+
     redirectPath = `/signin/password_signin?role=${role}`;
   } else if (data.user) {
     cookieStore.set('preferredSignInView', 'password_signin', {
@@ -106,13 +170,20 @@ export async function signInWithPassword(formData: FormData) {
       'You are now signed in.'
     );
 
+    console.log('Successful sign in, received redirect path:', redirectPath);
+
     if (candidate_id && job_id && role === 'applicant') { // special token sign in
       const applicantId = data.user.id;
 
       try {
-        addUserToApplicationsTable(supabase, applicantId, candidate_id, job_id, application_id);
-        addUserToApplicantsTable(supabase, applicantId, email, data.user.user_metadata.full_name, candidate_id);
+        // Use service role client for database operations
+        const supabase = createClient();
+        console.log('[AUTH] Adding user to database tables...');
+        await addUserToApplicationsTable(supabase, applicantId, candidate_id, job_id, application_id);
+        await addUserToApplicantsTable(supabase, applicantId, email, data.user.user_metadata.full_name, candidate_id);
+        console.log('[AUTH] Successfully added user to database tables');
       } catch (err: any) {
+        console.error('[AUTH] Error adding user to database tables:', err);
         redirectPath = getStatusRedirect(
           '/',
           'Critical signin error, please contact Talentora team for support',
@@ -127,6 +198,8 @@ export async function signInWithPassword(formData: FormData) {
       'Hmm... Something went wrong.',
       'You could not be signed in.'
     );
+
+    console.log('sign in simply failed, received redirect path:', redirectPath);
   }
 
   return redirectPath;
@@ -199,7 +272,8 @@ export async function signUp(formData: FormData) {
     return redirectPath;
   }
 
-  const supabase = await createClient();
+  // Use service role client for database operations (company validation)
+  const supabase = createClient();
 
   console.log('Supabase client created. Attempting to sign up user...');
   
@@ -234,7 +308,8 @@ export async function signUp(formData: FormData) {
     }
     const firstName = fullName.split(' ')[0];
 
-    const { error, data } = await supabase.auth.signUp({
+    // Use auth client for authentication (compatible with middleware)
+    const { error, data } = await createAuthClient().auth.signUp({
       email,
       password,
       options: {
@@ -442,9 +517,9 @@ async function addUserToApplicationsTable(
     if (existingApplication) {
       const { error: updateError } = await supabase
         .from('applications')
-        .upsert({ 
+        .update({ 
           applicant_id: applicantId,
-          status: 'in_progress',
+          status: 'pending_interview',
           job_id: jobId
          })
         .eq('merge_application_id', mergeApplicationId);
@@ -462,7 +537,7 @@ async function addUserToApplicationsTable(
           merge_application_id: mergeApplicationId,
           applicant_id: applicantId,
           job_id: jobId,
-          status: 'in_progress',
+          status: 'pending_interview',
         });
 
       if (insertError) {
@@ -490,8 +565,7 @@ export async function updatePassword(formData: FormData) {
     );
   }
 
-  const supabase = createClient();
-  const { error, data } = await supabase.auth.updateUser({
+  const { error, data } = await createAuthClient().auth.updateUser({
     password
   });
 
@@ -522,9 +596,8 @@ export async function updateName(formData: FormData) {
   // Get form data
   const fullName = String(formData.get('fullName')).trim();
 
-  const supabase = createClient();
   console.log('access name');
-  const { error, data } = await supabase.auth.updateUser({
+  const { error, data } = await createAuthClient().auth.updateUser({
     data: { full_name: fullName }
   });
 
@@ -556,8 +629,44 @@ export async function updateName(formData: FormData) {
  * @returns {Promise<{user: any | null, role: string | null, isSidebarVisible: boolean}>}
  */
 export async function getUserSessionDetails() {
+  console.log('[AUTH] getUserSessionDetails called - function is properly exported');
   try {
-    const supabase = await createClient();
+    console.log('[AUTH] getUserSessionDetails - creating client directly');
+    
+    // Create client directly without using createAuthClient to avoid serialization issues
+    const cookieStore = cookies();
+    const cookieDefaults: Partial<CookieOptions> = {
+      secure: process.env.APP_ENV === 'production',
+      sameSite: 'lax',
+      httpOnly: true,
+      path: '/'
+    };
+    
+    const supabase = createServerClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return cookieStore.get(name)?.value;
+          },
+          set(name: string, value: string, options: CookieOptions) {
+            try {
+              cookieStore.set({
+                name,
+                value,
+                ...cookieDefaults,
+                ...options,
+              });
+            } catch (error) {
+              console.error(`Error setting cookie ${name}:`, error);
+            }
+          },
+        },
+      }
+    );
+    
+    console.log('[AUTH] getUserSessionDetails - calling auth directly');
     const { data: { user } } = await supabase.auth.getUser();
     
     const role = user?.user_metadata?.role || null;
@@ -566,6 +675,8 @@ export async function getUserSessionDetails() {
     // Fetch company data for recruiters
     let company = null;
     if (user && role === 'recruiter') {
+      // Use service role client for database operations
+      const supabase = createClient();
       const { data: recruiterData } = await supabase
         .from('recruiters')
         .select('company_id')

@@ -3,31 +3,32 @@ module.exports = {
 
   // Remove the headers function if not needed
   async headers() {
+    const isProduction = process.env.APP_ENV === 'production';
+    const hasHttps = process.env.NEXT_PUBLIC_SITE_URL?.startsWith('https://');
+    
+    const headers = [
+      {
+        key: 'Cross-Origin-Resource-Policy',
+        value: 'cross-origin'
+      },
+      {
+        key: 'Access-Control-Allow-Origin',
+        value: '*'
+      }
+    ];
+
+    // Only add COOP header in secure contexts
+    if (!isProduction || hasHttps) {
+      headers.push({
+        key: 'Cross-Origin-Opener-Policy',
+        value: 'same-origin'
+      });
+    }
+
     return [
       {
         source: '/:path*',
-        headers: [
-          // {
-          //   key: 'Content-Security-Policy',
-          //   value: "script-src 'self' https://cdn.merge.dev; connect-src 'self' https://api.merge.dev https://harvest.greenhouse.io https://:54321; img-src 'self' https://merge-api-production.s3.amazonaws.com; frame-src 'self' https://cdn.merge.dev;"
-          // },
-          // {
-          //   key: 'Cross-Origin-Embedder-Policy',
-          //   value: 'require-corp'
-          // },
-          {
-            key: 'Cross-Origin-Resource-Policy',
-            value: 'cross-origin'
-          },
-          {
-            key: 'Access-Control-Allow-Origin',
-            value: '*'
-          },
-          {
-            key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin'
-          }
-        ]
+        headers
       }
     ];
   }

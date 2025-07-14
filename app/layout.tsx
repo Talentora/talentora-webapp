@@ -12,6 +12,9 @@ import AuthListener from '@/components/AuthListener';
 import { getUserSessionDetails } from '@/utils/auth-helpers/server';
 import { Metadata } from 'next';
 
+// Force dynamic rendering to prevent static generation errors with cookies
+export const dynamic = 'force-dynamic';
+
 const title = 'Talentora';
 const description =
   'Talentora is a platform for creating and managing AI-powered interviews.';

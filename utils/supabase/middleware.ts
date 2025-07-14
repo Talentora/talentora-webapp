@@ -1,8 +1,68 @@
 'use server'
 
 import { NextResponse, type NextRequest } from 'next/server';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { getUserRole, getCompany } from '@/utils/supabase/queries';
-import { createClient } from './server';
+
+// Create middleware-specific Supabase client
+const createMiddlewareClient = (request: NextRequest) => {
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
+
+  const cookieDefaults: Partial<CookieOptions> = {
+    secure: process.env.APP_ENV === 'production',
+    sameSite: 'lax',
+    httpOnly: true,
+    path: '/'
+  };
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, // Use anon key for middleware
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          // Set cookie on both request and response
+          request.cookies.set({
+            name,
+            value,
+            ...cookieDefaults,
+            ...options,
+          });
+          response.cookies.set({
+            name,
+            value,
+            ...cookieDefaults,
+            ...options,
+          });
+        },
+        remove(name: string, options: CookieOptions) {
+          // Remove cookie from both request and response
+          request.cookies.set({
+            name,
+            value: '',
+            ...cookieDefaults,
+            ...options,
+          });
+          response.cookies.set({
+            name,
+            value: '',
+            ...cookieDefaults,
+            ...options,
+          });
+        },
+      },
+    }
+  );
+
+  return { supabase, response };
+};
 
 // List of unprotected routes as regular expressions
 export const unprotectedRoutes = [
@@ -63,9 +123,12 @@ export async function handleAuthRedirects(request: NextRequest, user: any) {
   
   // Check if it's a signup/[id] URL - these are allowed for authenticated users
   const isSignupWithId = /^\/signup\/[A-Za-z0-9_-]+$/.test(pathname);
-  
+
+  console.log('check if user is exists:', user);
+
   // Only redirect for signin and signup pages that aren't signup/[id]
   if (/^\/(signin|signup)(\/.*)?$/.test(pathname) && !isSignupWithId) {
+    console.log('Redirecting to dashboard with initial pathname:', pathname);
     if (user) {
       console.log('[Middleware] Redirecting user to dashboard:', user);
       return NextResponse.redirect(new URL('/dashboard', request.url));
@@ -126,14 +189,18 @@ export async function handleRecruiterRedirects(
 
 export async function updateSession(request: NextRequest) {
   console.log('[Middleware] Updating session...');
-  let supabaseResponse = NextResponse.next({
-    request
-  });
-
-  const supabase = await createClient();
+  
+  const { supabase, response } = createMiddlewareClient(request);
 
   // Cache user data to avoid multiple calls
-  const { data: { user } } = await supabase.auth.getUser();
+  console.log('[Middleware] Getting user session...');
+  const { data: { user }, error } = await supabase.auth.getUser();
+  
+  if (error) {
+    console.log('[Middleware] Session error:', error.message);
+  } else {
+    console.log('[Middleware] User session result:', user ? 'Found user' : 'No user', user?.email || 'no email');
+  }
 
   // Add SAML redirect handling
   const samlRedirect = await handleSamlRedirect(request);
@@ -156,12 +223,12 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Add debug headers
-  supabaseResponse.headers.set(
+  response.headers.set(
     'x-debug-request-path',
     request.nextUrl.pathname
   );
-  supabaseResponse.headers.set('x-debug-message', 'Middleware executed');
-  supabaseResponse.headers.set('x-user-present', user ? 'true' : 'false');
+  response.headers.set('x-debug-message', 'Middleware executed');
+  response.headers.set('x-user-present', user ? 'true' : 'false');
 
-  return supabaseResponse;
+  return response;
 }
