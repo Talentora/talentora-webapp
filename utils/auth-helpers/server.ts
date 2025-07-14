@@ -178,9 +178,12 @@ export async function signInWithPassword(formData: FormData) {
       try {
         // Use service role client for database operations
         const supabase = createClient();
-        addUserToApplicationsTable(supabase, applicantId, candidate_id, job_id, application_id);
-        addUserToApplicantsTable(supabase, applicantId, email, data.user.user_metadata.full_name, candidate_id);
+        console.log('[AUTH] Adding user to database tables...');
+        await addUserToApplicationsTable(supabase, applicantId, candidate_id, job_id, application_id);
+        await addUserToApplicantsTable(supabase, applicantId, email, data.user.user_metadata.full_name, candidate_id);
+        console.log('[AUTH] Successfully added user to database tables');
       } catch (err: any) {
+        console.error('[AUTH] Error adding user to database tables:', err);
         redirectPath = getStatusRedirect(
           '/',
           'Critical signin error, please contact Talentora team for support',
