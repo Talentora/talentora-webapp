@@ -46,7 +46,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen w-full bg-gradient-to-br from-purple-500/[0.1] via-background to-pink-500/[0.1] p-0">
+      <body className="min-h-screen w-full bg-gradient-to-br from-purple-500/[0.1] via-background to-pink-500/[0.1] p-0" suppressHydrationWarning>
         {!isSidebarVisible && role !== 'applicant' && <AuthListener />}
         <ThemeProvider
           attribute="class"

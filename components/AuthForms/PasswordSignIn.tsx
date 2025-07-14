@@ -171,18 +171,17 @@ export default function PasswordSignIn({
             >
               Contact sales
             </Link>
-            <p>
-              <Link
-                href={
-                  signUpRedirectLink
-                    ? signUpRedirectLink
-                    : `/signup?role=${role}`
-                }
-                className="font-light text-sm text-muted-foreground"
-              >
-                Company initial sign up
-              </Link>
-            </p>
+            <br />
+            <Link
+              href={
+                signUpRedirectLink
+                  ? signUpRedirectLink
+                  : `/signup?role=${role}`
+              }
+              className="font-light text-sm text-muted-foreground"
+            >
+              Company initial sign up
+            </Link>
           </>
         )}
       </p>
