@@ -106,19 +106,21 @@ export async function signInWithPassword(formData: FormData) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
+          getAll() {
+            return cookieStore.getAll();
           },
-          set(name: string, value: string, options: CookieOptions) {
+          setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
             try {
-              cookieStore.set({
-                name,
-                value,
-                ...cookieDefaults,
-                ...options,
+              cookiesToSet.forEach(({ name, value, options }) => {
+                cookieStore.set({
+                  name,
+                  value,
+                  ...cookieDefaults,
+                  ...options,
+                });
               });
             } catch (error) {
-              console.error(`Error setting cookie ${name}:`, error);
+              console.error('Error setting cookies:', error);
             }
           },
         },
@@ -178,7 +180,7 @@ export async function signInWithPassword(formData: FormData) {
 
       try {
         // Use service role client for database operations
-        const supabase = createClient();
+        const supabase = await createClient();
         console.log('[AUTH] Adding user to database tables...');
         await addUserToApplicationsTable(supabase, applicantId, candidate_id, job_id, application_id);
         await addUserToApplicantsTable(supabase, applicantId, email, data.user.user_metadata.full_name, candidate_id);
@@ -567,7 +569,8 @@ export async function updatePassword(formData: FormData) {
     );
   }
 
-  const { error, data } = await createAuthClient().auth.updateUser({
+  const authClient = await createAuthClient();
+  const { error, data } = await authClient.auth.updateUser({
     password
   });
 
@@ -599,7 +602,8 @@ export async function updateName(formData: FormData) {
   const fullName = String(formData.get('fullName')).trim();
 
   console.log('access name');
-  const { error, data } = await createAuthClient().auth.updateUser({
+  const authClient = await createAuthClient();
+  const { error, data } = await authClient.auth.updateUser({
     data: { full_name: fullName }
   });
 
@@ -649,19 +653,21 @@ export async function getUserSessionDetails() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
+          getAll() {
+            return cookieStore.getAll();
           },
-          set(name: string, value: string, options: CookieOptions) {
+          setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
             try {
-              cookieStore.set({
-                name,
-                value,
-                ...cookieDefaults,
-                ...options,
+              cookiesToSet.forEach(({ name, value, options }) => {
+                cookieStore.set({
+                  name,
+                  value,
+                  ...cookieDefaults,
+                  ...options,
+                });
               });
             } catch (error) {
-              console.error(`Error setting cookie ${name}:`, error);
+              console.error('Error setting cookies:', error);
             }
           },
         },
@@ -678,7 +684,7 @@ export async function getUserSessionDetails() {
     let company = null;
     if (user && role === 'recruiter') {
       // Use service role client for database operations
-      const serviceRoleClient = createClient();
+      const serviceRoleClient = await createClient();
       const { data: recruiterData } = await serviceRoleClient
         .from('recruiters')
         .select('company_id')

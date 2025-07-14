@@ -14,7 +14,6 @@ import { inviteRecruiterAdmin, listUsersAdmin } from '@/utils/supabase/admin';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { fetchApplicationMergeId } from '@/server/applications';
 import { sendAuthCandidateEmail, sendAuthRecruiterEmail } from '../email_helpers';
-import { uuid } from '@supabase/auth-js/dist/module/lib/helpers';
 
 
 // CRUD operations for the company table

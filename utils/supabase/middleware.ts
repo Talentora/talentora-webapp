@@ -24,37 +24,24 @@ const createMiddlewareClient = (request: NextRequest) => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, // Use anon key for middleware
     {
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
+        getAll() {
+          return request.cookies.getAll();
         },
-        set(name: string, value: string, options: CookieOptions) {
-          // Set cookie on both request and response
-          request.cookies.set({
-            name,
-            value,
-            ...cookieDefaults,
-            ...options,
-          });
-          response.cookies.set({
-            name,
-            value,
-            ...cookieDefaults,
-            ...options,
-          });
-        },
-        remove(name: string, options: CookieOptions) {
-          // Remove cookie from both request and response
-          request.cookies.set({
-            name,
-            value: '',
-            ...cookieDefaults,
-            ...options,
-          });
-          response.cookies.set({
-            name,
-            value: '',
-            ...cookieDefaults,
-            ...options,
+        setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            // Set cookie on both request and response
+            request.cookies.set({
+              name,
+              value,
+              ...cookieDefaults,
+              ...options,
+            });
+            response.cookies.set({
+              name,
+              value,
+              ...cookieDefaults,
+              ...options,
+            });
           });
         },
       },

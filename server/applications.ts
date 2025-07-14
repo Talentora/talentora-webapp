@@ -120,7 +120,7 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
     if (!accountToken) {
       throw new Error('Account token not found');
     }
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: applications, error } = await supabase
       .from('applications')
       .select('*')
@@ -140,7 +140,7 @@ export async function fetchApplicationAISummary(mergeApplicationId: string) {
     if (!accountToken) {
       throw new Error('Account token not found');
     }
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, count, error } = await supabase
     .from('applications')
     .select('*', { count: 'exact' })
