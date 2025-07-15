@@ -47,7 +47,7 @@ export const CompanyContext3: React.FC<CompanyContextProps> = ({ onCompletion })
     };
 
     checkCompanyContext();
-  }, []);
+  }, [companyData.data?.id]);
 
   const handleChange = () => {
     // Mark as complete if all fields meet minimum length requirement

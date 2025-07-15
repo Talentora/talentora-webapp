@@ -94,7 +94,7 @@ export default function App() {
       console.error('Error fetching token:', e);
       setError(e instanceof Error ? e.message : 'Failed to connect');
     }
-  }, [roomName, participantName, scout, jobInterviewConfig, job, company, companyContext]);
+  }, [roomName, participantName, scout, jobInterviewConfig, job, company, companyContext, application?.applicant_id, application?.id, application?.job_id, demo, supabase.auth]);
 
   // Handle room disconnection
   const handleDisconnect = useCallback(() => {
