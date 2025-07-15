@@ -1,5 +1,7 @@
 'use server';
 
+/// <reference types="node" />
+
 import { createClient, createAuthClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
@@ -93,31 +95,22 @@ export async function signInWithPassword(formData: FormData) {
     console.log('[AUTH] signInWithPassword - creating client directly');
     
     const cookieStore = cookies();
-    const cookieDefaults: Partial<CookieOptions> = {
-      secure: process.env.APP_ENV === 'production',
-      sameSite: 'lax',
-      httpOnly: true,
-      path: '/'
-    };
     
     const supabase = createServerClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
+          getAll() {
+            return cookieStore.getAll();
           },
-          set(name: string, value: string, options: CookieOptions) {
+          setAll(cookiesToSet) {
             try {
-              cookieStore.set({
-                name,
-                value,
-                ...cookieDefaults,
-                ...options,
-              });
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              );
             } catch (error) {
-              console.error(`Error setting cookie ${name}:`, error);
+              console.error(`Error setting cookies:`, error);
             }
           },
         },
@@ -176,11 +169,25 @@ export async function signInWithPassword(formData: FormData) {
       const applicantId = data.user.id;
 
       try {
-        // Use service role client for database operations
-        const supabase = createClient();
+        // Create service role client directly for database operations
+        const serviceRoleClient = createServerClient<Database>(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!,
+          {
+            cookies: {
+              get() { return undefined; },
+              set() { },
+            },
+          }
+        );
+        
         console.log('[AUTH] Adding user to database tables...');
-        await addUserToApplicationsTable(supabase, applicantId, candidate_id, job_id, application_id);
-        await addUserToApplicantsTable(supabase, applicantId, email, data.user.user_metadata.full_name, candidate_id);
+        console.log('[AUTH] Service role client created:', {
+          hasFrom: !!serviceRoleClient.from,
+          clientType: typeof serviceRoleClient
+        });
+        await addUserToApplicationsTable(serviceRoleClient, applicantId, candidate_id, job_id, application_id);
+        await addUserToApplicantsTable(serviceRoleClient, applicantId, email, data.user.user_metadata.full_name, candidate_id);
         console.log('[AUTH] Successfully added user to database tables');
       } catch (err: any) {
         console.error('[AUTH] Error adding user to database tables:', err);
@@ -635,31 +642,22 @@ export async function getUserSessionDetails() {
     
     // Create client directly without using createAuthClient to avoid serialization issues
     const cookieStore = cookies();
-    const cookieDefaults: Partial<CookieOptions> = {
-      secure: process.env.APP_ENV === 'production',
-      sameSite: 'lax',
-      httpOnly: true,
-      path: '/'
-    };
     
     const supabase = createServerClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value;
+          getAll() {
+            return cookieStore.getAll();
           },
-          set(name: string, value: string, options: CookieOptions) {
+          setAll(cookiesToSet) {
             try {
-              cookieStore.set({
-                name,
-                value,
-                ...cookieDefaults,
-                ...options,
-              });
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              );
             } catch (error) {
-              console.error(`Error setting cookie ${name}:`, error);
+              console.error(`Error setting cookies:`, error);
             }
           },
         },

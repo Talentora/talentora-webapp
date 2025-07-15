@@ -472,7 +472,7 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
       console.error('Error saving flow:', error);
       toast.error('Failed to save flow');
     }
-  }, [nodes, edges, job.id, supabase, hasDisconnectedNodes, hasCycle]);
+  }, [nodes, edges, job.merge_id, supabase, hasDisconnectedNodes, hasCycle]);
 
   const autoLayoutNodes = useCallback(() => {
     const nodeWidth = 200;
@@ -568,7 +568,7 @@ const PromptFlowClient = ({ job, initialConfig }: PromptFlowClientProps) => {
     //   edgeCount: edges.length
     // });
     toast.success('Flow state logged to console');
-  }, [nodes, edges]);
+  }, []);
 
   const getNodeLabel = (type: string, content: string) => {
     const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);

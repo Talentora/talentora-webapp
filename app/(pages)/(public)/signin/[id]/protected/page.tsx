@@ -10,7 +10,7 @@ import { verifyToken, invalidateToken } from '@/utils/email_helpers';
 import { getAuthTypes, getRedirectMethod } from '@/utils/auth-helpers/settings';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase/client';
 
 export default function TokenProtectedSignIn({
   params
@@ -33,7 +33,7 @@ export default function TokenProtectedSignIn({
   const applicationIdParam = searchParams.get('application');
   const { allowEmail } = getAuthTypes();
   const redirectMethod = getRedirectMethod();
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
   
 
   // Helper function to add user to both tables

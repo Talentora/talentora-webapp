@@ -114,7 +114,7 @@ export default function ApplicantPage({ params }: { params: { id: string } }) {
     };
 
     fetchData();
-  }, [params.id]);
+  }, [params.id, portalProps.status]);
 
   if (loading) {
     return (
