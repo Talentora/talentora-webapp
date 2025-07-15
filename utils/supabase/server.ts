@@ -11,44 +11,23 @@ export const createClient = () => {
 
   const cookieStore = cookies();
 
-  const cookieDefaults: Partial<CookieOptions> = {
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    httpOnly: true,
-    path: '/'
-  };
-
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
+        getAll() {
+          return cookieStore.getAll();
         },
-        set(name: string, value: string, options: CookieOptions) {
+        setAll(cookiesToSet) {
           try {
-            cookieStore.set({
-              name,
-              value,
-              ...cookieDefaults,
-              ...options,
-            });
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            );
           } catch (error) {
-            console.error(`Error setting cookie ${name}:`, error);
+            console.error(`Error setting cookies:`, error);
           }
         },
-        // remove(name: string, options: CookieOptions) {
-        //   try {
-        //     cookieStore.delete({
-        //       name,
-        //       ...cookieDefaults,
-        //       ...options,
-        //     });
-        //   } catch (error) {
-        //     console.error(`Error removing cookie ${name}:`, error);
-        //   }
-        // }
       }
     }
   );
@@ -71,44 +50,23 @@ export const createAuthClient = () => {
 
   const cookieStore = cookies();
 
-  const cookieDefaults: Partial<CookieOptions> = {
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    httpOnly: true,
-    path: '/'
-  };
-
   const client = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, // Use anon key for auth
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
+        getAll() {
+          return cookieStore.getAll();
         },
-        set(name: string, value: string, options: CookieOptions) {
+        setAll(cookiesToSet) {
           try {
-            cookieStore.set({
-              name,
-              value,
-              ...cookieDefaults,
-              ...options,
-            });
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            );
           } catch (error) {
-            console.error(`Error setting cookie ${name}:`, error);
+            console.error(`Error setting cookies:`, error);
           }
         },
-        // remove(name: string, options: CookieOptions) {
-        //   try {
-        //     cookieStore.delete({
-        //       name,
-        //       ...cookieDefaults,
-        //       ...options,
-        //     });
-        //   } catch (error) {
-        //     console.error(`Error removing cookie ${name}:`, error);
-        //   }
-        // }
       }
     }
   );
