@@ -147,7 +147,7 @@ export function useJobList(): {
     });
 
     return filtered;
-  }, [enrichedJobs, state.searchTerm, state.filters, state.sortField, state.sortDirection]);
+  }, [enrichedJobs, state]);
 
   const totalPages = Math.ceil(filteredJobs.length / ITEMS_PER_PAGE);
   

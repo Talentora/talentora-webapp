@@ -47,7 +47,7 @@ export default function NodeFormModal({
     if (nodeFormData.type === 'branching' && !nodeFormData.criteria) {
       setNodeFormData(prev => ({ ...prev, criteria: defaultCriteria }));
     }
-  }, [nodeFormData.type]);
+  }, [nodeFormData.type, nodeFormData.criteria, defaultCriteria, setNodeFormData]);
 
   const insertTemplate = () => {
     setNodeFormData(prev => ({ ...prev, criteria: defaultCriteria }));

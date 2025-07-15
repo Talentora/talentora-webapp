@@ -53,7 +53,7 @@ export default function JobPage({
         {/* Add any other content for job details */}
       </div>
     );
-  }, [job, jobLoading, applicants]);
+  }, [job, jobLoading]);
 
   const applicantsSection = useMemo(() => {
     if (applicantsLoading) {

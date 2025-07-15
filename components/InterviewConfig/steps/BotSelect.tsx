@@ -78,7 +78,7 @@ const BotSelect = ({ onCompletion }: BotSelectProps) => {
     };
 
     fetchInitialData();
-  }, [mergedId, onCompletion]);
+  }, [mergedId, onCompletion, toast]);
 
   const handleBotSelection = (value: string | null) => {
     if (!value) {
