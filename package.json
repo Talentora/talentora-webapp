@@ -30,6 +30,11 @@
     "test:load:prod": "k6 run tests/load-test.js --env TARGET_URL=https://talentora.io -e scenario=load",
     "test:load:bot": "k6 run tests/load-test.js --env TARGET_URL=https://talentora.io -e scenario=bot_connect"
   },
+  "engines": {
+    "pnpm": ">=10.0.0",
+    "npm": "please-use-pnpm",
+    "yarn": "please-use-pnpm"
+  },
   "typescriptreact": {
     "editor.formatOnSave": true
   },
