@@ -15,7 +15,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { getNotInvitedColumns } from './NotInvitedColumns';
 import { getInProgressColumns } from './InProgressColumns';
@@ -181,7 +181,7 @@ export default function ApplicantList() {
   };
 
   // Export to Excel handler
-  const handleExport = () => {
+  const handleExport = async () => {
     const activeColumns = getActiveColumns();
     
     // Get the appropriate applicants array based on active tab
@@ -430,11 +430,23 @@ export default function ApplicantList() {
       return row;
     });
     
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Applicants');
-    const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'applicants.xlsx');
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Applicants');
+    
+    // Add headers
+    if (exportData.length > 0) {
+      const headers = Object.keys(exportData[0]);
+      worksheet.addRow(headers);
+      
+      // Add data rows
+      exportData.forEach(row => {
+        const values = headers.map(header => row[header]);
+        worksheet.addRow(values);
+      });
+    }
+    
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'applicants.xlsx');
   };
 
   return (
