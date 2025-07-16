@@ -168,6 +168,8 @@ export async function handleRecruiterRedirects(
 
 export async function updateSession(request: NextRequest) {
   console.log('[Middleware] Updating session...');
+
+  console.log("request:", request);
   
   const { supabase, response } = createMiddlewareClient(request);
 
