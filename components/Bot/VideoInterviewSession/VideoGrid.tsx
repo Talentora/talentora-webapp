@@ -21,7 +21,7 @@ export default function VideoGrid() {
       }`} />
       <h3 className="text-sm font-medium text-gray-500 mb-2">Your Video</h3>
       <div className="h-full">
-        {localCameraTrack && localCameraTrack.publication ? (
+        {localCameraTrack?.publication ? (
           <VideoTrack trackRef={localCameraTrack} />
         ) : (
           <div className="flex items-center justify-center h-full bg-gray-100 rounded-lg">

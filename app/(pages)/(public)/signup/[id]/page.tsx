@@ -369,7 +369,7 @@ export default function CandidateSignUp({ params }: { params: { id: string } }) 
               </div>
             </div>
 
-            <div className="mt-6"></div>
+            <div className="mt-6">
               <Link href={`/signin/${candidateId}/protected?token=${token}`}>
                 <Button variant="outline" className="w-full">
                   Sign in
@@ -379,5 +379,6 @@ export default function CandidateSignUp({ params }: { params: { id: string } }) 
           </div>
         </div>
       </div>
+    </div>
   )
 }
