@@ -74,7 +74,7 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
     if (hasMergeApiKey) {
       onCompletion(true);
     }
-  }, [hasMergeApiKey]);
+  }, [hasMergeApiKey, onCompletion]);
 
 
 
@@ -126,7 +126,7 @@ const MergeLink: React.FC<MergeLinkProps> = ({ onCompletion }) => {
         console.error('Error in token exchange:', err);
       }
     },
-    [companyId, onCompletion]
+    [companyId, onCompletion, userId]
   );
 
   // Memoize the Merge Link config

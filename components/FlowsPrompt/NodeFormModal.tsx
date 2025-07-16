@@ -28,6 +28,12 @@ const nodeTypes = [
   { value: 'branching', label: 'Branching' }
 ];
 
+const DEFAULT_CRITERIA = `if (condition) {
+  // Go to first path
+} else {
+  // Go to second path
+}`;
+
 export default function NodeFormModal({ 
   nodeFormData, 
   setNodeFormData, 
@@ -36,21 +42,16 @@ export default function NodeFormModal({
   onDelete,
   isEditing = false
 }: NodeFormModalProps) {
-  const defaultCriteria = `if (condition) {
-  // Go to first path
-} else {
-  // Go to second path
-}`;
-
+  
   // Set default criteria when type changes to branching
   useEffect(() => {
     if (nodeFormData.type === 'branching' && !nodeFormData.criteria) {
-      setNodeFormData(prev => ({ ...prev, criteria: defaultCriteria }));
+      setNodeFormData(prev => ({ ...prev, criteria: DEFAULT_CRITERIA }));
     }
-  }, [nodeFormData.type]);
+  }, [nodeFormData.type, nodeFormData.criteria, setNodeFormData]);
 
   const insertTemplate = () => {
-    setNodeFormData(prev => ({ ...prev, criteria: defaultCriteria }));
+    setNodeFormData(prev => ({ ...prev, criteria: DEFAULT_CRITERIA }));
   };
 
   const handleCriteriaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
