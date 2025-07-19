@@ -21,63 +21,20 @@ export async function GET(req: Request) {
     );
   }
 
-  // Validate the URL to prevent SSRF attacks
-  try {
-    const parsedUrl = new URL(fileUrl);
-    
-    // Whitelist allowed domains - adjust based on your actual Merge API domains
-    const allowedHosts = [
-      'api.merge.dev',
-      'files.merge.dev',
-      'merge-api-production.s3.amazonaws.com',
-      // Add S3 regional endpoints if needed
-      /^[a-z0-9-]+\.s3(\.[a-z0-9-]+)?\.amazonaws\.com$/i
-    ];
-    
-    // Check if hostname matches allowed hosts (string or regex)
-    const isAllowedHost = allowedHosts.some(host => 
-      typeof host === 'string' 
-        ? parsedUrl.hostname === host 
-        : host.test(parsedUrl.hostname)
-    );
-    
-    if (!isAllowedHost) {
-      return NextResponse.json(
-        { error: 'Invalid file URL: Unauthorized domain' },
-        { status: 400 }
-      );
-    }
-    
-    // Ensure HTTPS only
-    if (parsedUrl.protocol !== 'https:') {
-      return NextResponse.json(
-        { error: 'Invalid file URL: HTTPS required' },
-        { status: 400 }
-      );
-    }
-    
-    // Prevent localhost and private IPs
-    const privateIPPatterns = [
-      /^localhost$/i,
-      /^127\./,
-      /^10\./,
-      /^172\.(1[6-9]|2[0-9]|3[0-1])\./,
-      /^192\.168\./,
-      /^169\.254\./,
-      /^::1$/,
-      /^fc00:/i,
-      /^fe80:/i
-    ];
-    
-    if (privateIPPatterns.some(pattern => pattern.test(parsedUrl.hostname))) {
-      return NextResponse.json(
-        { error: 'Invalid file URL: Private network access denied' },
-        { status: 400 }
-      );
-    }
-  } catch (urlError) {
+import { validateExternalUrl } from '@/app/api/merge/utils/security';
+
+  if (!fileUrl) {
     return NextResponse.json(
-      { error: 'Invalid file URL: Malformed URL' },
+      { error: 'File URL is required' },
+      { status: 400 }
+    );
+  }
+
+  // Validate the URL to prevent SSRF attacks
+  const validation = validateExternalUrl(fileUrl);
+  if (!validation.valid) {
+    return NextResponse.json(
+      { error: `Invalid file URL: ${validation.error}` },
       { status: 400 }
     );
   }
