@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getMergeApiKey } from '@/utils/supabase/queries';
+import { validateExternalUrl } from '@/app/api/merge/utils/security';
 
 /**
  * Handles GET requests to fetch and serve a PDF file from a validated external URL.
@@ -18,15 +19,6 @@ export async function GET(req: Request) {
       { status: 500 }
     );
   }
-
-  if (!fileUrl) {
-    return NextResponse.json(
-      { error: 'File URL is required' },
-      { status: 400 }
-    );
-  }
-
-import { validateExternalUrl } from '@/app/api/merge/utils/security';
 
   if (!fileUrl) {
     return NextResponse.json(
