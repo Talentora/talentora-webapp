@@ -93,20 +93,23 @@ export async function handleSamlRedirect(request: NextRequest) {
 }
 
 export async function handleAuthRedirects(request: NextRequest, user: any) {
+  console.log('[Auth Middleware] Handling auth redirects...');
+
   const { pathname } = request.nextUrl;
+  console.log('[Auth Middleware] Checking current pathname:', pathname);
   
   // Check if it's a signup/[id] URL - these are allowed for authenticated users
   const isSignupWithId = /^\/signup\/[A-Za-z0-9_-]+$/.test(pathname);
 
-  console.log('check if user is exists:', user);
-
   // Only redirect for signin and signup pages that aren't signup/[id]
   if (/^\/(signin|signup)(\/.*)?$/.test(pathname) && !isSignupWithId) {
-    console.log('Redirecting to dashboard with initial pathname:', pathname);
+    console.log(`[Auth Middleware] Current pathname ${pathname} is a signin/signup page and not signup/[id]`);
+    console.log('[Auth Middleware] Checking if user exists:', user);
     if (user) {
-      console.log('[Middleware] Redirecting user to dashboard:', user);
+      console.log('[Auth Middleware] User exists, redirecting to dashboard:', user);
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
+    console.log('[Auth Middleware] No user found, returning null for auth redirects');
     return null;
   }
 
@@ -115,12 +118,14 @@ export async function handleAuthRedirects(request: NextRequest, user: any) {
   if (!allUnprotectedRoutes.some((route) => route.test(pathname)) && 
       !isSignupWithId && 
       !user) {
-    console.log('[Middleware] Redirecting user to signin:', pathname);
+    console.log(`[Auth Middleware] No user found, current pathname ${pathname} is protected, and not signup/[id], redirecting to signin`);
+    console.log('[Auth Middleware] Redirecting user to signin:', pathname);
     return NextResponse.redirect(
       new URL('/signin', process.env.NEXT_PUBLIC_SITE_URL || request.url)
     );
   }
 
+  console.log('[Auth Middleware] No auth redirects needed for current pathname:', pathname);
   return null;
 }
 
@@ -163,6 +168,8 @@ export async function handleRecruiterRedirects(
 
 export async function updateSession(request: NextRequest) {
   console.log('[Middleware] Updating session...');
+
+  console.log("request:", request);
   
   const { supabase, response } = createMiddlewareClient(request);
 
