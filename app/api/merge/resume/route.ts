@@ -17,9 +17,10 @@ export async function GET(req: Request) {
   
   const attachmentId = url.searchParams.get('attachmentId');
 
-  // Check if attachmentId is provided and is a string
-  if (!attachmentId || typeof attachmentId !== 'string') {
-    return NextResponse.json({ error: 'Attachment ID is required and must be a string' }, { status: 400 });
+  // Validate attachmentId to ensure it matches a predefined pattern (e.g., UUID or alphanumeric)
+  const validAttachmentIdPattern = /^[a-zA-Z0-9_-]{1,64}$/;
+  if (!attachmentId || !validAttachmentIdPattern.test(attachmentId)) {
+    return NextResponse.json({ error: 'Invalid Attachment ID' }, { status: 400 });
   }
 
   try {
