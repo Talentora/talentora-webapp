@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getMergeApiKey } from '@/utils/supabase/queries';
+import { validateAttachmentId } from '@/app/api/merge/utils/security';
 
+/**
+ * Handles GET requests to retrieve attachment details from an external API based on a validated `attachmentId` query parameter.
+ *
+ * Returns a JSON response containing the attachment data if successful, or an error message with the appropriate HTTP status code if credentials are missing, the attachment ID is invalid, the external API request fails, or an unexpected error occurs.
+ */
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const accountToken = await getMergeApiKey();
@@ -17,9 +23,9 @@ export async function GET(req: Request) {
   
   const attachmentId = url.searchParams.get('attachmentId');
 
-  // Check if attachmentId is provided and is a string
-  if (!attachmentId || typeof attachmentId !== 'string') {
-    return NextResponse.json({ error: 'Attachment ID is required and must be a string' }, { status: 400 });
+  // Validate attachmentId to ensure it matches a predefined pattern
+  if (!validateAttachmentId(attachmentId)) {
+    return NextResponse.json({ error: 'Invalid Attachment ID' }, { status: 400 });
   }
 
   try {
