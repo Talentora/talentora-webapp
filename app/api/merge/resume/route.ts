@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getMergeApiKey } from '@/utils/supabase/queries';
 
+/**
+ * Handles GET requests to retrieve attachment details from an external API based on a validated `attachmentId` query parameter.
+ *
+ * Returns a JSON response containing the attachment data if successful, or an error message with the appropriate HTTP status code if credentials are missing, the attachment ID is invalid, the external API request fails, or an unexpected error occurs.
+ */
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const accountToken = await getMergeApiKey();
