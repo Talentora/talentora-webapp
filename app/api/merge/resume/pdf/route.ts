@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getMergeApiKey } from '@/utils/supabase/queries';
 
+/**
+ * Handles GET requests to fetch and serve a PDF file from a validated external URL.
+ *
+ * Validates the `fileUrl` query parameter to ensure it is a well-formed, HTTPS URL from an allowed domain and not a private or localhost address. If validation passes, fetches the PDF from the external source and returns it with appropriate headers. Returns descriptive JSON error responses for missing credentials, invalid URLs, unauthorized domains, or fetch failures.
+ */
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const fileUrl = url.searchParams.get('fileUrl');
