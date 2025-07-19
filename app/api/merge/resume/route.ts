@@ -17,9 +17,12 @@ export async function GET(req: Request) {
   
   const attachmentId = url.searchParams.get('attachmentId');
 
-  // Validate attachmentId to ensure it matches a predefined pattern (e.g., UUID or alphanumeric)
-  const validAttachmentIdPattern = /^[a-zA-Z0-9_-]{1,64}$/;
-  if (!attachmentId || !validAttachmentIdPattern.test(attachmentId)) {
+import { validateAttachmentId } from '@/app/api/merge/utils/security';
+
+  const attachmentId = url.searchParams.get('attachmentId');
+
+  // Validate attachmentId to ensure it matches a predefined pattern
+  if (!validateAttachmentId(attachmentId)) {
     return NextResponse.json({ error: 'Invalid Attachment ID' }, { status: 400 });
   }
 
