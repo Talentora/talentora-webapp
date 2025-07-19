@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getMergeApiKey } from '@/utils/supabase/queries';
+import { validateAttachmentId } from '@/app/api/merge/utils/security';
 
 /**
  * Handles GET requests to retrieve attachment details from an external API based on a validated `attachmentId` query parameter.
@@ -20,10 +21,6 @@ export async function GET(req: Request) {
     );
   }
   
-  const attachmentId = url.searchParams.get('attachmentId');
-
-import { validateAttachmentId } from '@/app/api/merge/utils/security';
-
   const attachmentId = url.searchParams.get('attachmentId');
 
   // Validate attachmentId to ensure it matches a predefined pattern
